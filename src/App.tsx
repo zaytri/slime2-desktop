@@ -1,55 +1,23 @@
 import { readTextFile } from '@tauri-apps/api/fs';
 import { invoke } from '@tauri-apps/api/tauri';
-import { FileDropEvent, appWindow } from '@tauri-apps/api/window';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
 import reactLogo from './assets/react.svg';
+import useFileDrop from './hooks/useFileDrop';
 
 function App() {
   const [greetMsg, setGreetMsg] = useState('');
   const [name, setName] = useState('');
-  const [dragAndDropState, setDragAndDropState] =
-    useState<FileDropEvent['type']>('cancel');
-  const [filePath, setFilePath] = useState('');
+  const fileDrop = useFileDrop();
 
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
     setGreetMsg(await invoke('greet', { name }));
   }
 
-  useEffect(() => {
-    let unlisten = () => {};
-
-    async function dragAndDrop() {
-      unlisten = await appWindow.onFileDropEvent(event => {
-        setDragAndDropState(event.payload.type);
-
-        switch (event.payload.type) {
-          case 'hover':
-            {
-            }
-            break;
-          case 'drop':
-            {
-              setFilePath(event.payload.paths[0]);
-            }
-            break;
-          default: {
-          }
-        }
-      });
-    }
-
-    dragAndDrop();
-
-    return () => {
-      unlisten();
-    };
-  });
-
-  if (filePath) {
-    readTextFile(filePath).then(contents => {
+  if (fileDrop.type === 'drop' && fileDrop.paths[0]) {
+    readTextFile(fileDrop.paths[0]).then(contents => {
       // JSON.parse can throw an error if not valid JSON, handle that
       const parse = JSON.parse(contents);
       console.log(parse);
@@ -60,8 +28,8 @@ function App() {
     <div
       className={clsx(
         'container',
-        dragAndDropState === 'hover' && 'container-hover',
-        dragAndDropState === 'drop' && 'container-drop',
+        fileDrop.type === 'hover' && 'container-hover',
+        fileDrop.type === 'drop' && 'container-drop',
       )}
     >
       <h1>Welcome to Tauri!</h1>
