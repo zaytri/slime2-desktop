@@ -23,6 +23,14 @@
   text-align: center;
 }
 
+.container-hover {
+  background-color: pink;
+}
+
+.container-drop {
+  background-color: #24c8db;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
