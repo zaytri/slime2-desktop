@@ -1,4 +1,4 @@
-const config = {
+export default {
   plugins: ['prettier-plugin-organize-imports', 'prettier-plugin-tailwindcss'],
   arrowParens: 'avoid',
   semi: true,
@@ -8,7 +8,5 @@ const config = {
   tailwindFunctions: ['clsx'],
   organizeImportsSkipDestructiveCodeActions: true,
   tabWidth: 2,
-  useTabs: false
-}
-
-export default config
+  useTabs: false,
+};
