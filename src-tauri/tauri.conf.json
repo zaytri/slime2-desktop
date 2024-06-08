@@ -19,15 +19,30 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "window": {
+        "all": false,
+        "create": true,
+        "startDragging": true,
+        "hide": true,
+        "show": true,
+        "minimize": true,
+        "unminimize": true,
+        "close": true
       }
     },
     "windows": [
       {
         "title": "slime2",
-        "width": 800,
-        "height": 600
+        "width": 1200,
+        "height": 700,
+        "acceptFirstMouse": true,
+        "transparent": true,
+        "decorations": false,
+        "resizable": false
       }
     ],
+    "macOSPrivateApi": true,
     "security": {
       "csp": null
     },
