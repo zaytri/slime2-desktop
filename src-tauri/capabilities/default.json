@@ -1,0 +1,6 @@
+{
+	"identifier": "default",
+	"description": "This capability is required to run the app",
+	"windows": ["main"],
+	"permissions": ["shell:allow-open"]
+}

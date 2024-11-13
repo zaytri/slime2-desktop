@@ -1,25 +1,32 @@
+# Cargo.toml manifest documentation https://doc.rust-lang.org/cargo/reference/manifest.html
+
 [package]
 name = "slime2"
 version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Local Stream Widget Manager"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+publish = false
 
 [build-dependencies]
-tauri-build = { version = "1", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "window-close", "window-unminimize", "window-hide", "macos-private-api", "window-minimize", "window-show", "window-start-dragging", "window-create", "fs-read-file", "shell-open"] }
+# necessary for tauri
+tauri = { version = "2", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-zip = "0.6.6"
+
+# added for slime2
 tokio = { version = "1", features = ["full"] }
-warp = "0.3.7"
-nanoid = "0.4.0"
-futures = "0.3.30"
+warp = "0.3"
+nanoid = "0.4"
+futures = "0.3"
+chrono = "0.4"
+zip = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-shell = "2"
+tauri-plugin-clipboard-manager = "2.0.1"
 
 [features]
-# This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
+#! This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]

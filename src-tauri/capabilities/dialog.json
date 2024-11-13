@@ -1,0 +1,6 @@
+{
+	"identifier": "dialog",
+	"description": "This capability allows the dialogs used to open or save files",
+	"windows": ["main"],
+	"permissions": ["dialog:allow-open", "dialog:allow-save"]
+}

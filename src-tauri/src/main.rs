@@ -1,70 +1,48 @@
-// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+//! Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::{fs, io::Read};
+mod commands;
+mod file;
+mod server;
 
-use tauri::api::path::app_data_dir;
+#[tokio::main]
+async fn main() {
+	let connections = server::websocket::WebsocketConnections::default();
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+	if cfg!(dev) {
+		eprintln!("Welcome to slime2!");
+	}
 
-#[tauri::command]
-fn unzip(path: &str, app_handle: tauri::AppHandle) {
-    let fname = std::path::Path::new(path);
-    let file = fs::File::open(fname).unwrap();
+	tauri::Builder::default()
+		.plugin(tauri_plugin_shell::init())
+		.plugin(tauri_plugin_clipboard_manager::init())
+		.plugin(tauri_plugin_dialog::init())
+		.manage(connections.clone())
+		.setup(|app| {
+			let app_handle = app.handle();
 
-    let mut archive = zip::ZipArchive::new(file).unwrap();
-
-    archive.extract(app_handle.path_resolver().app_data_dir().unwrap());
-
-    for i in 0..archive.len() {
-        let mut file = archive.by_index(i).unwrap();
-        let outpath = match file.enclosed_name() {
-            Some(path) => path.to_owned(),
-            None => continue,
-        };
-
-        // let mut contents = String::new();
-        // file.read_to_string(&mut contents);
-        println!("{}", file.name());
-
-        // if (*file.name()).ends_with('/') {
-        //     println!("File {} extracted to \"{}\"", i, outpath.display());
-        //     fs::create_dir_all(&outpath).unwrap();
-        // } else {
-        //     println!(
-        //         "File {} extracted to \"{}\" ({} bytes)",
-        //         i,
-        //         outpath.display(),
-        //         file.size()
-        //     );
-        //     if let Some(p) = outpath.parent() {
-        //         if !p.exists() {
-        //             fs::create_dir_all(p).unwrap();
-        //         }
-        //     }
-        //     let mut outfile = fs::File::create(&outpath).unwrap();
-        //     io::copy(&mut file, &mut outfile).unwrap();
-        // }
-
-        // Get and Set permissions
-        // #[cfg(unix)]
-        // {
-        //     use std::os::unix::fs::PermissionsExt;
-
-        //     if let Some(mode) = file.unix_mode() {
-        //         fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).unwrap();
-        //     }
-        // }
-    }
-}
-
-fn main() {
-    tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, unzip])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+			server::setup(
+				connections,
+				(
+					file::widget_server_path(app_handle),
+					file::tiles_path(app_handle),
+					file::temp_files_path(app_handle),
+				),
+			)
+		})
+		.invoke_handler(tauri::generate_handler![
+			commands::send_websocket_message,
+			commands::copy_widget,
+			commands::delete_widget,
+			commands::install_widget,
+			commands::install_default_widget,
+			commands::extract_widget_details,
+			commands::load_json,
+			commands::save_json,
+			commands::create_widget_folder,
+			commands::temp_copy,
+			commands::temp_delete,
+		])
+		.run(tauri::generate_context!())
+		.expect("Error while running Tauri app!");
 }

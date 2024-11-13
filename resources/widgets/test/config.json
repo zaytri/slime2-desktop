@@ -1,0 +1,8 @@
+{
+	"id": "stream.slime2.chat",
+	"name": "Chat",
+	"author": "slime2",
+	"description": "Default chat widget for slime2",
+	"js": [],
+	"css": ["styles.css"]
+}

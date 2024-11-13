@@ -1,0 +1,44 @@
+{
+	"name": "slime2-widget-server",
+	"version": "0.0.0",
+	"description": "Widget Server Wrapper for slime2",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "npm run dev",
+		"dev": "vite",
+		"build": "tsc -b && vite build --emptyOutDir",
+		"lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@tanstack/react-router": "^1.43.12",
+		"axios": "^1.7.2",
+		"clsx": "^2.1.1",
+		"nanoid": "^5.0.7",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"devDependencies": {
+		"@tanstack/router-devtools": "^1.43.12",
+		"@tanstack/router-plugin": "^1.43.12",
+		"@types/node": "^20.14.9",
+		"@types/react": "^18.3.3",
+		"@types/react-dom": "^18.3.0",
+		"@typescript-eslint/eslint-plugin": "^7.13.1",
+		"@typescript-eslint/parser": "^7.13.1",
+		"@vitejs/plugin-react-swc": "^3.5.0",
+		"autoprefixer": "^10.4.19",
+		"eslint": "^9.6.0",
+		"eslint-plugin-react-hooks": "^4.6.2",
+		"eslint-plugin-react-refresh": "^0.4.7",
+		"postcss": "^8.4.39",
+		"prettier": "^3.3.2",
+		"prettier-plugin-organize-imports": "^4.0.0",
+		"prettier-plugin-tailwindcss": "^0.6.5",
+		"tailwindcss": "^3.4.4",
+		"typescript": "^5.2.2",
+		"vite": "^5.3.1",
+		"vite-tsconfig-paths": "^4.3.2"
+	}
+}
