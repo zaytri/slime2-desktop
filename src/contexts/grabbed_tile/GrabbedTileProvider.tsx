@@ -12,10 +12,10 @@ export default memo(function GrabbedTileProvider({
 	const [grabbedTile, dispatch] = useReducer(grabbedTileReducer, initialState);
 
 	return (
-		<GrabbedTileContext.Provider value={grabbedTile}>
-			<GrabbedTileDispatchContext.Provider value={dispatch}>
+		<GrabbedTileContext value={grabbedTile}>
+			<GrabbedTileDispatchContext value={dispatch}>
 				{children}
-			</GrabbedTileDispatchContext.Provider>
-		</GrabbedTileContext.Provider>
+			</GrabbedTileDispatchContext>
+		</GrabbedTileContext>
 	);
 });

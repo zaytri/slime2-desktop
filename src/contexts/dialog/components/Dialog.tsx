@@ -1,6 +1,6 @@
+import CloseSvg from '@/components/svg/CloseSvg';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { memo } from 'react';
-import CloseSvg from '../svg/CloseSvg';
 
 export default memo(function Dialog({ children }: Props.WithChildren) {
 	const { close } = useDialog();
@@ -12,7 +12,7 @@ export default memo(function Dialog({ children }: Props.WithChildren) {
 					{/* close button */}
 					<button
 						type='button'
-						className='group absolute flex h-8 items-center gap-0 self-end rounded-lg border-2 border-rose-800 bg-rose-400 bg-gradient-to-b from-rose-300 from-50% to-rose-400 to-50% px-2 font-bold text-rose-900 shadow-[0_2px] shadow-rose-800 transition-[gap] over:translate-y-[2px] over:gap-2 over:bg-none over:shadow-none'
+						className='group absolute flex h-8 items-center gap-0 self-end rounded-lg border-2 border-rose-800 bg-rose-300 bg-gradient-to-b from-rose-300 from-50% to-rose-400 to-50% px-2 font-bold text-rose-900 shadow-[0_2px] shadow-rose-800 transition-[gap] over:translate-y-[2px] over:gap-2 over:bg-none over:shadow-none'
 						onClick={close}
 					>
 						<span className='text-[.1px] opacity-0 transition-[font-size] group-over:text-lg group-over:opacity-100'>

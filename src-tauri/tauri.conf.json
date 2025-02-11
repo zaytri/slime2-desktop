@@ -40,7 +40,7 @@
 			}
 		],
 		"security": {
-			"capabilities": ["default", "dialog", "clipboard"],
+			"capabilities": ["default", "dialog", "clipboard", "files"],
 			"csp": {
 				"default-src": ["'self'", "http://localhost:*"]
 			}

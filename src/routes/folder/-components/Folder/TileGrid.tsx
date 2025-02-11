@@ -4,18 +4,20 @@ import {
 	useTileFolder,
 	useTileGridDispatch,
 } from '@/contexts/tile_grid/useTileGrid';
+import { useTile } from '@/contexts/tile_map/useTileMap';
 import { deleteWidget } from '@/helpers/commands';
 import { useNavigate } from '@tanstack/react-router';
 import { memo } from 'react';
-import Tile from '../tile/Tile';
+import Tile from '../Tile';
 
 type FolderPageProps = {
 	folderId: string;
 	page: number;
 };
 
-export default memo(function FolderPage({ folderId, page }: FolderPageProps) {
+export default memo(function TileGrid({ folderId, page }: FolderPageProps) {
 	const { getPage } = useTileFolder(folderId);
+	const { tile: folderTile } = useTile(folderId);
 	const { removeItem } = useTileGridDispatch();
 	const { open } = useDialog();
 	const navigate = useNavigate();
@@ -49,8 +51,8 @@ export default memo(function FolderPage({ folderId, page }: FolderPageProps) {
 							}
 						}}
 					>
-						<div className='relative h-32 w-36'>
-							<Tile {...tile} />
+						<div className='relative aspect-[9/8] w-3/4 min-w-36'>
+							<Tile {...tile} folderColor={folderTile?.color} />
 						</div>
 					</button>
 				);

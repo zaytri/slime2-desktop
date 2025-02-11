@@ -1,4 +1,4 @@
-import Folder from '@/components/folder/Folder';
+import Folder from '@/routes/folder/-components/Folder';
 import { createLazyFileRoute } from '@tanstack/react-router';
 
 export const Route = createLazyFileRoute('/folder/$folderId')({

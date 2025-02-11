@@ -1,15 +1,14 @@
+import CreateSvg from '@/components/svg/CreateSvg';
 import { type CreatePayload, useDialog } from '@/contexts/dialog/useDialog';
 import { useTileGridDispatch } from '@/contexts/tile_grid/useTileGrid';
-import { createWidgetFolder } from '@/helpers/commands';
+import { createWidgetFolder, installDefaultWidget } from '@/helpers/commands';
 import { useNavigate } from '@tanstack/react-router';
 import clsx from 'clsx';
 import { memo } from 'react';
-import CreateSvg from '../svg/CreateSvg';
 import DialogHeader from './DialogHeader';
 
 export default memo(function CreateDialog() {
-	const dialog = useDialog();
-	const data = dialog.payload as CreatePayload;
+	const { payload, close } = useDialog<CreatePayload>();
 	const { addItem } = useTileGridDispatch();
 	const navigate = useNavigate();
 
@@ -18,16 +17,27 @@ export default memo(function CreateDialog() {
 			<DialogHeader>Create New...</DialogHeader>
 			<div className='flex flex-col gap-8 p-14'>
 				<div className='flex items-center justify-center gap-24'>
-					<CreateButton className='rounded-slime' onClick={() => {}}>
+					<CreateButton
+						className='rounded-slime'
+						onClick={async () => {
+							const id = await installDefaultWidget('test');
+							addItem({ id, index: payload.index, folderId: payload.folderId });
+							close();
+						}}
+					>
 						Widget
 					</CreateButton>
-					{data.folderId === 'main' && (
+					{payload.folderId === 'main' && (
 						<CreateButton
 							className='rounded-10%'
 							onClick={async () => {
 								const id = await createWidgetFolder();
-								addItem({ id, index: data.index, folderId: data.folderId });
-								dialog.close();
+								addItem({
+									id,
+									index: payload.index,
+									folderId: payload.folderId,
+								});
+								close();
 								navigate({
 									to: '/folder/$folderId',
 									params: { folderId: id },

@@ -1,7 +1,12 @@
 import { loadTileData } from '@/helpers/json/tileData';
 import { memo, useCallback, useEffect, useReducer } from 'react';
 import useTileGrid from '../tile_grid/useTileGrid';
-import { initialState, TileMapContext, tileMapReducer } from './useTileMap';
+import {
+	initialState,
+	TileMapContext,
+	TileMapDispatchContext,
+	tileMapReducer,
+} from './useTileMap';
 
 export default memo(function TileMapProvider({ children }: Props.WithChildren) {
 	const grid = useTileGrid();
@@ -35,8 +40,10 @@ export default memo(function TileMapProvider({ children }: Props.WithChildren) {
 	}, [grid, tileMap]);
 
 	return (
-		<TileMapContext.Provider value={tileMap}>
-			{children}
-		</TileMapContext.Provider>
+		<TileMapContext value={tileMap}>
+			<TileMapDispatchContext value={dispatch}>
+				{children}
+			</TileMapDispatchContext>
+		</TileMapContext>
 	);
 });

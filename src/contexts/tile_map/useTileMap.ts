@@ -1,6 +1,6 @@
 import { saveTileData, type TileData } from '@/helpers/json/tileData';
 import { createContext, useContext } from 'react';
-import { deepCopyObject } from '../common';
+import { deepCopyObject, emptyFunction } from '../common';
 
 type TileMap = Record<string, TileData>;
 
@@ -8,14 +8,40 @@ export default function useTileMap(): TileMap {
 	return useContext(TileMapContext);
 }
 
-export function useTile(id: string | null): TileData | null {
+export function useTileMapDispatch() {
+	const dispatch = useContext(TileMapDispatchContext);
+
+	function set(id: string, data: TileData) {
+		dispatch({ type: 'set', id, data });
+	}
+
+	return { set };
+}
+
+export function useTile(id: string | null): {
+	tile: TileData | null;
+	setTile: (data: TileData) => void;
+} {
 	const map = useTileMap();
-	if (!id) return null;
-	return map[id] ?? null;
+	const { set } = useTileMapDispatch();
+
+	if (!id) return { tile: null, setTile: emptyFunction };
+
+	const tile = map[id];
+	if (!tile) return { tile: null, setTile: emptyFunction };
+
+	return {
+		tile,
+		setTile: (data: TileData) => {
+			set(id, data);
+		},
+	};
 }
 
 export const initialState: TileMap = {};
 export const TileMapContext = createContext<TileMap>(initialState);
+export const TileMapDispatchContext =
+	createContext<React.Dispatch<TileMapAction>>(emptyFunction);
 
 export function tileMapReducer(state: TileMap, action: TileMapAction): TileMap {
 	switch (action.type) {

@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import CreateSvg from '../svg/CreateSvg';
+import CreateSvg from '../../../../components/svg/CreateSvg';
 
 export default memo(function EmptyTile() {
 	return (

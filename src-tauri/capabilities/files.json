@@ -1,6 +1,6 @@
 {
 	"identifier": "files",
-	"description": "This capability allows the dialogs used to open or save files",
+	"description": "This capability allows file paths to be used.",
 	"windows": ["main"],
-	"permissions": ["dialog:allow-open", "dialog:allow-save"]
+	"permissions": ["core:path:allow-resolve-directory"]
 }

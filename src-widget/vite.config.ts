@@ -6,7 +6,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [TanStackRouterVite(), react()],
 	build: {
-		outDir: '../resources/widget-server',
+		outDir: '../resources/widget_server',
 	},
 	server: {
 		port: 57141,

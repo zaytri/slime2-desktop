@@ -1,18 +1,18 @@
 import { createContext, useContext } from 'react';
 import { emptyFunction } from '../common';
 
-export function useDialog() {
-	return useContext(DialogContext);
+export function useDialog<Payload extends DialogType['payload'] = never>() {
+	return useContext<DialogState<Payload>>(DialogContext);
 }
 
-type DialogState = {
+type DialogState<Payload extends DialogType['payload']> = {
 	name: DialogType['name'];
-	payload: DialogType['payload'];
+	payload: Payload;
 	open: (dialog: DialogType) => void;
 	close: () => void;
 };
 
-export const DialogContext = createContext<DialogState>({
+export const DialogContext = createContext<DialogState<any>>({
 	name: '',
 	payload: null,
 	open: emptyFunction,

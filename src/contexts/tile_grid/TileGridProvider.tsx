@@ -22,10 +22,10 @@ export default memo(function TileGridProvider({
 	}, []);
 
 	return (
-		<TileGridContext.Provider value={tileGrid}>
-			<TileGridDispatchContext.Provider value={dispatch}>
+		<TileGridContext value={tileGrid}>
+			<TileGridDispatchContext value={dispatch}>
 				{children}
-			</TileGridDispatchContext.Provider>
-		</TileGridContext.Provider>
+			</TileGridDispatchContext>
+		</TileGridContext>
 	);
 });

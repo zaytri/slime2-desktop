@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::{
 	fs::{self, File},
 	io,
@@ -19,6 +20,7 @@ pub fn load_json(mut file_path: PathBuf) -> io::Result<String> {
 }
 
 // file_path must not include .json
+// simply saves the given string as is, doesn't automatically pretty print it
 pub fn save_json(json_string: &str, mut file_path: PathBuf) -> io::Result<()> {
 	// create parent folder if it doesn't exist
 	if let Some(parent_path) = file_path.parent() {
@@ -31,6 +33,49 @@ pub fn save_json(json_string: &str, mut file_path: PathBuf) -> io::Result<()> {
 
 	// write json to file
 	fs::write(file_path, json_string)?;
+
+	Ok(())
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+struct WidgetMetaForTileMeta {
+	name: String,
+	icon: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct TileMeta {
+	pub name: String,
+	pub icon: String,
+	pub color: String,
+}
+
+pub fn load_widget_meta(core_path: PathBuf) -> io::Result<TileMeta> {
+	let json_string = load_json(core_path.join("config").join("meta"))?;
+
+	let meta = serde_json::from_str::<WidgetMetaForTileMeta>(&json_string)?;
+
+	let name = meta.name;
+	let icon = match meta.icon {
+		Some(value) => value,
+		None => String::from(""),
+	};
+
+	return Ok(TileMeta {
+		name,
+		icon,
+		color: String::from("green"),
+	});
+}
+
+pub fn create_tile_meta(
+	config_path: PathBuf,
+	meta: TileMeta,
+) -> io::Result<()> {
+	save_json(
+		&serde_json::to_string_pretty(&meta)?,
+		config_path.join("meta"),
+	)?;
 
 	Ok(())
 }
@@ -175,6 +220,17 @@ pub fn unzip(path: &Path) -> io::Result<ZipArchive<File>> {
 	Ok(archive)
 }
 
+pub fn empty_temp_folder(app: &AppHandle) -> io::Result<()> {
+	let temp_folder_path = temp_files_path(app);
+
+	if temp_folder_path.exists() {
+		fs::remove_dir_all(temp_folder_path.clone())?;
+		fs::create_dir(temp_folder_path)?;
+	}
+
+	Ok(())
+}
+
 // get path to widget_server folder (built by src-widget)
 pub fn widget_server_path(app: &AppHandle) -> PathBuf {
 	app.path()
@@ -187,6 +243,11 @@ pub fn tiles_path(app: &AppHandle) -> PathBuf {
 	app.path()
 		.resolve("tiles", BaseDirectory::AppData)
 		.expect("Failed to resolve [app_data]/tiles!")
+}
+
+// get path to a specific tile's config folder
+pub fn tile_config_path(app: &AppHandle, tile_id: String) -> PathBuf {
+	tiles_path(app).join(tile_id).join("config")
 }
 
 // get path to default widgets folder
@@ -212,4 +273,12 @@ pub fn assets_path(app: &AppHandle) -> PathBuf {
 	app.path()
 		.resolve("assets", BaseDirectory::Resource)
 		.expect("Failed to resolve [resource]/assets!")
+}
+
+pub fn default_folder_image_name() -> String {
+	String::from("folder.png")
+}
+
+pub fn default_widget_image_name() -> String {
+	String::from("widget.png")
 }

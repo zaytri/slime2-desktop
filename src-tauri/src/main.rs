@@ -21,6 +21,11 @@ async fn main() {
 		.setup(|app| {
 			let app_handle = app.handle();
 
+			// empty temp folder on startup
+			if let Err(error) = file::empty_temp_folder(app_handle) {
+				eprintln!("Error emptying temp folder! {}", error);
+			}
+
 			server::setup(
 				connections,
 				(
@@ -41,7 +46,8 @@ async fn main() {
 			commands::save_json,
 			commands::create_widget_folder,
 			commands::temp_copy,
-			commands::temp_delete,
+			commands::save_temp_folder_icon,
+			commands::delete_widget_folder,
 		])
 		.run(tauri::generate_context!())
 		.expect("Error while running Tauri app!");

@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 
-import { fontFamily } from 'tailwindcss/defaultTheme';
+import { fontFamily, spacing } from 'tailwindcss/defaultTheme';
 import plugin from 'tailwindcss/plugin';
 
 export default {
@@ -9,12 +9,13 @@ export default {
 		extend: {
 			fontFamily: {
 				fredoka: ['Fredoka', ...fontFamily.sans],
+				quicksand: ['Quicksand', ...fontFamily.sans],
 				'radio-canada': ['Radio Canada', ...fontFamily.sans],
-				'radio-canada-big': ['Radio Canada Big', ...fontFamily.sans],
 			},
 			borderRadius: {
 				'10%': '10%',
 				'100%': '100%',
+				...spacing,
 			},
 			keyframes: {
 				fade: {
@@ -51,14 +52,19 @@ export default {
 			]);
 		}),
 
-		// border radius values to create a slime shape
 		plugin(({ addUtilities }) => {
 			addUtilities({
+				// border radius values to create a slime shape
 				'.rounded-slime': {
 					'border-top-left-radius': '100% 150%',
 					'border-top-right-radius': '100% 150%',
 					'border-bottom-left-radius': '100% 50%',
 					'border-bottom-right-radius': '100% 50%',
+				},
+
+				// smooths images when object-fit: cover is used
+				'.smooth-image': {
+					'overflow-clip-margin': 'unset',
 				},
 			});
 		}),

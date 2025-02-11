@@ -37,6 +37,7 @@ export async function loadJson(filePath: string): Promise<unknown> {
 }
 
 // filePath must not include ".json" extension
+// pretty prints the string before saving
 export async function saveJson(
 	jsonObject: unknown,
 	filePath: string,
@@ -49,10 +50,17 @@ export async function createWidgetFolder(): Promise<string> {
 	return invoke('create_widget_folder');
 }
 
+export async function deleteWidgetFolder(folderId: string): Promise<void> {
+	return invoke('delete_widget_folder', { folderId });
+}
+
 export async function tempCopy(filePath: string): Promise<string> {
 	return invoke('temp_copy', { filePath });
 }
 
-export async function tempDelete(fileName: string): Promise<void> {
-	return invoke('temp_delete', { fileName });
+export async function saveTempFolderIcon(
+	fileName: string,
+	folderId: string,
+): Promise<void> {
+	return invoke('save_temp_folder_icon', { fileName, folderId });
 }

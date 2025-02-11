@@ -1,5 +1,5 @@
-import Dialog from '@/components/dialog/Dialog';
 import { lazy, memo, Suspense, useRef, useState } from 'react';
+import Dialog from './components/Dialog';
 import { DialogContext, type DialogType } from './useDialog';
 
 export default memo(function DialogProvider({ children }: Props.WithChildren) {
@@ -19,12 +19,10 @@ export default memo(function DialogProvider({ children }: Props.WithChildren) {
 		dialogRef.current?.showModal();
 	}
 
-	const LazyComponent = lazy(
-		() => import(`../../components/dialog/${name}Dialog.tsx`),
-	);
+	const LazyComponent = lazy(() => import(`./components/${name}Dialog.tsx`));
 
 	return (
-		<DialogContext.Provider value={{ name, payload, open, close }}>
+		<DialogContext value={{ name, payload, open, close }}>
 			{children}
 
 			<dialog
@@ -35,6 +33,6 @@ export default memo(function DialogProvider({ children }: Props.WithChildren) {
 					<Suspense fallback={null}>{name && <LazyComponent />}</Suspense>
 				</Dialog>
 			</dialog>
-		</DialogContext.Provider>
+		</DialogContext>
 	);
 });
