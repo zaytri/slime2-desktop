@@ -70,7 +70,7 @@ const CreateButton = memo(function CreateButton({
 		>
 			<div
 				className={clsx(
-					'relative flex h-32 w-36 items-center justify-center overflow-hidden border-4 border-green-800 bg-gradient-to-b from-lime-400 to-lime-200 shadow-[inset_0_0_20px] shadow-white/50',
+					'relative flex h-32 w-36 items-center justify-center overflow-hidden border-4 border-green-800 bg-linear-to-b from-lime-400 to-lime-200 shadow-[inset_0_0_20px] shadow-white/50',
 					className,
 				)}
 			>

@@ -33,7 +33,7 @@ export default memo(function ChangePageButton({ direction, onClick }: Props) {
 		<button
 			type='button'
 			className={clsx(
-				'group flex h-16 items-center border-t-4 border-amber-900 bg-amber-300 bg-gradient-to-b from-amber-200 from-50% to-amber-300 to-50% px-6 text-amber-900 transition-transform over:scale-125 over:bg-none',
+				'group flex h-16 items-center border-t-4 border-amber-900 bg-amber-300 bg-linear-to-b from-amber-200 from-50% to-amber-300 to-50% px-6 text-amber-900 transition-transform over:scale-125 over:bg-none',
 				direction === 'left'
 					? 'origin-bottom-left justify-start rounded-tr-2xl border-r-4'
 					: 'origin-bottom-right justify-end rounded-tl-2xl border-l-4',

@@ -8,7 +8,7 @@ export default memo(function Header({
 	return (
 		<div
 			className={clsx(
-				'flex border-b-4 border-amber-900 bg-gradient-to-r from-amber-200 to-amber-300',
+				'flex border-b-4 border-amber-900 bg-linear-to-r from-amber-200 to-amber-300',
 				className,
 			)}
 		>

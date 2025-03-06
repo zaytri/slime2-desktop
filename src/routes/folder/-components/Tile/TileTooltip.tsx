@@ -30,7 +30,7 @@ export default memo(function TileTooltip({
 
 			{/* contents */}
 			<div className='min-w-[50%] overflow-hidden rounded-xl border-4 border-black/50'>
-				<div className='relative max-w-full rounded-lg border-2 border-white bg-white/85 px-3 py-2 shadow-[inset_0_0_10px_5px] shadow-white backdrop-blur-sm'>
+				<div className='relative max-w-full rounded-lg border-2 border-white bg-white/85 px-3 py-2 shadow-[inset_0_0_10px_5px] shadow-white backdrop-blur-xs'>
 					<p className='break-words text-lg font-medium text-neutral-700 [text-shadow:0_0_3px_white,0_-1px_0_white]'>
 						{children}
 					</p>

@@ -68,17 +68,17 @@ export default memo(function Folder({ folderId }: FolderProps) {
 					)}
 				</div>
 				<div className='flex flex-1 items-center justify-end px-3'>
-					<TabList className='relative flex items-center justify-end gap-1 rounded-full outline-2 outline-offset-4 after:pointer-events-none after:absolute after:inset-0 after:rounded-full after:outline-1 after:outline-offset-[6px] after:outline-white after:content-[""] has-[[data-focus]]:outline has-[[data-focus]]:after:outline'>
+					<TabList className='relative flex items-center justify-end gap-1 rounded-full outline-2 outline-offset-4 after:pointer-events-none after:absolute after:inset-0 after:rounded-full after:outline-1 after:outline-offset-[6px] after:outline-white after:content-[""] has-data-focus:outline has-data-focus:after:outline'>
 						<span className='sr-only'>Page Selector</span>
 						{pageIndices.map(index => {
 							return (
 								<Tab
 									key={index}
 									className={clsx(
-										'group flex size-7 items-center justify-center rounded-full border-2 border-amber-900 bg-amber-600 bg-gradient-to-b from-amber-700 to-amber-600 outline-none transition-[width,height] data-[selected]:size-10 data-[hover]:from-amber-700 data-[selected]:from-amber-700 data-[hover]:to-amber-900 data-[selected]:to-amber-900 data-[selected]:text-xl',
+										'group flex size-7 items-center justify-center rounded-full border-2 border-amber-900 bg-amber-600 bg-linear-to-b from-amber-700 to-amber-600 outline-hidden transition-[width,height] data-selected:size-10 data-hover:from-amber-700 data-selected:from-amber-700 data-hover:to-amber-900 data-selected:to-amber-900 data-selected:text-xl',
 									)}
 								>
-									<span className='sr-only text-amber-100 group-data-[hover]:not-sr-only group-data-[selected]:not-sr-only'>
+									<span className='sr-only text-amber-100 group-data-hover:not-sr-only group-data-selected:not-sr-only'>
 										{index + 1}
 									</span>
 								</Tab>
@@ -99,7 +99,7 @@ export default memo(function Folder({ folderId }: FolderProps) {
 							<TabPanel
 								key={index}
 								tabIndex={-1}
-								className='flex flex-1 flex-col data-[selected]:animate-page'
+								className='flex flex-1 flex-col data-selected:animate-page'
 							>
 								<div className='flex flex-1 px-3 py-6'>
 									<TileGrid folderId={folderId} page={index} />

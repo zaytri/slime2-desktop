@@ -51,7 +51,7 @@ export default memo(function TileGrid({ folderId, page }: FolderPageProps) {
 							}
 						}}
 					>
-						<div className='relative aspect-[9/8] w-3/4 min-w-36'>
+						<div className='relative aspect-9/8 w-3/4 min-w-36'>
 							<Tile {...tile} folderColor={folderTile?.color} />
 						</div>
 					</button>
