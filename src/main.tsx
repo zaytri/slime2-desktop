@@ -1,7 +1,6 @@
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import GrabbedTileProvider from './contexts/grabbed_tile/GrabbedTileProvider';
 import TileGridProvider from './contexts/tile_grid/TileGridProvider';
 import TileMapProvider from './contexts/tile_map/TileMapProvider';
 import { routeTree } from './routeTree.gen';
@@ -21,9 +20,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>
 		<TileGridProvider>
 			<TileMapProvider>
-				<GrabbedTileProvider>
-					<RouterProvider router={router} />
-				</GrabbedTileProvider>
+				<RouterProvider router={router} />
 			</TileMapProvider>
 		</TileGridProvider>
 	</React.StrictMode>,
