@@ -1,50 +1,48 @@
-import { SLOTS_PER_PAGE, type Tile } from '@/contexts/tile_grid/useTileGrid';
-import { useTile } from '@/contexts/tile_map/useTileMap';
+import {
+	TILES_PER_PAGE,
+	TileSlot,
+} from '@/contexts/tile_locations/useTileFolder';
+import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import { TileColor } from '@/helpers/ui';
-import clsx from 'clsx';
 import { memo } from 'react';
-import EmptyTile from './EmptyTile';
 import TileAction from './TileAction';
+import TileAnimationWrapper from './TileAnimationWrapper';
 import TileBackground from './TileBackground';
 import TileImage from './TileImage';
 import TileTooltip from './TileTooltip';
 
-type Props = Tile & {
+type Props = Omit<TileSlot, 'folderId'> & {
 	folderColor?: TileColor;
 };
 
-export default memo(function Tile({
+const Tile = memo(function Tile({
 	index,
 	id,
 	type,
 	folderColor = TileColor.Green,
 }: Props) {
-	const { tile } = useTile(id);
-	const firstRow = index % SLOTS_PER_PAGE < 5;
+	const { tileMeta } = useTileMeta(id);
+	const firstRow = index % TILES_PER_PAGE < 5;
 
 	return (
-		<div
-			className={clsx(
-				'absolute inset-0 transition-transform duration-200 ease-bounce group-over:z-10 group-over:scale-125',
-			)}
-		>
+		<TileAnimationWrapper>
 			<TileBackground
 				type={type}
-				color={type === 'folder' ? tile?.color : folderColor}
+				color={type === 'folder' ? tileMeta.color : folderColor}
 			>
-				{/* tile image or empty tile icon */}
-				{id && type ? <TileImage id={id} type={type} /> : <EmptyTile />}
+				{/* tile image */}
+				<TileImage id={id} type={type} />
 
 				{/* action */}
-				<TileAction action={id ? 'Open' : 'Create'} />
+				<TileAction action='Open' />
 			</TileBackground>
 
 			{/* title tooltip */}
-			{id && (
-				<TileTooltip position={firstRow ? 'below' : 'above'}>
-					{tile?.name}
-				</TileTooltip>
-			)}
-		</div>
+			<TileTooltip position={firstRow ? 'below' : 'above'}>
+				{tileMeta.name}
+			</TileTooltip>
+		</TileAnimationWrapper>
 	);
 });
+
+export default Tile;

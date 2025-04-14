@@ -1,31 +1,30 @@
 import { useDialog } from '@/contexts/dialog/useDialog';
-import {
-	SLOTS_PER_PAGE,
-	useTileFolder,
-	useTileGridDispatch,
-} from '@/contexts/tile_grid/useTileGrid';
-import { useTile } from '@/contexts/tile_map/useTileMap';
-import { deleteWidget } from '@/helpers/commands';
+import useTileFolder, {
+	TILES_PER_PAGE,
+} from '@/contexts/tile_locations/useTileFolder';
+import { useTileLocationsDispatch } from '@/contexts/tile_locations/useTileLocationsDispatch';
+import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import { useNavigate } from '@tanstack/react-router';
 import { memo } from 'react';
 import Tile from '../Tile';
+import EmptyTile from '../Tile/EmptyTile';
 
 type FolderPageProps = {
 	folderId: string;
 	page: number;
 };
 
-export default memo(function TileGrid({ folderId, page }: FolderPageProps) {
-	const { getPage } = useTileFolder(folderId);
-	const { tile: folderTile } = useTile(folderId);
-	const { removeItem } = useTileGridDispatch();
+const TileGrid = memo(function TileGrid({ folderId, page }: FolderPageProps) {
+	const { getPage: getPage } = useTileFolder(folderId);
+	const { tileMeta: folderTileMeta } = useTileMeta(folderId);
+	const { removeTile } = useTileLocationsDispatch();
 	const { open } = useDialog();
 	const navigate = useNavigate();
 
 	return (
 		<div className='grid flex-1 grid-cols-5 gap-0'>
 			{getPage(page).map((tile, index) => {
-				const tileIndex = index + page * SLOTS_PER_PAGE;
+				const tileIndex = index + page * TILES_PER_PAGE;
 
 				return (
 					<button
@@ -35,24 +34,37 @@ export default memo(function TileGrid({ folderId, page }: FolderPageProps) {
 						onClick={async () => {
 							if (tile.id) {
 								if (tile.type === 'folder') {
-									navigate({
+									await navigate({
 										to: '/folder/$folderId',
 										params: { folderId: tile.id },
 									});
 								} else {
-									await deleteWidget(tile.id);
-									removeItem(tile.id);
+									await navigate({
+										to: '/widget/$widgetId',
+										params: { widgetId: tile.id },
+									});
+									// await deleteWidget(tile.id);
+									// removeTile(tile.id);
 								}
 							} else {
 								open({
-									name: 'Create',
+									name: 'CreateTile',
 									payload: { folderId, index: tileIndex },
 								});
 							}
 						}}
 					>
 						<div className='relative aspect-9/8 w-3/4 min-w-36'>
-							<Tile {...tile} folderColor={folderTile?.color} />
+							{tile.id ? (
+								<Tile
+									id={tile.id}
+									index={tile.index}
+									type={tile.type}
+									folderColor={folderTileMeta.color}
+								/>
+							) : (
+								<EmptyTile folderColor={folderTileMeta.color} />
+							)}
 						</div>
 					</button>
 				);
@@ -60,3 +72,5 @@ export default memo(function TileGrid({ folderId, page }: FolderPageProps) {
 		</div>
 	);
 });
+
+export default TileGrid;

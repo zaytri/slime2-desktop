@@ -1,8 +1,17 @@
 import { createContext, useContext } from 'react';
-import { emptyFunction } from '../common';
+import { contextErrorMessage } from '../common';
+import { DialogType } from './DialogType';
 
-export function useDialog<Payload extends DialogType['payload'] = never>() {
-	return useContext<DialogState<Payload>>(DialogContext);
+export function useDialog<
+	Payload extends DialogType['payload'] = never,
+>(): DialogState<Payload> {
+	const context = useContext<DialogState<Payload> | undefined>(DialogContext);
+
+	if (!context) {
+		throw new Error(contextErrorMessage('useDialog', 'DialogContext'));
+	}
+
+	return context;
 }
 
 type DialogState<Payload extends DialogType['payload']> = {
@@ -10,25 +19,9 @@ type DialogState<Payload extends DialogType['payload']> = {
 	payload: Payload;
 	open: (dialog: DialogType) => void;
 	close: () => void;
+	onCancel?: () => void;
 };
 
-export const DialogContext = createContext<DialogState<any>>({
-	name: '',
-	payload: null,
-	open: emptyFunction,
-	close: emptyFunction,
-});
-
-export type DialogType =
-	| { name: ''; payload: null }
-	| { name: 'Create'; payload: CreatePayload }
-	| { name: 'CustomizeFolder'; payload: CustomizeFolderPayload };
-
-export type CreatePayload = {
-	folderId: string;
-	index: number;
-};
-
-export type CustomizeFolderPayload = {
-	id: string;
-};
+export const DialogContext = createContext<DialogState<any> | undefined>(
+	undefined,
+);

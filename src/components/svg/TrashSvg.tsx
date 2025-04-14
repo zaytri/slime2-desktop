@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-export default memo(function TrashSvg({ className }: Props.WithClassName) {
+const TrashSvg = memo(function TrashSvg({ className }: Props.WithClassName) {
 	return (
 		<div className={className}>
 			<svg
@@ -18,3 +18,5 @@ export default memo(function TrashSvg({ className }: Props.WithClassName) {
 		</div>
 	);
 });
+
+export default TrashSvg;

@@ -38,6 +38,7 @@ export async function loadJson(filePath: string): Promise<unknown> {
 
 // filePath must not include ".json" extension
 // pretty prints the string before saving
+// never call this directly, use queueSaveJson
 export async function saveJson(
 	jsonObject: unknown,
 	filePath: string,
@@ -58,9 +59,9 @@ export async function tempCopy(filePath: string): Promise<string> {
 	return invoke('temp_copy', { filePath });
 }
 
-export async function saveTempFolderIcon(
+export async function saveTempTileIcon(
 	fileName: string,
-	folderId: string,
+	tileId: string,
 ): Promise<void> {
-	return invoke('save_temp_folder_icon', { fileName, folderId });
+	return invoke('save_temp_tile_icon', { fileName, tileId });
 }

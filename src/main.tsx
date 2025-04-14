@@ -1,8 +1,8 @@
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import TileGridProvider from './contexts/tile_grid/TileGridProvider';
-import TileMapProvider from './contexts/tile_map/TileMapProvider';
+import TileLocationsProvider from './contexts/tile_locations/TileLocationsProvider';
+import TileMetasProvider from './contexts/tile_metas/TileMetaProvider';
 import { routeTree } from './routeTree.gen';
 import './styles.css';
 
@@ -18,10 +18,10 @@ declare module '@tanstack/react-router' {
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>
-		<TileGridProvider>
-			<TileMapProvider>
+		<TileLocationsProvider>
+			<TileMetasProvider>
 				<RouterProvider router={router} />
-			</TileMapProvider>
-		</TileGridProvider>
+			</TileMetasProvider>
+		</TileLocationsProvider>
 	</React.StrictMode>,
 );

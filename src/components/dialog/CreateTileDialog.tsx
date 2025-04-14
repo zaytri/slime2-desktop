@@ -1,15 +1,16 @@
-import CreateSvg from '@/components/svg/CreateSvg';
-import { type CreatePayload, useDialog } from '@/contexts/dialog/useDialog';
-import { useTileGridDispatch } from '@/contexts/tile_grid/useTileGrid';
+import PlusSvg from '@/components/svg/PlusSvg';
+import { CreateTilePayload } from '@/contexts/dialog/DialogType';
+import { useDialog } from '@/contexts/dialog/useDialog';
+import { useTileLocationsDispatch } from '@/contexts/tile_locations/useTileLocationsDispatch';
 import { createWidgetFolder, installDefaultWidget } from '@/helpers/commands';
 import { useNavigate } from '@tanstack/react-router';
 import clsx from 'clsx';
 import { memo } from 'react';
 import DialogHeader from './DialogHeader';
 
-export default memo(function CreateDialog() {
-	const { payload, close } = useDialog<CreatePayload>();
-	const { addItem } = useTileGridDispatch();
+const CreateTileDialog = memo(function CreateTileDialog() {
+	const { payload, close } = useDialog<CreateTilePayload>();
+	const { addTile } = useTileLocationsDispatch();
 	const navigate = useNavigate();
 
 	return (
@@ -21,18 +22,19 @@ export default memo(function CreateDialog() {
 						className='rounded-slime'
 						onClick={async () => {
 							const id = await installDefaultWidget('test');
-							addItem({ id, index: payload.index, folderId: payload.folderId });
+							addTile({ id, index: payload.index, folderId: payload.folderId });
 							close();
 						}}
 					>
 						Widget
 					</CreateButton>
+
 					{payload.folderId === 'main' && (
 						<CreateButton
 							className='rounded-10%'
 							onClick={async () => {
 								const id = await createWidgetFolder();
-								addItem({
+								addTile({
 									id,
 									index: payload.index,
 									folderId: payload.folderId,
@@ -53,8 +55,10 @@ export default memo(function CreateDialog() {
 	);
 });
 
+export default CreateTileDialog;
+
 type CreateButtonProps = {
-	onClick: () => void;
+	onClick: VoidFunction;
 };
 
 const CreateButton = memo(function CreateButton({
@@ -66,7 +70,7 @@ const CreateButton = memo(function CreateButton({
 		<button
 			type='button'
 			onClick={onClick}
-			className='group flex flex-col items-center gap-2 transition-transform ease-bounce over:scale-125 first:over:-rotate-3 last:over:rotate-3 peer-over:scale-75 peer-over:opacity-50'
+			className='group ease-bounce over:scale-125 first:over:-rotate-3 last:over:rotate-3 peer-over:scale-75 peer-over:opacity-50 flex flex-col items-center gap-2 transition-transform'
 		>
 			<div
 				className={clsx(
@@ -74,8 +78,8 @@ const CreateButton = memo(function CreateButton({
 					className,
 				)}
 			>
-				<div className='relative size-12 text-emerald-800 transition-transform group-over:-rotate-180 group-over:scale-125'>
-					<CreateSvg />
+				<div className='group-over:-rotate-180 group-over:scale-125 relative size-12 text-emerald-800 transition-transform'>
+					<PlusSvg />
 				</div>
 			</div>
 			<p className='text-lg font-medium text-neutral-700'>{children}</p>

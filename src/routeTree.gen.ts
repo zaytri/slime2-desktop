@@ -18,6 +18,7 @@ import { Route as rootRoute } from './routes/__root';
 
 const SettingsLazyImport = createFileRoute('/settings')();
 const IndexLazyImport = createFileRoute('/')();
+const WidgetWidgetIdLazyImport = createFileRoute('/widget/$widgetId')();
 const FolderFolderIdLazyImport = createFileRoute('/folder/$folderId')();
 
 // Create/Update Routes
@@ -33,6 +34,14 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
+
+const WidgetWidgetIdLazyRoute = WidgetWidgetIdLazyImport.update({
+  id: '/widget/$widgetId',
+  path: '/widget/$widgetId',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/widget/$widgetId.lazy').then((d) => d.Route),
+);
 
 const FolderFolderIdLazyRoute = FolderFolderIdLazyImport.update({
   id: '/folder/$folderId',
@@ -67,6 +76,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FolderFolderIdLazyImport;
       parentRoute: typeof rootRoute;
     };
+    '/widget/$widgetId': {
+      id: '/widget/$widgetId';
+      path: '/widget/$widgetId';
+      fullPath: '/widget/$widgetId';
+      preLoaderRoute: typeof WidgetWidgetIdLazyImport;
+      parentRoute: typeof rootRoute;
+    };
   }
 }
 
@@ -76,12 +92,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute;
   '/settings': typeof SettingsLazyRoute;
   '/folder/$folderId': typeof FolderFolderIdLazyRoute;
+  '/widget/$widgetId': typeof WidgetWidgetIdLazyRoute;
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute;
   '/settings': typeof SettingsLazyRoute;
   '/folder/$folderId': typeof FolderFolderIdLazyRoute;
+  '/widget/$widgetId': typeof WidgetWidgetIdLazyRoute;
 }
 
 export interface FileRoutesById {
@@ -89,14 +107,20 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute;
   '/settings': typeof SettingsLazyRoute;
   '/folder/$folderId': typeof FolderFolderIdLazyRoute;
+  '/widget/$widgetId': typeof WidgetWidgetIdLazyRoute;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/settings' | '/folder/$folderId';
+  fullPaths: '/' | '/settings' | '/folder/$folderId' | '/widget/$widgetId';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/settings' | '/folder/$folderId';
-  id: '__root__' | '/' | '/settings' | '/folder/$folderId';
+  to: '/' | '/settings' | '/folder/$folderId' | '/widget/$widgetId';
+  id:
+    | '__root__'
+    | '/'
+    | '/settings'
+    | '/folder/$folderId'
+    | '/widget/$widgetId';
   fileRoutesById: FileRoutesById;
 }
 
@@ -104,12 +128,14 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute;
   SettingsLazyRoute: typeof SettingsLazyRoute;
   FolderFolderIdLazyRoute: typeof FolderFolderIdLazyRoute;
+  WidgetWidgetIdLazyRoute: typeof WidgetWidgetIdLazyRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   SettingsLazyRoute: SettingsLazyRoute,
   FolderFolderIdLazyRoute: FolderFolderIdLazyRoute,
+  WidgetWidgetIdLazyRoute: WidgetWidgetIdLazyRoute,
 };
 
 export const routeTree = rootRoute
@@ -124,7 +150,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/settings",
-        "/folder/$folderId"
+        "/folder/$folderId",
+        "/widget/$widgetId"
       ]
     },
     "/": {
@@ -135,6 +162,9 @@ export const routeTree = rootRoute
     },
     "/folder/$folderId": {
       "filePath": "folder/$folderId.lazy.tsx"
+    },
+    "/widget/$widgetId": {
+      "filePath": "widget/$widgetId.lazy.tsx"
     }
   }
 }

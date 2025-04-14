@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
+use serde_json::Number;
 use std::{
+	collections::HashMap,
 	fs::{self, File},
 	io,
 	path::{Path, PathBuf},
@@ -48,6 +50,20 @@ pub struct TileMeta {
 	pub name: String,
 	pub icon: String,
 	pub color: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct TileLocations {
+	pub version: Number,
+	pub locations: HashMap<String, TileLocation>,
+}
+
+#[allow(non_snake_case)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct TileLocation {
+	pub id: String,
+	pub index: Number,
+	pub folderId: String,
 }
 
 pub fn load_widget_meta(core_path: PathBuf) -> io::Result<TileMeta> {
@@ -226,6 +242,38 @@ pub fn empty_temp_folder(app: &AppHandle) -> io::Result<()> {
 	if temp_folder_path.exists() {
 		fs::remove_dir_all(temp_folder_path.clone())?;
 		fs::create_dir(temp_folder_path)?;
+	}
+
+	Ok(())
+}
+
+// removes unknown tile folders and files from tiles directory
+pub fn clean_tiles_folder(app: &AppHandle) -> io::Result<()> {
+	let tile_locations_path = app
+		.path()
+		.resolve("config", BaseDirectory::AppData)
+		.expect("Failed to resolve [app_data]/config!")
+		.join("tile_locations");
+
+	let tile_locations_json = load_json(tile_locations_path)?;
+
+	let tile_locations_data =
+		serde_json::from_str::<TileLocations>(&tile_locations_json)?;
+
+	let tiles_path = tiles_path(app);
+
+	for entry in fs::read_dir(tiles_path)? {
+		let entry = entry?;
+		let file_type = entry.file_type()?;
+		if file_type.is_dir() {
+			if let Some(file_name) = entry.file_name().to_str() {
+				if !tile_locations_data.locations.contains_key(file_name) {
+					fs::remove_dir_all(entry.path())?
+				}
+			}
+		} else {
+			fs::remove_file(entry.path())?
+		}
 	}
 
 	Ok(())

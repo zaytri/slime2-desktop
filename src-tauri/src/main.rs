@@ -26,6 +26,11 @@ async fn main() {
 				eprintln!("Error emptying temp folder! {}", error);
 			}
 
+			// clean tiles folder on startup
+			if let Err(error) = file::clean_tiles_folder(app_handle) {
+				eprintln!("Error cleaning tiles folder! {}", error);
+			}
+
 			server::setup(
 				connections,
 				(
@@ -46,7 +51,7 @@ async fn main() {
 			commands::save_json,
 			commands::create_widget_folder,
 			commands::temp_copy,
-			commands::save_temp_folder_icon,
+			commands::save_temp_tile_icon,
 			commands::delete_widget_folder,
 		])
 		.run(tauri::generate_context!())

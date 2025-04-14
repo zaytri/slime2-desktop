@@ -23,7 +23,7 @@ type Config = {
 
 export async function getConfig(widget: string): Promise<Config> {
 	const config = await widgetApi
-		.get<Config>(`/${widget}/config.json`)
+		.get<Config>(`/${widget}/config/meta.json`)
 		.then(response => response.data);
 
 	return config;

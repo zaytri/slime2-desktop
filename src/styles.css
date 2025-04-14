@@ -7,8 +7,6 @@ layer(base);
 
 * {
 	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
 }
 
 :root {
@@ -36,4 +34,29 @@ button:focus {
 		transition: none !important;
 		animation-duration: 0s !important;
 	}
+}
+
+/* "over" variant that adds styles for both :hover and :focus-visible */
+@custom-variant over {
+	@media (hover: hover) {
+		&:hover {
+			@slot;
+		}
+	}
+	&:focus-visible {
+		@slot;
+	}
+}
+
+/* border radius values to create a slime shape */
+@utility rounded-slime {
+	border-top-left-radius: 100% 150%;
+	border-top-right-radius: 100% 150%;
+	border-bottom-left-radius: 100% 50%;
+	border-bottom-right-radius: 100% 50%;
+}
+
+/* smooths images when object-fit: cover is used */
+@utility smooth-image {
+	overflow-clip-margin: unset;
 }

@@ -277,15 +277,15 @@ pub async fn temp_copy(
 }
 
 #[tauri::command]
-pub async fn save_temp_folder_icon(
+pub async fn save_temp_tile_icon(
 	file_name: &str,
-	folder_id: &str,
+	tile_id: &str,
 	app_handle: tauri::AppHandle,
 ) -> Result<String, String> {
 	return match file::copy_file(
 		file::temp_files_path(&app_handle).join(file_name).as_path(),
 		file::tiles_path(&app_handle)
-			.join(folder_id)
+			.join(tile_id)
 			.join("config")
 			.join("icon"),
 	) {

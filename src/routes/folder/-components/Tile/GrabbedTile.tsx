@@ -4,6 +4,8 @@ type GrabbedTileProps = {
 	id: string;
 };
 
-export default memo(function GrabbedTile({ id }: GrabbedTileProps) {
+const GrabbedTile = memo(function GrabbedTile({ id }: GrabbedTileProps) {
 	return <p>{id}</p>;
 });
+
+export default GrabbedTile;

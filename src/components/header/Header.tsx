@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { memo } from 'react';
 
-export default memo(function Header({
+const Header = memo(function Header({
 	children,
 	className,
 }: Props.WithClassNameAndChildren) {
@@ -16,3 +16,5 @@ export default memo(function Header({
 		</div>
 	);
 });
+
+export default Header;

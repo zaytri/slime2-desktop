@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-export default memo(function CloseSvg({ className }: Props.WithClassName) {
+const XSvg = memo(function XSvg({ className }: Props.WithClassName) {
 	return (
 		<div className={className}>
 			<svg viewBox='0 0 121.31 122.876' fill='currentColor'>
@@ -13,3 +13,5 @@ export default memo(function CloseSvg({ className }: Props.WithClassName) {
 		</div>
 	);
 });
+
+export default XSvg;

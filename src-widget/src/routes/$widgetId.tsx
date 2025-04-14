@@ -18,7 +18,10 @@ export const Route = createFileRoute('/$widgetId')({
 		config.css?.forEach(css => {
 			const linkElement = document.createElement('link');
 			linkElement.setAttribute('rel', 'stylesheet');
-			linkElement.setAttribute('href', `${baseDataUrl}/${widgetId}/${css}`);
+			linkElement.setAttribute(
+				'href',
+				`${baseDataUrl}/${widgetId}/core/${css}`,
+			);
 			linkElement.setAttribute('type', 'text/css');
 			document.head.appendChild(linkElement);
 		});
@@ -28,7 +31,7 @@ export const Route = createFileRoute('/$widgetId')({
 			const scriptElement = document.createElement('script');
 
 			if (typeof js === 'string') {
-				scriptElement.src = `${baseDataUrl}/${widgetId}/${js}`;
+				scriptElement.src = `${baseDataUrl}/${widgetId}/core/${js}`;
 			} else {
 				Object.entries(js).forEach(([attribute, value]) => {
 					scriptElement.setAttribute(attribute, value);

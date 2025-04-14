@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-export default memo(function CreateSvg({ className }: Props.WithClassName) {
+const PlusSvg = memo(function PlusSvg({ className }: Props.WithClassName) {
 	return (
 		<div className={className}>
 			<svg viewBox='0 0 122.88 122.88' fill='currentColor'>
@@ -12,3 +12,5 @@ export default memo(function CreateSvg({ className }: Props.WithClassName) {
 		</div>
 	);
 });
+
+export default PlusSvg;

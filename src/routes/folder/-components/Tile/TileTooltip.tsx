@@ -5,14 +5,14 @@ type WidgetTileTooltipProps = {
 	position: 'above' | 'below';
 };
 
-export default memo(function TileTooltip({
+const TileTooltip = memo(function TileTooltip({
 	children,
 	position = 'above',
 }: Props.WithChildren<WidgetTileTooltipProps>) {
 	return (
 		<div
 			className={clsx(
-				'pointer-events-none absolute -inset-x-14 z-10 flex scale-0 items-center justify-center opacity-0 transition-[transform,opacity] group-over:scale-100 group-over:opacity-100',
+				'group-over:scale-100 group-over:opacity-100 pointer-events-none absolute -inset-x-14 z-10 flex scale-0 items-center justify-center opacity-0 transition-[transform,opacity]',
 				position === 'below'
 					? 'top-[calc(100%+.75rem-4px)] origin-top'
 					: 'bottom-[calc(100%+.75rem-4px)] origin-bottom',
@@ -31,7 +31,7 @@ export default memo(function TileTooltip({
 			{/* contents */}
 			<div className='min-w-[50%] overflow-hidden rounded-xl border-4 border-black/50'>
 				<div className='relative max-w-full rounded-lg border-2 border-white bg-white/85 px-3 py-2 shadow-[inset_0_0_10px_5px] shadow-white backdrop-blur-xs'>
-					<p className='break-words text-lg font-medium text-neutral-700 [text-shadow:0_0_3px_white,0_-1px_0_white]'>
+					<p className='text-lg font-medium break-words text-neutral-700 [text-shadow:0_0_3px_white,0_-1px_0_white]'>
 						{children}
 					</p>
 				</div>
@@ -49,3 +49,5 @@ export default memo(function TileTooltip({
 		</div>
 	);
 });
+
+export default TileTooltip;

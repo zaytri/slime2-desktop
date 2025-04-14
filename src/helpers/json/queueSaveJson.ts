@@ -1,7 +1,6 @@
-import { appConfigDir, appDataDir } from '@tauri-apps/api/path';
 import { saveJson } from '../commands';
 
-const queueSaves = new Map<string, () => void>();
+const queueSaves = new Map<string, VoidFunction>();
 const queueCooldowns = new Map<string, Date>();
 const COOLDOWN_AMOUNT = 10 * 1000; // 10 seconds
 
@@ -31,17 +30,6 @@ export function queueSaveJson(jsonObject: unknown, filePath: string) {
 			runQueuedSave(filePath);
 		}, COOLDOWN_AMOUNT);
 	}
-}
-
-// fileName must not include ".json" extension
-export async function configFilePath(fileName: string) {
-	const appConfigDirPath = await appConfigDir();
-	return `${appConfigDirPath}/config/${fileName}`;
-}
-
-export async function tileFolderPath(id: string) {
-	const appDataDirPath = await appDataDir();
-	return `${appDataDirPath}/tiles/${id}`;
 }
 
 // run function from queue if it exists, and clear the queue

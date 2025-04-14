@@ -1,27 +1,28 @@
-import { type Tile } from '@/contexts/tile_grid/useTileGrid';
-import { useTile } from '@/contexts/tile_map/useTileMap';
+import { TileSlot } from '@/contexts/tile_locations/useTileFolder';
+import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import { getTileIconUrl } from '@/helpers/media';
 import clsx from 'clsx';
 import { memo } from 'react';
 
 type WidgetTileProps = {
 	id: string;
-	type: NonNullable<Tile['type']>;
+	type: NonNullable<TileSlot['type']>;
 };
 
-export default memo(function TileImage({ id, type }: WidgetTileProps) {
-	const { tile } = useTile(id);
-	if (!tile) return null;
+const TileImage = memo(function TileImage({ id, type }: WidgetTileProps) {
+	const { tileMeta } = useTileMeta(id);
 
 	return (
-		<div className='absolute inset-x-2 bottom-2 top-5 flex'>
+		<div className='absolute inset-x-2 top-5 bottom-2 flex'>
 			<img
-				src={getTileIconUrl(id, tile.icon)}
+				src={getTileIconUrl(id, tileMeta.icon)}
 				className={clsx(
-					'flex-1 border-2 border-black/25 object-cover smooth-image',
+					'smooth-image flex-1 border-2 border-black/25 object-cover',
 					type === 'widget' ? 'rounded-slime' : 'rounded-10%',
 				)}
 			/>
 		</div>
 	);
 });
+
+export default TileImage;

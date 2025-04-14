@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-export default memo(function PencilSvg({ className }: Props.WithClassName) {
+const PencilSvg = memo(function PencilSvg({ className }: Props.WithClassName) {
 	return (
 		<div className={className}>
 			<svg fill='currentColor' viewBox='0 0 121.48 122.88'>
@@ -13,3 +13,5 @@ export default memo(function PencilSvg({ className }: Props.WithClassName) {
 		</div>
 	);
 });
+
+export default PencilSvg;

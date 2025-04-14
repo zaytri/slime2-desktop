@@ -1,8 +1,10 @@
 {
-	"id": "stream.slime2.chat",
 	"name": "Chat",
-	"author": "slime2",
-	"description": "Default chat widget for slime2",
+	"author": "Zaytri",
+	"version": "1.0.0",
+	"updateKey": "stream.slime2.chat",
+	"icon": "bird.jpg",
 	"js": [],
-	"css": ["styles.css"]
+	"css": ["styles.css"],
+	"languages": ["en", "es"]
 }

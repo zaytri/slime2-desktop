@@ -1,18 +1,19 @@
 import { z } from 'zod';
-import { queueSaveJson, tileFolderPath } from '.';
 import { loadJson } from '../commands';
 import { TileColor } from '../ui';
+import { tileFolderPath } from './jsonPaths';
+import { queueSaveJson } from './queueSaveJson';
 
 // zod and types
 
-const TileData = z.object({
+const TileMeta = z.object({
 	name: z.string(),
 	color: z.nativeEnum(TileColor).default(TileColor.Green),
 	icon: z.string().default(''),
 });
-export type TileData = z.infer<typeof TileData>;
+export type TileMeta = z.infer<typeof TileMeta>;
 
-const DEFAULT_MAIN_DATA: TileData = {
+export const DEFAULT_MAIN_META: TileMeta = {
 	name: 'Widgets',
 	color: TileColor.Green,
 	icon: '',
@@ -20,15 +21,15 @@ const DEFAULT_MAIN_DATA: TileData = {
 
 // functions
 
-export async function loadTileData(id: string): Promise<TileData> {
+export async function loadTileMeta(id: string): Promise<TileMeta> {
 	const path = await tileMetaPath(id);
-	const data = await TileData.parseAsync(await loadJson(path)).catch(
+	const data = await TileMeta.parseAsync(await loadJson(path)).catch(
 		// fallback data
-		(): TileData | null => {
+		(): TileMeta | null => {
 			// if main has no saved data, create it
 			if (id === 'main') {
-				saveTileData('main', DEFAULT_MAIN_DATA);
-				return DEFAULT_MAIN_DATA;
+				saveTileMeta('main', DEFAULT_MAIN_META);
+				return DEFAULT_MAIN_META;
 			}
 
 			return null;
@@ -38,7 +39,7 @@ export async function loadTileData(id: string): Promise<TileData> {
 	return data || { name: 'Error!', color: TileColor.Red, icon: '' };
 }
 
-export async function saveTileData(id: string, data: TileData): Promise<void> {
+export async function saveTileMeta(id: string, data: TileMeta): Promise<void> {
 	queueSaveJson(data, await tileMetaPath(id));
 }
 

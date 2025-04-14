@@ -1,13 +1,15 @@
 import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
 import clsx from 'clsx';
 import { memo, useEffect, useState } from 'react';
-const appWindow = getCurrentWebviewWindow()
+const appWindow = getCurrentWebviewWindow();
 
 type FileDropperProps = {
 	onFileDrop: (paths: string[]) => void;
 };
 
-export default memo(function FileDropper({ onFileDrop }: FileDropperProps) {
+const FileDropper = memo(function FileDropper({
+	onFileDrop,
+}: FileDropperProps) {
 	// checks if a file is hovered over anywhere in the window
 	const [fileHover, setFileHover] = useState(false);
 
@@ -37,3 +39,5 @@ export default memo(function FileDropper({ onFileDrop }: FileDropperProps) {
 		</div>
 	);
 });
+
+export default FileDropper;

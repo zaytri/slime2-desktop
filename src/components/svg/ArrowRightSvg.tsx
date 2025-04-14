@@ -1,6 +1,8 @@
 import { memo } from 'react';
 
-export default memo(function RightSvg({ className }: Props.WithClassName) {
+const ArrowRightSvg = memo(function ArrowRightSvg({
+	className,
+}: Props.WithClassName) {
 	return (
 		<div className={className}>
 			<svg
@@ -17,3 +19,5 @@ export default memo(function RightSvg({ className }: Props.WithClassName) {
 		</div>
 	);
 });
+
+export default ArrowRightSvg;
