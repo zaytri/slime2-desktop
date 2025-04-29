@@ -40,10 +40,6 @@ const CreateTileDialog = memo(function CreateTileDialog() {
 									folderId: payload.folderId,
 								});
 								close();
-								navigate({
-									to: '/folder/$folderId',
-									params: { folderId: id },
-								});
 							}}
 						>
 							Folder
