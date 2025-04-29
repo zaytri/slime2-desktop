@@ -4,21 +4,6 @@ import { TileColor } from '../ui';
 import { tileFolderPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';
 
-// zod and types
-
-const TileMeta = z.object({
-	name: z.string(),
-	color: z.nativeEnum(TileColor).default(TileColor.Green),
-	icon: z.string().default(''),
-});
-export type TileMeta = z.infer<typeof TileMeta>;
-
-export const DEFAULT_MAIN_META: TileMeta = {
-	name: 'Widgets',
-	color: TileColor.Green,
-	icon: '',
-};
-
 // functions
 
 export async function loadTileMeta(id: string): Promise<TileMeta> {
@@ -47,3 +32,18 @@ async function tileMetaPath(id: string) {
 	const folderPath = await tileFolderPath(id);
 	return `${folderPath}/config/meta`;
 }
+
+// zod and types
+
+const TileMeta = z.object({
+	name: z.string(),
+	color: z.nativeEnum(TileColor).default(TileColor.Green),
+	icon: z.string().default(''),
+});
+export type TileMeta = z.infer<typeof TileMeta>;
+
+export const DEFAULT_MAIN_META: TileMeta = {
+	name: 'Widgets',
+	color: TileColor.Green,
+	icon: '',
+};

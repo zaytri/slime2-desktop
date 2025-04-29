@@ -3,24 +3,6 @@ import { loadJson } from '../commands';
 import { mainConfigPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';
 
-// zod and types
-
-const TileLocation = z.object({
-	id: z.string(),
-	index: z.number().nonnegative(),
-	folderId: z.string(),
-});
-export type TileLocation = z.infer<typeof TileLocation>;
-
-const TileLocations = z.record(z.string(), TileLocation);
-export type TileLocations = z.infer<typeof TileLocations>;
-
-const TileLocationsConfig = z.object({
-	version: z.number().positive(),
-	locations: z.record(z.string(), TileLocation),
-});
-type TileLocationsConfig = z.infer<typeof TileLocationsConfig>;
-
 // functions
 
 export async function loadTileLocations(): Promise<TileLocations> {
@@ -48,3 +30,21 @@ export async function saveTileLocations(
 async function tileLocationsConfigPath() {
 	return mainConfigPath('tile_locations');
 }
+
+// zod and types
+
+const TileLocation = z.object({
+	id: z.string(),
+	index: z.number().nonnegative(),
+	folderId: z.string(),
+});
+export type TileLocation = z.infer<typeof TileLocation>;
+
+const TileLocations = z.record(z.string(), TileLocation);
+export type TileLocations = z.infer<typeof TileLocations>;
+
+const TileLocationsConfig = z.object({
+	version: z.number().positive(),
+	locations: z.record(z.string(), TileLocation),
+});
+type TileLocationsConfig = z.infer<typeof TileLocationsConfig>;

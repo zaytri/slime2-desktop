@@ -2,7 +2,7 @@ import { saveJson } from '../commands';
 
 const queueSaves = new Map<string, VoidFunction>();
 const queueCooldowns = new Map<string, Date>();
-const COOLDOWN_AMOUNT = 10 * 1000; // 10 seconds
+const COOLDOWN_AMOUNT = 3 * 1000; // 3 seconds
 
 // saves once every COOLDOWN_AMOUNT at most, queueing overridable saves
 export function queueSaveJson(jsonObject: unknown, filePath: string) {
@@ -14,7 +14,7 @@ export function queueSaveJson(jsonObject: unknown, filePath: string) {
 	if (cooldown && cooldown.getTime() > Date.now()) {
 		queueSaves.set(filePath, saveFunction);
 	} else {
-		// set new cooldown of 1 minute
+		// set new cooldown of COOLDOWN_AMOUNT
 		queueCooldowns.set(filePath, new Date(Date.now() + COOLDOWN_AMOUNT));
 
 		if (runQueuedSave(filePath)) {
@@ -25,7 +25,7 @@ export function queueSaveJson(jsonObject: unknown, filePath: string) {
 			saveFunction();
 		}
 
-		// after 1 minute passes, run the function in the queue if it exists
+		// after COOLDOWN_AMOUNT passes, run the function in the queue if it exists
 		setTimeout(() => {
 			runQueuedSave(filePath);
 		}, COOLDOWN_AMOUNT);

@@ -29,20 +29,27 @@
 				"description": "Test Description"
 			},
 			{
-				"label": "Text Area Input",
-				"id": "textAreaInput",
-				"type": "text-area-input",
-				"defaultValue": "",
-				"placeholder": "Enter in text",
-				"description": "Test Description"
-			},
-			{
-				"label": "Multiple Text Input",
-				"id": "multiTextInput",
-				"type": "multiple-text-input",
-				"defaultValue": [],
-				"placeholder": "Enter in text",
-				"description": "Test Description"
+				"label": "Section",
+				"id": "section",
+				"type": "section",
+				"settings": [
+					{
+						"label": "Text Area Input",
+						"id": "textAreaInput",
+						"type": "text-area-input",
+						"defaultValue": "",
+						"placeholder": "Enter in text",
+						"description": "Test Description"
+					},
+					{
+						"label": "Multi Text Input",
+						"id": "multiTextInput",
+						"type": "multi-text-input",
+						"defaultValue": [],
+						"placeholder": "Enter in text",
+						"description": "Test Description"
+					}
+				]
 			},
 			{
 				"label": "Number Input",
@@ -100,11 +107,17 @@
 					{ "label": "Three", "value": 3 }
 				],
 				"description": "Test Description"
-			},
+			}
+		]
+	},
+	{
+		"id": "test2",
+		"label": "Test 2",
+		"settings": [
 			{
-				"label": "Multiple Select Input",
+				"label": "Multi Select Input",
 				"id": "multiSelectInput",
-				"type": "multiple-select-input",
+				"type": "multi-select-input",
 				"defaultValue": [1, 2],
 				"options": [
 					{ "label": "One", "value": 1 },
@@ -121,9 +134,9 @@
 				"description": "Test Description"
 			},
 			{
-				"label": "Multiple Image Input",
+				"label": "Multi Image Input",
 				"id": "multiImageInput",
-				"type": "multiple-image-input",
+				"type": "multi-image-input",
 				"defaultValue": [],
 				"description": "Test Description"
 			},
@@ -135,9 +148,9 @@
 				"description": "Test Description"
 			},
 			{
-				"label": "Multiple Video Input",
+				"label": "Multi Video Input",
 				"id": "multiVideoInput",
-				"type": "multiple-video-input",
+				"type": "multi-video-input",
 				"defaultValue": [],
 				"description": "Test Description"
 			},
@@ -149,9 +162,9 @@
 				"description": "Test Description"
 			},
 			{
-				"label": "Multiple Audio Input",
+				"label": "Multi Audio Input",
 				"id": "multiAudioInput",
-				"type": "multiple-audio-input",
+				"type": "multi-audio-input",
 				"defaultValue": [],
 				"description": "Test Description"
 			},

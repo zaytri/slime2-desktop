@@ -3,7 +3,36 @@ layer(base);
 
 @import 'tailwindcss';
 
-@config '../tailwind.config.js';
+@theme {
+	--font-fredoka: 'Fredoka', sans-serif;
+	--font-quicksand: 'Quicksand', sans-serif;
+	--font-radio-canada: 'Radio Canada', sans-serif;
+	--animate-bounce-in:
+		fade 0.15s reverse forwards,
+		expand 0.15s cubic-bezier(0.43, -0.5, 0.62, 1.5) forwards;
+	--animate-intro: fade 0.25s reverse forwards, expand 0.5s forwards;
+	--animate-page: fade reverse 0.15s fowards;
+	--ease-bounce: cubic-bezier(0.43, -0.5, 0.62, 2);
+	--radius-10\%: 10%;
+	--radius-100\%: 100%;
+
+	@keyframes fade {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0;
+		}
+	}
+	@keyframes expand {
+		from {
+			transform: scale(0.5);
+		}
+		to: {
+			transform: scale(1);
+		}
+	}
+}
 
 * {
 	box-sizing: border-box;
@@ -59,4 +88,74 @@ button:focus {
 /* smooths images when object-fit: cover is used */
 @utility smooth-image {
 	overflow-clip-margin: unset;
+}
+
+@utility rounded-* {
+	border-radius: --spacing(--value(number));
+}
+
+@utility rounded-b-* {
+	border-bottom-right-radius: --spacing(--value(number));
+	border-bottom-left-radius: --spacing(--value(number));
+}
+
+@utility rounded-t-* {
+	border-top-right-radius: --spacing(--value(number));
+	border-top-left-radius: --spacing(--value(number));
+}
+
+@utility rounded-s-* {
+	border-start-start-radius: --spacing(--value(number));
+	border-end-start-radius: --spacing(--value(number));
+}
+
+@utility rounded-e-* {
+	border-start-end-radius: --spacing(--value(number));
+	border-end-end-radius: --spacing(--value(number));
+}
+
+@utility rounded-r-* {
+	border-top-right-radius: --spacing(--value(number));
+	border-bottom-right-radius: --spacing(--value(number));
+}
+
+@utility rounded-l-* {
+	border-top-left-radius: --spacing(--value(number));
+	border-bottom-left-radius: --spacing(--value(number));
+}
+
+@utility rounded-ss-* {
+	border-start-start-radius: --spacing(--value(number));
+}
+
+@utility rounded-se-* {
+	border-start-end-radius: --spacing(--value(number));
+}
+
+@utility rounded-ee-* {
+	border-end-end-radius: --spacing(--value(number));
+}
+
+@utility rounded-es-* {
+	border-end-start-radius: --spacing(--value(number));
+}
+
+@utility rounded-tl-* {
+	border-top-left-radius: --spacing(--value(number));
+}
+
+@utility rounded-tr-* {
+	border-top-right-radius: --spacing(--value(number));
+}
+
+@utility rounded-br-* {
+	border-bottom-right-radius: --spacing(--value(number));
+}
+
+@utility rounded-bl-* {
+	border-bottom-left-radius: --spacing(--value(number));
+}
+
+@utility text-* {
+	font-size: --spacing(--value(number));
 }

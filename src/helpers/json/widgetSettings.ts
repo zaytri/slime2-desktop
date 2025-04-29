@@ -1,20 +1,29 @@
-// zod and types
-
 import { z } from 'zod';
 import { loadJson } from '../commands';
+import { I18nString } from '../i18n';
 import { tileFolderPath } from './jsonPaths';
 
-const localizableString = z.union([
-	z.string(),
-	z.record(z.string(), z.string()),
-]);
+// functions
+
+export async function loadWidgetSettings(id: string): Promise<WidgetSettings> {
+	const path = await settingsPath(id);
+	const settings = await WidgetSettings.parseAsync(await loadJson(path));
+	return settings;
+}
+
+async function settingsPath(id: string) {
+	const folderPath = await tileFolderPath(id);
+	return `${folderPath}/core/config/settings`;
+}
+
+// zod and types
 
 const BasePlaceholder = z.object({
-	placeholder: localizableString.optional(),
+	placeholder: I18nString.optional(),
 });
 
 const BaseDescription = z.object({
-	description: localizableString.optional(),
+	description: I18nString.optional(),
 });
 
 const BaseMediaDefaultValue = z.object({
@@ -30,32 +39,39 @@ const OptionValue = z.union([z.string(), z.number(), z.boolean()]);
 const BaseOptions = z.object({
 	options: z.array(
 		z.object({
-			label: localizableString.optional(),
+			label: I18nString.optional(),
 			value: OptionValue,
 		}),
 	),
 });
 
 const BaseSetting = z.object({
-	label: localizableString,
+	label: I18nString,
 	id: z.string(),
+	condition: z
+		.object({
+			id: z.string(),
+			value: OptionValue,
+		})
+		.optional(),
+	searchTags: z.array(z.string()).optional(),
 });
 
-const WidgetButton = z.object({
+const ButtonSetting = z.object({
 	type: z.literal('button'),
 });
 
-const WidgetTextDisplay = z.object({
+const TextDisplaySetting = z.object({
 	type: z.literal('text-display'),
 });
 
-const WidgetImageDisplay = z.object({
+const ImageDisplaySetting = z.object({
 	type: z.literal('image-display'),
 	src: z.string(),
-	alt: localizableString.optional(),
+	alt: I18nString,
 });
 
-const WidgetTextInput = z
+const TextInputSetting = z
 	.object({
 		type: z.literal('text-input'),
 		defaultValue: z.string().optional(),
@@ -63,7 +79,7 @@ const WidgetTextInput = z
 	.merge(BasePlaceholder)
 	.merge(BaseDescription);
 
-const WidgetTextAreaInput = z
+const TextAreaInputSetting = z
 	.object({
 		type: z.literal('text-area-input'),
 		defaultValue: z.string().optional(),
@@ -71,15 +87,15 @@ const WidgetTextAreaInput = z
 	.merge(BasePlaceholder)
 	.merge(BaseDescription);
 
-const WidgetMultipleTextInput = z
+const MultiTextInputSetting = z
 	.object({
-		type: z.literal('multiple-text-input'),
+		type: z.literal('multi-text-input'),
 		defaultValue: z.array(z.string()).optional(),
 	})
 	.merge(BasePlaceholder)
 	.merge(BaseDescription);
 
-const WidgetNumberInput = z
+const NumberInputSetting = z
 	.object({
 		type: z.literal('number-input'),
 		defaultValue: z.number().nullable().optional(),
@@ -90,7 +106,7 @@ const WidgetNumberInput = z
 	.merge(BasePlaceholder)
 	.merge(BaseDescription);
 
-const WidgetSliderInput = z
+const SliderInputSetting = z
 	.object({
 		type: z.literal('slider-input'),
 		defaultValue: z.number().nullable().optional(),
@@ -100,14 +116,14 @@ const WidgetSliderInput = z
 	})
 	.merge(BaseDescription);
 
-const WidgetToggleInput = z
+const ToggleInputSetting = z
 	.object({
 		type: z.literal('toggle-input'),
 		defaultValue: z.boolean().optional(),
 	})
 	.merge(BaseDescription);
 
-const WidgetDropdownInput = z
+const DropdownInputSetting = z
 	.object({
 		type: z.literal('dropdown-input'),
 	})
@@ -116,7 +132,7 @@ const WidgetDropdownInput = z
 	.merge(BaseOptions)
 	.merge(z.object({ defaultValue: OptionValue.optional() }));
 
-const WidgetSelectInput = z
+const SelectInputSetting = z
 	.object({
 		type: z.literal('select-input'),
 		defaultValue: OptionValue.optional(),
@@ -124,113 +140,157 @@ const WidgetSelectInput = z
 	.merge(BaseDescription)
 	.merge(BaseOptions);
 
-const WidgetMultipleSelectInput = z
+const MultiSelectInputSetting = z
 	.object({
-		type: z.literal('multiple-select-input'),
+		type: z.literal('multi-select-input'),
 		defaultValue: z.array(OptionValue).optional(),
 	})
 	.merge(BaseDescription)
 	.merge(BaseOptions);
 
-const WidgetImageInput = z
+const ImageInputSetting = z
 	.object({
 		type: z.literal('image-input'),
 	})
 	.merge(BaseDescription)
 	.merge(BaseMediaDefaultValue);
 
-const WidgetMultipleImageInput = z
+const MultiImageInputSetting = z
 	.object({
-		type: z.literal('multiple-image-input'),
+		type: z.literal('multi-image-input'),
 	})
 	.merge(BaseDescription)
 	.merge(BaseMultipleMediaDefaultValue);
 
-const WidgetVideoInput = z
+const VideoInputSetting = z
 	.object({
 		type: z.literal('video-input'),
 	})
 	.merge(BaseDescription)
 	.merge(BaseMediaDefaultValue);
 
-const WidgetMultipleVideoInput = z
+const MultiVideoInputSetting = z
 	.object({
-		type: z.literal('multiple-video-input'),
+		type: z.literal('multi-video-input'),
 	})
 	.merge(BaseDescription)
 	.merge(BaseMultipleMediaDefaultValue);
 
-const WidgetAudioInput = z
+const AudioInputSetting = z
 	.object({
 		type: z.literal('audio-input'),
 	})
 	.merge(BaseDescription)
 	.merge(BaseMediaDefaultValue);
 
-const WidgetMultipleAudioInput = z
+const MultiAudioInputSetting = z
 	.object({
-		type: z.literal('multiple-audio-input'),
+		type: z.literal('multi-audio-input'),
 	})
 	.merge(BaseDescription)
 	.merge(BaseMultipleMediaDefaultValue);
 
-const ColorInput = z
+const ColorInputSetting = z
 	.object({
 		type: z.literal('color-input'),
 		defaultValue: z.string().optional(),
 	})
 	.merge(BaseDescription);
 
-const FontInput = z
+const FontInputSetting = z
 	.object({
 		type: z.literal('font-input'),
 		defaultValue: z.string().optional(),
 	})
 	.merge(BaseDescription);
 
-const WidgetSetting = BaseSetting.and(
-	z.discriminatedUnion('type', [
-		WidgetButton,
-		WidgetTextDisplay,
-		WidgetImageDisplay,
-		WidgetTextInput,
-		WidgetTextAreaInput,
-		WidgetMultipleTextInput,
-		WidgetNumberInput,
-		WidgetSliderInput,
-		WidgetToggleInput,
-		WidgetDropdownInput,
-		WidgetSelectInput,
-		WidgetMultipleSelectInput,
-		WidgetImageInput,
-		WidgetMultipleImageInput,
-		WidgetVideoInput,
-		WidgetMultipleVideoInput,
-		WidgetAudioInput,
-		WidgetMultipleAudioInput,
-		ColorInput,
-		FontInput,
-	]),
-);
+const BaseSectionSetting = z.discriminatedUnion('type', [
+	ButtonSetting,
+	TextDisplaySetting,
+	ImageDisplaySetting,
+	TextInputSetting,
+	TextAreaInputSetting,
+	MultiTextInputSetting,
+	NumberInputSetting,
+	SliderInputSetting,
+	ToggleInputSetting,
+	DropdownInputSetting,
+	SelectInputSetting,
+	MultiSelectInputSetting,
+	ImageInputSetting,
+	MultiImageInputSetting,
+	VideoInputSetting,
+	MultiVideoInputSetting,
+	AudioInputSetting,
+	MultiAudioInputSetting,
+	ColorInputSetting,
+	FontInputSetting,
+]);
 
-const WidgetSettingsGroup = z.object({
-	label: localizableString,
-	id: z.string(),
-	settings: z.array(WidgetSetting),
+const SectionSetting = z.object({
+	type: z.literal('section'),
+	settings: z.array(BaseSetting.and(BaseSectionSetting)),
 });
 
-const WidgetSettings = z.array(WidgetSettingsGroup);
+const MultiSectionSetting = z.object({
+	type: z.literal('multi-section'),
+	settings: z.array(BaseSetting.and(BaseSectionSetting)),
+});
+
+const BaseCategorySetting = z.discriminatedUnion('type', [
+	...BaseSectionSetting.options,
+	SectionSetting,
+	MultiSectionSetting,
+]);
+
+const CategorySetting = z.object({
+	label: I18nString,
+	id: z.string(),
+	settings: z.array(BaseSetting.and(BaseCategorySetting)),
+});
+type CategorySetting = z.infer<typeof CategorySetting>;
+type WidgetSetting = CategorySetting['settings'][0];
+
+const WidgetSettings = z.array(CategorySetting);
 export type WidgetSettings = z.infer<typeof WidgetSettings>;
 
-// functions
+type ExtractSettingType<T extends WidgetSetting['type']> = Extract<
+	WidgetSetting,
+	{ type: T }
+>;
 
-export async function loadWidgetSettings(id: string): Promise<WidgetSettings> {
-	const path = await settingsPath(id);
-	const settings = await WidgetSettings.parseAsync(await loadJson(path));
-	return settings;
-}
+export namespace WidgetSetting {
+	export type Settings = WidgetSettings;
+	export type Setting = WidgetSetting;
 
-async function settingsPath(id: string) {
-	const folderPath = await tileFolderPath(id);
-	return `${folderPath}/core/config/settings`;
+	export type Category = CategorySetting;
+	export type Section = ExtractSettingType<'section'>;
+	export type MultiSection = ExtractSettingType<'multi-section'>;
+
+	export type Button = ExtractSettingType<'button'>;
+
+	export namespace Display {
+		export type Text = ExtractSettingType<'text-display'>;
+		export type Image = ExtractSettingType<'image-display'>;
+	}
+
+	export namespace Input {
+		export type Text = ExtractSettingType<'text-input'>;
+		export type TextArea = ExtractSettingType<'text-area-input'>;
+		export type MultiText = ExtractSettingType<'multi-text-input'>;
+		export type Number = ExtractSettingType<'number-input'>;
+		export type Slider = ExtractSettingType<'slider-input'>;
+		export type Toggle = ExtractSettingType<'toggle-input'>;
+		export type Dropdown = ExtractSettingType<'dropdown-input'>;
+		export type Select = ExtractSettingType<'select-input'>;
+		export type MultiSelect = ExtractSettingType<'multi-select-input'>;
+		export type Image = ExtractSettingType<'image-input'>;
+		export type MultiImage = ExtractSettingType<'multi-image-input'>;
+		export type Video = ExtractSettingType<'video-input'>;
+		export type MultiVideo = ExtractSettingType<'multi-video-input'>;
+		export type Audio = ExtractSettingType<'audio-input'>;
+		export type MultiAudio = ExtractSettingType<'multi-audio-input'>;
+		export type Color = ExtractSettingType<'color-input'>;
+		export type Font = ExtractSettingType<'font-input'>;
+	}
 }

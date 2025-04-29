@@ -1,1 +1,20 @@
 @import 'tailwindcss';
+
+* {
+	box-sizing: border-box;
+}
+
+:root {
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: 100%;
+}
+
+body,
+#root {
+	position: absolute;
+	inset: 0;
+	display: flex;
+}

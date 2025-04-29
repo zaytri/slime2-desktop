@@ -8,3 +8,9 @@ export function deepCopyObject<T>(object: T): T {
 export function contextErrorMessage(functionName: string, contextName: string) {
 	return `${functionName} was used outside of a ${contextName} provider!`;
 }
+
+export type AsyncContext<DataType> = {
+	loading: boolean;
+	error: boolean;
+	data: DataType | undefined;
+};

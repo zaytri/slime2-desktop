@@ -5,6 +5,5 @@
 	"updateKey": "stream.slime2.chat",
 	"icon": "bird.jpg",
 	"js": [],
-	"css": ["styles.css"],
-	"languages": ["en", "es"]
+	"css": ["styles.css"]
 }
