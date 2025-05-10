@@ -53,6 +53,8 @@ async fn main() {
 			commands::temp_copy,
 			commands::save_temp_tile_icon,
 			commands::delete_widget_folder,
+			commands::load_system_fonts,
+			commands::save_temp_widget_file,
 		])
 		.run(tauri::generate_context!())
 		.expect("Error while running Tauri app!");

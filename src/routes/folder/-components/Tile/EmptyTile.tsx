@@ -1,4 +1,4 @@
-import { TileColor } from '@/helpers/ui';
+import { TileColor } from '@/helpers/tileColors';
 import { memo } from 'react';
 import PlusSvg from '../../../../components/svg/PlusSvg';
 import TileAction from './TileAction';

@@ -7,7 +7,7 @@ import GearSvg from '@/components/svg/GearSvg';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { PAGES_PER_FOLDER } from '@/contexts/tile_locations/useTileFolder';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
-import { getTileIconUrl } from '@/helpers/media';
+import { getTileIconSrc } from '@/helpers/media';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import clsx from 'clsx';
 import { memo, useCallback, useState } from 'react';
@@ -50,7 +50,7 @@ const Folder = memo(function Folder({ folderId }: FolderProps) {
 
 				{tileMeta.icon && (
 					<img
-						src={getTileIconUrl(folderId, tileMeta.icon)}
+						src={getTileIconSrc(folderId, tileMeta.icon)}
 						className='rounded-2 smooth-image h-10 w-12 border-2 border-amber-900 object-cover'
 					/>
 				)}

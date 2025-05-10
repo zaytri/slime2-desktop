@@ -1,13 +1,14 @@
+import LinkifyText from '@/components/LinkifyText';
 import { i18nStringTransform } from '@/helpers/i18n';
 import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { memo } from 'react';
 
 const TextDisplay = memo(function TextDisplay(
-	setting: WidgetSetting.Display.Text,
+	setting: Props.WithId<WidgetSetting.Display.Text>,
 ) {
 	return (
-		<div id={setting.id} className='rounded-2 bg-amber-100 px-2 py-1'>
-			<p>{i18nStringTransform(setting.label)}</p>
+		<div className='rounded-2 border border-white bg-stone-100 px-2 py-1 outline outline-stone-300'>
+			<LinkifyText>{i18nStringTransform(setting.label)}</LinkifyText>
 		</div>
 	);
 });

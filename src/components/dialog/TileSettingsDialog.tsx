@@ -3,9 +3,9 @@ import { TileSettingsPayload } from '@/contexts/dialog/DialogType';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import { saveTempTileIcon, tempCopy } from '@/helpers/commands';
-import { getImagePreviewUrl, getTileIconUrl } from '@/helpers/media';
+import { getTempFileSrc, getTileIconSrc } from '@/helpers/media';
 import { openImage } from '@/helpers/openFile';
-import { TileColor, tileColorClasses } from '@/helpers/ui';
+import { TileColor, tileColorClasses } from '@/helpers/tileColors';
 import {
 	Field,
 	Fieldset,
@@ -89,7 +89,8 @@ const TileSettingsDialog = memo(function TileSettingsDialog() {
 				<Field className='flex flex-col gap-1'>
 					<Label className='font-medium'>Name</Label>
 					<Input
-						autoComplete='none'
+						autoComplete='off'
+						aria-autocomplete='none'
 						type='text'
 						value={name}
 						onChange={event => {
@@ -111,8 +112,8 @@ const TileSettingsDialog = memo(function TileSettingsDialog() {
 							<img
 								src={
 									icon
-										? getImagePreviewUrl(icon)
-										: getTileIconUrl(id, tileMeta.icon)
+										? getTempFileSrc(icon)
+										: getTileIconSrc(id, tileMeta.icon)
 								}
 								className={clsx(
 									'rounded-2 rounded-b-0 smooth-image relative overflow-hidden border-2 border-b-0 border-slate-700 bg-white object-cover',

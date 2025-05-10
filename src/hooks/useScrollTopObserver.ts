@@ -1,3 +1,4 @@
+import { useLocation } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
 /**
@@ -13,6 +14,7 @@ export default function useScrollTopObserver(
 ) {
 	const [topId, setTopId] = useState(targetIds[0]);
 	const [prevScrollTop, setPrevScrollTop] = useState(0);
+	const { hash } = useLocation();
 
 	useEffect(() => {
 		function onIntersect(entries: IntersectionObserverEntry[]) {
@@ -57,6 +59,10 @@ export default function useScrollTopObserver(
 			observer.disconnect();
 		};
 	}, [rootRef.current, targetIds]);
+
+	useEffect(() => {
+		setTopId(hash);
+	}, [hash]);
 
 	return topId;
 }

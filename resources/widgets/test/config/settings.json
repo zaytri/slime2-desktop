@@ -1,59 +1,51 @@
-[
-	{
+{
+	"test": {
 		"label": "Test",
-		"id": "test",
-		"settings": [
-			{
+		"settings": {
+			"button": {
 				"label": "Button",
-				"id": "button",
 				"type": "button"
 			},
-			{
+			"textDisplay": {
 				"label": "Text Display",
-				"id": "textDisplay",
 				"type": "text-display"
 			},
-			{
+			"imageDisplay": {
 				"label": "Image Display",
-				"id": "imageDisplay",
 				"type": "image-display",
 				"src": "assets/heavy_breathing.gif",
 				"alt": "Heavy Breathing Cat"
 			},
-			{
+			"textInput": {
 				"label": "Standard Text Input",
-				"id": "textInput",
+
 				"type": "text-input",
 				"defaultValue": "",
 				"placeholder": "Enter in text",
 				"description": "Test Description"
 			},
-			{
+			"section": {
 				"label": "Section",
-				"id": "section",
 				"type": "section",
-				"settings": [
-					{
+				"settings": {
+					"textAreaInput": {
 						"label": "Text Area Input",
-						"id": "textAreaInput",
 						"type": "text-area-input",
 						"defaultValue": "",
 						"placeholder": "Enter in text",
 						"description": "Test Description"
 					},
-					{
+					"multiTextInput": {
 						"label": "Multi Text Input",
-						"id": "multiTextInput",
 						"type": "multi-text-input",
 						"defaultValue": [],
 						"placeholder": "Enter in text",
 						"description": "Test Description"
 					}
-				]
+				}
 			},
-			{
+			"numberInput": {
 				"label": "Number Input",
-				"id": "numberInput",
 				"type": "number-input",
 				"defaultValue": 0,
 				"min": 0,
@@ -65,9 +57,8 @@
 				},
 				"description": "Test Description"
 			},
-			{
+			"sliderInput": {
 				"label": "Slider Input",
-				"id": "sliderInput",
 				"type": "slider-input",
 				"defaultValue": 0,
 				"min": 0,
@@ -76,16 +67,14 @@
 				"placeholder": "Pick a number",
 				"description": "Test Description"
 			},
-			{
+			"toggleInput": {
 				"label": "Toggle Input",
-				"id": "toggleInput",
 				"type": "toggle-input",
 				"defaultValue": false,
 				"description": "Test Description"
 			},
-			{
+			"dropdownInput": {
 				"label": "Dropdown Input",
-				"id": "dropdownInput",
 				"type": "dropdown-input",
 				"defaultValue": 3,
 				"options": [
@@ -96,9 +85,8 @@
 				"placeholder": "Pick a number",
 				"description": "Test Description"
 			},
-			{
+			"selectInput": {
 				"label": "Select Input",
-				"id": "selectInput",
 				"type": "select-input",
 				"defaultValue": 3,
 				"options": [
@@ -108,15 +96,13 @@
 				],
 				"description": "Test Description"
 			}
-		]
+		}
 	},
-	{
-		"id": "test2",
+	"test2": {
 		"label": "Test 2",
-		"settings": [
-			{
+		"settings": {
+			"multiSelectInput": {
 				"label": "Multi Select Input",
-				"id": "multiSelectInput",
 				"type": "multi-select-input",
 				"defaultValue": [1, 2],
 				"options": [
@@ -126,62 +112,90 @@
 				],
 				"description": "Test Description"
 			},
-			{
+			"imageInput": {
 				"label": "Image Input",
-				"id": "imageInput",
 				"type": "image-input",
-				"defaultValue": "assets/heavy_breathing.gif",
+				"defaultValue": "assets/illegal.jpg",
 				"description": "Test Description"
 			},
-			{
+			"multiImageInput": {
 				"label": "Multi Image Input",
-				"id": "multiImageInput",
 				"type": "multi-image-input",
 				"defaultValue": [],
 				"description": "Test Description"
 			},
-			{
+			"videoInput": {
 				"label": "Video Input",
-				"id": "videoInput",
 				"type": "video-input",
-				"defaultValue": null,
 				"description": "Test Description"
 			},
-			{
+			"multiVideoInput": {
 				"label": "Multi Video Input",
-				"id": "multiVideoInput",
 				"type": "multi-video-input",
 				"defaultValue": [],
 				"description": "Test Description"
 			},
-			{
+			"audioInput": {
 				"label": "Audio Input",
-				"id": "audioInput",
 				"type": "audio-input",
-				"defaultValue": null,
 				"description": "Test Description"
 			},
-			{
+			"multiAudioInput": {
 				"label": "Multi Audio Input",
-				"id": "multiAudioInput",
 				"type": "multi-audio-input",
 				"defaultValue": [],
 				"description": "Test Description"
 			},
-			{
-				"label": "Color Input",
-				"id": "colorInput",
-				"type": "color-input",
-				"defaultValue": "black",
-				"description": "Test Description"
+			"multiSection": {
+				"label": "Multi Section",
+				"type": "multi-section",
+				"settings": {
+					"colorInput": {
+						"label": "Color Input",
+						"type": "color-input",
+						"defaultValue": "black",
+						"description": "Test Description"
+					},
+					"fontInput": {
+						"label": "Font Input",
+						"type": "font-input",
+						"defaultValue": "Arial",
+						"description": "Test Description"
+					}
+				}
 			},
-			{
-				"label": "Font Input",
-				"id": "fontInput",
-				"type": "font-input",
-				"defaultValue": "Arial",
-				"description": "Test Description"
+			"followAlerts": {
+				"label": "Follow Alerts",
+				"type": "multi-section",
+				"settings": {
+					"alertButton": {
+						"label": "Test Alert",
+						"type": "button"
+					},
+					"alertEnabled": {
+						"label": "Enabled",
+						"type": "toggle-input",
+						"defaultValue": true
+					},
+					"alertImage": {
+						"label": "Image",
+						"type": "image-input"
+					},
+					"alertMessage": {
+						"label": "Message",
+						"type": "text-area-input",
+						"description": "{user} will be reaplced by the user's display name"
+					},
+					"alertDuration": {
+						"label": "Display (in seconds, 30 max)",
+						"type": "slider-input",
+						"defaultValue": 3,
+						"min": 0,
+						"max": 30,
+						"step": 1
+					}
+				}
 			}
-		]
+		}
 	}
-]
+}

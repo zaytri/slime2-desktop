@@ -4,6 +4,11 @@ export type DialogType = { onCancel?: VoidFunction } & (
 	| { name: 'TileSettings'; payload: TileSettingsPayload }
 	| { name: 'DeleteWidget'; payload: DeleteWidgetPayload }
 	| { name: 'DeleteFolder'; payload: DeleteFolderPayload }
+	| { name: 'SelectFont'; payload: SelectFontPayload }
+	| { name: 'SelectColor'; payload: SelectColorPayload }
+	| { name: 'SelectMedia'; payload: SelectMediaPayload }
+	| { name: 'SelectMultipleMedia'; payload: SelectMultipleMediaPayload }
+	| { name: 'Rename'; payload: RenamePayload }
 );
 
 export type CreateTilePayload = {
@@ -21,4 +26,29 @@ export type DeleteWidgetPayload = {
 
 export type DeleteFolderPayload = {
 	id: string;
+};
+
+export type SelectFontPayload = {
+	value?: string;
+	onChange: (font: string) => void;
+};
+
+export type SelectColorPayload = {
+	value?: string;
+	onSave: (color: string) => void;
+};
+
+export type SelectMediaPayload = {
+	type: 'image' | 'video' | 'audio';
+	onSave: (fileName: string) => void;
+};
+
+export type SelectMultipleMediaPayload = {
+	type: 'image' | 'video' | 'audio';
+	onSave: (fileNames: string[]) => void;
+};
+
+export type RenamePayload = {
+	value?: string;
+	onSave: (value: string) => void;
 };

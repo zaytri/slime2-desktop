@@ -6,7 +6,8 @@ import HeaderButton from '@/components/TileSettingsButton';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import useTileLocation from '@/contexts/tile_locations/useTileLocation';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
-import { getTileIconUrl } from '@/helpers/media';
+import WidgetValuesProvider from '@/contexts/widget_values/WidgetValuesProvider';
+import { getTileIconSrc } from '@/helpers/media';
 import { useParams } from '@tanstack/react-router';
 import { memo } from 'react';
 import WidgetSettings from './WidgetSettings';
@@ -31,7 +32,7 @@ const Widget = memo(function Widget() {
 
 				{tileMeta.icon && (
 					<img
-						src={getTileIconUrl(widgetId, tileMeta.icon)}
+						src={getTileIconSrc(widgetId, tileMeta.icon)}
 						className='rounded-2 smooth-image h-10 w-12 border-2 border-amber-900 object-cover'
 					/>
 				)}
@@ -51,7 +52,9 @@ const Widget = memo(function Widget() {
 				</HeaderButton>
 			</Header>
 
-			<WidgetSettings />
+			<WidgetValuesProvider id={widgetId}>
+				<WidgetSettings />
+			</WidgetValuesProvider>
 		</div>
 	);
 });

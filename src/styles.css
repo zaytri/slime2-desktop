@@ -54,8 +54,12 @@ body,
 	display: flex;
 }
 
-button:focus {
+button:focus-visible {
 	outline-offset: 4px;
+}
+
+button:hover {
+	cursor: pointer;
 }
 
 @media (prefers-reduced-motion) {
@@ -77,6 +81,16 @@ button:focus {
 	}
 }
 
+/* "data-over" variant that adds styles for both [data-hover] and [data-focus] */
+@custom-variant data-over {
+	&[data-hover] {
+		@slot;
+	}
+	&[data-focus] {
+		@slot;
+	}
+}
+
 /* border radius values to create a slime shape */
 @utility rounded-slime {
 	border-top-left-radius: 100% 150%;
@@ -88,6 +102,57 @@ button:focus {
 /* smooths images when object-fit: cover is used */
 @utility smooth-image {
 	overflow-clip-margin: unset;
+}
+
+@utility bg-alpha-checkerboard {
+	--square-size: 8px;
+	--color-1: var(--color-stone-200);
+	--color-2: white;
+	background-position:
+		0px 0px,
+		var(--square-size) var(--square-size);
+	background-size: calc(var(--square-size) * 2) calc(var(--square-size) * 2);
+	background-image:
+		linear-gradient(
+			45deg,
+			var(--color-2) 25%,
+			transparent 25%,
+			transparent 75%,
+			var(--color-2) 75%,
+			var(--color-2) 100%
+		),
+		linear-gradient(
+			45deg,
+			var(--color-2) 25%,
+			var(--color-1) 25%,
+			var(--color-1) 75%,
+			var(--color-2) 75%,
+			var(--color-2) 100%
+		);
+}
+
+@utility input-wrapper {
+	@apply rounded-2 flex w-full overflow-hidden border border-stone-300 bg-white px-2 py-1 text-left outline-offset-0! outline-black has-data-focus:outline-2 data-focus:outline-2;
+}
+
+@utility input-class {
+	@apply font-quicksand outline-none placeholder:text-stone-400;
+}
+
+@utility input-label {
+	@apply text-3 font-medium;
+}
+
+@utility input-select-option {
+	@apply cursor-pointer rounded-full border border-stone-300 bg-stone-200 px-1.5 py-0.5 font-medium text-stone-500 outline-black data-checked:border-lime-700 data-checked:bg-lime-600 data-checked:text-white data-over:outline-2;
+}
+
+@utility mini-menu-item {
+	@apply rounded-2 flex items-center gap-2 px-2 py-1 text-left outline-stone-400 data-focus:outline-2 data-over:bg-stone-200 data-over:font-medium;
+}
+
+@utility button-choose-file {
+	@apply rounded-2 over:translate-y-0.5 over:from-stone-300 over:to-stone-200 over:shadow-none font-quicksand w-full border border-white bg-stone-400 bg-linear-to-b from-stone-200 to-stone-300 py-0.5 font-medium text-stone-700 shadow-[0_2px_0_1px] shadow-stone-400 outline outline-stone-400 focus-visible:outline-2 focus-visible:outline-offset-0! focus-visible:outline-black;
 }
 
 @utility rounded-* {

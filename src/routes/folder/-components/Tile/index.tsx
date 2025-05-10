@@ -3,7 +3,7 @@ import {
 	TileSlot,
 } from '@/contexts/tile_locations/useTileFolder';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
-import { TileColor } from '@/helpers/ui';
+import { TileColor } from '@/helpers/tileColors';
 import { memo } from 'react';
 import TileAction from './TileAction';
 import TileAnimationWrapper from './TileAnimationWrapper';

@@ -1,29 +1,65 @@
+import useWidgetValueKey from '@/contexts/widget_setting_parent/useWidgetValueKey';
+import { useWidgetValue } from '@/contexts/widget_values/useWidgetValue';
 import { i18nStringTransform } from '@/helpers/i18n';
 import { WidgetSetting } from '@/helpers/json/widgetSettings';
-import { Description, Field, Input, Label } from '@headlessui/react';
+import { Field, Input, Label, Textarea } from '@headlessui/react';
 import { memo } from 'react';
+import { z } from 'zod';
+import InputDescription from './InputDescription';
 
-const TextInput = memo(function TextInput(setting: WidgetSetting.Input.Text) {
+const TextInput = memo(function TextInput(
+	setting: Props.WithId<
+		WidgetSetting.Input.Text | WidgetSetting.Input.TextArea
+	>,
+) {
+	const key = useWidgetValueKey(setting.id);
+	const { widgetValue, setWidgetValue } = useWidgetValue(key);
+
+	const value = z
+		.string()
+		.catch(setting.defaultValue ?? '')
+		.parse(widgetValue);
+
+	const placeholder = setting.placeholder
+		? i18nStringTransform(setting.placeholder)
+		: undefined;
+
+	function onChange(
+		event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+	) {
+		setWidgetValue(event.target.value);
+	}
+
 	return (
 		<Field>
-			<div className='rounded-2 flex flex-col border border-stone-300 px-2 py-1'>
-				<Label className='text-3 font-medium'>
+			<div className='input-wrapper flex-col'>
+				<Label className='input-label'>
 					{i18nStringTransform(setting.label)}
 				</Label>
-				<Input
-					placeholder={
-						setting.placeholder
-							? i18nStringTransform(setting.placeholder)
-							: undefined
-					}
-					className='font-quicksand outline-none placeholder:text-stone-400'
-				/>
+
+				{setting.type === 'text-area-input' ? (
+					<Textarea
+						value={value}
+						onChange={onChange}
+						placeholder={placeholder}
+						className='input-class'
+						autoComplete='off'
+						aria-autocomplete='none'
+						rows={4}
+					/>
+				) : (
+					<Input
+						value={value}
+						onChange={onChange}
+						placeholder={placeholder}
+						className='input-class'
+						autoComplete='off'
+						aria-autocomplete='none'
+					/>
+				)}
 			</div>
-			<Description className='text-3.5 font-quicksand px-2 pt-1 text-stone-500'>
-				{setting.description
-					? i18nStringTransform(setting.description)
-					: undefined}
-			</Description>
+
+			<InputDescription value={setting.description} />
 		</Field>
 	);
 });

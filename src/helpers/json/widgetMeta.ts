@@ -19,11 +19,19 @@ async function widgetMetaPath(id: string) {
 
 const WidgetMeta = z.object({
 	name: z.string(),
-	author: z.string(),
+	creator: z.string(),
 	version: z.string(),
-	updateKey: z.string().optional(),
+	versionApi: z.string().optional(),
+	homepage: z.string().optional(),
+	support: z.string().optional(),
 	icon: z.string().optional(),
-	js: z.array(z.string()),
-	css: z.array(z.string()),
+	imports: z
+		.object({
+			js: z.array(z.string()).optional(),
+			css: z.array(z.string()).optional(),
+		})
+		.optional(),
+	// "twitch.info" | "twitch.bot" | "twitch.moderate"
+	scopes: z.array(z.string()).optional(),
 });
 export type WidgetMeta = z.infer<typeof WidgetMeta>;

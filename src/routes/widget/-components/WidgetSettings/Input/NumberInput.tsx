@@ -1,34 +1,78 @@
+import useWidgetValueKey from '@/contexts/widget_setting_parent/useWidgetValueKey';
+import { useWidgetValue } from '@/contexts/widget_values/useWidgetValue';
 import { i18nStringTransform } from '@/helpers/i18n';
 import { WidgetSetting } from '@/helpers/json/widgetSettings';
-import { Description, Field, Input, Label } from '@headlessui/react';
+import { Field, Input, Label } from '@headlessui/react';
 import { memo } from 'react';
+import { z } from 'zod';
+import InputDescription from './InputDescription';
 
 const NumberInput = memo(function NumberInput(
-	setting: WidgetSetting.Input.Number,
+	setting: Props.WithId<WidgetSetting.Input.Number>,
 ) {
+	const key = useWidgetValueKey(setting.id);
+	const { widgetValue, setWidgetValue } = useWidgetValue(key);
+
+	const value = z
+		.number()
+		.nullable()
+		.catch(setting.defaultValue ?? null)
+		.parse(widgetValue);
+
+	// default step to 1
+	const step = setting.step || 1;
+
 	return (
 		<Field>
-			<div className='rounded-2 flex flex-col border border-stone-300 px-2 py-1'>
-				<Label className='text-3 font-medium'>
+			<div className='input-wrapper flex-col'>
+				<Label className='input-label'>
 					{i18nStringTransform(setting.label)}
 				</Label>
+
 				<Input
+					value={value === null ? '' : value}
+					type='number'
+					autoComplete='off'
+					aria-autocomplete='none'
 					min={setting.min}
 					max={setting.max}
-					step={setting.step}
+					step={step}
 					placeholder={
 						setting.placeholder
 							? i18nStringTransform(setting.placeholder)
 							: undefined
 					}
-					className='font-quicksand outline-none placeholder:text-stone-400'
+					className='input-class'
+					onChange={event => {
+						const { value } = event.target;
+
+						let newNumber = value
+							? Number.isInteger(step)
+								? Number.parseInt(value)
+								: Number.parseFloat(value)
+							: NaN;
+
+						if (Number.isNaN(newNumber)) {
+							setWidgetValue(null);
+						} else {
+							if (setting.max !== undefined) {
+								newNumber = Math.min(newNumber, setting.max);
+							}
+							if (setting.min !== undefined) {
+								newNumber = Math.max(newNumber, setting.min);
+							}
+							setWidgetValue(newNumber);
+						}
+					}}
+					onWheel={event => {
+						// prevents using mouse wheel to increment/decrement number
+						// since mouse wheel also scrolls the entire settings container
+						event.currentTarget.blur();
+					}}
 				/>
 			</div>
-			<Description className='text-3.5 font-quicksand px-2 pt-1 text-stone-500'>
-				{setting.description
-					? i18nStringTransform(setting.description)
-					: undefined}
-			</Description>
+
+			<InputDescription value={setting.description} />
 		</Field>
 	);
 });

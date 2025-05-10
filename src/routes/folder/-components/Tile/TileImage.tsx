@@ -1,6 +1,6 @@
 import { TileSlot } from '@/contexts/tile_locations/useTileFolder';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
-import { getTileIconUrl } from '@/helpers/media';
+import { getTileIconSrc } from '@/helpers/media';
 import clsx from 'clsx';
 import { memo } from 'react';
 
@@ -15,7 +15,7 @@ const TileImage = memo(function TileImage({ id, type }: WidgetTileProps) {
 	return (
 		<div className='absolute inset-x-2 top-5 bottom-2 flex'>
 			<img
-				src={getTileIconUrl(id, tileMeta.icon)}
+				src={getTileIconSrc(id, tileMeta.icon)}
 				className={clsx(
 					'smooth-image flex-1 border-2 border-black/25 object-cover',
 					type === 'widget' ? 'rounded-slime' : 'rounded-10%',

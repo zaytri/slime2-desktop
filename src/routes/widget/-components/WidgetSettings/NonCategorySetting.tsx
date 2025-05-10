@@ -2,47 +2,74 @@ import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { memo } from 'react';
 import ImageDisplay from './Display/ImageDisplay';
 import TextDisplay from './Display/TextDisplay';
+import ColorInput from './Input/ColorInput';
+import DropdownInput from './Input/DropdownInput';
+import FontInput from './Input/FontInput';
+import MediaInput from './Input/MediaInput';
+import MultiMediaInput from './Input/MultiMediaInput';
+import MultiSelectInput from './Input/MultiSelectInput';
 import MultiTextInput from './Input/MultiTextInput';
 import NumberInput from './Input/NumberInput';
+import SelectInput from './Input/SelectInput';
 import SliderInput from './Input/SliderInput';
-import TextAreaInput from './Input/TextAreaInput';
 import TextInput from './Input/TextInput';
+import ToggleInput from './Input/ToggleInput';
+import MultiSectionSetting from './MultiSectionSetting';
 import SectionSetting from './SectionSetting';
 import WidgetButton from './WidgetButton';
 
 const NonCategorySetting = memo(function NonCategorySetting(
-	setting: WidgetSetting.Setting,
+	setting: Props.WithId<WidgetSetting.NonCategory>,
 ) {
 	switch (setting.type) {
-		case 'button':
-			return <WidgetButton {...setting} />;
-		case 'image-display':
-			return <ImageDisplay {...setting} />;
-		case 'text-input':
-			return <TextInput {...setting} />;
 		case 'section':
 			return <SectionSetting {...setting} />;
-		case 'text-area-input':
-			return <TextAreaInput {...setting} />;
-		case 'multi-text-input':
-			return <MultiTextInput {...setting} />;
+		case 'multi-section':
+			return <MultiSectionSetting {...setting} />;
+
+		case 'button':
+			return <WidgetButton {...setting} />;
+
 		case 'number-input':
 			return <NumberInput {...setting} />;
 		case 'slider-input':
 			return <SliderInput {...setting} />;
+
 		case 'toggle-input':
+			return <ToggleInput {...setting} />;
+
 		case 'dropdown-input':
+			return <DropdownInput {...setting} />;
+
 		case 'select-input':
+			return <SelectInput {...setting} />;
 		case 'multi-select-input':
-		case 'image-input':
-		case 'multi-image-input':
-		case 'video-input':
-		case 'multi-video-input':
-		case 'audio-input':
-		case 'multi-audio-input':
-		case 'color-input':
+			return <MultiSelectInput {...setting} />;
+
 		case 'font-input':
-		case 'multi-section':
+			return <FontInput {...setting} />;
+		case 'color-input':
+			return <ColorInput {...setting} />;
+
+		case 'text-input':
+		case 'text-area-input':
+			return <TextInput {...setting} />;
+
+		case 'multi-text-input':
+			return <MultiTextInput {...setting} />;
+
+		case 'image-input':
+		case 'video-input':
+		case 'audio-input':
+			return <MediaInput {...setting} />;
+
+		case 'multi-image-input':
+		case 'multi-video-input':
+		case 'multi-audio-input':
+			return <MultiMediaInput {...setting} />;
+
+		case 'image-display':
+			return <ImageDisplay {...setting} />;
 
 		// fallback to text display for any unexpected types
 		case 'text-display':

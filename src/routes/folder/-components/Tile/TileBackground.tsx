@@ -1,6 +1,6 @@
 import WaveSvg from '@/components/svg/WaveSvg';
 import { TileSlot } from '@/contexts/tile_locations/useTileFolder';
-import { TileColor, tileColorClasses } from '@/helpers/ui';
+import { TileColor, tileColorClasses } from '@/helpers/tileColors';
 import clsx from 'clsx';
 import { memo, type PropsWithChildren } from 'react';
 

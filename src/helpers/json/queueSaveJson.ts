@@ -6,7 +6,10 @@ const COOLDOWN_AMOUNT = 3 * 1000; // 3 seconds
 
 // saves once every COOLDOWN_AMOUNT at most, queueing overridable saves
 export function queueSaveJson(jsonObject: unknown, filePath: string) {
-	const saveFunction = () => saveJson(jsonObject, filePath);
+	const saveFunction = () => {
+		saveJson(jsonObject, filePath);
+	};
+
 	const cooldown = queueCooldowns.get(filePath);
 
 	// if within the cooldown, set the function to be queued,

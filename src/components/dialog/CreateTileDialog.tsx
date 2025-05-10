@@ -3,7 +3,6 @@ import { CreateTilePayload } from '@/contexts/dialog/DialogType';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useTileLocationsDispatch } from '@/contexts/tile_locations/useTileLocationsDispatch';
 import { createWidgetFolder, installDefaultWidget } from '@/helpers/commands';
-import { useNavigate } from '@tanstack/react-router';
 import clsx from 'clsx';
 import { memo } from 'react';
 import DialogHeader from './DialogHeader';
@@ -11,7 +10,6 @@ import DialogHeader from './DialogHeader';
 const CreateTileDialog = memo(function CreateTileDialog() {
 	const { payload, close } = useDialog<CreateTilePayload>();
 	const { addTile } = useTileLocationsDispatch();
-	const navigate = useNavigate();
 
 	return (
 		<div>

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { fromError } from 'zod-validation-error';
 import { loadJson } from '../commands';
 import { I18nString } from '../i18n';
 import { tileFolderPath } from './jsonPaths';
@@ -7,8 +8,14 @@ import { tileFolderPath } from './jsonPaths';
 
 export async function loadWidgetSettings(id: string): Promise<WidgetSettings> {
 	const path = await settingsPath(id);
-	const settings = await WidgetSettings.parseAsync(await loadJson(path));
-	return settings;
+	try {
+		const settings = await WidgetSettings.parseAsync(await loadJson(path));
+		return settings;
+	} catch (error) {
+		const validationError = fromError(error);
+		console.error(validationError.toString());
+		throw error;
+	}
 }
 
 async function settingsPath(id: string) {
@@ -27,7 +34,7 @@ const BaseDescription = z.object({
 });
 
 const BaseMediaDefaultValue = z.object({
-	defaultValue: z.string().nullable().optional(),
+	defaultValue: z.string().optional(),
 });
 
 const BaseMultipleMediaDefaultValue = z.object({
@@ -35,11 +42,12 @@ const BaseMultipleMediaDefaultValue = z.object({
 });
 
 const OptionValue = z.union([z.string(), z.number(), z.boolean()]);
+export type OptionValue = z.infer<typeof OptionValue>;
 
 const BaseOptions = z.object({
 	options: z.array(
 		z.object({
-			label: I18nString.optional(),
+			label: I18nString,
 			value: OptionValue,
 		}),
 	),
@@ -47,13 +55,7 @@ const BaseOptions = z.object({
 
 const BaseSetting = z.object({
 	label: I18nString,
-	id: z.string(),
-	condition: z
-		.object({
-			id: z.string(),
-			value: OptionValue,
-		})
-		.optional(),
+	condition: z.record(z.string(), OptionValue).optional(),
 	searchTags: z.array(z.string()).optional(),
 });
 
@@ -98,7 +100,7 @@ const MultiTextInputSetting = z
 const NumberInputSetting = z
 	.object({
 		type: z.literal('number-input'),
-		defaultValue: z.number().nullable().optional(),
+		defaultValue: z.number().optional(),
 		min: z.number().optional(),
 		max: z.number().optional(),
 		step: z.union([z.number(), z.literal('any')]).optional(),
@@ -109,7 +111,7 @@ const NumberInputSetting = z
 const SliderInputSetting = z
 	.object({
 		type: z.literal('slider-input'),
-		defaultValue: z.number().nullable().optional(),
+		defaultValue: z.number().optional(),
 		min: z.number().optional(),
 		max: z.number().optional(),
 		step: z.union([z.number(), z.literal('any')]).optional(),
@@ -126,11 +128,11 @@ const ToggleInputSetting = z
 const DropdownInputSetting = z
 	.object({
 		type: z.literal('dropdown-input'),
+		defaultValue: OptionValue.optional(),
 	})
 	.merge(BasePlaceholder)
 	.merge(BaseDescription)
-	.merge(BaseOptions)
-	.merge(z.object({ defaultValue: OptionValue.optional() }));
+	.merge(BaseOptions);
 
 const SelectInputSetting = z
 	.object({
@@ -195,14 +197,16 @@ const ColorInputSetting = z
 		type: z.literal('color-input'),
 		defaultValue: z.string().optional(),
 	})
-	.merge(BaseDescription);
+	.merge(BaseDescription)
+	.merge(BasePlaceholder);
 
 const FontInputSetting = z
 	.object({
 		type: z.literal('font-input'),
 		defaultValue: z.string().optional(),
 	})
-	.merge(BaseDescription);
+	.merge(BaseDescription)
+	.merge(BasePlaceholder);
 
 const BaseSectionSetting = z.discriminatedUnion('type', [
 	ButtonSetting,
@@ -229,12 +233,12 @@ const BaseSectionSetting = z.discriminatedUnion('type', [
 
 const SectionSetting = z.object({
 	type: z.literal('section'),
-	settings: z.array(BaseSetting.and(BaseSectionSetting)),
+	settings: z.record(z.string(), BaseSetting.and(BaseSectionSetting)),
 });
 
 const MultiSectionSetting = z.object({
 	type: z.literal('multi-section'),
-	settings: z.array(BaseSetting.and(BaseSectionSetting)),
+	settings: z.record(z.string(), BaseSetting.and(BaseSectionSetting)),
 });
 
 const BaseCategorySetting = z.discriminatedUnion('type', [
@@ -243,27 +247,29 @@ const BaseCategorySetting = z.discriminatedUnion('type', [
 	MultiSectionSetting,
 ]);
 
+const NonCategorySetting = BaseSetting.and(BaseCategorySetting);
+type NonCategorySetting = z.infer<typeof NonCategorySetting>;
+
 const CategorySetting = z.object({
 	label: I18nString,
-	id: z.string(),
-	settings: z.array(BaseSetting.and(BaseCategorySetting)),
+	settings: z.record(z.string(), BaseSetting.and(NonCategorySetting)),
 });
 type CategorySetting = z.infer<typeof CategorySetting>;
-type WidgetSetting = CategorySetting['settings'][0];
 
-const WidgetSettings = z.array(CategorySetting);
+const WidgetSettings = z.record(z.string(), CategorySetting);
 export type WidgetSettings = z.infer<typeof WidgetSettings>;
 
-type ExtractSettingType<T extends WidgetSetting['type']> = Extract<
-	WidgetSetting,
+type ExtractSettingType<T extends NonCategorySetting['type']> = Extract<
+	NonCategorySetting,
 	{ type: T }
 >;
 
 export namespace WidgetSetting {
 	export type Settings = WidgetSettings;
-	export type Setting = WidgetSetting;
 
 	export type Category = CategorySetting;
+	export type NonCategory = NonCategorySetting;
+
 	export type Section = ExtractSettingType<'section'>;
 	export type MultiSection = ExtractSettingType<'multi-section'>;
 

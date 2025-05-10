@@ -8,4 +8,8 @@ namespace Props {
 	type WithClassNameAndChildren<PropType = unknown> = WithClassName<
 		WithChildren<PropType>
 	>;
+
+	type WithId<PropType = unknown> = PropType & {
+		id: string;
+	};
 }

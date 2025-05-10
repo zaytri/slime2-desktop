@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { loadJson } from '../commands';
-import { TileColor } from '../ui';
+import { TileColor } from '../tileColors';
 import { tileFolderPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';
 

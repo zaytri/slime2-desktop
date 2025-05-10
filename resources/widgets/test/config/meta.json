@@ -1,9 +1,13 @@
 {
 	"name": "Chat",
-	"author": "Zaytri",
+	"creator": "Zaytri",
 	"version": "1.0.0",
-	"updateKey": "stream.slime2.chat",
+	"homepage": "https://zaytri.com/",
+	"support": "https://zaytri.com/",
 	"icon": "bird.jpg",
-	"js": [],
-	"css": ["styles.css"]
+	"imports": {
+		"js": [],
+		"css": ["styles.css"]
+	},
+	"scopes": ["twitch:read"]
 }

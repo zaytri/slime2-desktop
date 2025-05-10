@@ -6,6 +6,7 @@ use crate::{
 	server,
 };
 use chrono::Local;
+use font_kit::source::SystemSource;
 use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -300,6 +301,29 @@ pub async fn save_temp_tile_icon(
 }
 
 #[tauri::command]
+pub async fn save_temp_widget_file(
+	file_name: &str,
+	widget_id: &str,
+	app_handle: tauri::AppHandle,
+) -> Result<String, String> {
+	return match file::copy_file_timestamped(
+		file::temp_files_path(&app_handle).join(file_name).as_path(),
+		file::tiles_path(&app_handle)
+			.join(widget_id)
+			.join("config")
+			.join("assets"),
+	) {
+		Ok(timestamped_file_name) => Ok(timestamped_file_name),
+		Err(error) => {
+			return Err(format!(
+				"Failed to copy widget asset from temp folder! {}",
+				error
+			))
+		}
+	};
+}
+
+#[tauri::command]
 pub async fn extract_widget_details(zip_path: &str) -> Result<String, String> {
 	let source_path = Path::new(zip_path);
 
@@ -334,6 +358,17 @@ pub async fn extract_widget_details(zip_path: &str) -> Result<String, String> {
 
 	// return widget name and author
 	Ok(format!("{} by {}", config.name, config.author))
+}
+
+// thanks to https://github.com/tauri-apps/tauri/discussions/9616
+#[tauri::command]
+pub async fn load_system_fonts() -> Vec<String> {
+	let source = SystemSource::new();
+	if let Ok(fonts) = source.all_families() {
+		fonts
+	} else {
+		vec![]
+	}
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]

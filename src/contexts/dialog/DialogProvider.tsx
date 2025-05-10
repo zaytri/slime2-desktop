@@ -15,8 +15,8 @@ const DialogProvider = memo(function DialogProvider({
 	});
 
 	function close() {
-		dialogRef.current?.close();
 		setDialog({ name: '', payload: null });
+		dialogRef.current?.close();
 	}
 
 	function open(dialog: DialogType) {
@@ -26,7 +26,7 @@ const DialogProvider = memo(function DialogProvider({
 	}
 
 	const LazyComponent = lazy(
-		() => import(`${dialogComponentsFolderPath}/${name}Dialog.tsx`),
+		() => import(`${dialogComponentsFolderPath}/${name}Dialog`),
 	);
 
 	return (

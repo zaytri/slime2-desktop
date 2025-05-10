@@ -62,6 +62,17 @@ export async function tempCopy(filePath: string): Promise<string> {
 export async function saveTempTileIcon(
 	fileName: string,
 	tileId: string,
-): Promise<void> {
+): Promise<string> {
 	return invoke('save_temp_tile_icon', { fileName, tileId });
+}
+
+export async function saveTempWidgetFile(
+	fileName: string,
+	widgetId: string,
+): Promise<string> {
+	return invoke('save_temp_widget_file', { fileName, widgetId });
+}
+
+export async function loadSystemFonts(): Promise<string[]> {
+	return invoke('load_system_fonts');
 }

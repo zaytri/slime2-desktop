@@ -5,6 +5,7 @@ use std::{
 	fs::{self, File},
 	io,
 	path::{Path, PathBuf},
+	time::{SystemTime, UNIX_EPOCH},
 };
 use tauri::{path::BaseDirectory, AppHandle, Manager};
 use zip::ZipArchive;
@@ -162,13 +163,8 @@ pub fn copy_zip(
 	Ok(())
 }
 
-pub fn copy_file(
-	source_file: &Path,
-	destination_folder: PathBuf,
-) -> io::Result<String> {
-	fs::create_dir_all(&destination_folder)?;
-
-	let Some(file_name_os_str) = source_file.file_name() else {
+fn read_file_name(file: &Path) -> io::Result<String> {
+	let Some(file_name_os_str) = file.file_name() else {
 		return Err(io::Error::new(
 			io::ErrorKind::Other,
 			"Error reading source file name!",
@@ -182,7 +178,35 @@ pub fn copy_file(
 		));
 	};
 
-	fs::copy(source_file, destination_folder.join(file_name))?;
+	Ok(file_name.to_string())
+}
+
+pub fn copy_file(
+	source_file: &Path,
+	destination_folder: PathBuf,
+) -> io::Result<String> {
+	fs::create_dir_all(&destination_folder)?;
+
+	let file_name = read_file_name(source_file)?;
+	fs::copy(source_file, destination_folder.join(&file_name))?;
+
+	Ok(file_name.to_string())
+}
+
+pub fn copy_file_timestamped(
+	source_file: &Path,
+	destination_folder: PathBuf,
+) -> io::Result<String> {
+	fs::create_dir_all(&destination_folder)?;
+
+	let timestamp = match SystemTime::now().duration_since(UNIX_EPOCH) {
+		Ok(time) => time.as_millis(),
+		Err(_error) => 0,
+	};
+
+	let file_name = format!("{}_{}", timestamp, read_file_name(source_file)?);
+
+	fs::copy(source_file, destination_folder.join(&file_name))?;
 
 	Ok(file_name.to_string())
 }
