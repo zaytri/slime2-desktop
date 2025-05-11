@@ -1,12 +1,12 @@
-use futures::{stream::SplitSink, SinkExt, StreamExt, TryFutureExt};
+use futures::{SinkExt, StreamExt, TryFutureExt, stream::SplitSink};
 use std::{
 	collections::{HashMap, HashSet},
 	sync::{
-		atomic::{AtomicUsize, Ordering},
 		Arc,
+		atomic::{AtomicUsize, Ordering},
 	},
 };
-use tokio::sync::{mpsc, RwLock};
+use tokio::sync::{RwLock, mpsc};
 use warp::filters::ws::{Message, WebSocket};
 mod ws_commands;
 

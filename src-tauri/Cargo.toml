@@ -4,7 +4,7 @@
 name = "slime2"
 version = "0.0.0"
 description = "Local Stream Widget Manager"
-edition = "2021"
+edition = "2024"
 publish = false
 
 [build-dependencies]

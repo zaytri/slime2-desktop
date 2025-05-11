@@ -7,7 +7,7 @@ use std::{
 	path::{Path, PathBuf},
 	time::{SystemTime, UNIX_EPOCH},
 };
-use tauri::{path::BaseDirectory, AppHandle, Manager};
+use tauri::{AppHandle, Manager, path::BaseDirectory};
 use zip::ZipArchive;
 
 // file_path must not include .json

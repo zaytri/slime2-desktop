@@ -2,7 +2,7 @@
 // Websocket commmands found under server/websocket/ws_commands.rs
 
 use crate::{
-	file::{self, create_tile_meta, load_widget_meta, TileMeta},
+	file::{self, TileMeta, create_tile_meta, load_widget_meta},
 	server,
 };
 use chrono::Local;
@@ -88,7 +88,7 @@ pub async fn create_widget_folder(
 	) {
 		Ok(file_name) => file_name,
 		Err(error) => {
-			return Err(format!("Failed to create widget folder! {}", error))
+			return Err(format!("Failed to create widget folder! {}", error));
 		}
 	};
 
@@ -99,7 +99,7 @@ pub async fn create_widget_folder(
 	})) {
 		Ok(json) => json,
 		Err(error) => {
-			return Err(format!("Failed to create widget folder! {}", error))
+			return Err(format!("Failed to create widget folder! {}", error));
 		}
 	};
 
@@ -163,7 +163,7 @@ pub async fn install_default_widget(
 			return Err(format!(
 				"Failed to load meta.json for default widget \"{}\": {}",
 				widget_name, error
-			))
+			));
 		}
 	};
 
@@ -188,7 +188,7 @@ pub async fn install_default_widget(
 				return Err(format!(
 					"Failed to copy icon file for default widget \"{}\": {}",
 					widget_name, error
-				))
+				));
 			}
 		};
 
@@ -272,7 +272,7 @@ pub async fn temp_copy(
 			return Err(format!(
 				"Failed to copy file to temp folder! {}",
 				error
-			))
+			));
 		}
 	};
 }
@@ -295,7 +295,7 @@ pub async fn save_temp_tile_icon(
 			return Err(format!(
 				"Failed to copy folder icon from temp folder! {}",
 				error
-			))
+			));
 		}
 	};
 }
@@ -318,7 +318,7 @@ pub async fn save_temp_widget_file(
 			return Err(format!(
 				"Failed to copy widget asset from temp folder! {}",
 				error
-			))
+			));
 		}
 	};
 }
