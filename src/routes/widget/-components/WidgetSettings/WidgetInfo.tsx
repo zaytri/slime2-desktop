@@ -14,9 +14,9 @@ const WidgetInfo = memo(function WidgetInfo(meta: Props.WithId<WidgetMeta>) {
 	];
 
 	return (
-		<div id={meta.id} className='flex items-center gap-4 p-4'>
+		<div id={meta.id} className='flex gap-4 p-4'>
 			<div className='flex flex-1 flex-col gap-2'>
-				<h2 className='text-7 border-b border-stone-400 font-medium'>
+				<h2 className='text-7 border-b-2 border-stone-300 font-medium'>
 					{meta.name} <span className='text-stone-400'>v{meta.version}</span>
 				</h2>
 
@@ -24,7 +24,7 @@ const WidgetInfo = memo(function WidgetInfo(meta: Props.WithId<WidgetMeta>) {
 					if (!value) return null;
 
 					return (
-						<div className='flex flex-col'>
+						<div key={label} className='flex flex-col'>
 							<p className='text-3 font-semibold text-stone-400 uppercase'>
 								{label}
 							</p>
@@ -42,7 +42,7 @@ const WidgetInfo = memo(function WidgetInfo(meta: Props.WithId<WidgetMeta>) {
 			{meta.icon && (
 				<img
 					src={getWidgetIconSrc(widgetId, meta.icon)}
-					className='rounded-2 max-h-48 max-w-48 bg-rose-200 object-contain'
+					className='rounded-2 max-h-48 max-w-48 self-center bg-rose-200 object-contain'
 				/>
 			)}
 		</div>

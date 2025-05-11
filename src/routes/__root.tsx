@@ -1,14 +1,54 @@
 import logoSlime from '@/assets/logo_slime_stencil.svg';
 import logoText from '@/assets/logo_text_stencil.svg';
 import DialogProvider from '@/contexts/dialog/DialogProvider';
+import { loadWidgetSettings } from '@/helpers/json/widgetSettings';
+import { loadWidgetValues } from '@/helpers/json/widgetValues';
+import { sendWidgetValues } from '@/helpers/websocket';
 
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router';
+import { listen, UnlistenFn } from '@tauri-apps/api/event';
 import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
+import { useEffect } from 'react';
+import { z } from 'zod';
+import { fromError } from 'zod-validation-error';
 const appWindow = getCurrentWebviewWindow();
 
 export const Route = createRootRoute({ component: Root });
 
 function Root() {
+	useEffect(() => {
+		let unlisten: UnlistenFn | undefined = undefined;
+
+		async function register() {
+			// sends widget values upon webhook registration
+			unlisten = await listen<WidgetRegistration>(
+				'widget-registration',
+				async event => {
+					try {
+						// just in case payload isn't formatted correctly
+						const { id } = WidgetRegistration.parse(event.payload);
+
+						const [settings, values] = await Promise.all([
+							loadWidgetSettings(id),
+							loadWidgetValues(id),
+						]);
+
+						await sendWidgetValues(id, settings, values);
+					} catch (error) {
+						const validationError = fromError(error);
+						console.error(validationError.toString());
+					}
+				},
+			);
+		}
+
+		register();
+
+		return () => {
+			if (unlisten) unlisten();
+		};
+	}, []);
+
 	return (
 		<DialogProvider>
 			<div className='animate-intro relative flex flex-1 origin-bottom overflow-hidden'>
@@ -59,3 +99,6 @@ function Root() {
 		</DialogProvider>
 	);
 }
+
+const WidgetRegistration = z.object({ id: z.string() });
+type WidgetRegistration = z.infer<typeof WidgetRegistration>;

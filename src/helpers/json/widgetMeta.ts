@@ -33,5 +33,6 @@ const WidgetMeta = z.object({
 		.optional(),
 	// "twitch.info" | "twitch.bot" | "twitch.moderate"
 	scopes: z.array(z.string()).optional(),
+	sharedChannels: z.array(z.string()).optional(),
 });
 export type WidgetMeta = z.infer<typeof WidgetMeta>;

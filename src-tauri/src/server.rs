@@ -29,7 +29,7 @@ pub fn setup(
 		.map(
 			|websocket: warp::ws::Ws,
 			 connections: websocket::WebsocketConnections| {
-				websocket.on_upgrade(move |websocket| {
+				websocket.on_upgrade(|websocket| {
 					websocket::connect(websocket, connections)
 				})
 			},
@@ -37,7 +37,7 @@ pub fn setup(
 
 	if cfg!(dev) {
 		// no need to run widget server in dev here
-		// that's run from src-widget directly
+		// that's run from src-widget directly on port 57141
 		let routes = home_route
 			.or(tiles_route)
 			.or(websocket_route)

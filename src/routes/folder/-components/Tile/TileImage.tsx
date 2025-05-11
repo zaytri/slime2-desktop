@@ -12,6 +12,8 @@ type WidgetTileProps = {
 const TileImage = memo(function TileImage({ id, type }: WidgetTileProps) {
 	const { tileMeta } = useTileMeta(id);
 
+	if (!tileMeta.icon) return null;
+
 	return (
 		<div className='absolute inset-x-2 top-5 bottom-2 flex'>
 			<img

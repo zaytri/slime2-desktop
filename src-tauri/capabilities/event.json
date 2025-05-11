@@ -1,0 +1,6 @@
+{
+	"identifier": "event",
+	"description": "This capability allows listening to events called by the Rust backend.",
+	"windows": ["main"],
+	"permissions": ["core:event:allow-listen", "core:event:allow-unlisten"]
+}

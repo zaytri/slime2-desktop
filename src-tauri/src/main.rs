@@ -1,42 +1,56 @@
 //! Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::sync::OnceLock;
+
+use tauri::{AppHandle, Manager};
+
 mod commands;
 mod file;
 mod server;
 
+// thanks to https://github.com/tauri-apps/tauri/discussions/6309#discussioncomment-10295527
+static APP_HANDLE: OnceLock<AppHandle> = OnceLock::new();
+fn get_app_handle() -> AppHandle {
+	APP_HANDLE.get().unwrap().clone()
+}
+
 #[tokio::main]
 async fn main() {
-	let connections = server::websocket::WebsocketConnections::default();
-
 	if cfg!(dev) {
 		eprintln!("Welcome to slime2!");
 	}
+
+	let connections = server::websocket::WebsocketConnections::default();
 
 	tauri::Builder::default()
 		.plugin(tauri_plugin_shell::init())
 		.plugin(tauri_plugin_clipboard_manager::init())
 		.plugin(tauri_plugin_dialog::init())
 		.manage(connections.clone())
-		.setup(|app| {
-			let app_handle = app.handle();
+		.setup(|app: &mut tauri::App| {
+			let app_handle = app.app_handle().clone();
+
+			if let Err(..) = APP_HANDLE.set(app_handle.clone()) {
+				eprintln!("Error setting static app handle!");
+			}
 
 			// empty temp folder on startup
-			if let Err(error) = file::empty_temp_folder(app_handle) {
+			if let Err(error) = file::empty_temp_folder(&app_handle) {
 				eprintln!("Error emptying temp folder! {}", error);
 			}
 
 			// clean tiles folder on startup
-			if let Err(error) = file::clean_tiles_folder(app_handle) {
+			if let Err(error) = file::clean_tiles_folder(&app_handle) {
 				eprintln!("Error cleaning tiles folder! {}", error);
 			}
 
 			server::setup(
 				connections,
 				(
-					file::widget_server_path(app_handle),
-					file::tiles_path(app_handle),
-					file::temp_files_path(app_handle),
+					file::widget_server_path(&app_handle),
+					file::tiles_path(&app_handle),
+					file::temp_files_path(&app_handle),
 				),
 			)
 		})

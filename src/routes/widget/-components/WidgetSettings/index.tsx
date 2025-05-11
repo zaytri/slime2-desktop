@@ -1,3 +1,4 @@
+import WidgetValuesProvider from '@/contexts/widget_values/WidgetValuesProvider';
 import { i18nStringTransform } from '@/helpers/i18n';
 import { WidgetMeta } from '@/helpers/json/widgetMeta';
 import type {
@@ -83,16 +84,21 @@ const WidgetSettings = memo(function WidgetSettings() {
 				})}
 			</aside>
 
-			<section className='col-span-6 overflow-y-auto' ref={scrollContainerRef}>
-				<div className='border-r border-stone-300 pb-8'>
-					{meta && <WidgetInfo {...meta} id={widgetInfoProps.id} />}
+			<WidgetValuesProvider id={widgetId} settings={settings}>
+				<section
+					className='col-span-6 overflow-y-auto'
+					ref={scrollContainerRef}
+				>
+					<div className='border-r border-stone-300 pb-8'>
+						{meta && <WidgetInfo {...meta} id={widgetInfoProps.id} />}
 
-					{Object.entries(settings).map(([id, category]) => {
-						const props = { id, ...category };
-						return <CategorySetting key={id} {...props} />;
-					})}
-				</div>
-			</section>
+						{Object.entries(settings).map(([id, category]) => {
+							const props = { id, ...category };
+							return <CategorySetting key={id} {...props} />;
+						})}
+					</div>
+				</section>
+			</WidgetValuesProvider>
 		</div>
 	);
 });

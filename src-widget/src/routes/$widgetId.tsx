@@ -1,57 +1,19 @@
-import { createFileRoute, useLoaderData } from '@tanstack/react-router';
-import { baseDataUrl, getConfig, getHtml } from '../services/data';
+import { createFileRoute } from '@tanstack/react-router';
+import Widget from '../components/Widget';
+import { getHtml, getMeta } from '../helpers/widgetApi';
 
 export const Route = createFileRoute('/$widgetId')({
 	loader: async ({ params }) => {
 		const { widgetId } = params;
 
 		// get widget data
-		const [html, config] = await Promise.all([
+		const [html, meta] = await Promise.all([
 			getHtml(widgetId),
-			getConfig(widgetId),
+			getMeta(widgetId),
 		]);
 
-		// set tab title
-		document.title = config.title || 'slime2 widget';
-
-		// load widget CSS
-		config.css?.forEach(css => {
-			const linkElement = document.createElement('link');
-			linkElement.setAttribute('rel', 'stylesheet');
-			linkElement.setAttribute(
-				'href',
-				`${baseDataUrl}/${widgetId}/core/${css}`,
-			);
-			linkElement.setAttribute('type', 'text/css');
-			document.head.appendChild(linkElement);
-		});
-
-		// load widget JS
-		config.js?.forEach(js => {
-			const scriptElement = document.createElement('script');
-
-			if (typeof js === 'string') {
-				scriptElement.src = `${baseDataUrl}/${widgetId}/core/${js}`;
-			} else {
-				Object.entries(js).forEach(([attribute, value]) => {
-					scriptElement.setAttribute(attribute, value);
-				});
-			}
-
-			document.head.appendChild(scriptElement);
-		});
-
 		// pass widget HTML to component
-		return html;
+		return { html, meta };
 	},
-	component: WidgetComponent,
+	component: Widget,
 });
-
-// render widget
-function WidgetComponent() {
-	const html = useLoaderData({ from: '/$widgetId' });
-
-	return (
-		<div id='slime2-widget' dangerouslySetInnerHTML={{ __html: html }}></div>
-	);
-}

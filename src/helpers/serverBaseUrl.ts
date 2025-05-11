@@ -1,6 +1,6 @@
-const DEV_PORT = 57140;
-const DEV_WIDGET_SERVER_PORT = 57141;
-const PROD_PORT = 57143;
+export const DEV_PORT = 57140;
+export const DEV_WIDGET_SERVER_PORT = 57141;
+export const PROD_PORT = 57143;
 
 function createBaseUrl(prodPort: number, devPort: number) {
 	return `http://localhost:${import.meta.env.PROD ? prodPort : devPort}`;

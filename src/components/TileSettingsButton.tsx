@@ -6,12 +6,14 @@ type HeaderButtonProps = {
 	onClick?: VoidFunction;
 	linkTo?: LinkComponentProps['to'];
 	linkParams?: LinkComponentProps['params'];
+	externalHref?: string;
 };
 
 const HeaderButton = memo(function HeaderButton({
 	onClick,
 	linkTo,
 	linkParams,
+	externalHref,
 	children,
 	icon,
 }: PropsWithChildren<HeaderButtonProps>) {
@@ -27,11 +29,23 @@ const HeaderButton = memo(function HeaderButton({
 		</>
 	);
 
-	return linkTo ? (
-		<Link to={linkTo} params={linkParams} className={className}>
-			{buttonChildren}
-		</Link>
-	) : (
+	if (linkTo) {
+		return (
+			<Link to={linkTo} params={linkParams} className={className}>
+				{buttonChildren}
+			</Link>
+		);
+	}
+
+	if (externalHref) {
+		return (
+			<a href={externalHref} target='_blank' className={className}>
+				{buttonChildren}
+			</a>
+		);
+	}
+
+	return (
 		<button type='button' className={className} onClick={onClick}>
 			{buttonChildren}
 		</button>

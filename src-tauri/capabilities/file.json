@@ -1,5 +1,5 @@
 {
-	"identifier": "files",
+	"identifier": "file",
 	"description": "This capability allows file paths to be used.",
 	"windows": ["main"],
 	"permissions": ["core:path:allow-resolve-directory"]

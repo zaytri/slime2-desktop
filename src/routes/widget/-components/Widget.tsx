@@ -1,13 +1,14 @@
 import Header from '@/components/header/Header';
 import HeaderText from '@/components/header/HeaderText';
 import ArrowLeftSvg from '@/components/svg/ArrowLeftSvg';
+import ChainLinkSvg from '@/components/svg/ChainLinkSvg';
 import GearSvg from '@/components/svg/GearSvg';
 import HeaderButton from '@/components/TileSettingsButton';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import useTileLocation from '@/contexts/tile_locations/useTileLocation';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
-import WidgetValuesProvider from '@/contexts/widget_values/WidgetValuesProvider';
 import { getTileIconSrc } from '@/helpers/media';
+import { DEV_WIDGET_SERVER_PORT, PROD_PORT } from '@/helpers/serverBaseUrl';
 import { useParams } from '@tanstack/react-router';
 import { memo } from 'react';
 import WidgetSettings from './WidgetSettings';
@@ -40,6 +41,13 @@ const Widget = memo(function Widget() {
 				<HeaderText className='flex-1'>{tileMeta.name}</HeaderText>
 
 				<HeaderButton
+					icon={<ChainLinkSvg className='size-7' />}
+					externalHref={`http://localhost:${import.meta.env.PROD ? `${PROD_PORT}/widget` : DEV_WIDGET_SERVER_PORT}/${widgetId}`}
+				>
+					Open Overlay
+				</HeaderButton>
+
+				<HeaderButton
 					icon={<GearSvg className='size-7' />}
 					onClick={() => {
 						open({
@@ -52,9 +60,7 @@ const Widget = memo(function Widget() {
 				</HeaderButton>
 			</Header>
 
-			<WidgetValuesProvider id={widgetId}>
-				<WidgetSettings />
-			</WidgetValuesProvider>
+			<WidgetSettings />
 		</div>
 	);
 });
