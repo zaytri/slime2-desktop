@@ -1,9 +1,7 @@
 import { appConfigDir, appDataDir } from '@tauri-apps/api/path';
 
-type MainConfigFileName = 'tile_locations';
-
 // fileName must not include ".json" extension
-export async function mainConfigPath(fileName: MainConfigFileName) {
+export async function mainConfigPath(fileName: string) {
 	const appConfigDirPath = await appConfigDir();
 	return `${appConfigDirPath}/config/${fileName}`;
 }

@@ -5,9 +5,13 @@
 	"homepage": "https://zaytri.com/",
 	"support": "https://zaytri.com/",
 	"icon": "bird.jpg",
-	"imports": {
+	"import": {
 		"js": [],
 		"css": ["styles.css"]
 	},
-	"scopes": ["twitch:read"]
+	"scope": {
+		"read": {
+			"service": ["twitch", "youtube", "facebook"]
+		}
+	}
 }

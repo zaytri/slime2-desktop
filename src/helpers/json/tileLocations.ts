@@ -7,24 +7,17 @@ import { queueSaveJson } from './queueSaveJson';
 
 export async function loadTileLocations(): Promise<TileLocations> {
 	const path = await tileLocationsConfigPath();
-	const config = await TileLocationsConfig.parseAsync(
-		await loadJson(path),
-	).catch(
+	const locations = await TileLocations.parseAsync(await loadJson(path)).catch(
 		// fallback config on error or missing
-		(): TileLocationsConfig => ({ version: 1, locations: {} }),
+		(): TileLocations => ({}),
 	);
-	return config.locations;
+	return locations;
 }
 
 export async function saveTileLocations(
 	locations: TileLocations,
 ): Promise<void> {
-	const config: TileLocationsConfig = {
-		version: 1,
-		locations,
-	};
-
-	queueSaveJson(config, await tileLocationsConfigPath());
+	queueSaveJson(locations, await tileLocationsConfigPath());
 }
 
 async function tileLocationsConfigPath() {
@@ -42,9 +35,3 @@ export type TileLocation = z.infer<typeof TileLocation>;
 
 const TileLocations = z.record(z.string(), TileLocation);
 export type TileLocations = z.infer<typeof TileLocations>;
-
-const TileLocationsConfig = z.object({
-	version: z.number().positive(),
-	locations: z.record(z.string(), TileLocation),
-});
-type TileLocationsConfig = z.infer<typeof TileLocationsConfig>;

@@ -25,14 +25,25 @@ const WidgetMeta = z.object({
 	homepage: z.string().optional(),
 	support: z.string().optional(),
 	icon: z.string().optional(),
-	imports: z
+	import: z
 		.object({
 			js: z.array(z.string()).optional(),
 			css: z.array(z.string()).optional(),
 		})
-		.optional(),
-	// "twitch.info" | "twitch.bot" | "twitch.moderate"
-	scopes: z.array(z.string()).optional(),
-	sharedChannels: z.array(z.string()).optional(),
+		.optional()
+		.catch(undefined),
+	scope: z
+		.record(
+			z.string(), // "read", "bot", "mod"
+			z.object({
+				// "twitch", "youtube"
+				service: z.array(z.string()),
+				// if the widget can be used without this scope
+				optional: z.boolean().optional(),
+			}),
+		)
+		.optional()
+		.catch(undefined),
+	channel: z.array(z.string()).optional().catch(undefined),
 });
 export type WidgetMeta = z.infer<typeof WidgetMeta>;

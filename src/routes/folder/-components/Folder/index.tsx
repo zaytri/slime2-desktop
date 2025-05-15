@@ -1,6 +1,6 @@
 import bg from '@/assets/bliss.jpg';
-import HeaderButton from '@/components/TileSettingsButton';
 import Header from '@/components/header/Header';
+import HeaderButton from '@/components/header/HeaderButton';
 import HeaderText from '@/components/header/HeaderText';
 import ArrowLeftSvg from '@/components/svg/ArrowLeftSvg';
 import GearSvg from '@/components/svg/GearSvg';

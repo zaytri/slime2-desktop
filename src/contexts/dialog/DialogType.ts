@@ -9,6 +9,8 @@ export type DialogType = { onCancel?: VoidFunction } & (
 	| { name: 'SelectMedia'; payload: SelectMediaPayload }
 	| { name: 'SelectMultipleMedia'; payload: SelectMultipleMediaPayload }
 	| { name: 'Rename'; payload: RenamePayload }
+	| { name: 'AddAccount'; payload?: null }
+	| { name: 'TwitchActivation'; payload: TwitchActivationPayload }
 );
 
 export type CreateTilePayload = {
@@ -51,4 +53,10 @@ export type SelectMultipleMediaPayload = {
 export type RenamePayload = {
 	value?: string;
 	onSave: (value: string) => void;
+};
+
+export type TwitchActivationPayload = {
+	deviceCode: string;
+	userCode: string;
+	verificationUri: string;
 };

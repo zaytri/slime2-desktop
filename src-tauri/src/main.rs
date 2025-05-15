@@ -3,16 +3,23 @@
 
 use std::sync::OnceLock;
 
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 
 mod commands;
 mod file;
+mod secret;
 mod server;
 
 // thanks to https://github.com/tauri-apps/tauri/discussions/6309#discussioncomment-10295527
 static APP_HANDLE: OnceLock<AppHandle> = OnceLock::new();
 fn get_app_handle() -> AppHandle {
 	APP_HANDLE.get().unwrap().clone()
+}
+
+#[derive(Clone, serde::Serialize)]
+struct SingleInstancePayload {
+	args: Vec<String>,
+	cwd: String,
 }
 
 #[tokio::main]
@@ -24,6 +31,14 @@ async fn main() {
 	let connections = server::websocket::WebsocketConnections::default();
 
 	tauri::Builder::default()
+		.plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+			println!("{}, {argv:?}, {cwd}", app.package_info().name);
+			app.emit(
+				"single-instance",
+				SingleInstancePayload { args: argv, cwd },
+			)
+			.unwrap();
+		}))
 		.plugin(tauri_plugin_shell::init())
 		.plugin(tauri_plugin_clipboard_manager::init())
 		.plugin(tauri_plugin_dialog::init())
@@ -69,6 +84,9 @@ async fn main() {
 			commands::delete_widget_folder,
 			commands::load_system_fonts,
 			commands::save_temp_widget_file,
+			commands::get_secret_key,
+			commands::set_secret_key,
+			commands::delete_secret_key
 		])
 		.run(tauri::generate_context!())
 		.expect("Error while running Tauri app!");

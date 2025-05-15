@@ -3,6 +3,7 @@
 
 use crate::{
 	file::{self, TileMeta, create_tile_meta, load_widget_meta},
+	secret::{delete_secret, get_secret, set_secret},
 	server,
 };
 use chrono::Local;
@@ -15,6 +16,7 @@ use std::{
 	io::Read,
 	path::{Path, PathBuf},
 };
+use tauri::AppHandle;
 
 // file_path must not include ".json" extension
 #[tauri::command]
@@ -55,7 +57,7 @@ pub async fn send_websocket_message(
 #[tauri::command]
 pub async fn copy_widget(
 	widget_id: &str,
-	app_handle: tauri::AppHandle,
+	app_handle: AppHandle,
 ) -> Result<String, String> {
 	let new_widget_id = generate_widget_id();
 	let widget_files_path = file::tiles_path(&app_handle);
@@ -75,7 +77,7 @@ pub async fn copy_widget(
 
 #[tauri::command]
 pub async fn create_widget_folder(
-	app_handle: tauri::AppHandle,
+	app_handle: AppHandle,
 ) -> Result<String, String> {
 	let new_folder_id = generate_widget_folder_id();
 	let new_folder_config_path = file::tiles_path(&app_handle)
@@ -115,7 +117,7 @@ pub async fn create_widget_folder(
 #[tauri::command]
 pub async fn delete_widget_folder(
 	folder_id: &str,
-	app_handle: tauri::AppHandle,
+	app_handle: AppHandle,
 ) -> Result<(), String> {
 	if !folder_id.starts_with("folder") {
 		return Err(format!(
@@ -139,7 +141,7 @@ pub async fn delete_widget_folder(
 #[tauri::command]
 pub async fn install_default_widget(
 	widget_name: &str,
-	app_handle: tauri::AppHandle,
+	app_handle: AppHandle,
 ) -> Result<String, String> {
 	let new_widget_id = generate_widget_id();
 	let core_path =
@@ -212,7 +214,7 @@ pub async fn install_default_widget(
 #[tauri::command]
 pub async fn install_widget(
 	zip_path: &str,
-	app_handle: tauri::AppHandle,
+	app_handle: AppHandle,
 ) -> Result<String, String> {
 	let new_widget_id = generate_widget_id();
 	let source_path = Path::new(zip_path);
@@ -237,7 +239,7 @@ pub async fn install_widget(
 #[tauri::command]
 pub async fn delete_widget(
 	widget_id: &str,
-	app_handle: tauri::AppHandle,
+	app_handle: AppHandle,
 ) -> Result<(), String> {
 	if !widget_id.starts_with("widget") {
 		return Err(format!(
@@ -261,7 +263,7 @@ pub async fn delete_widget(
 #[tauri::command]
 pub async fn temp_copy(
 	file_path: &str,
-	app_handle: tauri::AppHandle,
+	app_handle: AppHandle,
 ) -> Result<String, String> {
 	return match file::copy_file(
 		Path::new(file_path),
@@ -281,7 +283,7 @@ pub async fn temp_copy(
 pub async fn save_temp_tile_icon(
 	file_name: &str,
 	tile_id: &str,
-	app_handle: tauri::AppHandle,
+	app_handle: AppHandle,
 ) -> Result<String, String> {
 	return match file::copy_file(
 		file::temp_files_path(&app_handle).join(file_name).as_path(),
@@ -304,7 +306,7 @@ pub async fn save_temp_tile_icon(
 pub async fn save_temp_widget_file(
 	file_name: &str,
 	widget_id: &str,
-	app_handle: tauri::AppHandle,
+	app_handle: AppHandle,
 ) -> Result<String, String> {
 	return match file::copy_file_timestamped(
 		file::temp_files_path(&app_handle).join(file_name).as_path(),
@@ -369,6 +371,45 @@ pub async fn load_system_fonts() -> Vec<String> {
 	} else {
 		vec![]
 	}
+}
+
+#[tauri::command]
+pub async fn get_secret_key(key: &str) -> Result<String, String> {
+	return match get_secret(key) {
+		Ok(entry) => Ok(entry),
+		Err(error) => {
+			return Err(format!(
+				"Error getting secret key ({}): {}",
+				key, error
+			));
+		}
+	};
+}
+
+#[tauri::command]
+pub async fn set_secret_key(key: &str, value: &str) -> Result<(), String> {
+	return match set_secret(key, value) {
+		Ok(()) => Ok(()),
+		Err(error) => {
+			return Err(format!(
+				"Error setting secret key ({}): {}",
+				key, error
+			));
+		}
+	};
+}
+
+#[tauri::command]
+pub async fn delete_secret_key(key: &str) -> Result<(), String> {
+	return match delete_secret(key) {
+		Ok(()) => Ok(()),
+		Err(error) => {
+			return Err(format!(
+				"Error deleting secret key ({}): {}",
+				key, error
+			));
+		}
+	};
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]

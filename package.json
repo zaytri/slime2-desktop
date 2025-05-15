@@ -25,6 +25,7 @@
 		"@tauri-apps/plugin-dialog": "^2.0.1",
 		"@tauri-apps/plugin-shell": "^2.0.1",
 		"@uiw/react-color": "^2.5.3",
+		"axios": "^1.9.0",
 		"clsx": "^2.1.0",
 		"colorjs.io": "^0.5.2",
 		"linkify-react": "^4.3.1",

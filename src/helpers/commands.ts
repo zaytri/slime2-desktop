@@ -73,6 +73,18 @@ export async function saveTempWidgetFile(
 	return invoke('save_temp_widget_file', { fileName, widgetId });
 }
 
+export async function getSecretKey(key: string): Promise<string> {
+	return invoke('get_secret_key', { key });
+}
+
+export async function setSecretKey(key: string, value: string): Promise<void> {
+	return invoke('set_secret_key', { key, value });
+}
+
+export async function deleteSecretKey(key: string): Promise<void> {
+	return invoke('delete_secret_key', { key });
+}
+
 export async function loadSystemFonts(): Promise<string[]> {
 	return invoke('load_system_fonts');
 }

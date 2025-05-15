@@ -62,7 +62,7 @@ export function widgetValuesReducer(
 			const newValues: WidgetValues = deepCopyObject(values);
 
 			// set new widget values
-			const newState = { ...newValues, ...copiedState };
+			const newState = { ...copiedState, ...newValues };
 
 			return newState;
 		}

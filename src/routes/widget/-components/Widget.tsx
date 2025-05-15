@@ -1,9 +1,9 @@
 import Header from '@/components/header/Header';
+import HeaderButton from '@/components/header/HeaderButton';
 import HeaderText from '@/components/header/HeaderText';
 import ArrowLeftSvg from '@/components/svg/ArrowLeftSvg';
 import ChainLinkSvg from '@/components/svg/ChainLinkSvg';
 import GearSvg from '@/components/svg/GearSvg';
-import HeaderButton from '@/components/TileSettingsButton';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import useTileLocation from '@/contexts/tile_locations/useTileLocation';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
