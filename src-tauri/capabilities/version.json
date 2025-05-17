@@ -1,0 +1,6 @@
+{
+	"identifier": "version",
+	"description": "This capability allows access to the app version.",
+	"windows": ["main"],
+	"permissions": ["core:app:allow-version"]
+}

@@ -1,6 +1,6 @@
 {
 	"name": "slime2-widget-server",
-	"version": "0.0.0",
+	"version": "0.0.1-alpha",
 	"description": "Widget Server Wrapper for slime2",
 	"private": true,
 	"type": "module",

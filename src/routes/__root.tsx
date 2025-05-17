@@ -4,8 +4,10 @@ import DialogProvider from '@/contexts/dialog/DialogProvider';
 import { loadWidgetSettings } from '@/helpers/json/widgetSettings';
 import { loadWidgetValues } from '@/helpers/json/widgetValues';
 import { sendWidgetValues } from '@/helpers/websocket';
+import { useQuery } from '@tanstack/react-query';
 
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router';
+import { getVersion } from '@tauri-apps/api/app';
 import { listen, UnlistenFn } from '@tauri-apps/api/event';
 import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { useEffect } from 'react';
@@ -16,6 +18,12 @@ const appWindow = getCurrentWebviewWindow();
 export const Route = createRootRoute({ component: Root });
 
 function Root() {
+	const versionQuery = useQuery({
+		queryKey: ['version'],
+		queryFn: getVersion,
+		networkMode: 'always',
+	});
+
 	useEffect(() => {
 		let unlisten: UnlistenFn | undefined = undefined;
 
@@ -90,6 +98,9 @@ function Root() {
 								_
 							</button>
 						</div>
+						{versionQuery.data && (
+							<p className='mt-2 text-center'>v{versionQuery.data}</p>
+						)}
 						<div className='absolute right-0 bottom-4 left-0 pr-4 pb-4 pl-3'>
 							<img src={logoSlime} className='text-slate-700' />
 						</div>

@@ -26,7 +26,7 @@
 	},
 	"productName": "slime2",
 	"mainBinaryName": "slime2",
-	"version": "0.0.0",
+	"version": "../package.json",
 	"identifier": "stream.slime2.desktop",
 	"plugins": {},
 	"app": {
@@ -46,7 +46,8 @@
 				"clipboard",
 				"file",
 				"event",
-				"websocket"
+				"websocket",
+				"version"
 			],
 			"csp": {
 				"default-src": ["'self'", "http://localhost:*"]
