@@ -40,7 +40,14 @@
 			}
 		],
 		"security": {
-			"capabilities": ["default", "dialog", "clipboard", "file", "event"],
+			"capabilities": [
+				"default",
+				"dialog",
+				"clipboard",
+				"file",
+				"event",
+				"websocket"
+			],
 			"csp": {
 				"default-src": ["'self'", "http://localhost:*"]
 			}

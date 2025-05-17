@@ -1,0 +1,6 @@
+{
+	"identifier": "websocket",
+	"description": "This capability allows the app to connect to websockets, such as Twitch EventSub.",
+	"windows": ["main"],
+	"permissions": ["websocket:allow-connect"]
+}

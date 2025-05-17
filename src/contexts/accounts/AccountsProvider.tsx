@@ -1,5 +1,5 @@
-import { loadAccounts } from '@/helpers/json/accounts';
-import { memo, useEffect, useReducer } from 'react';
+import { getAccountKey, loadAccounts } from '@/helpers/json/accounts';
+import { memo, useEffect, useReducer, useRef } from 'react';
 import { AccountsContext } from './useAccounts';
 import {
 	AccountsDispatchContext,
@@ -19,6 +19,24 @@ const AccountsProvider = memo(function AccountsProvider({
 
 		getAccounts();
 	}, []);
+
+	const accountConnectionsRef = useRef(
+		new Map<
+			string,
+			{
+				listener: (data: unknown) => void;
+				unlisten: VoidFunction;
+				commander: (data: unknown) => unknown;
+			}
+		>(),
+	);
+
+	useEffect(() => {
+		Object.values(accounts).forEach(account => {
+			if (!accountConnectionsRef.current.has(getAccountKey(account))) {
+			}
+		});
+	}, [accounts]);
 
 	return (
 		<AccountsContext value={accounts}>

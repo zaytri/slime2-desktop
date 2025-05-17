@@ -24,7 +24,7 @@ export async function saveAccounts(accounts: Accounts): Promise<void> {
 }
 
 export function getAccountKey(account: Account) {
-	return `${account.type}_${account.id}`;
+	return `${account.service}_${account.type}_${account.id}`;
 }
 
 export async function getTokens(account: Account): Promise<Tokens | null> {

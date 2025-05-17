@@ -40,8 +40,9 @@ async fn main() {
 			.unwrap();
 		}))
 		.plugin(tauri_plugin_shell::init())
-		.plugin(tauri_plugin_clipboard_manager::init())
+		.plugin(tauri_plugin_websocket::init())
 		.plugin(tauri_plugin_dialog::init())
+		.plugin(tauri_plugin_clipboard_manager::init())
 		.manage(connections.clone())
 		.setup(|app: &mut tauri::App| {
 			let app_handle = app.app_handle().clone();
