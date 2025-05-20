@@ -8,6 +8,7 @@
 		"start": "npm run widget:build && npm run dev",
 		"dev": "concurrently --kill-others -n TAURI,WIDGET -c green.bold,yellow.bold \"tauri dev\" \"npm:widget:dev\"",
 		"build": "tauri build",
+		"build:debug": "tauri build --debug",
 		"tauri": "tauri",
 		"icon": "npm run tauri icon",
 		"before:dev": "vite",

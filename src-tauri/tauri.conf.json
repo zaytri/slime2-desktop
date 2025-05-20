@@ -50,7 +50,9 @@
 				"version"
 			],
 			"csp": {
-				"default-src": ["'self'", "http://localhost:*"]
+				"default-src": ["'self'", "http://localhost:*"],
+				"style-src": ["'self'", "https://fonts.googleapis.com"],
+				"font-src": ["https://fonts.gstatic.com"]
 			}
 		}
 	}
