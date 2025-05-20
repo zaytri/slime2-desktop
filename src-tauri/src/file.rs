@@ -281,8 +281,9 @@ pub fn clean_tiles_folder(app: &AppHandle) -> io::Result<()> {
 
 	let tile_locations_json = load_json(tile_locations_path)?;
 
-	let tile_locations_data =
-		serde_json::from_str::<TileLocations>(&tile_locations_json)?;
+	let tile_locations = serde_json::from_str::<HashMap<String, TileLocation>>(
+		&tile_locations_json,
+	)?;
 
 	let tiles_path = tiles_path(app);
 
@@ -291,7 +292,7 @@ pub fn clean_tiles_folder(app: &AppHandle) -> io::Result<()> {
 		let file_type = entry.file_type()?;
 		if file_type.is_dir() {
 			if let Some(file_name) = entry.file_name().to_str() {
-				if !tile_locations_data.locations.contains_key(file_name) {
+				if !tile_locations.contains_key(file_name) {
 					fs::remove_dir_all(entry.path())?
 				}
 			}
