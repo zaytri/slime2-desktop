@@ -3,7 +3,7 @@ import { useDialog } from '@/contexts/dialog/useDialog';
 import { memo } from 'react';
 
 const Dialog = memo(function Dialog({ children }: Props.WithChildren) {
-	const { close, onCancel } = useDialog();
+	const { closeDialog: close, onCancel } = useDialog();
 
 	if (children === null) return null;
 

@@ -9,13 +9,14 @@ import clsx from 'clsx';
 import { memo } from 'react';
 import { z } from 'zod';
 import InputDescription from './InputDescription';
+import SelectFontDialog from './SelectFontDialog';
 
 const FontInput = memo(function FontInput(
 	setting: Props.WithId<WidgetSetting.Input.Font>,
 ) {
 	const key = useWidgetValueKey(setting.id);
 	const { widgetValue, setWidgetValue } = useWidgetValue(key);
-	const { open } = useDialog();
+	const { openDialog } = useDialog();
 
 	const value = z
 		.string()
@@ -27,10 +28,7 @@ const FontInput = memo(function FontInput(
 		: 'Select font...';
 
 	function openSelectFontDialog() {
-		open({
-			name: 'SelectFont',
-			payload: { value, onChange: setWidgetValue },
-		});
+		openDialog(<SelectFontDialog value={value} onChange={setWidgetValue} />);
 	}
 
 	return (

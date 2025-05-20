@@ -1,4 +1,3 @@
-import { DeleteWidgetPayload } from '@/contexts/dialog/DialogType';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import useTileFolder from '@/contexts/tile_locations/useTileFolder';
 import { useTileLocationsDispatch } from '@/contexts/tile_locations/useTileLocationsDispatch';
@@ -8,9 +7,14 @@ import { useNavigate } from '@tanstack/react-router';
 import { memo } from 'react';
 import DialogHeader from './DialogHeader';
 
-const DeleteWidgetDialog = memo(function DeleteWidgetDialog() {
-	const { payload, close, onCancel } = useDialog<DeleteWidgetPayload>();
-	const { id } = payload;
+type DeleteFolderDialogProps = {
+	id: string;
+};
+
+const DeleteFolderDialog = memo(function DeleteFolderDialog({
+	id,
+}: DeleteFolderDialogProps) {
+	const { closeDialog, onCancel } = useDialog();
 	const { tileMeta } = useTileMeta(id);
 	const { removeTile } = useTileLocationsDispatch();
 	const { status } = useTileFolder(id);
@@ -51,7 +55,7 @@ const DeleteWidgetDialog = memo(function DeleteWidgetDialog() {
 							type='button'
 							className='group over:translate-y-0.5 over:bg-none over:shadow-none flex-1 rounded-lg border-2 border-rose-800 bg-rose-300 bg-linear-to-b from-rose-300 from-50% to-rose-400 to-50% py-2 text-xl font-medium text-rose-900 shadow-[0_2px] shadow-rose-800 transition-[gap]'
 							onClick={async () => {
-								close();
+								closeDialog();
 								await navigate({ to: '/', replace: true });
 								await deleteWidgetFolder(id);
 								removeTile(id);
@@ -66,4 +70,4 @@ const DeleteWidgetDialog = memo(function DeleteWidgetDialog() {
 	);
 });
 
-export default DeleteWidgetDialog;
+export default DeleteFolderDialog;

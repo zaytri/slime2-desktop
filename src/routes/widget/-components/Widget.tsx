@@ -1,3 +1,4 @@
+import TileSettingsDialog from '@/components/dialog/TileSettingsDialog';
 import Header from '@/components/header/Header';
 import HeaderButton from '@/components/header/HeaderButton';
 import HeaderText from '@/components/header/HeaderText';
@@ -18,7 +19,7 @@ const Widget = memo(function Widget() {
 
 	const { tileMeta } = useTileMeta(widgetId);
 	const tileLocation = useTileLocation(widgetId);
-	const { open } = useDialog();
+	const { openDialog } = useDialog();
 
 	return (
 		<div className='flex w-full flex-col'>
@@ -50,10 +51,7 @@ const Widget = memo(function Widget() {
 				<HeaderButton
 					icon={<GearSvg className='size-7' />}
 					onClick={() => {
-						open({
-							name: 'TileSettings',
-							payload: { id: widgetId },
-						});
+						openDialog(<TileSettingsDialog id={widgetId} />);
 					}}
 				>
 					Tile Settings

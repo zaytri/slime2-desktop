@@ -9,13 +9,14 @@ import clsx from 'clsx';
 import { memo } from 'react';
 import { z } from 'zod';
 import InputDescription from './InputDescription';
+import SelectColorDialog from './SelectColorDialog';
 
 const ColorInput = memo(function ColorInput(
 	setting: Props.WithId<WidgetSetting.Input.Color>,
 ) {
 	const key = useWidgetValueKey(setting.id);
 	const { widgetValue, setWidgetValue } = useWidgetValue(key);
-	const { open } = useDialog();
+	const { openDialog } = useDialog();
 
 	const value = z
 		.string()
@@ -32,13 +33,9 @@ const ColorInput = memo(function ColorInput(
 				type='button'
 				className='input-wrapper group items-center gap-2'
 				onClick={() => {
-					open({
-						name: 'SelectColor',
-						payload: {
-							value,
-							onSave: setWidgetValue,
-						},
-					});
+					openDialog(
+						<SelectColorDialog value={value} onSave={setWidgetValue} />,
+					);
 				}}
 			>
 				<div className='flex flex-1 flex-col'>

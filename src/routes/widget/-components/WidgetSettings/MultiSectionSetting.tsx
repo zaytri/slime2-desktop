@@ -1,3 +1,4 @@
+import RenameDialog from '@/components/dialog/RenameDialog';
 import TriangleDownSvg from '@/components/svg/TriangleDownSvg';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidgetValueKey';
@@ -27,7 +28,7 @@ const MultiSectionSetting = memo(function MultiSectionSetting({
 	const { duplicate, set } = useWidgetValuesDispatch();
 	const { hash, state: locationState } = useLocation();
 	const navigate = useNavigate();
-	const { open } = useDialog();
+	const { openDialog } = useDialog();
 	const mainDisclosureButtonRef = useRef<HTMLButtonElement>(null);
 
 	const subsections = z.array(z.string()).catch([]).parse(widgetValue);
@@ -84,15 +85,14 @@ const MultiSectionSetting = memo(function MultiSectionSetting({
 					type='button'
 					className='rounded-2 over:translate-y-0.5 over:from-stone-300 over:to-stone-200 over:shadow-none font-quicksand w-full flex-1 border border-white bg-stone-400 bg-linear-to-b from-stone-200 to-stone-300 py-1 font-medium text-stone-700 shadow-[0_2px_0_1px] shadow-stone-400 outline outline-stone-400 focus-visible:outline-2 focus-visible:outline-offset-0! focus-visible:outline-black'
 					onClick={() => {
-						open({
-							name: 'Rename',
-							payload: {
-								onSave: value => {
+						openDialog(
+							<RenameDialog
+								onSave={value => {
 									const newSubsection = createNewSubsection(value);
 									setWidgetValue([newSubsection.id, ...subsections]);
-								},
-							},
-						});
+								}}
+							/>,
+						);
 					}}
 				>
 					Add New

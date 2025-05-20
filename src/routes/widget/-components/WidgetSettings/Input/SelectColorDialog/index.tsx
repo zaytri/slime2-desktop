@@ -1,21 +1,25 @@
-import { SelectColorPayload } from '@/contexts/dialog/DialogType';
+import ColorInputPreview from '@/components/ColorInputPreview';
+import DialogHeader from '@/components/dialog/DialogHeader';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { Field, Input, Label } from '@headlessui/react';
 import { HsvaColor, hsvaToRgba, rgbaToHsva } from '@uiw/react-color';
 import { memo, useState } from 'react';
-import ColorInputPreview from '../../ColorInputPreview';
-import DialogHeader from '../DialogHeader';
 import AlphaSlider from './AlphaSlider';
 import { hsvaToString, stringToHsva } from './colorConversion';
 import HueSlider from './HueSlider';
 import RgbaInput from './RgbaInput';
 import SaturationGrid from './SaturationGrid';
 
-const SelectColorDialog = memo(function SelectColorDialog() {
-	const {
-		payload: { onSave, value },
-		close,
-	} = useDialog<SelectColorPayload>();
+type SelectColorDialogProps = {
+	value?: string;
+	onSave: (color: string) => void;
+};
+
+const SelectColorDialog = memo(function SelectColorDialog({
+	value,
+	onSave,
+}: SelectColorDialogProps) {
+	const { closeDialog } = useDialog();
 	const [stringValue, setStringValue] = useState(value);
 	const [hsvaValue, setHsvaValue] = useState<HsvaColor>(
 		stringToHsva(stringValue),
@@ -148,7 +152,7 @@ const SelectColorDialog = memo(function SelectColorDialog() {
 							onSave(stringValue);
 						}
 
-						close();
+						closeDialog();
 					}}
 				>
 					Save

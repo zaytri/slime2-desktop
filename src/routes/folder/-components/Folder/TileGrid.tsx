@@ -2,12 +2,12 @@ import { useDialog } from '@/contexts/dialog/useDialog';
 import useTileFolder, {
 	TILES_PER_PAGE,
 } from '@/contexts/tile_locations/useTileFolder';
-import { useTileLocationsDispatch } from '@/contexts/tile_locations/useTileLocationsDispatch';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import { useNavigate } from '@tanstack/react-router';
 import { memo } from 'react';
 import Tile from '../Tile';
 import EmptyTile from '../Tile/EmptyTile';
+import CreateTileDialog from './CreateTileDialog';
 
 type FolderPageProps = {
 	folderId: string;
@@ -17,8 +17,7 @@ type FolderPageProps = {
 const TileGrid = memo(function TileGrid({ folderId, page }: FolderPageProps) {
 	const { getPage: getPage } = useTileFolder(folderId);
 	const { tileMeta: folderTileMeta } = useTileMeta(folderId);
-	const { removeTile } = useTileLocationsDispatch();
-	const { open } = useDialog();
+	const { openDialog } = useDialog();
 	const navigate = useNavigate();
 
 	return (
@@ -43,14 +42,11 @@ const TileGrid = memo(function TileGrid({ folderId, page }: FolderPageProps) {
 										to: '/widget/$widgetId',
 										params: { widgetId: tile.id },
 									});
-									// await deleteWidget(tile.id);
-									// removeTile(tile.id);
 								}
 							} else {
-								open({
-									name: 'CreateTile',
-									payload: { folderId, index: tileIndex },
-								});
+								openDialog(
+									<CreateTileDialog folderId={folderId} index={tileIndex} />,
+								);
 							}
 						}}
 					>

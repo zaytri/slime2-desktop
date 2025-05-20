@@ -2,10 +2,11 @@ import { useDialog } from '@/contexts/dialog/useDialog';
 import { startTwitchDeviceCodeFlow } from '@/helpers/twitchAuth';
 import { memo, useState } from 'react';
 import DialogHeader from './DialogHeader';
+import TwitchActivationDialog from './TwitchActivationDialog';
 
 const AddAccountDialog = memo(function AddAccountDialog() {
 	const [loading, setLoading] = useState(false);
-	const { open } = useDialog();
+	const { openDialog } = useDialog();
 
 	return (
 		<div>
@@ -21,14 +22,16 @@ const AddAccountDialog = memo(function AddAccountDialog() {
 							setLoading(true);
 
 							startTwitchDeviceCodeFlow().then(response => {
-								open({
-									name: 'TwitchActivation',
-									payload: {
-										deviceCode: response.data.device_code,
-										userCode: response.data.user_code,
-										verificationUri: response.data.verification_uri,
-									},
-								});
+								const { device_code, user_code, verification_uri } =
+									response.data;
+
+								openDialog(
+									<TwitchActivationDialog
+										deviceCode={device_code}
+										userCode={user_code}
+										verificationUri={verification_uri}
+									/>,
+								);
 							});
 						}}
 					>

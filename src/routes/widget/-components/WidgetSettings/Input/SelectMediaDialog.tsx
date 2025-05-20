@@ -1,3 +1,4 @@
+import DialogHeader from '@/components/dialog/DialogHeader';
 import MediaInputPreview from '@/components/MediaInputPreview';
 import { SelectMediaPayload } from '@/contexts/dialog/DialogType';
 import { useDialog } from '@/contexts/dialog/useDialog';
@@ -15,13 +16,17 @@ import InputDescription from '@/routes/widget/-components/WidgetSettings/Input/I
 import { useParams } from '@tanstack/react-router';
 import clsx from 'clsx';
 import { memo, useState } from 'react';
-import DialogHeader from './DialogHeader';
 
-const SelectMediaDialog = memo(function SelectMediaDialog() {
-	const {
-		payload: { type, onSave },
-		close,
-	} = useDialog<SelectMediaPayload>();
+type SelectMediaDialogProps = {
+	type: 'image' | 'video' | 'audio';
+	onSave: (fileName: string) => void;
+};
+
+const SelectMediaDialog = memo(function SelectMediaDialog({
+	type,
+	onSave,
+}: SelectMediaDialogProps) {
+	const { closeDialog } = useDialog();
 	const { widgetId } = useParams({ from: '/widget/$widgetId' });
 	const [value, setValue] = useState<string | undefined>(undefined);
 
@@ -91,7 +96,7 @@ const SelectMediaDialog = memo(function SelectMediaDialog() {
 									onSave(fileName);
 								}
 
-								close();
+								closeDialog();
 							}}
 						>
 							Save

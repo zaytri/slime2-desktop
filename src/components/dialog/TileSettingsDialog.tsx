@@ -1,5 +1,4 @@
 import TrashSvg from '@/components/svg/TrashSvg';
-import { TileSettingsPayload } from '@/contexts/dialog/DialogType';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import { saveTempTileIcon, tempCopy } from '@/helpers/commands';
@@ -17,6 +16,8 @@ import {
 } from '@headlessui/react';
 import clsx from 'clsx';
 import { memo, useCallback, useState } from 'react';
+import DeleteFolderDialog from './DeleteFolderDialog';
+import DeleteWidgetDialog from './DeleteWidgetDialog';
 import DialogHeader from './DialogHeader';
 
 const colors: {
@@ -36,9 +37,14 @@ const colors: {
 	className: tileColorClasses[color].main,
 }));
 
-const TileSettingsDialog = memo(function TileSettingsDialog() {
-	const { close, payload, open } = useDialog<TileSettingsPayload>();
-	const { id } = payload;
+type TileSettingsDialogProps = {
+	id: string;
+};
+
+const TileSettingsDialog = memo(function TileSettingsDialog({
+	id,
+}: TileSettingsDialogProps) {
+	const { closeDialog, openDialog } = useDialog();
 	const { tileMeta, setTileMeta } = useTileMeta(id);
 
 	const [name, setName] = useState(tileMeta.name);
@@ -70,7 +76,7 @@ const TileSettingsDialog = memo(function TileSettingsDialog() {
 			});
 		}
 
-		close();
+		closeDialog();
 	}, [
 		icon,
 		name,
@@ -79,7 +85,7 @@ const TileSettingsDialog = memo(function TileSettingsDialog() {
 		saveTempTileIcon,
 		setTileMeta,
 		unsavedChanges,
-		close,
+		closeDialog,
 	]);
 
 	return (
@@ -186,16 +192,16 @@ const TileSettingsDialog = memo(function TileSettingsDialog() {
 						type='button'
 						className='group over:translate-y-[2px] over:gap-2 over:bg-none over:shadow-none flex items-center gap-0 rounded-lg border-2 border-rose-800 bg-rose-300 bg-linear-to-b from-rose-300 from-50% to-rose-400 to-50% px-4 font-medium text-rose-900 shadow-[0_2px] shadow-rose-800 transition-[gap]'
 						onClick={() => {
-							open({
-								name: type === 'folder' ? 'DeleteFolder' : 'DeleteWidget',
-								payload: { id },
-								onCancel: () => {
-									open({
-										name: 'TileSettings',
-										payload: { id },
-									});
+							openDialog(
+								type === 'folder' ? (
+									<DeleteFolderDialog id={id} />
+								) : (
+									<DeleteWidgetDialog id={id} />
+								),
+								() => {
+									openDialog(<TileSettingsDialog id={id} />);
 								},
-							});
+							);
 						}}
 					>
 						<span className='group-over:text-xl group-over:opacity-100 text-[.1px] opacity-0 transition-[font-size]'>

@@ -1,3 +1,4 @@
+import AddAccountDialog from '@/components/dialog/AddAccountDialog';
 import Header from '@/components/header/Header';
 import HeaderButton from '@/components/header/HeaderButton';
 import HeaderText from '@/components/header/HeaderText';
@@ -9,7 +10,7 @@ import { getAccountKey } from '@/helpers/json/accounts';
 import { memo } from 'react';
 
 const Settings = memo(function Settings() {
-	const { open } = useDialog();
+	const { openDialog } = useDialog();
 	const accounts = useAccounts();
 
 	return (
@@ -29,7 +30,7 @@ const Settings = memo(function Settings() {
 						<button
 							className='flex flex-col items-center gap-1'
 							onClick={() => {
-								open({ name: 'AddAccount' });
+								openDialog(<AddAccountDialog />);
 							}}
 						>
 							<div className='relative'>

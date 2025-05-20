@@ -1,4 +1,5 @@
 import bg from '@/assets/bliss.jpg';
+import TileSettingsDialog from '@/components/dialog/TileSettingsDialog';
 import Header from '@/components/header/Header';
 import HeaderButton from '@/components/header/HeaderButton';
 import HeaderText from '@/components/header/HeaderText';
@@ -21,7 +22,7 @@ type FolderProps = {
 
 const Folder = memo(function Folder({ folderId }: FolderProps) {
 	const { tileMeta } = useTileMeta(folderId);
-	const { open } = useDialog();
+	const { openDialog } = useDialog();
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const changePage = useCallback(
 		(action: 'previous' | 'next') => {
@@ -61,10 +62,7 @@ const Folder = memo(function Folder({ folderId }: FolderProps) {
 					<HeaderButton
 						icon={<GearSvg className='size-7' />}
 						onClick={() => {
-							open({
-								name: 'TileSettings',
-								payload: { id: folderId },
-							});
+							openDialog(<TileSettingsDialog id={folderId} />);
 						}}
 					>
 						Tile Settings

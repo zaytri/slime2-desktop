@@ -1,3 +1,4 @@
+import MediaInputPreview from '@/components/MediaInputPreview';
 import TrashSvg from '@/components/svg/TrashSvg';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import useWidgetValueKey from '@/contexts/widget_setting_parent/useWidgetValueKey';
@@ -13,8 +14,8 @@ import { useParams } from '@tanstack/react-router';
 import clsx from 'clsx';
 import { memo } from 'react';
 import { z } from 'zod';
-import MediaInputPreview from '../../../../../components/MediaInputPreview';
 import InputDescription from './InputDescription';
+import SelectMediaDialog from './SelectMediaDialog';
 
 const MediaInput = memo(function MediaInput(
 	setting: Props.WithId<
@@ -26,7 +27,7 @@ const MediaInput = memo(function MediaInput(
 	const key = useWidgetValueKey(setting.id);
 	const { widgetValue, setWidgetValue } = useWidgetValue(key);
 	const { widgetId } = useParams({ from: '/widget/$widgetId' });
-	const { open } = useDialog();
+	const { openDialog } = useDialog();
 
 	const value = z
 		.string()
@@ -49,15 +50,14 @@ const MediaInput = memo(function MediaInput(
 						type='button'
 						className='button-choose-file'
 						onClick={() => {
-							open({
-								name: 'SelectMedia',
-								payload: {
-									type: mediaType,
-									onSave: fileName => {
+							openDialog(
+								<SelectMediaDialog
+									type={mediaType}
+									onSave={fileName => {
 										setWidgetValue(`custom/${fileName}`);
-									},
-								},
-							});
+									}}
+								/>,
+							);
 						}}
 					>
 						{value ? 'Change' : 'Add'}{' '}

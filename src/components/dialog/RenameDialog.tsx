@@ -1,14 +1,18 @@
-import { RenamePayload } from '@/contexts/dialog/DialogType';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { Field, Input, Label } from '@headlessui/react';
 import { memo, useState } from 'react';
 import DialogHeader from './DialogHeader';
 
-const RenameDialog = memo(function RenameDialog() {
-	const {
-		payload: { value, onSave },
-		close,
-	} = useDialog<RenamePayload>();
+type RenameDialogProps = {
+	value?: string;
+	onSave: (value: string) => void;
+};
+
+const RenameDialog = memo(function RenameDialog({
+	value,
+	onSave,
+}: RenameDialogProps) {
+	const { closeDialog } = useDialog();
 	const [inputValue, setInputValue] = useState(value ?? 'New');
 
 	return (
@@ -38,7 +42,7 @@ const RenameDialog = memo(function RenameDialog() {
 					onClick={async () => {
 						onSave(inputValue || value || 'New');
 
-						close();
+						closeDialog();
 					}}
 				>
 					Save

@@ -1,6 +1,6 @@
 {
 	"name": "slime2",
-	"version": "0.0.1-alpha",
+	"version": "0.0.1",
 	"description": "Local Stream Widget Manager",
 	"private": true,
 	"type": "module",

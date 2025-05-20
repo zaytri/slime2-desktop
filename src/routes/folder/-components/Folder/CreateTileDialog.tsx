@@ -1,14 +1,21 @@
+import DialogHeader from '@/components/dialog/DialogHeader';
 import PlusSvg from '@/components/svg/PlusSvg';
-import { CreateTilePayload } from '@/contexts/dialog/DialogType';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useTileLocationsDispatch } from '@/contexts/tile_locations/useTileLocationsDispatch';
 import { createWidgetFolder, installDefaultWidget } from '@/helpers/commands';
 import clsx from 'clsx';
 import { memo } from 'react';
-import DialogHeader from './DialogHeader';
 
-const CreateTileDialog = memo(function CreateTileDialog() {
-	const { payload, close } = useDialog<CreateTilePayload>();
+type CreateTileDialogProps = {
+	folderId: string;
+	index: number;
+};
+
+const CreateTileDialog = memo(function CreateTileDialog({
+	folderId,
+	index,
+}: CreateTileDialogProps) {
+	const { closeDialog } = useDialog();
 	const { addTile } = useTileLocationsDispatch();
 
 	return (
@@ -20,24 +27,24 @@ const CreateTileDialog = memo(function CreateTileDialog() {
 						className='rounded-slime'
 						onClick={async () => {
 							const id = await installDefaultWidget('test');
-							addTile({ id, index: payload.index, folderId: payload.folderId });
-							close();
+							addTile({ id, index, folderId });
+							closeDialog();
 						}}
 					>
 						Widget
 					</CreateButton>
 
-					{payload.folderId === 'main' && (
+					{folderId === 'main' && (
 						<CreateButton
 							className='rounded-10%'
 							onClick={async () => {
 								const id = await createWidgetFolder();
 								addTile({
 									id,
-									index: payload.index,
-									folderId: payload.folderId,
+									index,
+									folderId,
 								});
-								close();
+								closeDialog();
 							}}
 						>
 							Folder

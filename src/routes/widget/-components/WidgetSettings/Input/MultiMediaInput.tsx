@@ -15,6 +15,7 @@ import { memo } from 'react';
 import { z } from 'zod';
 import MediaInputPreview from '../../../../../components/MediaInputPreview';
 import InputDescription from './InputDescription';
+import SelectMediaDialog from './SelectMediaDialog';
 
 const MultiMediaInput = memo(function MultiMediaInput(
 	setting: Props.WithId<
@@ -26,7 +27,7 @@ const MultiMediaInput = memo(function MultiMediaInput(
 	const key = useWidgetValueKey(setting.id);
 	const { widgetValue, setWidgetValue } = useWidgetValue(key);
 	const { widgetId } = useParams({ from: '/widget/$widgetId' });
-	const { open } = useDialog();
+	const { openDialog } = useDialog();
 
 	const values = z
 		.array(z.string())
@@ -55,15 +56,14 @@ const MultiMediaInput = memo(function MultiMediaInput(
 						type='button'
 						className='button-choose-file'
 						onClick={() => {
-							open({
-								name: 'SelectMedia',
-								payload: {
-									type: mediaType,
-									onSave: fileName => {
+							openDialog(
+								<SelectMediaDialog
+									type={mediaType}
+									onSave={fileName => {
 										setWidgetValue([`custom/${fileName}`, ...values]);
-									},
-								},
-							});
+									}}
+								/>,
+							);
 						}}
 					>
 						Add <span className='capitalize'>{mediaType}</span>

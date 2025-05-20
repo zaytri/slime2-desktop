@@ -1,3 +1,4 @@
+import RenameDialog from '@/components/dialog/RenameDialog';
 import DoubleSquareSvg from '@/components/svg/DoubleSquareSvg';
 import GearSvg from '@/components/svg/GearSvg';
 import PencilSvg from '@/components/svg/PencilSvg';
@@ -31,7 +32,7 @@ const MultiSubsection = memo(function MultiSubsection({
 	onDuplicate,
 }: Props.WithId<Props.WithChildren<MultiSectionProps>>) {
 	const { widgetValue, setWidgetValue } = useWidgetValue(id);
-	const { open } = useDialog();
+	const { openDialog } = useDialog();
 
 	const value = z.string().catch('New').parse(widgetValue);
 
@@ -67,13 +68,9 @@ const MultiSubsection = memo(function MultiSubsection({
 								as='button'
 								className='mini-menu-item'
 								onClick={() => {
-									open({
-										name: 'Rename',
-										payload: {
-											value,
-											onSave: setWidgetValue,
-										},
-									});
+									openDialog(
+										<RenameDialog value={value} onSave={setWidgetValue} />,
+									);
 								}}
 							>
 								<PencilSvg className='size-3.5' />

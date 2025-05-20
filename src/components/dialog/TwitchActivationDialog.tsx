@@ -1,20 +1,29 @@
 import { useAccountsDispatch } from '@/contexts/accounts/useAccountsDispatch';
-import { TwitchActivationPayload } from '@/contexts/dialog/DialogType';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { Account, setTokens } from '@/helpers/json/accounts';
 import { getUser, obtainTwitchTokens, verifyToken } from '@/helpers/twitchAuth';
 import { memo, useEffect, useState } from 'react';
 import DialogHeader from './DialogHeader';
 
-const TwitchActivationDialog = memo(function TwitchActivationDialog() {
-	const { payload, close } = useDialog<TwitchActivationPayload>();
+type TwitchActivationDialogProps = {
+	deviceCode: string;
+	userCode: string;
+	verificationUri: string;
+};
+
+const TwitchActivationDialog = memo(function TwitchActivationDialog({
+	deviceCode,
+	userCode,
+	verificationUri,
+}: TwitchActivationDialogProps) {
+	const { closeDialog } = useDialog();
 	const [activating, setActivating] = useState(false);
 	const { addAccount: set } = useAccountsDispatch();
 
 	useEffect(() => {
 		if (activating) {
 			const activationLoop = setInterval(() => {
-				obtainTwitchTokens(payload.deviceCode)
+				obtainTwitchTokens(deviceCode)
 					.then(response => {
 						setActivating(false);
 						const { access_token, refresh_token, scope } = response.data;
@@ -38,7 +47,7 @@ const TwitchActivationDialog = memo(function TwitchActivationDialog() {
 
 								setTokens(account, access_token, refresh_token);
 								set(account);
-								close();
+								closeDialog();
 							});
 						});
 					})
@@ -58,13 +67,13 @@ const TwitchActivationDialog = memo(function TwitchActivationDialog() {
 			<DialogHeader>Twitch Activation Code</DialogHeader>
 			<div className='flex flex-col gap-3'>
 				<p className='text-10 font-quicksand text-center font-medium tracking-widest'>
-					{payload.userCode}
+					{userCode}
 				</p>
 				<p className='font-quicksand'>
 					Click the button below and enter the activation code.
 				</p>
 				<a
-					href={payload.verificationUri}
+					href={verificationUri}
 					target='_blank'
 					className='rounded-2 over:translate-y-0.5 over:bg-none over:shadow-none flex-1 border-2 border-emerald-800 bg-lime-400 bg-linear-to-b from-lime-300 from-50% to-lime-400 to-50% py-2 text-center text-xl font-medium text-emerald-900 shadow-[0_2px] shadow-emerald-800'
 					onClick={() => {

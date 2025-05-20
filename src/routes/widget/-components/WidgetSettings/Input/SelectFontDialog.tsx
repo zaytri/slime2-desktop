@@ -1,15 +1,19 @@
-import { SelectFontPayload } from '@/contexts/dialog/DialogType';
+import DialogHeader from '@/components/dialog/DialogHeader';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useSystemFonts } from '@/helpers/queryHooks';
 import { Checkbox, Field, Input, Label } from '@headlessui/react';
 import { memo, useEffect, useRef, useState } from 'react';
-import DialogHeader from './DialogHeader';
 
-const SelectFontDialog = memo(function SelectFontDialog() {
-	const {
-		payload: { onChange, value },
-		close,
-	} = useDialog<SelectFontPayload>();
+type SelectFontDialogProps = {
+	value?: string;
+	onChange: (font: string) => void;
+};
+
+const SelectFontDialog = memo(function SelectFontDialog({
+	value,
+	onChange,
+}: SelectFontDialogProps) {
+	const { closeDialog } = useDialog();
 	const [search, setSearch] = useState('');
 	const { data } = useSystemFonts();
 	const scrollRef = useRef<HTMLDivElement>(null);
@@ -69,7 +73,7 @@ const SelectFontDialog = memo(function SelectFontDialog() {
 								if (newValue) {
 									event.preventDefault();
 									onChange(newValue);
-									close();
+									closeDialog();
 								}
 							}
 
@@ -113,7 +117,7 @@ const SelectFontDialog = memo(function SelectFontDialog() {
 										className='pl-2 data-checked:bg-lime-600 data-checked:text-white data-over:bg-lime-200 data-over:text-black data-checked:data-over:bg-lime-600 data-checked:data-over:text-white'
 										onClick={() => {
 											onChange(font);
-											close();
+											closeDialog();
 										}}
 									>
 										<Label style={{ fontFamily: `${font}, sans-serif` }}>

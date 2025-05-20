@@ -1,11 +1,8 @@
 import { createContext, useContext } from 'react';
 import { contextErrorMessage } from '../common';
-import { DialogType } from './DialogType';
 
-export function useDialog<
-	Payload extends DialogType['payload'] = never,
->(): DialogState<Payload> {
-	const context = useContext<DialogState<Payload> | undefined>(DialogContext);
+export function useDialog(): DialogState {
+	const context = useContext(DialogContext);
 
 	if (!context) {
 		throw new Error(contextErrorMessage('useDialog', 'DialogContext'));
@@ -14,14 +11,11 @@ export function useDialog<
 	return context;
 }
 
-type DialogState<Payload extends DialogType['payload']> = {
-	name: DialogType['name'];
-	payload: Payload;
-	open: (dialog: DialogType) => void;
-	close: () => void;
-	onCancel?: () => void;
+type DialogState = {
+	component: React.ReactNode;
+	openDialog: (component: React.ReactNode, onCancel?: VoidFunction) => void;
+	closeDialog: VoidFunction;
+	onCancel?: VoidFunction;
 };
 
-export const DialogContext = createContext<DialogState<any> | undefined>(
-	undefined,
-);
+export const DialogContext = createContext<DialogState | undefined>(undefined);
