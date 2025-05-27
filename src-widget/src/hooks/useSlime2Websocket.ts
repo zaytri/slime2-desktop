@@ -4,7 +4,7 @@ import useWebSocket from 'react-use-websocket';
 import { WEBSOCKET_URL } from '../helpers/serverUrl';
 
 export default function useSlime2Websocket() {
-	const { widgetId } = useLoaderData({ from: '/' });
+	const { widgetId } = useLoaderData({ from: '/$' });
 	const registeredRef = useRef(false);
 	const { sendJsonMessage } = useWebSocket(WEBSOCKET_URL, {
 		onMessage: event => {

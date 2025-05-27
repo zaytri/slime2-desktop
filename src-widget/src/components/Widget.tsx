@@ -4,7 +4,7 @@ import useMetaLoader from '../hooks/useMetaLoader';
 import useSlime2Websocket from '../hooks/useSlime2Websocket';
 
 const Widget = memo(function Widget() {
-	const { html } = useLoaderData({ from: '/' });
+	const { html } = useLoaderData({ from: '/$' });
 	useMetaLoader();
 	useSlime2Websocket();
 

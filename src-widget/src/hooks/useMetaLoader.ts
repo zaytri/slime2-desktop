@@ -4,7 +4,7 @@ import { BASE_DATA_URL } from '../helpers/serverUrl';
 import { Meta } from '../helpers/widgetApi';
 
 export default function useMetaLoader() {
-	const { meta, widgetId } = useLoaderData({ from: '/' });
+	const { meta, widgetId } = useLoaderData({ from: '/$' });
 	const loadingRef = useRef(true);
 
 	useEffect(() => {
