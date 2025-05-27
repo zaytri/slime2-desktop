@@ -66,7 +66,7 @@ export function accountsReducer(
 		case 'remove': {
 			const account = newState[action.id];
 
-			if (account) deleteTokens(account);
+			if (account) deleteTokens(account.id);
 
 			delete newState[action.id];
 			break;

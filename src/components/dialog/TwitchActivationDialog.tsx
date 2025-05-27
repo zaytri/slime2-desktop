@@ -2,6 +2,7 @@ import { useAccountsDispatch } from '@/contexts/accounts/useAccountsDispatch';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { Account, setTokens } from '@/helpers/json/accounts';
 import { getUser, obtainTwitchTokens, verifyToken } from '@/helpers/twitchAuth';
+import { nanoid } from 'nanoid';
 import { memo, useEffect, useState } from 'react';
 import DialogHeader from './DialogHeader';
 
@@ -34,18 +35,19 @@ const TwitchActivationDialog = memo(function TwitchActivationDialog({
 							getUser(access_token, user_id).then(response => {
 								const user = response.data.data[0];
 								const account: Account = {
-									id: user.id,
+									id: nanoid(),
+									service: 'twitch',
+									serviceId: user.id,
 									username: user.login,
 									displayName: user.display_name,
 									image: user.profile_image_url,
 									scopes: scope,
-									service: 'twitch',
 									type: 'read',
 									reauthorize: false,
 									widgets: [],
 								};
 
-								setTokens(account, access_token, refresh_token);
+								setTokens(account.id, access_token, refresh_token);
 								set(account);
 								closeDialog();
 							});

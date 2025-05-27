@@ -6,7 +6,6 @@ import ArrowLeftSvg from '@/components/svg/ArrowLeftSvg';
 import PlusSvg from '@/components/svg/PlusSvg';
 import useAccounts from '@/contexts/accounts/useAccounts';
 import { useDialog } from '@/contexts/dialog/useDialog';
-import { getAccountKey } from '@/helpers/json/accounts';
 import { memo } from 'react';
 
 const Settings = memo(function Settings() {
@@ -44,7 +43,7 @@ const Settings = memo(function Settings() {
 						{Object.values(accounts).map(account => {
 							return (
 								<button
-									key={getAccountKey(account)}
+									key={account.id}
 									className='flex flex-col items-center gap-1'
 									onClick={() => {}}
 								>

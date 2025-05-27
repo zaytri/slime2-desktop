@@ -23,13 +23,9 @@ export async function saveAccounts(accounts: Accounts): Promise<void> {
 	queueSaveJson(accounts, await accountsPath());
 }
 
-export function getAccountKey(account: Account) {
-	return `${account.service}_${account.type}_${account.id}`;
-}
-
-export async function getTokens(account: Account): Promise<Tokens | null> {
+export async function getTokens(accountId: string): Promise<Tokens | null> {
 	try {
-		const secret = await getSecretKey(getAccountKey(account));
+		const secret = await getSecretKey(accountId);
 		const tokens = JSON.parse(secret);
 		return Tokens.parse(tokens);
 	} catch (error) {
@@ -39,16 +35,16 @@ export async function getTokens(account: Account): Promise<Tokens | null> {
 }
 
 export async function setTokens(
-	account: Account,
+	accountId: string,
 	accessToken: string,
 	refreshToken: string,
 ): Promise<void> {
 	const secret = JSON.stringify({ accessToken, refreshToken });
-	await setSecretKey(getAccountKey(account), secret);
+	await setSecretKey(accountId, secret);
 }
 
-export async function deleteTokens(account: Account) {
-	await deleteSecretKey(getAccountKey(account));
+export async function deleteTokens(accountId: string) {
+	await deleteSecretKey(accountId);
 }
 
 async function accountsPath() {
@@ -59,6 +55,7 @@ async function accountsPath() {
 
 const Account = z.object({
 	id: z.string(),
+	serviceId: z.string(),
 	service: z.string(), // "twitch"
 	username: z.string(),
 	displayName: z.string(),

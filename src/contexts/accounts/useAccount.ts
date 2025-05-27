@@ -19,7 +19,7 @@ export function useAccount(id: string): {
 		account,
 		setAccount: set,
 		setAccountTokens: async (accessToken: string, refreshToken: string) =>
-			setTokens(account, accessToken, refreshToken),
-		getAccountTokens: async () => getTokens(account),
+			setTokens(account.id, accessToken, refreshToken),
+		getAccountTokens: async () => getTokens(account.id),
 	};
 }

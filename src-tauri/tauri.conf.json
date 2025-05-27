@@ -46,7 +46,6 @@
 				"clipboard",
 				"file",
 				"event",
-				"websocket",
 				"version"
 			],
 			"csp": {
@@ -56,7 +55,7 @@
 					"http://ipc.localhost",
 					"https://id.twitch.tv",
 					"https://api.twitch.tv",
-					"wss://eventsub.wss.twitch.tv/ws"
+					"wss://eventsub.wss.twitch.tv"
 				],
 				"style-src": ["'self'", "https://fonts.googleapis.com"],
 				"font-src": ["https://fonts.gstatic.com"],

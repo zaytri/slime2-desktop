@@ -29,7 +29,6 @@ function setTitle(meta: Meta) {
 
 function loadCSS(meta: Meta, widgetId: string) {
 	meta.import?.css?.forEach(css => {
-		console.log(css);
 		const linkElement = document.createElement('link');
 		linkElement.setAttribute('rel', 'stylesheet');
 		linkElement.setAttribute('href', generateImportURL(css, widgetId));
