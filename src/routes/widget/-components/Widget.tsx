@@ -43,7 +43,7 @@ const Widget = memo(function Widget() {
 
 				<HeaderButton
 					icon={<ChainLinkSvg className='size-7' />}
-					externalHref={`http://localhost:${import.meta.env.PROD ? `${PROD_PORT}/widget` : DEV_WIDGET_SERVER_PORT}/${widgetId}`}
+					externalHref={`http://localhost:${import.meta.env.PROD ? `${PROD_PORT}/widget` : DEV_WIDGET_SERVER_PORT}/?widgetId=${widgetId}`}
 				>
 					Open Overlay
 				</HeaderButton>

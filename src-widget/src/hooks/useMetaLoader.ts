@@ -1,11 +1,10 @@
-import { useLoaderData, useParams } from '@tanstack/react-router';
+import { useLoaderData } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { BASE_DATA_URL } from '../helpers/serverUrl';
 import { Meta } from '../helpers/widgetApi';
 
 export default function useMetaLoader() {
-	const { widgetId } = useParams({ from: '/$widgetId' });
-	const { meta } = useLoaderData({ from: '/$widgetId' });
+	const { meta, widgetId } = useLoaderData({ from: '/' });
 	const loadingRef = useRef(true);
 
 	useEffect(() => {
@@ -23,13 +22,14 @@ export default function useMetaLoader() {
 function setTitle(meta: Meta) {
 	let title = meta.name || 'slime2 widget';
 	if (meta.version) title = `${title} v${meta.version}`;
-	if (meta.author) title = `${title} by ${meta.author}`;
+	if (meta.creator) title = `${title} by ${meta.creator}`;
 
 	document.title = title;
 }
 
 function loadCSS(meta: Meta, widgetId: string) {
-	meta.imports?.css?.forEach(css => {
+	meta.import?.css?.forEach(css => {
+		console.log(css);
 		const linkElement = document.createElement('link');
 		linkElement.setAttribute('rel', 'stylesheet');
 		linkElement.setAttribute('href', generateImportURL(css, widgetId));
@@ -39,7 +39,7 @@ function loadCSS(meta: Meta, widgetId: string) {
 }
 
 function loadJS(meta: Meta, widgetId: string) {
-	meta.imports?.js?.forEach(js => {
+	meta.import?.js?.forEach(js => {
 		const scriptElement = document.createElement('script');
 
 		if (typeof js === 'string') {

@@ -23,11 +23,11 @@ export async function getMeta(widgetId: string): Promise<Meta> {
 
 export type Meta = {
 	name?: string;
-	author?: string;
+	creator?: string;
 	version?: string;
-	imports?: {
+	import?: {
 		js?: (string | Record<string, string>)[];
 		css?: string[];
 	};
-	sharedChannels?: string[];
+	channel?: string[];
 };

@@ -11,13 +11,13 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as WidgetIdImport } from './routes/$widgetId'
+import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
 
-const WidgetIdRoute = WidgetIdImport.update({
-  id: '/$widgetId',
-  path: '/$widgetId',
+const IndexRoute = IndexImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -25,11 +25,11 @@ const WidgetIdRoute = WidgetIdImport.update({
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/$widgetId': {
-      id: '/$widgetId'
-      path: '/$widgetId'
-      fullPath: '/$widgetId'
-      preLoaderRoute: typeof WidgetIdImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -38,33 +38,33 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/$widgetId': typeof WidgetIdRoute
+  '/': typeof IndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/$widgetId': typeof WidgetIdRoute
+  '/': typeof IndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/$widgetId': typeof WidgetIdRoute
+  '/': typeof IndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/$widgetId'
+  fullPaths: '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/$widgetId'
-  id: '__root__' | '/$widgetId'
+  to: '/'
+  id: '__root__' | '/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  WidgetIdRoute: typeof WidgetIdRoute
+  IndexRoute: typeof IndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  WidgetIdRoute: WidgetIdRoute,
+  IndexRoute: IndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +77,11 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/$widgetId"
+        "/"
       ]
     },
-    "/$widgetId": {
-      "filePath": "$widgetId.tsx"
+    "/": {
+      "filePath": "index.tsx"
     }
   }
 }
