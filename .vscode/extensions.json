@@ -7,7 +7,7 @@
 		"bradlc.vscode-tailwindcss",
 		"zignd.html-css-class-completion",
 		"tamasfe.even-better-toml",
-		"mgmcdermott.vscode-language-babel",
-		"aaron-bond.better-comments"
+		"aaron-bond.better-comments",
+		"yoavbls.pretty-ts-errors"
 	]
 }

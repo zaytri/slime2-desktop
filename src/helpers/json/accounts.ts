@@ -1,12 +1,13 @@
 // functions
 
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import {
 	deleteSecretKey,
 	getSecretKey,
 	loadJson,
 	setSecretKey,
 } from '../commands';
+import logZodError from '../zodError';
 import { mainConfigPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';
 
@@ -23,14 +24,14 @@ export async function saveAccounts(accounts: Accounts): Promise<void> {
 	queueSaveJson(accounts, await accountsPath());
 }
 
-export async function getTokens(accountId: string): Promise<Tokens | null> {
+export async function getTokens(accountId: string): Promise<Tokens> {
 	try {
 		const secret = await getSecretKey(accountId);
 		const tokens = JSON.parse(secret);
 		return Tokens.parse(tokens);
 	} catch (error) {
-		console.error(error);
-		return null;
+		logZodError(error);
+		throw error;
 	}
 }
 
@@ -38,9 +39,14 @@ export async function setTokens(
 	accountId: string,
 	accessToken: string,
 	refreshToken: string,
-): Promise<void> {
-	const secret = JSON.stringify({ accessToken, refreshToken });
-	await setSecretKey(accountId, secret);
+): Promise<Tokens> {
+	const tokens: Tokens = {
+		accessToken,
+		refreshToken,
+		validatedAt: Date.now(),
+	};
+	await setSecretKey(accountId, JSON.stringify(tokens));
+	return tokens;
 }
 
 export async function deleteTokens(accountId: string) {
@@ -56,12 +62,12 @@ async function accountsPath() {
 const Account = z.object({
 	id: z.string(),
 	serviceId: z.string(),
-	service: z.string(), // "twitch"
+	service: z.union([z.literal('twitch'), z.literal('youtube')]),
 	username: z.string(),
 	displayName: z.string(),
 	image: z.string(),
 	scopes: z.array(z.string()),
-	type: z.string(), // "read", "bot", "mod"
+	type: z.union([z.literal('read'), z.literal('bot'), z.literal('mod')]),
 	reauthorize: z.boolean(),
 	widgets: z.array(z.string()),
 });
@@ -73,5 +79,6 @@ export type Accounts = z.infer<typeof Accounts>;
 const Tokens = z.object({
 	accessToken: z.string(),
 	refreshToken: z.string(),
+	validatedAt: z.number(),
 });
 export type Tokens = z.infer<typeof Tokens>;

@@ -15,7 +15,7 @@ import {
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { nanoid } from 'nanoid';
 import { memo, useEffect, useRef } from 'react';
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import MultiSubsection from './MultiSubsection';
 import NonCategorySettings from './NonCategorySettings';
 
@@ -31,7 +31,7 @@ const MultiSectionSetting = memo(function MultiSectionSetting({
 	const { openDialog } = useDialog();
 	const mainDisclosureButtonRef = useRef<HTMLButtonElement>(null);
 
-	const subsections = z.array(z.string()).catch([]).parse(widgetValue);
+	const subsections = z.catch(z.array(z.string()), []).parse(widgetValue);
 
 	function removeValueAtIndex(index: number) {
 		const newSubsections = [...subsections];

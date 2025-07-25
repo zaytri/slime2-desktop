@@ -1,5 +1,9 @@
 export default {
-	plugins: ['prettier-plugin-organize-imports', 'prettier-plugin-tailwindcss'],
+	plugins: [
+		'prettier-plugin-organize-imports',
+		'prettier-plugin-tailwindcss',
+		'prettier-plugin-jsdoc',
+	],
 	arrowParens: 'avoid',
 	semi: true,
 	singleQuote: true,

@@ -18,7 +18,7 @@ import {
 	MenuSeparator,
 } from '@headlessui/react';
 import { memo } from 'react';
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 
 type MultiSectionProps = {
 	onDelete: VoidFunction;
@@ -34,7 +34,7 @@ const MultiSubsection = memo(function MultiSubsection({
 	const { widgetValue, setWidgetValue } = useWidgetValue(id);
 	const { openDialog } = useDialog();
 
-	const value = z.string().catch('New').parse(widgetValue);
+	const value = z.catch(z.string(), 'New').parse(widgetValue);
 
 	return (
 		<Disclosure

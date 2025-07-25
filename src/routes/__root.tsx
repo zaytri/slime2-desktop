@@ -1,19 +1,13 @@
 import logoSlime from '@/assets/logo_slime_stencil.svg';
 import logoText from '@/assets/logo_text_stencil.svg';
 import DialogProvider from '@/contexts/dialog/DialogProvider';
-import { loadWidgetSettings } from '@/helpers/json/widgetSettings';
-import { loadWidgetValues } from '@/helpers/json/widgetValues';
-import { sendWidgetValues } from '@/helpers/websocket';
+import useWidgetCoreChange from '@/hooks/useWidgetCoreChange';
+import useWidgetRegistration from '@/hooks/useWidgetRegistration';
+import useWidgetRequest from '@/hooks/useWidgetRequest';
 import { useQuery } from '@tanstack/react-query';
 
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router';
 import { getVersion } from '@tauri-apps/api/app';
-import { listen, UnlistenFn } from '@tauri-apps/api/event';
-import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
-import { useEffect } from 'react';
-import { z } from 'zod';
-import { fromError } from 'zod-validation-error';
-const appWindow = getCurrentWebviewWindow();
 
 export const Route = createRootRoute({ component: Root });
 
@@ -24,38 +18,9 @@ function Root() {
 		networkMode: 'always',
 	});
 
-	useEffect(() => {
-		let unlisten: UnlistenFn | undefined = undefined;
-
-		async function register() {
-			// sends widget values upon webhook registration
-			unlisten = await listen<WidgetRegistration>(
-				'widget-registration',
-				async event => {
-					try {
-						// just in case payload isn't formatted correctly
-						const { id } = WidgetRegistration.parse(event.payload);
-
-						const [settings, values] = await Promise.all([
-							loadWidgetSettings(id),
-							loadWidgetValues(id),
-						]);
-
-						await sendWidgetValues(id, settings, values);
-					} catch (error) {
-						const validationError = fromError(error);
-						console.error(validationError.toString());
-					}
-				},
-			);
-		}
-
-		register();
-
-		return () => {
-			if (unlisten) unlisten();
-		};
-	}, []);
+	useWidgetRegistration();
+	useWidgetRequest();
+	useWidgetCoreChange();
 
 	return (
 		<DialogProvider>
@@ -83,17 +48,13 @@ function Root() {
 						<div className='mt-10 ml-3 flex w-24 flex-col'>
 							<button
 								className='rounded-100% flex h-10 w-10 items-center justify-center self-end border-4 border-lime-600 bg-emerald-900 font-bold text-white'
-								onClick={() => {
-									appWindow.close();
-								}}
+								onClick={() => {}}
 							>
 								X
 							</button>
 							<button
 								className='rounded-100% flex h-10 w-10 items-center justify-center border-4 border-lime-600 bg-emerald-900 font-black text-white'
-								onClick={() => {
-									appWindow.minimize();
-								}}
+								onClick={() => {}}
 							>
 								_
 							</button>
@@ -110,6 +71,3 @@ function Root() {
 		</DialogProvider>
 	);
 }
-
-const WidgetRegistration = z.object({ id: z.string() });
-type WidgetRegistration = z.infer<typeof WidgetRegistration>;

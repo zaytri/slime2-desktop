@@ -8,6 +8,7 @@ use std::{
 };
 use tokio::sync::{RwLock, mpsc};
 use warp::filters::ws::{Message, WebSocket};
+
 mod ws_commands;
 
 static NEXT_CONNECTION_ID: AtomicUsize = AtomicUsize::new(1);
@@ -83,25 +84,37 @@ fn get_command(
 ) -> Result<ws_commands::Command, String> {
 	match message_result {
 		Ok(message) => {
-			let Ok(message_text) = message.to_str() else {
-				// message is not a text string
-				return Err(String::from("Message is not a Text message!"));
-			};
-
-			let command = match serde_json::from_str::<ws_commands::Command>(
-				message_text,
-			) {
-				Ok(command) => command,
-				// text cannot be deserialized into a Command
-				Err(error) => {
-					return Err(format!(
-						"Failed to deserialize Message into a Command: {}",
-						error
+			if message.is_text() {
+				let Ok(message_text) = message.to_str() else {
+					// message is not a text string
+					return Err(String::from(
+						"Message is somehow not a Text message! (This should never happen here)",
 					));
-				}
-			};
+				};
 
-			Ok(command)
+				let command = match serde_json::from_str::<ws_commands::Command>(
+					message_text,
+				) {
+					Ok(command) => command,
+					// text cannot be deserialized into a Command
+					Err(error) => {
+						return Err(format!(
+							"Failed to deserialize Message into a Command: {}",
+							error
+						));
+					}
+				};
+
+				return Ok(command);
+			} else if message.is_close() {
+				return Err(String::from(
+					"Websocket connection closed by the client.",
+				));
+			} else {
+				return Err(String::from(
+					"Unrecognized websocket message type!",
+				));
+			}
 		}
 		Err(error) => Err(error.to_string()),
 	}
@@ -167,7 +180,14 @@ async fn message_handler(
 
 		// command handling
 		match command.r#type.as_str() {
-			"test" => {}
+			"request" => {
+				if let Err(error) = ws_commands::request(command.data) {
+					return Err(format!(
+						"Error from (ID: {}): {}",
+						connection_id, error
+					));
+				}
+			}
 			"register" => {
 				// not allowed to register more than once
 				return Err(format!(

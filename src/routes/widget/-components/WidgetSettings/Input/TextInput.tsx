@@ -4,7 +4,7 @@ import { i18nStringTransform } from '@/helpers/i18n';
 import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { Field, Input, Label, Textarea } from '@headlessui/react';
 import { memo } from 'react';
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import InputDescription from './InputDescription';
 
 const TextInput = memo(function TextInput(
@@ -16,8 +16,7 @@ const TextInput = memo(function TextInput(
 	const { widgetValue, setWidgetValue } = useWidgetValue(key);
 
 	const value = z
-		.string()
-		.catch(setting.defaultValue ?? '')
+		.catch(z.string(), setting.defaultValue ?? '')
 		.parse(widgetValue);
 
 	const placeholder = setting.placeholder

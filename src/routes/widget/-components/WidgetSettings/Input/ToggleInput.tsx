@@ -6,7 +6,7 @@ import { i18nStringTransform } from '@/helpers/i18n';
 import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { Field, Label, Switch } from '@headlessui/react';
 import { memo } from 'react';
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import InputDescription from './InputDescription';
 
 const ToggleInput = memo(function ToggleInput(
@@ -17,8 +17,7 @@ const ToggleInput = memo(function ToggleInput(
 
 	// default to false
 	const value = z
-		.boolean()
-		.catch(setting.defaultValue ?? false)
+		.catch(z.boolean(), setting.defaultValue ?? false)
 		.parse(widgetValue);
 
 	return (

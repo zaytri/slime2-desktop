@@ -24,6 +24,7 @@ keyring = { version = "4.0.0-rc.1" }
 nanoid = "0.4"
 tauri-plugin-clipboard-manager = "2"
 tauri-plugin-dialog = "2"
+tauri-plugin-fs = { version = "2", features = ["watch"] }
 tauri-plugin-shell = "2"
 tauri-plugin-single-instance = "2"
 tokio = { version = "1", features = ["full"] }

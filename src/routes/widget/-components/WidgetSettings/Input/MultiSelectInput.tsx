@@ -4,7 +4,7 @@ import { i18nStringTransform } from '@/helpers/i18n';
 import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { Checkbox, Field, Fieldset, Label, Legend } from '@headlessui/react';
 import { memo } from 'react';
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import InputDescription from './InputDescription';
 
 const MultiSelectInput = memo(function MultiSelectInput(
@@ -14,8 +14,10 @@ const MultiSelectInput = memo(function MultiSelectInput(
 	const { widgetValue, setWidgetValue } = useWidgetValue(key);
 
 	const values = z
-		.array(z.union([z.string(), z.number(), z.boolean()]))
-		.catch(setting.defaultValue ?? [])
+		.catch(
+			z.array(z.union([z.string(), z.number(), z.boolean()])),
+			setting.defaultValue ?? [],
+		)
 		.parse(widgetValue);
 
 	const descriptionId = `<[slime2-description]>-${key}`;

@@ -1,6 +1,6 @@
 // functions
 
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import { loadJson } from '../commands';
 import { tileFolderPath } from './jsonPaths';
 
@@ -21,29 +21,34 @@ const WidgetMeta = z.object({
 	name: z.string(),
 	creator: z.string(),
 	version: z.string(),
-	versionApi: z.string().optional(),
-	homepage: z.string().optional(),
-	support: z.string().optional(),
-	icon: z.string().optional(),
-	import: z
-		.object({
-			js: z.array(z.string()).optional(),
-			css: z.array(z.string()).optional(),
-		})
-		.optional()
-		.catch(undefined),
-	scope: z
-		.record(
-			z.string(), // "read", "bot", "mod"
+	versionApi: z.optional(z.string()),
+	homepage: z.optional(z.string()),
+	support: z.optional(z.string()),
+	icon: z.optional(z.string()),
+	import: z.catch(
+		z.optional(
 			z.object({
-				// "twitch", "youtube"
-				service: z.array(z.string()),
-				// if the widget can be used without this scope
-				optional: z.boolean().optional(),
+				js: z.optional(z.array(z.string())),
+				css: z.optional(z.array(z.string())),
 			}),
-		)
-		.optional()
-		.catch(undefined),
-	channel: z.array(z.string()).optional().catch(undefined),
+		),
+		undefined,
+	),
+	scope: z.catch(
+		z.optional(
+			z.record(
+				z.string(), // "read", "bot", "mod"
+				z.object({
+					// "twitch", "youtube"
+					service: z.array(z.string()),
+					// if the widget can be used without this scope
+					optional: z.optional(z.boolean()),
+				}),
+			),
+		),
+		undefined,
+	),
+
+	channel: z.catch(z.optional(z.array(z.string())), undefined),
 });
 export type WidgetMeta = z.infer<typeof WidgetMeta>;

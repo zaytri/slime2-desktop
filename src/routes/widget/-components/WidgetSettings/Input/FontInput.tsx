@@ -7,7 +7,7 @@ import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { Field, Label } from '@headlessui/react';
 import clsx from 'clsx';
 import { memo } from 'react';
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import InputDescription from './InputDescription';
 import SelectFontDialog from './SelectFontDialog';
 
@@ -19,8 +19,7 @@ const FontInput = memo(function FontInput(
 	const { openDialog } = useDialog();
 
 	const value = z
-		.string()
-		.catch(setting.defaultValue ?? '')
+		.catch(z.string(), setting.defaultValue ?? '')
 		.parse(widgetValue);
 
 	const placeholder = setting.placeholder

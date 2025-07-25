@@ -1,19 +1,18 @@
-import { z } from 'zod';
-import { fromError } from 'zod-validation-error';
+import { z } from 'zod/v4-mini';
 import { loadJson } from '../commands';
 import { I18nString } from '../i18n';
+import logZodError from '../zodError';
 import { tileFolderPath } from './jsonPaths';
 
 // functions
 
 export async function loadWidgetSettings(id: string): Promise<WidgetSettings> {
-	const path = await settingsPath(id);
 	try {
-		const settings = await WidgetSettings.parseAsync(await loadJson(path));
-		return settings;
+		const json = await loadJson(await settingsPath(id));
+		const data = WidgetSettings.parse(json);
+		return data;
 	} catch (error) {
-		const validationError = fromError(error);
-		console.error(validationError.toString());
+		logZodError(error);
 		throw error;
 	}
 }
@@ -25,38 +24,26 @@ async function settingsPath(id: string) {
 
 // zod and types
 
-const BasePlaceholder = z.object({
-	placeholder: I18nString.optional(),
-});
+const Placeholder = z.optional(I18nString);
+const Description = z.optional(I18nString);
 
-const BaseDescription = z.object({
-	description: I18nString.optional(),
-});
-
-const BaseMediaDefaultValue = z.object({
-	defaultValue: z.string().optional(),
-});
-
-const BaseMultipleMediaDefaultValue = z.object({
-	defaultValue: z.array(z.string()).optional(),
-});
+const MediaDefaultValue = z.optional(z.string());
+const MultiMediaDefaultValue = z.optional(z.array(z.string()));
 
 const OptionValue = z.union([z.string(), z.number(), z.boolean()]);
 export type OptionValue = z.infer<typeof OptionValue>;
 
-const BaseOptions = z.object({
-	options: z.array(
-		z.object({
-			label: I18nString,
-			value: OptionValue,
-		}),
-	),
-});
+const Options = z.array(
+	z.object({
+		label: I18nString,
+		value: OptionValue,
+	}),
+);
 
 const BaseSetting = z.object({
 	label: I18nString,
-	condition: z.record(z.string(), OptionValue).optional(),
-	searchTags: z.array(z.string()).optional(),
+	condition: z.optional(z.record(z.string(), OptionValue)),
+	searchTags: z.optional(z.array(z.string())),
 });
 
 const ButtonSetting = z.object({
@@ -73,140 +60,123 @@ const ImageDisplaySetting = z.object({
 	alt: I18nString,
 });
 
-const TextInputSetting = z
-	.object({
-		type: z.literal('text-input'),
-		defaultValue: z.string().optional(),
-	})
-	.merge(BasePlaceholder)
-	.merge(BaseDescription);
+const TextInputSetting = z.object({
+	type: z.literal('text-input'),
+	defaultValue: z.optional(z.string()),
+	placeholder: Placeholder,
+	description: Description,
+});
 
-const TextAreaInputSetting = z
-	.object({
-		type: z.literal('text-area-input'),
-		defaultValue: z.string().optional(),
-	})
-	.merge(BasePlaceholder)
-	.merge(BaseDescription);
+const TextAreaInputSetting = z.object({
+	type: z.literal('text-area-input'),
+	defaultValue: z.optional(z.string()),
+	placeholder: Placeholder,
+	description: Description,
+});
 
-const MultiTextInputSetting = z
-	.object({
-		type: z.literal('multi-text-input'),
-		defaultValue: z.array(z.string()).optional(),
-	})
-	.merge(BasePlaceholder)
-	.merge(BaseDescription);
+const MultiTextInputSetting = z.object({
+	type: z.literal('multi-text-input'),
+	defaultValue: z.optional(z.array(z.string())),
+	placeholder: Placeholder,
+	description: Description,
+});
 
-const NumberInputSetting = z
-	.object({
-		type: z.literal('number-input'),
-		defaultValue: z.number().optional(),
-		min: z.number().optional(),
-		max: z.number().optional(),
-		step: z.union([z.number(), z.literal('any')]).optional(),
-	})
-	.merge(BasePlaceholder)
-	.merge(BaseDescription);
+const NumberInputSetting = z.object({
+	type: z.literal('number-input'),
+	defaultValue: z.optional(z.number()),
+	min: z.optional(z.number()),
+	max: z.optional(z.number()),
+	step: z.optional(z.union([z.number(), z.literal('any')])),
+	placeholder: Placeholder,
+	description: Description,
+});
 
-const SliderInputSetting = z
-	.object({
-		type: z.literal('slider-input'),
-		defaultValue: z.number().optional(),
-		min: z.number().optional(),
-		max: z.number().optional(),
-		step: z.union([z.number(), z.literal('any')]).optional(),
-	})
-	.merge(BaseDescription);
+const SliderInputSetting = z.object({
+	type: z.literal('slider-input'),
+	defaultValue: z.optional(z.number()),
+	min: z.optional(z.number()),
+	max: z.optional(z.number()),
+	step: z.optional(z.union([z.number(), z.literal('any')])),
+	description: Description,
+});
 
-const ToggleInputSetting = z
-	.object({
-		type: z.literal('toggle-input'),
-		defaultValue: z.boolean().optional(),
-	})
-	.merge(BaseDescription);
+const ToggleInputSetting = z.object({
+	type: z.literal('toggle-input'),
+	defaultValue: z.optional(z.boolean()),
+	description: Description,
+});
 
-const DropdownInputSetting = z
-	.object({
-		type: z.literal('dropdown-input'),
-		defaultValue: OptionValue.optional(),
-	})
-	.merge(BasePlaceholder)
-	.merge(BaseDescription)
-	.merge(BaseOptions);
+const DropdownInputSetting = z.object({
+	type: z.literal('dropdown-input'),
+	defaultValue: z.optional(OptionValue),
+	placeholder: Placeholder,
+	description: Description,
+	options: Options,
+});
 
-const SelectInputSetting = z
-	.object({
-		type: z.literal('select-input'),
-		defaultValue: OptionValue.optional(),
-	})
-	.merge(BaseDescription)
-	.merge(BaseOptions);
+const SelectInputSetting = z.object({
+	type: z.literal('select-input'),
+	defaultValue: z.optional(OptionValue),
+	description: Description,
+	options: Options,
+});
 
-const MultiSelectInputSetting = z
-	.object({
-		type: z.literal('multi-select-input'),
-		defaultValue: z.array(OptionValue).optional(),
-	})
-	.merge(BaseDescription)
-	.merge(BaseOptions);
+const MultiSelectInputSetting = z.object({
+	type: z.literal('multi-select-input'),
+	defaultValue: z.optional(z.array(OptionValue)),
+	description: Description,
+	options: Options,
+});
 
-const ImageInputSetting = z
-	.object({
-		type: z.literal('image-input'),
-	})
-	.merge(BaseDescription)
-	.merge(BaseMediaDefaultValue);
+const ImageInputSetting = z.object({
+	type: z.literal('image-input'),
+	description: Description,
+	defaultValue: MediaDefaultValue,
+});
 
-const MultiImageInputSetting = z
-	.object({
-		type: z.literal('multi-image-input'),
-	})
-	.merge(BaseDescription)
-	.merge(BaseMultipleMediaDefaultValue);
+const MultiImageInputSetting = z.object({
+	type: z.literal('multi-image-input'),
+	description: Description,
+	defaultValue: MultiMediaDefaultValue,
+});
 
-const VideoInputSetting = z
-	.object({
-		type: z.literal('video-input'),
-	})
-	.merge(BaseDescription)
-	.merge(BaseMediaDefaultValue);
+const VideoInputSetting = z.object({
+	type: z.literal('video-input'),
+	description: Description,
+	defaultValue: MediaDefaultValue,
+});
 
-const MultiVideoInputSetting = z
-	.object({
-		type: z.literal('multi-video-input'),
-	})
-	.merge(BaseDescription)
-	.merge(BaseMultipleMediaDefaultValue);
+const MultiVideoInputSetting = z.object({
+	type: z.literal('multi-video-input'),
+	description: Description,
+	defaultValue: MultiMediaDefaultValue,
+});
 
-const AudioInputSetting = z
-	.object({
-		type: z.literal('audio-input'),
-	})
-	.merge(BaseDescription)
-	.merge(BaseMediaDefaultValue);
+const AudioInputSetting = z.object({
+	type: z.literal('audio-input'),
+	description: Description,
+	defaultValue: MediaDefaultValue,
+});
 
-const MultiAudioInputSetting = z
-	.object({
-		type: z.literal('multi-audio-input'),
-	})
-	.merge(BaseDescription)
-	.merge(BaseMultipleMediaDefaultValue);
+const MultiAudioInputSetting = z.object({
+	type: z.literal('multi-audio-input'),
+	description: Description,
+	defaultValue: MultiMediaDefaultValue,
+});
 
-const ColorInputSetting = z
-	.object({
-		type: z.literal('color-input'),
-		defaultValue: z.string().optional(),
-	})
-	.merge(BaseDescription)
-	.merge(BasePlaceholder);
+const ColorInputSetting = z.object({
+	type: z.literal('color-input'),
+	defaultValue: z.optional(z.string()),
+	description: Description,
+	placeholder: Placeholder,
+});
 
-const FontInputSetting = z
-	.object({
-		type: z.literal('font-input'),
-		defaultValue: z.string().optional(),
-	})
-	.merge(BaseDescription)
-	.merge(BasePlaceholder);
+const FontInputSetting = z.object({
+	type: z.literal('font-input'),
+	defaultValue: z.optional(z.string()),
+	description: Description,
+	placeholder: Placeholder,
+});
 
 const BaseSectionSetting = z.discriminatedUnion('type', [
 	ButtonSetting,
@@ -233,26 +203,35 @@ const BaseSectionSetting = z.discriminatedUnion('type', [
 
 const SectionSetting = z.object({
 	type: z.literal('section'),
-	settings: z.record(z.string(), BaseSetting.and(BaseSectionSetting)),
+	settings: z.record(
+		z.string(),
+		z.intersection(BaseSectionSetting, BaseSetting),
+	),
 });
 
 const MultiSectionSetting = z.object({
 	type: z.literal('multi-section'),
-	settings: z.record(z.string(), BaseSetting.and(BaseSectionSetting)),
+	settings: z.record(
+		z.string(),
+		z.intersection(BaseSetting, BaseSectionSetting),
+	),
 });
 
 const BaseCategorySetting = z.discriminatedUnion('type', [
-	...BaseSectionSetting.options,
+	...BaseSectionSetting.def.options,
 	SectionSetting,
 	MultiSectionSetting,
 ]);
 
-const NonCategorySetting = BaseSetting.and(BaseCategorySetting);
+const NonCategorySetting = z.intersection(BaseSetting, BaseCategorySetting);
 type NonCategorySetting = z.infer<typeof NonCategorySetting>;
 
 const CategorySetting = z.object({
 	label: I18nString,
-	settings: z.record(z.string(), BaseSetting.and(NonCategorySetting)),
+	settings: z.record(
+		z.string(),
+		z.intersection(BaseSetting, NonCategorySetting),
+	),
 });
 type CategorySetting = z.infer<typeof CategorySetting>;
 

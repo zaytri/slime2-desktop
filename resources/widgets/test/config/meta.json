@@ -6,12 +6,12 @@
 	"support": "https://zaytri.com/",
 	"icon": "bird.jpg",
 	"import": {
-		"js": [],
+		"js": ["script.js"],
 		"css": ["styles.css"]
 	},
 	"scope": {
 		"read": {
-			"service": ["twitch", "youtube", "facebook"]
+			"service": ["twitch"]
 		}
 	}
 }

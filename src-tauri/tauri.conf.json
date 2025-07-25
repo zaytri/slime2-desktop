@@ -46,7 +46,8 @@
 				"clipboard",
 				"file",
 				"event",
-				"version"
+				"version",
+				"watcher"
 			],
 			"csp": {
 				"default-src": ["'self'", "http://localhost:*"],

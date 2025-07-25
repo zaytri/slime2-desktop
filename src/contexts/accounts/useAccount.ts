@@ -8,7 +8,7 @@ export function useAccount(id: string): {
 	setAccountTokens: (
 		accessToken: string,
 		refreshToken: string,
-	) => Promise<void>;
+	) => Promise<Tokens>;
 	getAccountTokens: () => Promise<Tokens | null>;
 } {
 	const accounts = useAccounts();

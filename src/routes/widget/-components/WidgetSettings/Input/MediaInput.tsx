@@ -13,7 +13,7 @@ import { Field, Label } from '@headlessui/react';
 import { useParams } from '@tanstack/react-router';
 import clsx from 'clsx';
 import { memo } from 'react';
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import InputDescription from './InputDescription';
 import SelectMediaDialog from './SelectMediaDialog';
 
@@ -30,8 +30,7 @@ const MediaInput = memo(function MediaInput(
 	const { openDialog } = useDialog();
 
 	const value = z
-		.string()
-		.catch(setting.defaultValue ?? '')
+		.catch(z.string(), setting.defaultValue ?? '')
 		.parse(widgetValue);
 
 	const chooseButtonId = `<[slime2-choose-file]>-${key}`;

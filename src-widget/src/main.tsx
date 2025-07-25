@@ -16,6 +16,13 @@ declare module '@tanstack/react-router' {
 	}
 }
 
+// setup slime2 global var for the widget to use
+globalThis.slime2 = {
+	async getPronouns() {
+		return null;
+	},
+};
+
 // Render the app
 const rootElement = document.getElementById('root')!;
 if (!rootElement.innerHTML) {

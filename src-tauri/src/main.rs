@@ -24,13 +24,12 @@ struct SingleInstancePayload {
 
 #[tokio::main]
 async fn main() {
-	if cfg!(dev) {
-		eprintln!("Welcome to slime2!");
-	}
+	println!("Welcome to slime2!");
 
 	let connections = server::websocket::WebsocketConnections::default();
 
 	tauri::Builder::default()
+		.plugin(tauri_plugin_fs::init())
 		.plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
 			println!("{}, {argv:?}, {cwd}", app.package_info().name);
 			app.emit(

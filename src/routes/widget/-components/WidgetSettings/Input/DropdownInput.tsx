@@ -11,7 +11,7 @@ import {
 	ListboxOptions,
 } from '@headlessui/react';
 import { memo } from 'react';
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import InputDescription from './InputDescription';
 
 const DropdownInput = memo(function DropdownInput(
@@ -22,8 +22,10 @@ const DropdownInput = memo(function DropdownInput(
 
 	// default to the value of the first option
 	const value = z
-		.union([z.string(), z.number(), z.boolean()])
-		.catch(setting.defaultValue ?? setting.options[0].value)
+		.catch(
+			z.union([z.string(), z.number(), z.boolean()]),
+			setting.defaultValue ?? setting.options[0].value,
+		)
 		.parse(widgetValue);
 
 	const placeholder = setting.placeholder

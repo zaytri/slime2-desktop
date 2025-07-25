@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import { loadJson } from '../commands';
 import { TileColor } from '../tileColors';
 import { tileFolderPath } from './jsonPaths';
@@ -37,8 +37,8 @@ async function tileMetaPath(id: string) {
 
 const TileMeta = z.object({
 	name: z.string(),
-	color: z.nativeEnum(TileColor).default(TileColor.Green),
-	icon: z.string().default(''),
+	color: z._default(z.enum(TileColor), TileColor.Green),
+	icon: z._default(z.string(), ''),
 });
 export type TileMeta = z.infer<typeof TileMeta>;
 

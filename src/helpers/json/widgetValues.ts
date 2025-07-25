@@ -1,22 +1,19 @@
-import { z } from 'zod';
-import { fromError } from 'zod-validation-error';
+import { z } from 'zod/v4-mini';
 import { loadJson } from '../commands';
+import logZodError from '../zodError';
 import { tileFolderPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';
 
 // functions
 
 export async function loadWidgetValues(id: string): Promise<WidgetValues> {
-	const path = await widgetValuesPath(id);
-	const values = await WidgetValues.parseAsync(await loadJson(path)).catch(
-		error => {
-			const validationError = fromError(error);
-			console.error(validationError.toString());
-			return {};
-		},
-	);
-
-	return values;
+	try {
+		const json = await loadJson(await widgetValuesPath(id));
+		return WidgetValues.parse(json);
+	} catch (error) {
+		logZodError(error);
+		return {};
+	}
 }
 
 export async function saveWidgetValues(
@@ -45,5 +42,5 @@ const WidgetValue = z.union([
 ]);
 export type WidgetValue = z.infer<typeof WidgetValue>;
 
-const WidgetValues = z.record(WidgetValue);
+const WidgetValues = z.record(z.string(), WidgetValue);
 export type WidgetValues = z.infer<typeof WidgetValues>;

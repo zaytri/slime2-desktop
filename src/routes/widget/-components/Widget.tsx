@@ -4,18 +4,22 @@ import HeaderButton from '@/components/header/HeaderButton';
 import HeaderText from '@/components/header/HeaderText';
 import ArrowLeftSvg from '@/components/svg/ArrowLeftSvg';
 import ChainLinkSvg from '@/components/svg/ChainLinkSvg';
+import ChatBubbleSvg from '@/components/svg/ChatBubbleSvg';
 import GearSvg from '@/components/svg/GearSvg';
+import useAccounts from '@/contexts/accounts/useAccounts';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import useTileLocation from '@/contexts/tile_locations/useTileLocation';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import { getTileIconSrc } from '@/helpers/media';
 import { DEV_WIDGET_SERVER_PORT, PROD_PORT } from '@/helpers/serverBaseUrl';
+import { mockTwitchChatMessage } from '@/helpers/services/twitch/twitchMock';
 import { useParams } from '@tanstack/react-router';
 import { memo } from 'react';
 import WidgetSettings from './WidgetSettings';
 
 const Widget = memo(function Widget() {
 	const { widgetId } = useParams({ from: '/widget/$widgetId' });
+	const accounts = useAccounts();
 
 	const { tileMeta } = useTileMeta(widgetId);
 	const tileLocation = useTileLocation(widgetId);
@@ -40,6 +44,17 @@ const Widget = memo(function Widget() {
 				)}
 
 				<HeaderText className='flex-1'>{tileMeta.name}</HeaderText>
+
+				<HeaderButton
+					icon={<ChatBubbleSvg className='size-7' />}
+					onClick={() => {
+						Object.values(accounts).forEach(account => {
+							mockTwitchChatMessage(account, widgetId);
+						});
+					}}
+				>
+					Simulate Message
+				</HeaderButton>
 
 				<HeaderButton
 					icon={<ChainLinkSvg className='size-7' />}

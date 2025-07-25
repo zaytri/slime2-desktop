@@ -1,0 +1,6 @@
+{
+	"identifier": "watcher",
+	"description": "This capability is used to watch AppData files for changes.",
+	"windows": ["main"],
+	"permissions": ["fs:allow-appdata-read-recursive", "fs:deny-default"]
+}

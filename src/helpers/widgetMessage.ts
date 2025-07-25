@@ -15,10 +15,54 @@ export async function sendWidgetValues(
 	);
 }
 
+export async function sendTwitchEvent(
+	accountId: string,
+	widgetId: string,
+	eventId: string,
+	eventType: string,
+	eventVersion: string,
+	eventTimestamp: string,
+	data: unknown,
+	mock: boolean = false,
+) {
+	return sendWidgetMessage(widgetId, 'twitch-event', {
+		id: eventId,
+		type: eventType,
+		version: eventVersion,
+		account_id: accountId,
+		timestamp: eventTimestamp,
+		mock,
+		data,
+	});
+}
+
+export async function sendWidgetAccounts(widgetId: string, data: unknown) {
+	return sendWidgetMessage(widgetId, 'widget-accounts', {
+		accounts: data,
+	});
+}
+
+export async function sendWidgetResponse(
+	widgetId: string,
+	type: string,
+	requestId: string,
+	data: unknown,
+) {
+	return sendWidgetMessage(widgetId, 'widget-response', {
+		type,
+		request_id: requestId,
+		response: data,
+	});
+}
+
+export async function sendWidgetCoreChange(widgetId: string) {
+	return sendWidgetMessage(widgetId, 'widget-core-change');
+}
+
 async function sendWidgetMessage(
 	widgetId: string,
 	type: string,
-	data: unknown,
+	data?: unknown,
 ) {
 	return sendWebsocketMessage(
 		JSON.stringify({

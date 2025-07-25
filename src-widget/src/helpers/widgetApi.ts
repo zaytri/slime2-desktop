@@ -7,7 +7,7 @@ const widgetApi = axios.create({
 
 export async function getHtml(widgetId: string): Promise<string> {
 	const html = await widgetApi
-		.get<string>(`/${widgetId}/core/index.html`)
+		.get<string>(`/${widgetId}/core/index.html?timestamp=${Date.now()}`)
 		.then(response => response.data);
 
 	return html;
@@ -15,7 +15,7 @@ export async function getHtml(widgetId: string): Promise<string> {
 
 export async function getMeta(widgetId: string): Promise<Meta> {
 	const config = await widgetApi
-		.get<Meta>(`/${widgetId}/core/config/meta.json`)
+		.get<Meta>(`/${widgetId}/core/config/meta.json?timestamp=${Date.now()}`)
 		.then(response => response.data);
 
 	return config;

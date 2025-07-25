@@ -6,7 +6,7 @@ import { i18nStringTransform } from '@/helpers/i18n';
 import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { Field, Input, Label } from '@headlessui/react';
 import { memo, useState } from 'react';
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import InputDescription from './InputDescription';
 
 const MultiTextInput = memo(function MultiTextInput(
@@ -17,8 +17,7 @@ const MultiTextInput = memo(function MultiTextInput(
 	const [inputValue, setInputValue] = useState<string>('');
 
 	const values = z
-		.array(z.string())
-		.catch(setting.defaultValue ?? [])
+		.catch(z.array(z.string()), setting.defaultValue ?? [])
 		.parse(widgetValue);
 
 	function removeValueAtIndex(index: number) {

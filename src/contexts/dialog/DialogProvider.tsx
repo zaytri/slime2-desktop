@@ -18,7 +18,7 @@ const DialogProvider = memo(function DialogProvider({
 	function openDialog(component: React.ReactNode, onCancel?: VoidFunction) {
 		closeDialog();
 		setComponent(component);
-		setOnCancel(onCancel);
+		setOnCancel(() => onCancel);
 		dialogRef.current?.showModal();
 	}
 

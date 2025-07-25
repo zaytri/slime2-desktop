@@ -3,7 +3,7 @@ import {
 	loadWidgetValues,
 	saveWidgetValues,
 } from '@/helpers/json/widgetValues';
-import { sendWidgetValues } from '@/helpers/websocket';
+import { sendWidgetValues } from '@/helpers/widgetMessage';
 import { memo, useEffect, useReducer, useState } from 'react';
 import { WidgetValuesContext } from './useWidgetValues';
 import {

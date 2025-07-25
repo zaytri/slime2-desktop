@@ -1,5 +1,8 @@
+import { WidgetSettingParentContext } from '@/contexts/widget_setting_parent/useWidgetSettingParent';
+import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidgetValueKey';
+import useWidgetValues from '@/contexts/widget_values/useWidgetValues';
 import { WidgetSetting } from '@/helpers/json/widgetSettings';
-import { memo } from 'react';
+import { memo, useContext } from 'react';
 import ImageDisplay from './Display/ImageDisplay';
 import TextDisplay from './Display/TextDisplay';
 import ColorInput from './Input/ColorInput';
@@ -21,6 +24,25 @@ import WidgetButton from './WidgetButton';
 const NonCategorySetting = memo(function NonCategorySetting(
 	setting: Props.WithId<WidgetSetting.NonCategory>,
 ) {
+	const parentId = useContext(WidgetSettingParentContext);
+	const values = useWidgetValues();
+	if (setting.condition) {
+		// for every condition, check value of the dependency
+		const allConditionsMet = Object.entries(setting.condition).every(
+			dependency => {
+				const [dependentId, dependentValue] = dependency;
+				return (
+					(parentId &&
+						values[getWidgetValueChildKey(parentId, dependentId)] ===
+							dependentValue) ||
+					values[dependentId] === dependentValue
+				);
+			},
+		);
+
+		if (!allConditionsMet) return null;
+	}
+
 	switch (setting.type) {
 		case 'section':
 			return <SectionSetting {...setting} />;

@@ -4,7 +4,7 @@ import { i18nStringTransform } from '@/helpers/i18n';
 import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { Field, Input, Label } from '@headlessui/react';
 import { memo } from 'react';
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import InputDescription from './InputDescription';
 
 const SliderInput = memo(function SliderInput(
@@ -20,8 +20,8 @@ const SliderInput = memo(function SliderInput(
 
 	// default to min
 	const value = z
-		.number()
 		.catch(
+			z.number(),
 			setting.defaultValue === undefined
 				? min
 				: Math.max(Math.min(setting.defaultValue, max), min),

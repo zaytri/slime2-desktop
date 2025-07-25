@@ -1,8 +1,9 @@
+import useAccounts from '@/contexts/accounts/useAccounts';
 import { useAccountsDispatch } from '@/contexts/accounts/useAccountsDispatch';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { Account, setTokens } from '@/helpers/json/accounts';
-import { getUser, obtainTwitchTokens, verifyToken } from '@/helpers/twitchAuth';
-import { nanoid } from 'nanoid';
+import twitchApi from '@/helpers/services/twitch/twitchApi';
+import twitchAuth from '@/helpers/services/twitch/twitchAuth';
 import { memo, useEffect, useState } from 'react';
 import DialogHeader from './DialogHeader';
 
@@ -19,39 +20,49 @@ const TwitchActivationDialog = memo(function TwitchActivationDialog({
 }: TwitchActivationDialogProps) {
 	const { closeDialog } = useDialog();
 	const [activating, setActivating] = useState(false);
-	const { addAccount: set } = useAccountsDispatch();
+	const accounts = useAccounts();
+	const { addAccount } = useAccountsDispatch();
 
 	useEffect(() => {
 		if (activating) {
 			const activationLoop = setInterval(() => {
-				obtainTwitchTokens(deviceCode)
+				twitchAuth
+					.obtainDCFTokens(deviceCode)
 					.then(response => {
 						setActivating(false);
 						const { access_token, refresh_token, scope } = response.data;
 
-						verifyToken(response.data.access_token).then(response => {
-							const { user_id } = response.data;
+						twitchAuth
+							.validateAccessToken(response.data.access_token)
+							.then(async response => {
+								const { user_id } = response.data;
+								const serviceId = user_id;
+								const service = 'twitch';
+								const type = 'read';
+								const accountId = `${service}_${type}_${serviceId}`;
+								await setTokens(accountId, access_token, refresh_token);
 
-							getUser(access_token, user_id).then(response => {
-								const user = response.data.data[0];
-								const account: Account = {
-									id: nanoid(),
-									service: 'twitch',
-									serviceId: user.id,
-									username: user.login,
-									displayName: user.display_name,
-									image: user.profile_image_url,
-									scopes: scope,
-									type: 'read',
-									reauthorize: false,
-									widgets: [],
-								};
+								twitchApi.getUser(accountId, user_id).then(response => {
+									const user = response.data.data[0];
+									const existingAccount: Account | undefined =
+										accounts[accountId];
+									const account: Account = {
+										id: accountId,
+										type,
+										service,
+										serviceId,
+										username: user.login,
+										displayName: user.display_name,
+										image: user.profile_image_url,
+										scopes: scope,
+										reauthorize: false,
+										widgets: existingAccount ? existingAccount.widgets : [],
+									};
 
-								setTokens(account.id, access_token, refresh_token);
-								set(account);
-								closeDialog();
+									addAccount(account);
+									closeDialog();
+								});
 							});
-						});
 					})
 					.catch(() => {
 						// user hasn't finished activation, ignore

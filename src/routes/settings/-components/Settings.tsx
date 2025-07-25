@@ -50,6 +50,11 @@ const Settings = memo(function Settings() {
 									<div className='relative'>
 										<div className='absolute inset-1 -z-10 rounded-full bg-lime-300'></div>
 										<img className='size-24 rounded-full' src={account.image} />
+										{account.reauthorize && (
+											<div className='absolute top-0 rounded-full bg-rose-900 px-2 font-bold text-white'>
+												REAUTH
+											</div>
+										)}
 									</div>
 
 									<p>{account.displayName}</p>

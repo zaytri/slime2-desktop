@@ -1,5 +1,5 @@
 import { useDialog } from '@/contexts/dialog/useDialog';
-import { startTwitchDeviceCodeFlow } from '@/helpers/twitchAuth';
+import twitchAuth from '@/helpers/services/twitch/twitchAuth';
 import { memo, useState } from 'react';
 import DialogHeader from './DialogHeader';
 import TwitchActivationDialog from './TwitchActivationDialog';
@@ -21,7 +21,7 @@ const AddAccountDialog = memo(function AddAccountDialog() {
 						onClick={() => {
 							setLoading(true);
 
-							startTwitchDeviceCodeFlow().then(response => {
+							twitchAuth.startDCF().then(response => {
 								const { device_code, user_code, verification_uri } =
 									response.data;
 

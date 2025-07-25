@@ -19,8 +19,8 @@
 		"nanoid": "^5.0.8",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
-		"react-use-websocket": "^4.13.0",
-		"tailwindcss": "^4.1.4"
+		"tailwindcss": "^4.1.4",
+		"zod": "^3.25.56"
 	},
 	"devDependencies": {
 		"@tanstack/react-router-devtools": "^1.120.3",

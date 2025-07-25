@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4-mini';
 import { loadJson } from '../commands';
 import { mainConfigPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';
@@ -28,7 +28,7 @@ async function tileLocationsConfigPath() {
 
 const TileLocation = z.object({
 	id: z.string(),
-	index: z.number().nonnegative(),
+	index: z.number().check(z.nonnegative()),
 	folderId: z.string(),
 });
 export type TileLocation = z.infer<typeof TileLocation>;
