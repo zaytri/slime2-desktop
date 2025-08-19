@@ -1,7 +1,6 @@
 import { useWidgetMeta } from '@/contexts/widget_metas/useWidgetMeta';
 import WidgetValuesProvider from '@/contexts/widget_values/WidgetValuesProvider';
 import { i18nStringTransform } from '@/helpers/i18n';
-import { loadWidgetMeta } from '@/helpers/json/widgetMeta';
 import type {
 	WidgetSetting,
 	WidgetSettings,
@@ -9,7 +8,7 @@ import type {
 import { useWidgetSettings } from '@/helpers/queryHooks';
 import useScrollTopObserver from '@/hooks/useScrollTopObserver';
 import { useParams } from '@tanstack/react-router';
-import { memo, useEffect, useRef } from 'react';
+import { memo, useRef } from 'react';
 import CategorySetting from './CategorySetting';
 import WidgetInfo from './WidgetInfo';
 
@@ -18,7 +17,7 @@ const WidgetSettings = memo(function WidgetSettings() {
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
 	const widgetSettingsQuery = useWidgetSettings(widgetId);
-	const { widgetMeta, setWidgetMeta } = useWidgetMeta(widgetId);
+	const { widgetMeta } = useWidgetMeta(widgetId);
 	const settings: WidgetSettings = widgetSettingsQuery.data ?? {};
 
 	const widgetInfoProps: Props.WithId<WidgetSetting.Category> = {
@@ -34,15 +33,6 @@ const WidgetSettings = memo(function WidgetSettings() {
 
 	const isLoading = widgetSettingsQuery.isLoading;
 	const isError = widgetSettingsQuery.isError;
-
-	useEffect(() => {
-		async function refreshWidgetMeta() {
-			const meta = await loadWidgetMeta(widgetId);
-			setWidgetMeta(meta);
-		}
-
-		refreshWidgetMeta();
-	}, [widgetId]);
 
 	if (isLoading) return <p>loading widget settings...</p>;
 	if (isError) return <p>error loading widget settings!</p>;

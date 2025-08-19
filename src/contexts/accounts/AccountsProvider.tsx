@@ -42,6 +42,10 @@ const AccountsProvider = memo(function AccountsProvider({
 	}, []);
 
 	useEffect(() => {
+		if (Object.keys(widgetMetas).length === 0) {
+			return;
+		}
+
 		async function createTwitchWebsocket(
 			twitchReadAccount: Account,
 			reconnectUrl?: string,
