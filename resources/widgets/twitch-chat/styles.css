@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&display=swap');
+
+#widget {
+	--default-font-name: 'Nunito';
+	--default-font-size: 14px;
+	--default-font-weight: normal;
+	--default-font-color: white;
+	--default-bg-color: transparent;
+	--font-name: var(--custom-font-name, var(--default-font-name));
+	--font-weight: var(--custom-font-weight, var(--default-font-weight));
+	--font-size: var(--custom-font-size, var(--default-font-size));
+	--font-color: var(--custom-font-color, var(--default-font-color));
+	--bg-color: var(--custom-bg-color, var(--default-bg-color));
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	font-family: var(--font-name), Nunito, Helvetica, Arial, sans-serif;
+	font-weight: var(--font-weight);
+	font-size: var(--font-size);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	color: var(--font-color);
+	background-color: var(--bg-color);
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+	align-items: flex-start;
+}
+
+#widget.align-top {
+	flex-direction: column-reverse;
+	justify-content: start;
+}
+
+#widget.align-bottom {
+	flex-direction: column;
+	justify-content: end;
+}
+
+#widget.align-left {
+	align-items: flex-start;
+}
+
+#widget.align-right {
+	align-items: flex-end;
+}
+
+.message {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.user {
+	display: inline-flex;
+	align-items: flex-end;
+}
+
+.name {
+	display: inline;
+	font-weight: bold;
+	color: var(--font-color);
+	position: relative;
+}
+
+#widget.username-color-custom .name {
+	color: var(--custom-username-color, var(--font-color));
+}
+
+#widget.username-color-twitch .name {
+	color: var(--twitch-username-color, var(--font-color));
+}
+
+#widget.username-color-twitch-light .name {
+	color: var(--twitch-light-username-color, var(--font-color));
+}
+
+#widget.username-color-twitch-dark .name {
+	color: var(--twitch-dark-username-color, var(--font-color));
+}
+
+.name::after {
+	content: ': ';
+	white-space: pre;
+	display: inline;
+	color: var(--font-color);
+	font-weight: var(--font-weight);
+}
+
+.badges {
+	display: inline;
+}
+
+.badges:empty {
+	display: none;
+}
+
+.badge {
+	height: calc(1em + 4px);
+	display: inline;
+	margin-right: 3px;
+}
+
+.pronouns {
+	display: inline;
+	border-radius: 4px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	font-size: calc(1em - 2px);
+	margin-right: 4px;
+	margin-left: 1px;
+	box-shadow: 0 0 0 1.5px var(--font-color);
+}
+
+.pronouns:empty {
+	display: none;
+}
+
+.text,
+.emote,
+.cheer-amount {
+	display: inline;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.cheer-amount {
+	font-weight: bold;
+	padding-left: 5px;
+}
+
+.emote {
+	height: 2em;
+	max-height: 112px;
+	vertical-align: middle;
+	margin-top: -0.25em;
+	margin-bottom: -0.2em;
+}

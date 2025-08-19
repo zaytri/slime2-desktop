@@ -1,14 +1,15 @@
+import { useWidgetMeta } from '@/contexts/widget_metas/useWidgetMeta';
 import WidgetValuesProvider from '@/contexts/widget_values/WidgetValuesProvider';
 import { i18nStringTransform } from '@/helpers/i18n';
-import { WidgetMeta } from '@/helpers/json/widgetMeta';
+import { loadWidgetMeta } from '@/helpers/json/widgetMeta';
 import type {
 	WidgetSetting,
 	WidgetSettings,
 } from '@/helpers/json/widgetSettings';
-import { useWidgetMeta, useWidgetSettings } from '@/helpers/queryHooks';
+import { useWidgetSettings } from '@/helpers/queryHooks';
 import useScrollTopObserver from '@/hooks/useScrollTopObserver';
 import { useParams } from '@tanstack/react-router';
-import { memo, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import CategorySetting from './CategorySetting';
 import WidgetInfo from './WidgetInfo';
 
@@ -17,9 +18,8 @@ const WidgetSettings = memo(function WidgetSettings() {
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
 	const widgetSettingsQuery = useWidgetSettings(widgetId);
-	const widgetMetaQuery = useWidgetMeta(widgetId);
+	const { widgetMeta, setWidgetMeta } = useWidgetMeta(widgetId);
 	const settings: WidgetSettings = widgetSettingsQuery.data ?? {};
-	const meta: WidgetMeta | undefined = widgetMetaQuery.data;
 
 	const widgetInfoProps: Props.WithId<WidgetSetting.Category> = {
 		id: '<[slime2-widget-info-id]>',
@@ -32,8 +32,17 @@ const WidgetSettings = memo(function WidgetSettings() {
 		...Object.keys(settings),
 	]);
 
-	const isLoading = widgetSettingsQuery.isLoading || widgetMetaQuery.isLoading;
-	const isError = widgetSettingsQuery.isError || widgetMetaQuery.isError;
+	const isLoading = widgetSettingsQuery.isLoading;
+	const isError = widgetSettingsQuery.isError;
+
+	useEffect(() => {
+		async function refreshWidgetMeta() {
+			const meta = await loadWidgetMeta(widgetId);
+			setWidgetMeta(meta);
+		}
+
+		refreshWidgetMeta();
+	}, [widgetId]);
 
 	if (isLoading) return <p>loading widget settings...</p>;
 	if (isError) return <p>error loading widget settings!</p>;
@@ -90,7 +99,9 @@ const WidgetSettings = memo(function WidgetSettings() {
 					ref={scrollContainerRef}
 				>
 					<div className='border-r border-stone-300 pb-8'>
-						{meta && <WidgetInfo {...meta} id={widgetInfoProps.id} />}
+						{widgetMeta && (
+							<WidgetInfo {...widgetMeta} id={widgetInfoProps.id} />
+						)}
 
 						{Object.entries(settings).map(([id, category]) => {
 							const props = { id, ...category };

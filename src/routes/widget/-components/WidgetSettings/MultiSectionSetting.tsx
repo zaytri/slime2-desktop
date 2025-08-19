@@ -15,7 +15,7 @@ import {
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { nanoid } from 'nanoid';
 import { memo, useEffect, useRef } from 'react';
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/mini';
 import MultiSubsection from './MultiSubsection';
 import NonCategorySettings from './NonCategorySettings';
 

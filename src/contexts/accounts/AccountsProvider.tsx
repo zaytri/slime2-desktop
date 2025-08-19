@@ -10,6 +10,7 @@ import twitchApi, {
 import twitchAuth from '@/helpers/services/twitch/twitchAuth';
 import { sendTwitchEvent } from '@/helpers/widgetMessage';
 import { memo, useEffect, useReducer, useRef } from 'react';
+import useWidgetMetas from '../widget_metas/useWidgetMetas';
 import { AccountsContext } from './useAccounts';
 import {
 	AccountsDispatchContext,
@@ -20,6 +21,7 @@ const AccountsProvider = memo(function AccountsProvider({
 	children,
 }: Props.WithChildren) {
 	const [accounts, dispatch] = useReducer(accountsReducer, {});
+	const widgetMetas = useWidgetMetas();
 	const twitchWebsockets = useRef(new Map<string, WebSocket>());
 
 	function setAccounts(accounts: Accounts) {
@@ -41,16 +43,19 @@ const AccountsProvider = memo(function AccountsProvider({
 
 	useEffect(() => {
 		async function createTwitchWebsocket(
-			account: Account,
+			twitchReadAccount: Account,
 			reconnectUrl?: string,
 		) {
 			// get existing eventsub subscriptions
-			const response = await twitchApi.getEventSubs(account.id);
+			const response = await twitchApi.getEventSubs(twitchReadAccount.id);
 			let existingEventSubs = response.data.data;
 			let cursor = response.data.pagination.cursor;
 
 			while (cursor) {
-				const nextResponse = await twitchApi.getEventSubs(account.id, cursor);
+				const nextResponse = await twitchApi.getEventSubs(
+					twitchReadAccount.id,
+					cursor,
+				);
 
 				existingEventSubs = [...existingEventSubs, ...nextResponse.data.data];
 				cursor = nextResponse.data.pagination.cursor;
@@ -58,9 +63,11 @@ const AccountsProvider = memo(function AccountsProvider({
 
 			// delete all existing eventsub subscriptions
 			for (const eventSub of existingEventSubs) {
-				await twitchApi.deleteEventSub(account.id, eventSub.id).catch(error => {
-					console.error(error);
-				});
+				await twitchApi
+					.deleteEventSub(twitchReadAccount.id, eventSub.id)
+					.catch(error => {
+						console.error(error);
+					});
 			}
 
 			const websocket = new WebSocket(
@@ -85,7 +92,7 @@ const AccountsProvider = memo(function AccountsProvider({
 				if (keepAliveTimeoutSeconds) {
 					connectionLostTimer = setTimeout(() => {
 						// connection has been lost, create a new connection and disconnect
-						createTwitchWebsocket(account);
+						createTwitchWebsocket(twitchReadAccount);
 						websocket.close();
 
 						// 1200 instead of 1000 to allow extra time
@@ -98,7 +105,7 @@ const AccountsProvider = memo(function AccountsProvider({
 				clearConnectionLostTimer();
 				websocket.close();
 				updateAccount({
-					...account,
+					...twitchReadAccount,
 					reauthorize: true,
 				});
 			}
@@ -114,15 +121,15 @@ const AccountsProvider = memo(function AccountsProvider({
 						try {
 							// ensure that the API tokens are ready to use
 							// by checking whether or not this throws an error
-							await twitchAuth.getValidTokens(account.id);
+							await twitchAuth.getValidTokens(twitchReadAccount.id);
 						} catch {
 							// unable to get valid tokens
 							// delete tokens and set account to need reauthorization
 							updateAccount({
-								...account,
+								...twitchReadAccount,
 								reauthorize: true,
 							});
-							deleteTokens(account.id);
+							deleteTokens(twitchReadAccount.id);
 							return;
 						}
 
@@ -134,14 +141,16 @@ const AccountsProvider = memo(function AccountsProvider({
 						restartConnectionLostTimer();
 
 						// create all eventsub subscriptions using sessionId
-						for (const params of createEventSubParamsList(account.serviceId)) {
+						for (const params of createEventSubParamsList(
+							twitchReadAccount.serviceId,
+						)) {
 							// stop creating subscriptions if websocket is closed
 							if (websocket.readyState !== WebSocket.OPEN) {
 								break;
 							}
 
 							await twitchApi
-								.createEventSub(account, sessionId, params)
+								.createEventSub(twitchReadAccount, sessionId, params)
 								.catch(error => {
 									console.error(params.type, error);
 									reauthorizationNeeded();
@@ -164,11 +173,24 @@ const AccountsProvider = memo(function AccountsProvider({
 						const notificationMessage =
 							twitchMessage as Twitch.WebsocketMessage.Notification;
 
+						const relatedWidgets: string[] = [];
+						Object.entries(widgetMetas).forEach(([widgetId, widgetMeta]) => {
+							widgetMeta.accounts.forEach((accountSlot, index) => {
+								if (
+									twitchReadAccount.widgets[widgetId] === index ||
+									(accountSlot.service === 'twitch' &&
+										accountSlot.type === 'read' &&
+										twitchReadAccount.default)
+								) {
+									relatedWidgets.push(widgetId);
+								}
+							});
+						});
 						// send events to all related widgets
 						Promise.all(
-							account.widgets.map(async widgetId => {
+							relatedWidgets.map(async widgetId => {
 								await sendTwitchEvent(
-									account.id,
+									twitchReadAccount.id,
 									widgetId,
 									notificationMessage.metadata.message_id,
 									notificationMessage.metadata.subscription_type,
@@ -190,7 +212,10 @@ const AccountsProvider = memo(function AccountsProvider({
 						clearConnectionLostTimer();
 
 						// create new websocket with reconnect_url
-						createTwitchWebsocket(account, payload.session.reconnect_url);
+						createTwitchWebsocket(
+							twitchReadAccount,
+							payload.session.reconnect_url,
+						);
 						websocket.close();
 
 						break;
@@ -211,8 +236,8 @@ const AccountsProvider = memo(function AccountsProvider({
 								type: metadata.subscription_type,
 								version: metadata.subscription_version,
 								status: status,
-								username: account.username,
-								userId: account.serviceId,
+								username: twitchReadAccount.username,
+								userId: twitchReadAccount.serviceId,
 							},
 						);
 
@@ -230,11 +255,13 @@ const AccountsProvider = memo(function AccountsProvider({
 			});
 
 			// if a websocket already exists for this account, close it
-			const existingWebsocket = twitchWebsockets.current.get(account.id);
+			const existingWebsocket = twitchWebsockets.current.get(
+				twitchReadAccount.id,
+			);
 			if (existingWebsocket) existingWebsocket.close();
 
 			// save new websocket
-			twitchWebsockets.current.set(account.id, websocket);
+			twitchWebsockets.current.set(twitchReadAccount.id, websocket);
 		}
 
 		Promise.all(
@@ -278,7 +305,7 @@ const AccountsProvider = memo(function AccountsProvider({
 						return;
 					}
 
-					if (account.type === 'read' && account.widgets.length > 0) {
+					if (account.type === 'read') {
 						createTwitchWebsocket(account);
 					}
 				}
@@ -290,7 +317,7 @@ const AccountsProvider = memo(function AccountsProvider({
 				websocket.close();
 			});
 		};
-	}, [accounts]);
+	}, [accounts, widgetMetas]);
 
 	return (
 		<AccountsContext value={accounts}>

@@ -18,7 +18,7 @@ export async function getPronouns(
 	username: string,
 ) {
 	if (userId.startsWith('mock_')) {
-		return Random.item(MOCK_PRONOUNS);
+		return Random.boolean() ? Random.item(MOCK_PRONOUNS) : null;
 	}
 
 	const cacheId = `${platform}_${userId}`;

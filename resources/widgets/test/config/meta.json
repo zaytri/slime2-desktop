@@ -6,7 +6,7 @@
 	"support": "https://zaytri.com/",
 	"icon": "bird.jpg",
 	"import": {
-		"js": ["script.js"],
+		"js": ["script.js", "https://colorjs.io/dist/color.global.min.js"],
 		"css": ["styles.css"]
 	},
 	"scope": {

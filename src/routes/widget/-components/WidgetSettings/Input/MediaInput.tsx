@@ -13,7 +13,7 @@ import { Field, Label } from '@headlessui/react';
 import { useParams } from '@tanstack/react-router';
 import clsx from 'clsx';
 import { memo } from 'react';
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/mini';
 import InputDescription from './InputDescription';
 import SelectMediaDialog from './SelectMediaDialog';
 

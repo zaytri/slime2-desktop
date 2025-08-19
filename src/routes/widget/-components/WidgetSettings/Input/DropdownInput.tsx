@@ -11,7 +11,7 @@ import {
 	ListboxOptions,
 } from '@headlessui/react';
 import { memo } from 'react';
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/mini';
 import InputDescription from './InputDescription';
 
 const DropdownInput = memo(function DropdownInput(

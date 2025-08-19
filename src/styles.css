@@ -145,7 +145,7 @@ button:hover {
 }
 
 @utility mini-menu-item {
-	@apply rounded-2 flex items-center gap-2 px-2 py-1 text-left outline-stone-400 data-focus:outline-2 data-over:bg-stone-200 data-over:font-medium;
+	@apply rounded-2 flex cursor-pointer items-center gap-2 px-2 py-1 text-left outline-stone-400 data-active-item:bg-stone-200 data-active-item:font-medium data-focus:outline-2 data-over:bg-stone-200 data-over:font-medium;
 }
 
 @utility button-choose-file {

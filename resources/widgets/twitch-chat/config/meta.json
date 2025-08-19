@@ -1,0 +1,18 @@
+{
+	"name": "Twitch Chat",
+	"creator": "Zaytri",
+	"version": "1.0.0",
+	"homepage": "https://slime2.stream/",
+	"support": "https://forums.slime2.stream/",
+	"icon": "icon.png",
+	"import": {
+		"js": ["script.js", "https://colorjs.io/dist/color.global.min.js"],
+		"css": ["styles.css"]
+	},
+	"accounts": [
+		{
+			"type": "read",
+			"service": "twitch"
+		}
+	]
+}

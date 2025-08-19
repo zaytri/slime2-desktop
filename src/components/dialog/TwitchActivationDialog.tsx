@@ -5,6 +5,7 @@ import { Account, setTokens } from '@/helpers/json/accounts';
 import twitchApi from '@/helpers/services/twitch/twitchApi';
 import twitchAuth from '@/helpers/services/twitch/twitchAuth';
 import { memo, useEffect, useState } from 'react';
+import AccountSuccessDialog from './AccountSuccessDialog';
 import DialogHeader from './DialogHeader';
 
 type TwitchActivationDialogProps = {
@@ -18,7 +19,7 @@ const TwitchActivationDialog = memo(function TwitchActivationDialog({
 	userCode,
 	verificationUri,
 }: TwitchActivationDialogProps) {
-	const { closeDialog } = useDialog();
+	const { openDialog } = useDialog();
 	const [activating, setActivating] = useState(false);
 	const accounts = useAccounts();
 	const { addAccount } = useAccountsDispatch();
@@ -56,11 +57,12 @@ const TwitchActivationDialog = memo(function TwitchActivationDialog({
 										image: user.profile_image_url,
 										scopes: scope,
 										reauthorize: false,
-										widgets: existingAccount ? existingAccount.widgets : [],
+										default: existingAccount ? existingAccount.default : false,
+										widgets: existingAccount ? existingAccount.widgets : {},
 									};
 
 									addAccount(account);
-									closeDialog();
+									openDialog(<AccountSuccessDialog id={account.id} />);
 								});
 							});
 					})

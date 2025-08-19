@@ -1,6 +1,6 @@
 // zod and types
 
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/mini';
 
 export function i18nStringTransform(i18nString: I18nString): string {
 	// already a basic string, just return it

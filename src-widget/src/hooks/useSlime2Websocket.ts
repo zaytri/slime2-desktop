@@ -1,7 +1,7 @@
 import { useLoaderData } from '@tanstack/react-router';
 import { nanoid } from 'nanoid';
 import { useEffect, useRef } from 'react';
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/mini';
 import { WEBSOCKET_URL } from '../helpers/serverUrl';
 import logZodError from '../helpers/zodError';
 

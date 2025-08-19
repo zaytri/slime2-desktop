@@ -1,3 +1,4 @@
+import AccountPreview from '@/components/AccountPreview';
 import AddAccountDialog from '@/components/dialog/AddAccountDialog';
 import Header from '@/components/header/Header';
 import HeaderButton from '@/components/header/HeaderButton';
@@ -41,25 +42,7 @@ const Settings = memo(function Settings() {
 						</button>
 
 						{Object.values(accounts).map(account => {
-							return (
-								<button
-									key={account.id}
-									className='flex flex-col items-center gap-1'
-									onClick={() => {}}
-								>
-									<div className='relative'>
-										<div className='absolute inset-1 -z-10 rounded-full bg-lime-300'></div>
-										<img className='size-24 rounded-full' src={account.image} />
-										{account.reauthorize && (
-											<div className='absolute top-0 rounded-full bg-rose-900 px-2 font-bold text-white'>
-												REAUTH
-											</div>
-										)}
-									</div>
-
-									<p>{account.displayName}</p>
-								</button>
-							);
+							return <AccountPreview key={account.id} account={account} />;
 						})}
 					</div>
 				</div>

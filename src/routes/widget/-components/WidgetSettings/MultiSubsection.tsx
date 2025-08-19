@@ -18,7 +18,7 @@ import {
 	MenuSeparator,
 } from '@headlessui/react';
 import { memo } from 'react';
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/mini';
 
 type MultiSectionProps = {
 	onDelete: VoidFunction;

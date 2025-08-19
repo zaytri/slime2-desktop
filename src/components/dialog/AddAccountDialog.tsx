@@ -1,6 +1,7 @@
 import { useDialog } from '@/contexts/dialog/useDialog';
 import twitchAuth from '@/helpers/services/twitch/twitchAuth';
 import { memo, useState } from 'react';
+import TwitchIconSvg from '../svg/TwitchIconSvg';
 import DialogHeader from './DialogHeader';
 import TwitchActivationDialog from './TwitchActivationDialog';
 
@@ -12,12 +13,10 @@ const AddAccountDialog = memo(function AddAccountDialog() {
 		<div>
 			<DialogHeader>Add Account</DialogHeader>
 
-			{loading ? (
-				<p>loading...</p>
-			) : (
+			{loading ? null : (
 				<div>
 					<button
-						className='rounded-2 bg-amber-500 p-2'
+						className='rounded-2 bg-[#9146FF] font-radio-canada text-5 p-3 text-white flex gap-2 items-center w-full justify-center group over:translate-y-0.5 over:bg-none over:shadow-none border-2 border-violet-900 bg-linear-to-b from-[#9146FF] to-violet-600 from-50% to-50% shadow-[0_2px] shadow-violet-900'
 						onClick={() => {
 							setLoading(true);
 
@@ -35,7 +34,8 @@ const AddAccountDialog = memo(function AddAccountDialog() {
 							});
 						}}
 					>
-						Login with Twitch
+						<TwitchIconSvg className='size-6' />
+						Twitch
 					</button>
 				</div>
 			)}

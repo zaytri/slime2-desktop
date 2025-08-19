@@ -694,7 +694,7 @@ namespace Twitch {
 				order: number;
 				last_updated: string;
 				is_charitable: boolean;
-			};
+			}[];
 		};
 
 		type GetBadges = {

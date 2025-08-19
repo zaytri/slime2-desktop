@@ -17,6 +17,12 @@ type AccountsAction =
 			accounts: Accounts;
 	  }
 	| {
+			type: 'set-default';
+			accountId: string;
+			accountType: Account['type'];
+			accountService: Account['service'];
+	  }
+	| {
 			type: 'remove';
 			id: string;
 	  };
@@ -42,7 +48,15 @@ export function useAccountsDispatch() {
 		dispatch({ type: 'remove', id });
 	};
 
-	return { addAccount, removeAccount };
+	const setDefaultAccount = (
+		accountId: string,
+		accountService: Account['service'],
+		accountType: Account['type'],
+	) => {
+		dispatch({ type: 'set-default', accountId, accountService, accountType });
+	};
+
+	return { addAccount, removeAccount, setDefaultAccount };
 }
 
 export function accountsReducer(
@@ -61,6 +75,24 @@ export function accountsReducer(
 
 			// set/update new account value
 			newState[newAccount.id] = newAccount;
+			break;
+		}
+		case 'set-default': {
+			const { accountId, accountService, accountType } = action;
+
+			Object.values(newState).forEach(account => {
+				if (account.id === accountId) {
+					// set default account
+					newState[account.id].default = true;
+				} else if (
+					accountService === account.service &&
+					accountType === account.type
+				) {
+					// remove default from other related accounts
+					newState[account.id].default = false;
+				}
+			});
+
 			break;
 		}
 		case 'remove': {

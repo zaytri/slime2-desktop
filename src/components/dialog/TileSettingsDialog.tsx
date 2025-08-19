@@ -90,7 +90,7 @@ const TileSettingsDialog = memo(function TileSettingsDialog({
 
 	return (
 		<div>
-			<DialogHeader>Tile Settings</DialogHeader>
+			<DialogHeader>Edit Tile</DialogHeader>
 			<div className='flex flex-col gap-4'>
 				<Field className='flex flex-col gap-1'>
 					<Label className='font-medium'>Name</Label>
@@ -122,7 +122,7 @@ const TileSettingsDialog = memo(function TileSettingsDialog({
 										: getTileIconSrc(id, tileMeta.icon)
 								}
 								className={clsx(
-									'rounded-2 rounded-b-0 smooth-image relative overflow-hidden border-2 border-b-0 border-slate-700 bg-white object-cover',
+									'rounded-2 rounded-b-0 smooth-image relative overflow-hidden border-2 border-b-0 border-slate-700 bg-white object-contain',
 									type === 'folder' ? 'h-40 w-48' : 'h-72 w-full',
 								)}
 							/>

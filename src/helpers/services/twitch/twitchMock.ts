@@ -1,20 +1,10 @@
-import { Account } from '@/helpers/json/accounts';
 import Random from '@/helpers/random';
 import { sendTwitchEvent } from '@/helpers/widgetMessage';
 
 export async function mockTwitchChatMessage(
-	account: Account,
 	widgetId: string,
 	_eventOptions?: {},
 ) {
-	if (
-		account.type !== 'read' ||
-		account.service !== 'twitch' ||
-		!account.widgets.includes(widgetId)
-	) {
-		return;
-	}
-
 	const date = new Date();
 	const isoString = date.toISOString();
 
@@ -94,9 +84,9 @@ export async function mockTwitchChatMessage(
 	}
 
 	const chatMessageEvent: Twitch.WebsocketEvent.ChatMessage = {
-		broadcaster_user_id: account.serviceId,
-		broadcaster_user_login: account.username,
-		broadcaster_user_name: account.displayName,
+		broadcaster_user_id: 'mock_event',
+		broadcaster_user_login: 'mock_event',
+		broadcaster_user_name: 'Mock_Event',
 		chatter_user_id: `mock_chatter_${displayName}`,
 		chatter_user_name: displayName,
 		chatter_user_login: displayName.toLowerCase(),
@@ -112,7 +102,7 @@ export async function mockTwitchChatMessage(
 		}),
 	};
 	await sendTwitchEvent(
-		account.id,
+		'mock_event',
 		widgetId,
 		`mock_event_${isoString}`,
 		'channel.chat.message',

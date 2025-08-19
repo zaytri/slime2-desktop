@@ -1,59 +1,200 @@
 {
-	"textCategory": {
-		"label": "Text",
+	"test": {
+		"label": "Test",
 		"settings": {
-			"font": {
-				"label": "Font",
-				"type": "font-input"
+			"button": {
+				"label": "Button",
+				"type": "button"
 			},
-			"size": {
-				"label": "Font Size (px)",
+			"textDisplay": {
+				"label": "Text Display",
+				"type": "text-display"
+			},
+			"imageDisplay": {
+				"label": "Image Display",
+				"type": "image-display",
+				"src": "assets/heavy_breathing.gif",
+				"alt": "Heavy Breathing Cat"
+			},
+			"textInput": {
+				"label": "Standard Text Input",
+
+				"type": "text-input",
+				"defaultValue": "",
+				"placeholder": "Enter in text",
+				"description": "Test Description"
+			},
+			"section": {
+				"label": "Section",
+				"type": "section",
+				"settings": {
+					"textAreaInput": {
+						"label": "Text Area Input",
+						"type": "text-area-input",
+						"defaultValue": "",
+						"placeholder": "Enter in text",
+						"description": "Test Description"
+					},
+					"multiTextInput": {
+						"label": "Multi Text Input",
+						"type": "multi-text-input",
+						"defaultValue": [],
+						"placeholder": "Enter in text",
+						"description": "Test Description"
+					}
+				}
+			},
+			"numberInput": {
+				"label": "Number Input",
 				"type": "number-input",
+				"defaultValue": 0,
 				"min": 0,
-				"step": 1
+				"max": 100,
+				"step": 1,
+				"placeholder": {
+					"en": "Enter a number",
+					"es": "Un numbero por favor"
+				},
+				"description": "Test Description"
 			},
-			"weight": {
-				"label": "Font Weight",
-				"type": "select-input",
-				"defaultValue": "normal",
-				"options": [
-					{ "label": "Normal", "value": "normal" },
-					{ "label": "Bold", "value": "bold" },
-					{ "label": "100", "value": 100 },
-					{ "label": "200", "value": 200 },
-					{ "label": "300", "value": 300 },
-					{ "label": "400", "value": 400 },
-					{ "label": "500", "value": 500 },
-					{ "label": "600", "value": 600 },
-					{ "label": "700", "value": 700 },
-					{ "label": "800", "value": 800 },
-					{ "label": "900", "value": 900 }
-				]
+			"sliderInput": {
+				"label": "Slider Input",
+				"type": "slider-input",
+				"defaultValue": 0,
+				"min": 0,
+				"max": 100,
+				"step": 1,
+				"placeholder": "Pick a number",
+				"description": "Test Description"
 			},
-			"showColon": {
-				"label": "Show colon (:) after username",
+			"toggleInput": {
+				"label": "Toggle Input",
 				"type": "toggle-input",
-				"defaultValue": true
+				"defaultValue": false,
+				"description": "Test Description"
 			},
-			"usernameColor": {
-				"label": "Username Color",
-				"type": "select-input",
-				"defaultValue": "twitch",
+			"dropdownInput": {
+				"label": "Dropdown Input",
+				"type": "dropdown-input",
+				"defaultValue": 3,
 				"options": [
-					{ "label": "Twitch", "value": "twitch" },
-					{ "label": "Custom", "value": "custom" }
-				]
+					{ "label": "One", "value": 1 },
+					{ "label": "Two", "value": 2 },
+					{ "label": "Three", "value": 3 }
+				],
+				"placeholder": "Pick a number",
+				"description": "Test Description"
 			},
-			"customUsernameColor": {
-				"label": "Custom User Color",
-				"type": "color-input",
-				"defaultValue": "white",
-				"description": "This will only be applied when you select \"Custom\" above."
+			"selectInput": {
+				"label": "Select Input",
+				"type": "select-input",
+				"defaultValue": 3,
+				"options": [
+					{ "label": "One", "value": 1 },
+					{ "label": "Two", "value": 2 },
+					{ "label": "Three", "value": 3 }
+				],
+				"description": "Test Description"
+			}
+		}
+	},
+	"test2": {
+		"label": "Test 2",
+		"settings": {
+			"multiSelectInput": {
+				"label": "Multi Select Input",
+				"type": "multi-select-input",
+				"defaultValue": [1, 2],
+				"options": [
+					{ "label": "One", "value": 1 },
+					{ "label": "Two", "value": 2 },
+					{ "label": "Three", "value": 3 }
+				],
+				"description": "Test Description"
 			},
-			"messageColor": {
-				"label": "Message Text Color",
-				"type": "color-input",
-				"defaultValue": "white"
+			"imageInput": {
+				"label": "Image Input",
+				"type": "image-input",
+				"defaultValue": "assets/illegal.jpg",
+				"description": "Test Description"
+			},
+			"multiImageInput": {
+				"label": "Multi Image Input",
+				"type": "multi-image-input",
+				"defaultValue": [],
+				"description": "Test Description"
+			},
+			"videoInput": {
+				"label": "Video Input",
+				"type": "video-input",
+				"description": "Test Description"
+			},
+			"multiVideoInput": {
+				"label": "Multi Video Input",
+				"type": "multi-video-input",
+				"defaultValue": [],
+				"description": "Test Description"
+			},
+			"audioInput": {
+				"label": "Audio Input",
+				"type": "audio-input",
+				"description": "Test Description"
+			},
+			"multiAudioInput": {
+				"label": "Multi Audio Input",
+				"type": "multi-audio-input",
+				"defaultValue": [],
+				"description": "Test Description"
+			},
+			"multiSection": {
+				"label": "Multi Section",
+				"type": "multi-section",
+				"settings": {
+					"colorInput": {
+						"label": "Color Input",
+						"type": "color-input",
+						"defaultValue": "black",
+						"description": "Test Description"
+					},
+					"fontInput": {
+						"label": "Font Input",
+						"type": "font-input",
+						"defaultValue": "Arial",
+						"description": "Test Description"
+					}
+				}
+			},
+			"followAlerts": {
+				"label": "Follow Alerts",
+				"type": "multi-section",
+				"settings": {
+					"alertButton": {
+						"label": "Test Alert",
+						"type": "button"
+					},
+					"alertEnabled": {
+						"label": "Enabled",
+						"type": "toggle-input",
+						"defaultValue": true
+					},
+					"alertImage": {
+						"label": "Image",
+						"type": "image-input"
+					},
+					"alertMessage": {
+						"label": "Message",
+						"type": "text-area-input",
+						"description": "{user} will be reaplced by the user's display name"
+					},
+					"alertDuration": {
+						"label": "Display (in seconds, 30 max)",
+						"type": "slider-input",
+						"defaultValue": 3,
+						"min": 0,
+						"max": 30,
+						"step": 1
+					}
+				}
 			}
 		}
 	}

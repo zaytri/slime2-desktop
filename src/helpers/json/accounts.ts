@@ -1,6 +1,6 @@
 // functions
 
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/mini';
 import {
 	deleteSecretKey,
 	getSecretKey,
@@ -69,7 +69,9 @@ const Account = z.object({
 	scopes: z.array(z.string()),
 	type: z.union([z.literal('read'), z.literal('bot'), z.literal('mod')]),
 	reauthorize: z.boolean(),
-	widgets: z.array(z.string()),
+	// keys are widget IDs, values are indices
+	widgets: z.catch(z.record(z.string(), z.number().check(z.nonnegative())), {}),
+	default: z.boolean(),
 });
 export type Account = z.infer<typeof Account>;
 

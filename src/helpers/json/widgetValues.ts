@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/mini';
 import { loadJson } from '../commands';
 import logZodError from '../zodError';
 import { tileFolderPath } from './jsonPaths';

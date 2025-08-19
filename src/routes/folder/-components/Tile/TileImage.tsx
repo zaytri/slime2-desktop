@@ -15,13 +15,15 @@ const TileImage = memo(function TileImage({ id, type }: WidgetTileProps) {
 	if (!tileMeta.icon) return null;
 
 	return (
-		<div className='absolute inset-x-2 top-5 bottom-2 flex'>
+		<div
+			className={clsx(
+				'absolute inset-x-2 top-5 bottom-2 flex',
+				type === 'widget' && 'px-4 py-1',
+			)}
+		>
 			<img
 				src={getTileIconSrc(id, tileMeta.icon)}
-				className={clsx(
-					'smooth-image flex-1 border-2 border-black/25 object-cover',
-					type === 'widget' ? 'rounded-slime' : 'rounded-10%',
-				)}
+				className='smooth-image flex-1 object-contain rounded-10% '
 			/>
 		</div>
 	);

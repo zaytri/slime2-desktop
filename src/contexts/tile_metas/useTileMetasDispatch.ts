@@ -3,10 +3,10 @@ import { createContext, useContext } from 'react';
 import { contextErrorMessage, deepCopyObject } from '../common';
 import { TileMetas } from './useTileMetas';
 
-type TileMapAction = { type: 'set'; id: string; meta: TileMeta };
+type TileMetasAction = { type: 'set'; id: string; meta: TileMeta };
 
 export const TileMetasDispatchContext = createContext<
-	React.Dispatch<TileMapAction> | undefined
+	React.Dispatch<TileMetasAction> | undefined
 >(undefined);
 
 export function useTileMetasDispatch() {
@@ -27,7 +27,7 @@ export function useTileMetasDispatch() {
 
 export function tileMetasReducer(
 	state: TileMetas,
-	action: TileMapAction,
+	action: TileMetasAction,
 ): TileMetas {
 	switch (action.type) {
 		case 'set': {

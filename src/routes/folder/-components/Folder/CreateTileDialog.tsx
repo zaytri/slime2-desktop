@@ -26,15 +26,15 @@ const CreateTileDialog = memo(function CreateTileDialog({
 					<CreateButton
 						className='rounded-slime'
 						onClick={async () => {
-							const id = await installDefaultWidget('test');
+							const id = await installDefaultWidget('twitch-chat');
 							addTile({ id, index, folderId });
 							closeDialog();
 						}}
 					>
-						Widget
+						Twitch Chat Widget
 					</CreateButton>
 
-					{folderId === 'main' && (
+					{folderId === 'main' && false && (
 						<CreateButton
 							className='rounded-10%'
 							onClick={async () => {

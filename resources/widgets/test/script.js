@@ -1,41 +1,104 @@
 /* Globals *******************************************************************/
 const slime2 = /** @type {Slime2} */ (window.slime2);
 
-const Widget = {};
-
-const messagesDeleted = new Map();
-const usersCleared = new Map();
 const EPOCH = new Date(0);
-let lastChatClear = EPOCH;
 
-if (!!window.obsstudio) {
-	document.body.style.setProperty('background-color', 'transparent');
-}
+const Widget = {
+	values: {},
+	channelBadges: new Map(),
+	globalBadges: new Map(),
+	cheermotes: new Map(),
+	bttv: {},
+	ffz: {},
+	messagesDeleted: new Map(),
+	usersCleared: new Map(),
+	lastChatClear: EPOCH,
+};
 
-/** Listeners */
+/* Listeners *****************************************************************/
 
-addEventListener('slime2:widget-values', event => {
-	console.log(event);
-});
+function widgetValuesListener(event) {
+	console.log('slime2:widget-values', event.detail);
 
-addEventListener('slime2:widget-accounts', event => {
-	Widget.badges = event.detail[0].badges;
-});
+	const widgetElement = document.getElementById('widget');
 
-addEventListener('slime2:twitch-event', async event => {
-	if (
-		!event.detail ||
-		!event.detail.type ||
-		!event.detail.data ||
-		!event.detail.account_id ||
-		!event.detail.timestamp
-	) {
-		return;
+	function setStyle(cssProperty, value) {
+		widgetElement.style.setProperty(cssProperty, value);
 	}
 
-	const timestamp = new Date(event.timestamp);
+	function addClass(...classes) {
+		widgetElement.classList.add(...classes);
+	}
 
-	console.log(event.detail.type, event.detail.data);
+	function removeClass(...classes) {
+		widgetElement.classList.remove(...classes);
+	}
+
+	Widget.values = event.detail;
+
+	setStyle('--custom-font-name', `"${Widget.values['font-name']}"`);
+	setStyle('--custom-font-size', `${Widget.values['font-size']}px`);
+	setStyle('--custom-font-weight', Widget.values['font-weight']);
+	setStyle('--custom-font-color', Widget.values['message-color']);
+	setStyle('--custom-username-color', Widget.values['custom-username-color']);
+
+	removeClass(
+		'username-color-twitch',
+		'username-color-custom',
+		'username-color-twitch-light',
+		'username-color-twitch-dark',
+	);
+	addClass(`username-color-${Widget.values['username-color']}`);
+}
+
+function widgetAccountsListener(event) {
+	console.log('slime2:widget-accounts', event.detail);
+
+	const accountData = event.detail.accounts[0];
+
+	// converting arrays to map for fast access
+
+	accountData.globalBadges.forEach(badge => {
+		const badgeVersions = new Map();
+		badge.versions.forEach(version => {
+			badgeVersions.set(version.id, version);
+		});
+		Widget.globalBadges.set(badge.set_id, {
+			...badge,
+			versions: badgeVersions,
+		});
+	});
+
+	accountData.channelBadges.forEach(badge => {
+		const badgeVersions = new Map();
+		badge.versions.forEach(version => {
+			badgeVersions.set(version.id, version);
+		});
+		Widget.channelBadges.set(badge.set_id, {
+			...badge,
+			versions: badgeVersions,
+		});
+	});
+
+	accountData.cheermotes.forEach(cheermote => {
+		const cheermoteTiers = new Map();
+		cheermote.tiers.forEach(tier => {
+			cheermoteTiers.set(tier.min_bits, tier);
+		});
+		Widget.cheermotes.set(cheermote.prefix, {
+			...cheermote,
+			tiers: cheermoteTiers,
+		});
+	});
+
+	Widget.bttv = accountData.betterTTV;
+	Widget.ffz = accountData.frankerFaceZ;
+}
+
+function twitchEventListener(event) {
+	console.log('slime2:twitch-event', event.detail.type, event.detail);
+
+	const timestamp = new Date(event.timestamp);
 
 	const { type, data } = event.detail;
 
@@ -49,9 +112,14 @@ addEventListener('slime2:twitch-event', async event => {
 		case 'channel.chat.clear_user_messages':
 			return handleChatClearUserMessages(data, timestamp);
 	}
-});
+}
 
-/** Event Handlers */
+addEventListener('slime2:widget-values', widgetValuesListener);
+addEventListener('slime2:widget-accounts', widgetAccountsListener);
+addEventListener('slime2:twitch-event', twitchEventListener);
+
+/* Event Handlers ************************************************************/
+
 async function handleChatMessage(data, timestamp) {
 	const {
 		message,
@@ -60,6 +128,7 @@ async function handleChatMessage(data, timestamp) {
 		chatter_user_id,
 		message_id,
 		color,
+		badges,
 	} = data;
 	const pronouns = await slime2.getPronouns(
 		'twitch',
@@ -71,7 +140,18 @@ async function handleChatMessage(data, timestamp) {
 	const messageElement = messageTemplateClone.querySelector('.message');
 	messageElement.setAttribute('data-message-id', message_id);
 	messageElement.setAttribute('data-user-id', chatter_user_id);
-	messageElement.style.setProperty('--userColor', color);
+
+	if (color) {
+		messageElement.style.setProperty('--twitch-username-color', color);
+		messageElement.style.setProperty(
+			'--twitch-light-username-color',
+			lightTextColor(color),
+		);
+		messageElement.style.setProperty(
+			'--twitch-dark-username-color',
+			darkTextColor(color),
+		);
+	}
 
 	messageTemplateClone
 		.querySelector('.user')
@@ -88,11 +168,11 @@ async function handleChatMessage(data, timestamp) {
 
 	if (
 		// chat cleared
-		timestamp < lastChatClear ||
+		timestamp < Widget.lastChatClear ||
 		// message deleted
-		messagesDeleted.get(message_id) ||
+		Widget.messagesDeleted.get(message_id) ||
 		// user banned or timed out
-		timestamp < (usersCleared.get(chatter_user_id) ?? EPOCH)
+		timestamp < (Widget.usersCleared.get(chatter_user_id) ?? EPOCH)
 	) {
 		console.log('deleted??');
 		// if message was already deleted by the above checks, don't render
@@ -104,7 +184,7 @@ async function handleChatMessage(data, timestamp) {
 
 async function handleChatMessageDelete(data) {
 	const { message_id } = data;
-	messagesDeleted.set(message_id, true);
+	Widget.messagesDeleted.set(message_id, true);
 	document
 		.getElementById('widget')
 		.querySelectorAll(`[data-message-id='${message_id}']`)
@@ -112,7 +192,7 @@ async function handleChatMessageDelete(data) {
 }
 
 async function handleChatClear(timestamp) {
-	lastChatClear = timestamp;
+	Widget.lastChatClear = timestamp;
 	document
 		.getElementById('widget')
 		.querySelectorAll('.message')
@@ -121,14 +201,14 @@ async function handleChatClear(timestamp) {
 
 async function handleChatClearUserMessages(data, timestamp) {
 	const { target_user_id } = data;
-	usersCleared.set(target_user_id, timestamp);
+	Widget.usersCleared.set(target_user_id, timestamp);
 	document
 		.getElementById('widget')
 		.querySelectorAll(`[data-user-id='${target_user_id}']`)
 		.forEach(element => element.remove());
 }
 
-/** Element Builders */
+/* Element Builders **********************************************************/
 
 /**
  * @param {string} displayName
@@ -154,27 +234,31 @@ function buildUser(displayName, username, pronouns, badges) {
 		userClone.querySelector('.pronouns').textContent = pronouns.join('/');
 	}
 
-	userClone.querySelector('.badges').append(buildBadges(badges));
+	const badgeClones = buildBadges(badges);
+	badgeClones.forEach(badgeClone =>
+		userClone.querySelector('.badges').append(badgeClone),
+	);
 
 	return userClone;
 }
 
 /**
  * @param {Twitch.Badge[]} badges
- * @returns {DocumentFragment}
+ * @returns {DocumentFragment[]}
  */
 function buildBadges(badges) {
 	return badges.map(userBadge => {
-		const badgeSetData = Widget.badges.find(
-			badge => badge.set_id === userBadge.set_id,
-		);
-		const badgeData = badgeSetData.versions.find(
-			version => version.id === userBadge.id,
-		);
-		const image = badgeData.image_url_4x;
+		const badgeVersion =
+			Widget.channelBadges.get(userBadge.set_id)?.versions.get(userBadge.id) ??
+			Widget.globalBadges.get(userBadge.set_id)?.versions.get(userBadge.id);
 
 		const badgeClone = cloneTemplate('badge-template');
-		badgeClone.querySelector('.badge').setAttribute('src', image);
+
+		if (badgeVersion) {
+			badgeClone
+				.querySelector('.badge')
+				.setAttribute('src', badgeVersion.image_url_4x);
+		}
 
 		return badgeClone;
 	});
@@ -191,6 +275,7 @@ function buildMessageFragment(fragment) {
 		case 'mention':
 			return buildMentionFragment(fragment);
 		case 'cheermote':
+			return buildCheermoteFragment(fragment);
 		case 'text':
 		default:
 			return buildTextFragment(fragment);
@@ -236,10 +321,31 @@ function buildEmoteFragment(emoteFragment) {
 	return emoteClone;
 }
 
-/** Helpers */
+function buildCheermoteFragment(cheermoteFragment) {
+	const { cheermote } = cheermoteFragment;
+
+	const cheermoteClone = cloneTemplate('cheermote-fragment-template');
+
+	const tier = Widget.cheermotes
+		.get(cheermote.prefix)
+		?.tiers.get(cheermote.tier);
+
+	if (tier) {
+		cheermoteClone.querySelector('.cheermote').src =
+			tier.images.dark.animated['4'];
+		cheermoteClone.querySelector('.cheer-amount').textContent = cheermote.bits;
+		cheermoteClone
+			.querySelector('.cheer-amount')
+			.style.setProperty('color', tier.color);
+	}
+
+	return cheermoteClone;
+}
+
+/* Helpers *******************************************************************/
 
 /**
- * Builds Twitch emote image URL given the emote ID
+ * Builds Twitch emote image URL given the emote ID.
  *
  * @typedef {Object} EmoteOptions
  * @property {'default' | 'static' | 'animated'} [animation]
@@ -255,7 +361,7 @@ function buildTwitchEmoteImageUrl(id, options = {}) {
 }
 
 /**
- * Given the ID of an HTML template, returns the cloned contents
+ * Given the ID of an HTML template, returns the cloned contents.
  *
  * @param {string} id
  * @returns {DocumentFragment}
@@ -274,6 +380,57 @@ function cloneTemplate(id) {
 	return element.content.cloneNode(true);
 }
 
+/**
+ * Given a text color, lightens the color if needed to be accessible on a black
+ * background.
+ *
+ * @param {string} textColor
+ * @returns {string}
+ */
+function lightTextColor(textColor) {
+	return accessibleTextColor(textColor, 'black');
+}
+
+/**
+ * Given a text color, darkens the color if needed to be accessible on a white
+ * background.
+ *
+ * @param {string} textColor
+ * @returns {string}
+ */
+function darkTextColor(textColor) {
+	return accessibleTextColor(textColor, 'white');
+}
+
+/**
+ * Given a text color and background color of black or white, modifies the color
+ * if needed to be accessible on that background.
+ *
+ * @param {string} textColor
+ * @param {'black' | 'white'} backgroundColor
+ * @returns {string}
+ */
+function accessibleTextColor(textColor, backgroundColor) {
+	const targetTextColor = backgroundColor === 'black' ? 'white' : 'black';
+
+	let newColor = textColor;
+
+	const potentialColors = Color.steps(textColor, targetTextColor, {
+		space: 'hsv',
+		outputSpace: 'srgb',
+		steps: 9,
+	});
+
+	for (const potentialColor of potentialColors) {
+		if (Math.abs(Color.contrastAPCA(backgroundColor, potentialColor)) > 60) {
+			newColor = potentialColor;
+			break;
+		}
+	}
+
+	return new Color(newColor).toString({ format: 'hex' });
+}
+
 /* Type Definitions **********************************************************/
 
 /**
@@ -286,6 +443,19 @@ function cloneTemplate(id) {
  * 	username: string,
  * ) => Promise<string[] | null>} getPronouns
  */
+
+/**
+ * Possible type for any widget value.
+ *
+ * @typedef {string
+ * 	| number
+ * 	| boolean
+ * 	| null
+ * 	| undefined
+ * 	| (string | number | boolean)[]} WidgetValue
+ */
+
+/* Twitch Event Types ********************************************************/
 
 /**
  * Twitch Event, identified by type and version.
@@ -528,7 +698,33 @@ function cloneTemplate(id) {
  * @property {Twitch.MessageWithFragments} message - Structured chat message.
  */
 
-/** Twitch Helper Types */
+/* Account Types *************************************************************/
+
+/**
+ * Twitch Account Badges
+ *
+ * @typedef {object} Account.Twitch.Badge
+ * @property {string} set_id - ID that identifies this set of chat badges. For
+ *   example, Bits or Subscriber.
+ * @property {Twitch.Account.Badge.Version[]} versions - List of chat badges in
+ *   this set.
+ *
+ * @typedef {object} Account.Twitch.Badge.Version
+ * @property {string} id - ID that identifies the version of the badge. Can be
+ *   any value. For exmaple, for bits, the ID is the bits tier level, but for
+ *   World of Warcraft, it could be Alliance or Horde.
+ * @property {string} image_url_1x - 18px x 18px URL of the badge.
+ * @property {string} image_url_2x - 36px x 36px URL of the badge.
+ * @property {string} image_url_4x - 72px x 72px URL of the badge.
+ * @property {string} title - Title of the badge.
+ * @property {string} description - Description of the badge.
+ * @property {string | null} click_action - Action to take when clicking on the
+ *   badge. Set to `null` if no action is specified.
+ * @property {string | null} click_url - URL to navigate to when clicking on the
+ *   badge. Set to `null` if no URL is specified.
+ */
+
+/* Twitch Helper Types *******************************************************/
 
 /**
  * @typedef {object} Twitch.Badge
@@ -540,7 +736,9 @@ function cloneTemplate(id) {
  * @property {string} info - Contains metadata related to the chat badges in the
  *   badges tag. Currently, this tag contains metadata only for subscriber
  *   badges, to indicate the number of months the user has been a subscriber.
- *
+ */
+
+/**
  * @typedef {object} Twitch.MessageWithFragments
  * @property {string} text - Chat message in plain text.
  * @property {Twitch.MessageFragment[]} fragments - Ordered list of chat message

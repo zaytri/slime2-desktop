@@ -3,7 +3,7 @@ import { sendWidgetResponse } from '@/helpers/widgetMessage';
 import logZodError from '@/helpers/zodError';
 import { listen } from '@tauri-apps/api/event';
 import { useEffect } from 'react';
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/mini';
 
 export default function useWidgetRequest() {
 	useEffect(() => {

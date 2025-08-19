@@ -10,85 +10,39 @@
 
 import { createFileRoute } from '@tanstack/react-router';
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root';
 
-import { Route as rootRoute } from './routes/__root';
+const IndexLazyRouteImport = createFileRoute('/')();
+const SettingsIndexLazyRouteImport = createFileRoute('/settings/')();
+const WidgetWidgetIdLazyRouteImport = createFileRoute('/widget/$widgetId')();
+const FolderFolderIdLazyRouteImport = createFileRoute('/folder/$folderId')();
 
-// Create Virtual Routes
-
-const IndexLazyImport = createFileRoute('/')();
-const SettingsIndexLazyImport = createFileRoute('/settings/')();
-const WidgetWidgetIdLazyImport = createFileRoute('/widget/$widgetId')();
-const FolderFolderIdLazyImport = createFileRoute('/folder/$folderId')();
-
-// Create/Update Routes
-
-const IndexLazyRoute = IndexLazyImport.update({
+const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
-
-const SettingsIndexLazyRoute = SettingsIndexLazyImport.update({
+const SettingsIndexLazyRoute = SettingsIndexLazyRouteImport.update({
   id: '/settings/',
   path: '/settings/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() =>
   import('./routes/settings/index.lazy').then((d) => d.Route),
 );
-
-const WidgetWidgetIdLazyRoute = WidgetWidgetIdLazyImport.update({
+const WidgetWidgetIdLazyRoute = WidgetWidgetIdLazyRouteImport.update({
   id: '/widget/$widgetId',
   path: '/widget/$widgetId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() =>
   import('./routes/widget/$widgetId.lazy').then((d) => d.Route),
 );
-
-const FolderFolderIdLazyRoute = FolderFolderIdLazyImport.update({
+const FolderFolderIdLazyRoute = FolderFolderIdLazyRouteImport.update({
   id: '/folder/$folderId',
   path: '/folder/$folderId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() =>
   import('./routes/folder/$folderId.lazy').then((d) => d.Route),
 );
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexLazyImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/folder/$folderId': {
-      id: '/folder/$folderId';
-      path: '/folder/$folderId';
-      fullPath: '/folder/$folderId';
-      preLoaderRoute: typeof FolderFolderIdLazyImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/widget/$widgetId': {
-      id: '/widget/$widgetId';
-      path: '/widget/$widgetId';
-      fullPath: '/widget/$widgetId';
-      preLoaderRoute: typeof WidgetWidgetIdLazyImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/settings/': {
-      id: '/settings/';
-      path: '/settings';
-      fullPath: '/settings';
-      preLoaderRoute: typeof SettingsIndexLazyImport;
-      parentRoute: typeof rootRoute;
-    };
-  }
-}
-
-// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute;
@@ -96,22 +50,19 @@ export interface FileRoutesByFullPath {
   '/widget/$widgetId': typeof WidgetWidgetIdLazyRoute;
   '/settings': typeof SettingsIndexLazyRoute;
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute;
   '/folder/$folderId': typeof FolderFolderIdLazyRoute;
   '/widget/$widgetId': typeof WidgetWidgetIdLazyRoute;
   '/settings': typeof SettingsIndexLazyRoute;
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute;
+  __root__: typeof rootRouteImport;
   '/': typeof IndexLazyRoute;
   '/folder/$folderId': typeof FolderFolderIdLazyRoute;
   '/widget/$widgetId': typeof WidgetWidgetIdLazyRoute;
   '/settings/': typeof SettingsIndexLazyRoute;
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths: '/' | '/folder/$folderId' | '/widget/$widgetId' | '/settings';
@@ -125,12 +76,44 @@ export interface FileRouteTypes {
     | '/settings/';
   fileRoutesById: FileRoutesById;
 }
-
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute;
   FolderFolderIdLazyRoute: typeof FolderFolderIdLazyRoute;
   WidgetWidgetIdLazyRoute: typeof WidgetWidgetIdLazyRoute;
   SettingsIndexLazyRoute: typeof SettingsIndexLazyRoute;
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexLazyRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/settings/': {
+      id: '/settings/';
+      path: '/settings';
+      fullPath: '/settings';
+      preLoaderRoute: typeof SettingsIndexLazyRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/widget/$widgetId': {
+      id: '/widget/$widgetId';
+      path: '/widget/$widgetId';
+      fullPath: '/widget/$widgetId';
+      preLoaderRoute: typeof WidgetWidgetIdLazyRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/folder/$folderId': {
+      id: '/folder/$folderId';
+      path: '/folder/$folderId';
+      fullPath: '/folder/$folderId';
+      preLoaderRoute: typeof FolderFolderIdLazyRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -139,35 +122,6 @@ const rootRouteChildren: RootRouteChildren = {
   WidgetWidgetIdLazyRoute: WidgetWidgetIdLazyRoute,
   SettingsIndexLazyRoute: SettingsIndexLazyRoute,
 };
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>();
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/folder/$folderId",
-        "/widget/$widgetId",
-        "/settings/"
-      ]
-    },
-    "/": {
-      "filePath": "index.lazy.tsx"
-    },
-    "/folder/$folderId": {
-      "filePath": "folder/$folderId.lazy.tsx"
-    },
-    "/widget/$widgetId": {
-      "filePath": "widget/$widgetId.lazy.tsx"
-    },
-    "/settings/": {
-      "filePath": "settings/index.lazy.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */

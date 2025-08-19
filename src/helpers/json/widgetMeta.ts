@@ -1,13 +1,21 @@
 // functions
 
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/mini';
 import { loadJson } from '../commands';
 import { tileFolderPath } from './jsonPaths';
+import { queueSaveJson } from './queueSaveJson';
 
 export async function loadWidgetMeta(id: string): Promise<WidgetMeta> {
 	const path = await widgetMetaPath(id);
 	const meta = await WidgetMeta.parseAsync(await loadJson(path));
 	return meta;
+}
+
+export async function saveWidgetMeta(
+	id: string,
+	data: WidgetMeta,
+): Promise<void> {
+	queueSaveJson(data, await widgetMetaPath(id));
 }
 
 async function widgetMetaPath(id: string) {
@@ -34,19 +42,16 @@ const WidgetMeta = z.object({
 		),
 		undefined,
 	),
-	scope: z.catch(
-		z.optional(
-			z.record(
-				z.string(), // "read", "bot", "mod"
-				z.object({
-					// "twitch", "youtube"
-					service: z.array(z.string()),
-					// if the widget can be used without this scope
-					optional: z.optional(z.boolean()),
-				}),
-			),
+	accounts: z.catch(
+		z.array(
+			z.object({
+				type: z.literal(['read', 'bot', 'mod']),
+				service: z.literal(['twitch', 'youtube']),
+				// if the widget can be used without this account
+				optional: z.optional(z.boolean()),
+			}),
 		),
-		undefined,
+		[],
 	),
 
 	channel: z.catch(z.optional(z.array(z.string())), undefined),

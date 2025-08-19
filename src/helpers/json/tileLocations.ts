@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/mini';
 import { loadJson } from '../commands';
 import { mainConfigPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';

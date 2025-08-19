@@ -2,7 +2,9 @@
 // Websocket commmands found under server/websocket/ws_commands.rs
 
 use crate::{
-	file::{self, TileMeta, create_tile_meta, load_widget_meta},
+	file::{
+		self, TileMeta, create_tile_meta, load_widget_meta, tile_config_path,
+	},
 	secret::{delete_secret, get_secret, set_secret},
 	server,
 };
@@ -71,6 +73,42 @@ pub async fn copy_widget(
 			widget_id, error
 		));
 	}
+
+	let new_config_path = tile_config_path(&app_handle, new_widget_id.clone());
+
+	match file::load_json(new_config_path.join("meta")) {
+		Ok(tile_meta_json) => {
+			match serde_json::from_str::<TileMeta>(&tile_meta_json) {
+				Ok(tile_meta) => {
+					if let Err(error) = file::create_tile_meta(
+						new_config_path,
+						TileMeta {
+							name: format!("{} (copy)", tile_meta.name),
+							icon: tile_meta.icon,
+							color: tile_meta.color,
+						},
+					) {
+						return Err(format!(
+							"Failed to save tile meta for widget \"{}\": {}",
+							new_widget_id, error
+						));
+					};
+				}
+				Err(error) => {
+					return Err(format!(
+						"Failed to load tile meta for widget \"{}\": {}",
+						new_widget_id, error
+					));
+				}
+			}
+		}
+		Err(error) => {
+			return Err(format!(
+				"Failed to load tile meta for widget \"{}\": {}",
+				new_widget_id, error
+			));
+		}
+	};
 
 	Ok(new_widget_id)
 }

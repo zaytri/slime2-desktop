@@ -29,6 +29,7 @@ async fn main() {
 	let connections = server::websocket::WebsocketConnections::default();
 
 	tauri::Builder::default()
+		.plugin(tauri_plugin_single_instance::init(|app, args, cwd| {}))
 		.plugin(tauri_plugin_fs::init())
 		.plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
 			println!("{}, {argv:?}, {cwd}", app.package_info().name);

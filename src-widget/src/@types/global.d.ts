@@ -5,3 +5,5 @@ declare var slime2: {
 		username: string,
 	) => Promise<string[] | null>;
 };
+
+declare var obsstudio;

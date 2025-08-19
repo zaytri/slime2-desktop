@@ -22,15 +22,13 @@ const alejoPronounsApi = {
 		const primary = pronounsDataMap[pronoun_id];
 		const secondary = alt_pronoun_id ? pronounsDataMap[alt_pronoun_id] : null;
 
-		if (!secondary) {
-			return primary.singular
+		const pronouns = !secondary
+			? primary.singular
 				? [primary.subject]
-				: [primary.subject, primary.object];
-		}
+				: [primary.subject, primary.object]
+			: [primary.subject, secondary.object];
 
-		return [primary.subject, secondary.object].map(pronoun =>
-			pronoun.toLowerCase(),
-		);
+		return pronouns.map(pronoun => pronoun.toLowerCase());
 	},
 };
 
