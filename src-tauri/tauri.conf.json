@@ -56,11 +56,15 @@
 					"http://ipc.localhost",
 					"https://id.twitch.tv",
 					"https://api.twitch.tv",
-					"wss://eventsub.wss.twitch.tv"
+					"wss://eventsub.wss.twitch.tv",
+					"https://api.pronouns.alejo.io",
+					"https://pronoundb.org",
+					"https://api.betterttv.net",
+					"https://api.frankerfacez.com"
 				],
 				"style-src": ["'self'", "https://fonts.googleapis.com"],
 				"font-src": ["https://fonts.gstatic.com"],
-				"img-src": ["'self'", "http://localhost:*", "https:"]
+				"img-src": ["'self'", "http://localhost:*", "https:", "data:"]
 			}
 		}
 	}
