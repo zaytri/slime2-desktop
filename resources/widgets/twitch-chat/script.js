@@ -230,7 +230,8 @@ function buildUser(displayName, username, pronouns, badges) {
 	userClone.querySelector('.name').setAttribute('data-content', name);
 
 	if (pronouns) {
-		userClone.querySelector('.pronouns').textContent = pronouns.join('/');
+		userClone.querySelector('.pronouns').textContent =
+			` (${pronouns.join('/')})`;
 	}
 
 	const badgeClones = buildBadges(badges);

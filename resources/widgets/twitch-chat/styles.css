@@ -59,37 +59,35 @@
 .user {
 	display: inline-flex;
 	align-items: flex-end;
+	color: var(--font-color);
+	font-weight: bold;
+}
+
+#widget.username-color-custom .user {
+	color: var(--custom-username-color, var(--font-color));
+}
+
+#widget.username-color-twitch .user {
+	color: var(--twitch-username-color, var(--font-color));
+}
+
+#widget.username-color-twitch-light .user {
+	color: var(--twitch-light-username-color, var(--font-color));
+}
+
+#widget.username-color-twitch-dark .user {
+	color: var(--twitch-dark-username-color, var(--font-color));
 }
 
 .name {
 	display: inline;
-	font-weight: bold;
-	color: var(--font-color);
 	position: relative;
 }
 
-#widget.username-color-custom .name {
-	color: var(--custom-username-color, var(--font-color));
-}
-
-#widget.username-color-twitch .name {
-	color: var(--twitch-username-color, var(--font-color));
-}
-
-#widget.username-color-twitch-light .name {
-	color: var(--twitch-light-username-color, var(--font-color));
-}
-
-#widget.username-color-twitch-dark .name {
-	color: var(--twitch-dark-username-color, var(--font-color));
-}
-
-.name::after {
+.user::after {
 	content: ': ';
 	white-space: pre;
 	display: inline;
-	color: var(--font-color);
-	font-weight: var(--font-weight);
 }
 
 .badges {
@@ -108,15 +106,8 @@
 
 .pronouns {
 	display: inline;
-	border-radius: 4px;
-	padding-left: 5px;
-	padding-right: 5px;
-	padding-top: 1px;
-	padding-bottom: 1px;
 	font-size: calc(1em - 2px);
-	margin-right: 4px;
-	margin-left: 1px;
-	box-shadow: 0 0 0 1.5px var(--font-color);
+	white-space: pre;
 }
 
 .pronouns:empty {
