@@ -75,4 +75,4 @@ jobs:
           releaseDraft: true
           prerelease: true
           args: ${{ matrix.args }}
-          assetNamePattern: 'slime2_${version}_${{ matrix.os_name }}.${ext}'
+          assetNamePattern: 'slime2_v[version]_${{ matrix.os_name }}[ext]'
