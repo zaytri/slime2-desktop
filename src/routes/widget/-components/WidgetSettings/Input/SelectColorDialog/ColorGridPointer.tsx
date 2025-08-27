@@ -1,8 +1,8 @@
 import { memo } from 'react';
 
 type ColorGridPointerProps = {
-	left?: string;
-	top?: string;
+	left?: string | number;
+	top?: string | number;
 	color: string;
 };
 
