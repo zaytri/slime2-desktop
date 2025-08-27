@@ -15,16 +15,21 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: 'macos-latest' # for Arm based macs (M1 and above).
+          - platform: 'macos-latest-arm' # for Arm based macs (M1 and above).
             args: '--target aarch64-apple-darwin'
+            os_name: 'macos-arm'
           - platform: 'macos-latest' # for Intel based macs.
             args: '--target x86_64-apple-darwin'
+            os_name: 'macos'
           - platform: 'ubuntu-22.04'
             args: ''
+            os_name: 'linux'
           - platform: 'ubuntu-22.04-arm' # Only available in public repos.
             args: ''
+            os_name: 'linux-arm'
           - platform: 'windows-latest'
             args: ''
+            os_name: 'windows'
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -70,3 +75,4 @@ jobs:
           releaseDraft: true
           prerelease: true
           args: ${{ matrix.args }}
+          assetNamePattern: 'slime2_${version}_${{ matrix.os_name }}.${ext}'
