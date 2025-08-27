@@ -15,21 +15,24 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: 'macos-latest-arm' # for Arm based macs (M1 and above).
-            args: '--target aarch64-apple-darwin'
-            os_name: 'macos-arm'
-          - platform: 'macos-latest' # for Intel based macs.
+          - platform: 'macos-latest' # Intel based Mac
             args: '--target x86_64-apple-darwin'
-            os_name: 'macos'
-          - platform: 'ubuntu-22.04'
+            os_name: 'mac'
+          - platform: 'macos-latest' # Arm based Mac (M1 and above)
+            args: '--target aarch64-apple-darwin'
+            os_name: 'mac-arm'
+          - platform: 'ubuntu-22.04' # Linux
             args: ''
             os_name: 'linux'
-          - platform: 'ubuntu-22.04-arm' # Only available in public repos.
+          - platform: 'ubuntu-22.04-arm' # Arm based Linux
             args: ''
             os_name: 'linux-arm'
-          - platform: 'windows-latest'
+          - platform: 'windows-latest' # Windows 10/11
             args: ''
             os_name: 'windows'
+          - platform: 'windows-11-arm' # Arm based Windows 11
+            args: ''
+            os_name: 'windows-11-arm'
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -69,8 +72,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
-          releaseName: 'App v__VERSION__'
+          tagName: slime2_v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
+          releaseName: 'Slime2 v__VERSION__'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: true
