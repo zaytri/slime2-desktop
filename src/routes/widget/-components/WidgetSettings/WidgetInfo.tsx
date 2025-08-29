@@ -75,7 +75,7 @@ const WidgetInfo = memo(function WidgetInfo(meta: Props.WithId<WidgetMeta>) {
 								}
 
 								return (
-									<span className='text-rose-600'>
+									<span className='text-rose-600' key={`missing_${index}`}>
 										account missing, add account in settings
 									</span>
 								);
