@@ -17,16 +17,22 @@ jobs:
         include:
           - platform: 'macos-latest' # Intel based Mac
             args: '--target x86_64-apple-darwin'
+            os_name: 'macOS'
           - platform: 'macos-latest' # Arm based Mac (M1 and above)
             args: '--target aarch64-apple-darwin'
+            os_name: 'macOS-ARM'
           - platform: 'ubuntu-22.04' # Linux
             args: ''
+            os_name: 'Linux'
           - platform: 'ubuntu-22.04-arm' # Arm based Linux
             args: ''
+            os_name: 'Linux-ARM'
           - platform: 'windows-latest' # Windows 10/11
             args: ''
+            os_name: 'Windows'
           - platform: 'windows-11-arm' # Arm based Windows 11
             args: ''
+            os_name: 'Windows-ARM'
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -47,7 +53,7 @@ jobs:
       - name: Install Rust (Stable)
         uses: dtolnay/rust-toolchain@stable # Set this to dtolnay/rust-toolchain@nightly
         with:
-          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
+          # Those targets are only used on macOS runners so it's in an `if` to slightly speed up Windows and Linux builds.
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: Rust Cache
@@ -72,4 +78,4 @@ jobs:
           releaseDraft: true
           prerelease: ${{ github.ref_name == 'release/beta' }}
           args: ${{ matrix.args }}
-          assetNamePattern: 'slime2_v[version]_${{ runner.os }}_${{ runner.arch }}[ext]'
+          assetNamePattern: 'slime2-v[version]_${{ matrix.os_name }}[ext]'
