@@ -13,11 +13,16 @@ import { queueSaveJson } from './queueSaveJson';
 
 export async function loadAccounts(): Promise<Accounts> {
 	const path = await accountsPath();
-	const accounts = await Accounts.parseAsync(await loadJson(path)).catch(
+	const json = await loadJson(path);
+	try {
+		const accounts = Accounts.parse(json);
+		return accounts;
+	} catch (error) {
+		logZodError(error);
+
 		// fallback to empty
-		(): Accounts => ({}),
-	);
-	return accounts;
+		return {};
+	}
 }
 
 export async function saveAccounts(accounts: Accounts): Promise<void> {

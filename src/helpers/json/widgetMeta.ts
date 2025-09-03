@@ -2,13 +2,20 @@
 
 import { z } from 'zod/mini';
 import { loadJson } from '../commands';
+import logZodError from '../zodError';
 import { tileFolderPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';
 
 export async function loadWidgetMeta(id: string): Promise<WidgetMeta> {
 	const path = await widgetMetaPath(id);
-	const meta = await WidgetMeta.parseAsync(await loadJson(path));
-	return meta;
+	const json = await loadJson(path);
+	try {
+		const meta = WidgetMeta.parse(json);
+		return meta;
+	} catch (error) {
+		logZodError(error);
+		throw error;
+	}
 }
 
 export async function saveWidgetMeta(

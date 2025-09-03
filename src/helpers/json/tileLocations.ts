@@ -1,5 +1,6 @@
 import { z } from 'zod/mini';
 import { loadJson } from '../commands';
+import logZodError from '../zodError';
 import { mainConfigPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';
 
@@ -7,11 +8,16 @@ import { queueSaveJson } from './queueSaveJson';
 
 export async function loadTileLocations(): Promise<TileLocations> {
 	const path = await tileLocationsConfigPath();
-	const locations = await TileLocations.parseAsync(await loadJson(path)).catch(
+	const json = await loadJson(path);
+	try {
+		const locations = TileLocations.parse(json);
+		return locations;
+	} catch (error) {
+		logZodError(error);
+
 		// fallback config on error or missing
-		(): TileLocations => ({}),
-	);
-	return locations;
+		return {};
+	}
 }
 
 export async function saveTileLocations(

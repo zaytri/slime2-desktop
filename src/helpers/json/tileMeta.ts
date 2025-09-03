@@ -1,6 +1,7 @@
 import { z } from 'zod/mini';
 import { loadJson } from '../commands';
 import { TileColor } from '../tileColors';
+import logZodError from '../zodError';
 import { tileFolderPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';
 
@@ -8,20 +9,23 @@ import { queueSaveJson } from './queueSaveJson';
 
 export async function loadTileMeta(id: string): Promise<TileMeta> {
 	const path = await tileMetaPath(id);
-	const data = await TileMeta.parseAsync(await loadJson(path)).catch(
-		// fallback data
-		(): TileMeta | null => {
-			// if main has no saved data, create it
-			if (id === 'main') {
-				saveTileMeta('main', DEFAULT_MAIN_META);
-				return DEFAULT_MAIN_META;
-			}
+	const json = await loadJson(path);
 
-			return null;
-		},
-	);
+	try {
+		const data = TileMeta.parse(json);
+		return data;
+	} catch (error) {
+		logZodError(error);
 
-	return data || { name: 'Error!', color: TileColor.Red, icon: '' };
+		// if main has no saved data, create it
+		if (id === 'main') {
+			saveTileMeta('main', DEFAULT_MAIN_META);
+			return DEFAULT_MAIN_META;
+		} else {
+			// fallback to error
+			return { name: 'Error!', color: TileColor.Red, icon: '' };
+		}
+	}
 }
 
 export async function saveTileMeta(id: string, data: TileMeta): Promise<void> {
