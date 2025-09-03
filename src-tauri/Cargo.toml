@@ -26,7 +26,7 @@ tauri-plugin-clipboard-manager = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = { version = "2", features = ["watch"] }
 tauri-plugin-shell = "2"
-tauri-plugin-single-instance = "2.3.3"
+tauri-plugin-single-instance = "2.3.4"
 tokio = { version = "1", features = ["full"] }
 warp = "0.3"
 zip = "2"
