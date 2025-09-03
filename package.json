@@ -13,8 +13,9 @@
 		"icon": "npm run tauri icon",
 		"before:dev": "npm run clean:target && vite && npm run widget:build && npm run icon",
 		"before:build": "npm run clean:target && npm run widget:build && tsc && vite build && npm run icon",
-		"widget:dev": "npm --prefix ./src-widget/ run dev",
-		"widget:build": "npm --prefix ./src-widget/ run build",
+		"widget:install": "cd ./src-widget && npm install && cd ..",
+		"widget:dev": "npm run widget:install && npm --prefix ./src-widget/ run dev",
+		"widget:build": "npm run widget:install && npm --prefix ./src-widget/ run build",
 		"clean:target": "cd ./src-tauri && cargo clean && cd .."
 	},
 	"dependencies": {
