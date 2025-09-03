@@ -275,7 +275,7 @@ pub fn empty_temp_folder(app: &AppHandle) -> io::Result<()> {
 pub fn clean_tiles_folder(app: &AppHandle) -> io::Result<()> {
 	let tile_locations_path = app
 		.path()
-		.resolve("config", BaseDirectory::AppData)
+		.resolve("config", BaseDirectory::AppConfig)
 		.expect("Failed to resolve [app_data]/config!")
 		.join("tile_locations");
 
