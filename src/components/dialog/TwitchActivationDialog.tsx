@@ -5,6 +5,7 @@ import { Account, setTokens } from '@/helpers/json/accounts';
 import twitchApi from '@/helpers/services/twitch/twitchApi';
 import twitchAuth from '@/helpers/services/twitch/twitchAuth';
 import { memo, useEffect, useState } from 'react';
+import LinkifyText from '../LinkifyText';
 import AccountSuccessDialog from './AccountSuccessDialog';
 import DialogHeader from './DialogHeader';
 
@@ -12,12 +13,14 @@ type TwitchActivationDialogProps = {
 	deviceCode: string;
 	userCode: string;
 	verificationUri: string;
+	accountType: Account['type'];
 };
 
 const TwitchActivationDialog = memo(function TwitchActivationDialog({
 	deviceCode,
 	userCode,
 	verificationUri,
+	accountType,
 }: TwitchActivationDialogProps) {
 	const { openDialog } = useDialog();
 	const [activating, setActivating] = useState(false);
@@ -28,7 +31,7 @@ const TwitchActivationDialog = memo(function TwitchActivationDialog({
 		if (activating) {
 			const activationLoop = setInterval(() => {
 				twitchAuth
-					.obtainDCFTokens(deviceCode)
+					.obtainDCFTokens(accountType, deviceCode)
 					.then(response => {
 						setActivating(false);
 						const { access_token, refresh_token, scope } = response.data;
@@ -39,8 +42,7 @@ const TwitchActivationDialog = memo(function TwitchActivationDialog({
 								const { user_id } = response.data;
 								const serviceId = user_id;
 								const service = 'twitch';
-								const type = 'read';
-								const accountId = `${service}_${type}_${serviceId}`;
+								const accountId = `${service}_${accountType}_${serviceId}`;
 								await setTokens(accountId, access_token, refresh_token);
 
 								twitchApi.getUser(accountId, user_id).then(response => {
@@ -49,7 +51,7 @@ const TwitchActivationDialog = memo(function TwitchActivationDialog({
 										accounts[accountId];
 									const account: Account = {
 										id: accountId,
-										type,
+										type: accountType,
 										service,
 										serviceId,
 										username: user.login,
@@ -97,6 +99,10 @@ const TwitchActivationDialog = memo(function TwitchActivationDialog({
 				>
 					Activate
 				</a>
+				<LinkifyText className='text-3.5 font-quicksand text-stone-500 max-w-96'>
+					If the button does not work, you can also go to
+					https://www.twitch.tv/activate and enter the code there.
+				</LinkifyText>
 				{activating && <p>Waiting for activation...</p>}
 			</div>
 		</div>

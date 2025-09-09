@@ -1,5 +1,5 @@
 import AccountPreview from '@/components/AccountPreview';
-import AddAccountDialog from '@/components/dialog/AddAccountDialog';
+import ChooseAccountTypeDialog from '@/components/dialog/ChooseAccountTypeDialog';
 import Header from '@/components/header/Header';
 import HeaderButton from '@/components/header/HeaderButton';
 import HeaderText from '@/components/header/HeaderText';
@@ -30,7 +30,7 @@ const Settings = memo(function Settings() {
 						<button
 							className='flex flex-col items-center gap-1'
 							onClick={() => {
-								openDialog(<AddAccountDialog />);
+								openDialog(<ChooseAccountTypeDialog />);
 							}}
 						>
 							<div className='relative'>

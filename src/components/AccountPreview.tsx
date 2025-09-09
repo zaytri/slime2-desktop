@@ -6,6 +6,17 @@ type AccountPreviewProps = {
 	account: Account;
 };
 
+function accountTypeEmoji(account: Account) {
+	switch (account.type) {
+		case 'read':
+			return '📖';
+		case 'bot':
+			return '🤖';
+		case 'mod':
+			return '🛡️';
+	}
+}
+
 const AccountPreview = memo(function AccountPreview({
 	account,
 }: AccountPreviewProps) {
@@ -19,6 +30,10 @@ const AccountPreview = memo(function AccountPreview({
 						REAUTH
 					</div>
 				)}
+				<div className='select-none absolute bottom-0 left-0 text-6.5  [font-kerning:none] -ml-1.5 -mb-1.5'>
+					{accountTypeEmoji(account)}
+				</div>
+
 				{account.service === 'twitch' && (
 					<TwitchIconColorSvg className='absolute bottom-0 right-0 size-6' />
 				)}

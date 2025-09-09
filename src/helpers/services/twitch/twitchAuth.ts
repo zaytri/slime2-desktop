@@ -1,11 +1,16 @@
 import axios from 'axios';
 import {
+	Account,
 	deleteTokens,
 	getTokens,
 	setTokens,
 	Tokens,
 } from '../../json/accounts';
-import { TWITCH_CLIENT_ID, TWITCH_READ_SCOPES } from './twitchConstants';
+import {
+	TWITCH_BOT_SCOPES,
+	TWITCH_CLIENT_ID,
+	TWITCH_READ_SCOPES,
+} from './twitchConstants';
 
 const ONE_HOUR = 1000 * 60 * 60; // in milliseconds
 
@@ -13,11 +18,23 @@ const twitchAuthAxios = axios.create({
 	baseURL: 'https://id.twitch.tv/oauth2',
 });
 
+function accountScopes(type: Account['type']) {
+	switch (type) {
+		case 'read':
+			return TWITCH_READ_SCOPES;
+		case 'bot':
+			return TWITCH_BOT_SCOPES;
+		case 'mod':
+		default:
+			throw new Error('Unhandled account type!');
+	}
+}
+
 // DCF = Device Code Grant Flow
 // https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#device-code-grant-flow
 
 const twitchAuth = {
-	async startDCF() {
+	async startDCF(type: Account['type']) {
 		return twitchAuthAxios.post<{
 			device_code: string;
 			expires_in: number;
@@ -27,12 +44,12 @@ const twitchAuth = {
 		}>('/device', undefined, {
 			params: {
 				client_id: TWITCH_CLIENT_ID,
-				scopes: TWITCH_READ_SCOPES.join(' '),
+				scopes: accountScopes(type).join(' '),
 			},
 		});
 	},
 
-	async obtainDCFTokens(deviceCode: string) {
+	async obtainDCFTokens(type: Account['type'], deviceCode: string) {
 		return twitchAuthAxios.post<{
 			access_token: string;
 			refresh_token: string;
@@ -42,7 +59,7 @@ const twitchAuth = {
 		}>('/token', undefined, {
 			params: {
 				client_id: TWITCH_CLIENT_ID,
-				scopes: TWITCH_READ_SCOPES.join(' '),
+				scopes: accountScopes(type).join(' '),
 				grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
 				device_code: deviceCode,
 			},
