@@ -46,10 +46,7 @@ const ChooseAccountTypeDialog = memo(function ChooseAccountTypeDialog() {
 								<Radio value={option.value} className='cursor-pointer'>
 									<Label className='cursor-pointer select-none flex flex-col'>
 										<strong className='text-4.5'>{option.title}</strong>
-										<p className='text-3.5 font-medium'>
-											{' '}
-											{option.description}
-										</p>
+										<p className='text-3.5 font-medium'>{option.description}</p>
 									</Label>
 								</Radio>
 							</Field>

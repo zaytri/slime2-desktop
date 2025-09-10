@@ -13,6 +13,11 @@ export const TWITCH_READ_SCOPES = [
 	'user:read:chat',
 ];
 
-export const TWITCH_BOT_SCOPES = ['channel:bot'];
+export const TWITCH_BOT_SCOPES = [
+	'channel:bot',
+	'user:write:chat',
+	'moderator:manage:announcements',
+	'moderator:manage:shoutouts',
+];
 
 export const TWITCH_CLIENT_ID = 'x94joq8r5wtpajvpdmc95gh03wu6ur';
