@@ -13,9 +13,10 @@ const TWITCH_WEBSOCKET_URL = 'wss://eventsub.wss.twitch.tv/ws';
 
 export default function useTwitchWebsocket() {
 	const widgetMetas = useWidgetMetas();
-	const twitchWebsockets = useRef(new Map<string, WebSocket | 'connecting'>());
 	const accounts = useAccounts();
 	const { addAccount: updateAccount } = useAccountsDispatch();
+
+	const twitchWebsockets = useRef(new Map<string, WebSocket | 'connecting'>());
 
 	// necessary to get the updated account data within functions
 	const accountsRef = useRef(accounts);
@@ -230,7 +231,11 @@ export default function useTwitchWebsocket() {
 	}
 
 	useEffect(() => {
-		if (Object.keys(widgetMetas).length === 0) {
+		// don't run if there are no widgets or no accounts
+		if (
+			Object.keys(widgetMetas).length === 0 ||
+			Object.keys(accounts).length === 0
+		) {
 			return;
 		}
 

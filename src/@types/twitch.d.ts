@@ -712,6 +712,17 @@ namespace Twitch {
 				}[];
 			}[];
 		};
+
+		type SendMessage = {
+			data: {
+				message_id: string;
+				is_sent: boolean;
+				drop_reason?: {
+					code: string;
+					message: string;
+				};
+			}[];
+		};
 	}
 
 	type MessageFragment = {

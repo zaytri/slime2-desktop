@@ -1,6 +1,7 @@
 import logoSlime from '@/assets/logo_slime_stencil.svg';
 import logoText from '@/assets/logo_text_stencil.svg';
 import DialogProvider from '@/contexts/dialog/DialogProvider';
+import useTwitchBot from '@/hooks/useTwitchBot';
 import useTwitchWebsocket from '@/hooks/useTwitchWebsocket';
 import useWidgetCoreChange from '@/hooks/useWidgetCoreChange';
 import useWidgetRegistration from '@/hooks/useWidgetRegistration';
@@ -23,6 +24,7 @@ function Root() {
 	useWidgetRequest();
 	useWidgetCoreChange();
 	useTwitchWebsocket();
+	useTwitchBot();
 
 	return (
 		<DialogProvider>

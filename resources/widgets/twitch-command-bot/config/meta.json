@@ -1,0 +1,19 @@
+{
+	"name": "Twitch Command Bot",
+	"creator": "Zaytri",
+	"version": "1.0.0",
+	"homepage": "https://slime2.stream/",
+	"support": "https://forums.slime2.stream/",
+	"icon": "icon.jpg",
+	"bot": "bot.js",
+	"accounts": [
+		{
+			"type": "read",
+			"service": "twitch"
+		},
+		{
+			"type": "bot",
+			"service": "twitch"
+		}
+	]
+}

@@ -1,0 +1,71 @@
+{
+	"textCategory": {
+		"label": "Text",
+		"settings": {
+			"font-name": {
+				"label": "Font Name",
+				"type": "font-input"
+			},
+			"font-size": {
+				"label": "Font Size (px)",
+				"type": "number-input",
+				"min": 0,
+				"step": 1,
+				"defaultValue": 14
+			},
+			"font-weight": {
+				"label": "Font Weight",
+				"type": "select-input",
+				"defaultValue": "normal",
+				"options": [
+					{ "label": "Normal", "value": "normal" },
+					{ "label": "Bold", "value": "bold" },
+					{ "label": "100", "value": 100 },
+					{ "label": "200", "value": 200 },
+					{ "label": "300", "value": 300 },
+					{ "label": "400", "value": 400 },
+					{ "label": "500", "value": 500 },
+					{ "label": "600", "value": 600 },
+					{ "label": "700", "value": 700 },
+					{ "label": "800", "value": 800 },
+					{ "label": "900", "value": 900 }
+				]
+			}
+		}
+	},
+	"colorCategory": {
+		"label": "Color",
+		"settings": {
+			"username-color": {
+				"label": "Username Color",
+				"type": "select-input",
+				"defaultValue": "twitch-light",
+				"options": [
+					{ "label": "Twitch", "value": "twitch" },
+					{ "label": "Twitch Light", "value": "twitch-light" },
+					{ "label": "Twitch Dark", "value": "twitch-dark" },
+					{ "label": "Custom", "value": "custom" }
+				]
+			},
+			"custom-username-color": {
+				"label": "Custom Username Color",
+				"type": "color-input",
+				"condition": {
+					"username-color": "custom"
+				},
+				"defaultValue": "white",
+				"description": "This will only be applied when you select \"Custom\" above."
+			},
+			"message-color": {
+				"label": "Message Text Color",
+				"type": "color-input",
+				"defaultValue": "white"
+			},
+			"background-color": {
+				"label": "Background Color",
+				"type": "color-input",
+				"defaultValue": "transparent"
+			}
+		}
+	}
+}

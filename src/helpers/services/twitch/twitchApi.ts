@@ -82,6 +82,25 @@ const twitchApi = {
 			},
 		);
 	},
+
+	async sendChatMessage(
+		account_id: string,
+		broadcaster_id: string,
+		sender_id: string,
+		message: string,
+		reply_parent_message_id?: string,
+	) {
+		return twitchApiPost<Twitch.ApiResponse.SendMessage>(
+			'/chat/messages',
+			account_id,
+			{
+				broadcaster_id,
+				sender_id,
+				message,
+				reply_parent_message_id,
+			},
+		);
+	},
 };
 
 export default twitchApi;

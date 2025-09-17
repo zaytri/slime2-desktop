@@ -14,7 +14,6 @@ export const TWITCH_READ_SCOPES = [
 ];
 
 export const TWITCH_BOT_SCOPES = [
-	'channel:bot',
 	'user:write:chat',
 	'moderator:manage:announcements',
 	'moderator:manage:shoutouts',

@@ -14,12 +14,12 @@ const ACCOUNT_TYPE_OPTIONS: {
 		value: 'read',
 		title: '📖 Read-Only',
 		description:
-			'Can read events (such as follows, subscriptions, and channel point redemptions) and chat messages.',
+			'Allows widgets to read data from events (such as follows, subscriptions, etc.) and chat messages.',
 	},
 	{
 		value: 'bot',
 		title: '🤖 Chat Bot',
-		description: 'Can read and send chat messages.',
+		description: 'Allows widgets to send chat messages.',
 	},
 ];
 

@@ -34,6 +34,17 @@ const CreateTileDialog = memo(function CreateTileDialog({
 						Twitch Chat Widget
 					</CreateButton>
 
+					<CreateButton
+						className='rounded-slime'
+						onClick={async () => {
+							const id = await installDefaultWidget('twitch-command-bot');
+							addTile({ id, index, folderId });
+							closeDialog();
+						}}
+					>
+						Twitch Command Bot Widget
+					</CreateButton>
+
 					{folderId === 'main' && false && (
 						<CreateButton
 							className='rounded-10%'

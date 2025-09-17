@@ -49,6 +49,7 @@ const WidgetMeta = z.object({
 		),
 		undefined,
 	),
+	bot: z.optional(z.string()),
 	accounts: z.catch(
 		z.array(
 			z.object({

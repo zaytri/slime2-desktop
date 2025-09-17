@@ -12,6 +12,7 @@ export async function sendWidgetValues(
 		widgetId,
 		'widget-values',
 		mergeDefaultValues(settings, values),
+		true,
 	);
 }
 
@@ -25,21 +26,29 @@ export async function sendTwitchEvent(
 	data: unknown,
 	mock: boolean = false,
 ) {
-	return sendWidgetMessage(widgetId, 'twitch-event', {
-		id: eventId,
-		type: eventType,
-		version: eventVersion,
-		account_id: accountId,
-		timestamp: eventTimestamp,
-		mock,
-		data,
-	});
+	return sendWidgetMessage(
+		widgetId,
+		'twitch-event',
+		{
+			id: eventId,
+			type: eventType,
+			version: eventVersion,
+			account_id: accountId,
+			timestamp: eventTimestamp,
+			mock,
+			data,
+		},
+		true,
+	);
 }
 
 export async function sendWidgetAccounts(widgetId: string, data: unknown) {
-	return sendWidgetMessage(widgetId, 'widget-accounts', {
-		accounts: data,
-	});
+	return sendWidgetMessage(
+		widgetId,
+		'widget-accounts',
+		{ accounts: data },
+		true,
+	);
 }
 
 export async function sendWidgetResponse(
@@ -48,22 +57,36 @@ export async function sendWidgetResponse(
 	requestId: string,
 	data: unknown,
 ) {
-	return sendWidgetMessage(widgetId, 'widget-response', {
-		type,
-		request_id: requestId,
-		response: data,
-	});
+	return sendWidgetMessage(
+		widgetId,
+		'widget-response',
+		{
+			type,
+			request_id: requestId,
+			response: data,
+		},
+		true,
+	);
 }
 
 export async function sendWidgetCoreChange(widgetId: string) {
-	return sendWidgetMessage(widgetId, 'widget-core-change');
+	return sendWidgetMessage(widgetId, 'widget-core-change', null, true);
 }
 
 async function sendWidgetMessage(
 	widgetId: string,
 	type: string,
 	data?: unknown,
+	dispatchToBot: boolean = false,
 ) {
+	if (dispatchToBot) {
+		dispatchEvent(
+			new CustomEvent(type, {
+				detail: { widgetId, data },
+			}),
+		);
+	}
+
 	return sendWebsocketMessage(
 		JSON.stringify({
 			type,

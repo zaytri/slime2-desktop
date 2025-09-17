@@ -19,8 +19,36 @@ export default function useWidgetRegistration() {
 		Record<string, boolean>
 	>({});
 
+	// sends widget values upon webhook registration / bot connection
 	useEffect(() => {
-		// sends widget values upon webhook registration
+		async function registerWidget(widgetId: string) {
+			const [settings, values] = await Promise.all([
+				loadWidgetSettings(widgetId),
+				loadWidgetValues(widgetId),
+			]);
+
+			await sendWidgetValues(widgetId, settings, values);
+
+			if (!registeredWidgets[widgetId]) {
+				setRegisteredWidgets({
+					...registeredWidgets,
+					[widgetId]: true,
+				});
+			}
+		}
+
+		// registration from bot
+		function botRegistrationListener(event: CustomEvent<{ widgetId: string }>) {
+			const { widgetId } = event.detail;
+			registerWidget(widgetId);
+		}
+
+		addEventListener(
+			'bot-registration',
+			botRegistrationListener as EventListener,
+		);
+
+		// registration from overlay
 		const unlistenPromise = listen<WidgetRegistration>(
 			'widget-registration',
 			async event => {
@@ -28,19 +56,7 @@ export default function useWidgetRegistration() {
 					// just in case payload isn't formatted correctly
 					const { id: widgetId } = WidgetRegistration.parse(event.payload);
 
-					const [settings, values] = await Promise.all([
-						loadWidgetSettings(widgetId),
-						loadWidgetValues(widgetId),
-					]);
-
-					await sendWidgetValues(widgetId, settings, values);
-
-					if (!registeredWidgets[widgetId]) {
-						setRegisteredWidgets({
-							...registeredWidgets,
-							[widgetId]: true,
-						});
-					}
+					registerWidget(widgetId);
 				} catch (error) {
 					logZodError(error);
 				}
@@ -48,6 +64,11 @@ export default function useWidgetRegistration() {
 		);
 
 		return () => {
+			removeEventListener(
+				'bot-registration',
+				botRegistrationListener as EventListener,
+			);
+
 			unlistenPromise.then(unlisten => {
 				if (unlisten) unlisten();
 			});
