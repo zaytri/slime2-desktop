@@ -1,6 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, useQuery } from '@tanstack/react-query';
 import { loadSystemFonts } from './commands';
 import { loadWidgetSettings } from './json/widgetSettings';
+
+export const queryClient = new QueryClient();
 
 export function useWidgetSettings(id: string) {
 	return useQuery({

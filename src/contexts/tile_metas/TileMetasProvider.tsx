@@ -27,7 +27,7 @@ const TileMetasProvider = memo(function TileMetasProvider({
 
 			// loop thru all tile ids, loading tile metas if they don't
 			// already exist in the tile metas map
-			['main', ...Object.keys(locations)].forEach(id => {
+			Object.keys(locations).forEach(id => {
 				if (!tileMetas[id]) {
 					loadPromises.push(getTileMeta(id));
 				}

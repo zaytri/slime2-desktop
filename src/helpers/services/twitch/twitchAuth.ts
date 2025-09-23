@@ -18,6 +18,8 @@ const twitchAuthAxios = axios.create({
 	baseURL: 'https://id.twitch.tv/oauth2',
 });
 
+const validationPromises = new Map<string, Promise<Tokens>>();
+
 function accountScopes(type: Account['type']) {
 	switch (type) {
 		case 'read':
@@ -96,44 +98,51 @@ const twitchAuth = {
 	},
 
 	async getValidTokens(accountId: string): Promise<Tokens> {
-		// throws if tokens don't exist
-		const tokens = await getTokens(accountId);
+		// ensures that access token refreshes never happen simultaneously
+		const existingPromise = validationPromises.get(accountId);
+		if (existingPromise) return existingPromise;
 
-		// need to validate token every hour
-		if (Date.now() - tokens.validatedAt > ONE_HOUR) {
-			try {
-				await twitchAuth.validateAccessToken(tokens.accessToken);
-			} catch (error) {
-				console.error(
-					`Twitch Access Token for ${accountId} no longer valid! Refreshing...`,
-					error,
-				);
+		const promise = new Promise<Tokens>(async resolve => {
+			// throws if tokens don't exist
+			let tokens = await getTokens(accountId);
 
-				// access token might be expired, refresh it
+			// need to validate token every hour
+			if (Date.now() - tokens.validatedAt > ONE_HOUR) {
 				try {
-					const { data } = await twitchAuth.refreshAccessToken(
-						tokens.refreshToken,
-					);
-
-					const newTokens = await setTokens(
-						accountId,
-						data.access_token,
-						data.refresh_token,
-					);
-
-					return newTokens;
+					await twitchAuth.validateAccessToken(tokens.accessToken);
 				} catch (error) {
-					console.error(`Twitch Access Token could not be refreshed!`, error);
+					console.error(
+						`Twitch Access Token for ${accountId} no longer valid! Refreshing...`,
+						error,
+					);
 
-					// access token likely revoked, delete the tokens
-					deleteTokens(accountId);
+					// access token might be expired, refresh it
+					try {
+						const { data } = await twitchAuth.refreshAccessToken(
+							tokens.refreshToken,
+						);
 
-					throw error;
+						tokens = await setTokens(
+							accountId,
+							data.access_token,
+							data.refresh_token,
+						);
+					} catch (error) {
+						console.error(`Twitch Access Token could not be refreshed!`, error);
+
+						// access token likely revoked, delete the tokens
+						deleteTokens(accountId);
+
+						throw error;
+					}
 				}
 			}
-		}
 
-		return tokens;
+			resolve(tokens);
+		});
+
+		validationPromises.set(accountId, promise);
+		return promise;
 	},
 };
 

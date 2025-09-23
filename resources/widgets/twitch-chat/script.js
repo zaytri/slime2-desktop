@@ -19,6 +19,10 @@ const Widget = {
 // Listeners
 // ***************************************************************************
 
+addEventListener('slime2:widget-values', widgetValuesListener);
+addEventListener('slime2:widget-accounts', widgetAccountsListener);
+addEventListener('slime2:twitch-event', twitchEventListener);
+
 function widgetValuesListener(event) {
 	console.log('slime2:widget-values', event.detail);
 
@@ -118,10 +122,6 @@ function twitchEventListener(event) {
 			return handleChatClearUserMessages(data, timestamp);
 	}
 }
-
-addEventListener('slime2:widget-values', widgetValuesListener);
-addEventListener('slime2:widget-accounts', widgetAccountsListener);
-addEventListener('slime2:twitch-event', twitchEventListener);
 
 // Event Handlers
 // ***************************************************************************

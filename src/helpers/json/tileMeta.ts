@@ -15,16 +15,10 @@ export async function loadTileMeta(id: string): Promise<TileMeta> {
 		const data = TileMeta.parse(json);
 		return data;
 	} catch (error) {
-		logZodError(error);
+		logZodError(error, json);
 
-		// if main has no saved data, create it
-		if (id === 'main') {
-			saveTileMeta('main', DEFAULT_MAIN_META);
-			return DEFAULT_MAIN_META;
-		} else {
-			// fallback to error
-			return { name: 'Error!', color: TileColor.Red, icon: '' };
-		}
+		// fallback to error
+		return { name: 'Error!', color: TileColor.Red, icon: '' };
 	}
 }
 
@@ -45,9 +39,3 @@ const TileMeta = z.object({
 	icon: z._default(z.string(), ''),
 });
 export type TileMeta = z.infer<typeof TileMeta>;
-
-export const DEFAULT_MAIN_META: TileMeta = {
-	name: 'Widgets',
-	color: TileColor.Green,
-	icon: '',
-};

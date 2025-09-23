@@ -53,13 +53,13 @@
 				"condition": {
 					"username-color": "custom"
 				},
-				"defaultValue": "white",
+				"defaultValue": "black",
 				"description": "This will only be applied when you select \"Custom\" above."
 			},
 			"message-color": {
 				"label": "Message Text Color",
 				"type": "color-input",
-				"defaultValue": "white"
+				"defaultValue": "black"
 			},
 			"background-color": {
 				"label": "Background Color",

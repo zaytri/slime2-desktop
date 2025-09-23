@@ -5,7 +5,7 @@ import type {
 	WidgetSetting,
 	WidgetSettings,
 } from '@/helpers/json/widgetSettings';
-import { useWidgetSettings } from '@/helpers/queryHooks';
+import { useWidgetSettings } from '@/helpers/query';
 import useScrollTopObserver from '@/hooks/useScrollTopObserver';
 import { useParams } from '@tanstack/react-router';
 import { memo, useRef } from 'react';

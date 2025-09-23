@@ -28,10 +28,12 @@ export default function useWidgetRequest() {
 							throw Error('Unhandled request type!');
 					}
 				} catch (error) {
-					const formattedError = logZodError(error);
+					const formattedError = logZodError(error, event.payload);
+
 					const type = event.payload?.request_type;
 					const widgetId = event.payload?.widget_id;
 					const requestId = event.payload?.request_id;
+
 					if (type && widgetId && requestId) {
 						sendWidgetResponse(widgetId, type, requestId, {
 							error: formattedError,

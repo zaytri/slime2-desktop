@@ -13,7 +13,7 @@ export async function loadTileLocations(): Promise<TileLocations> {
 		const locations = TileLocations.parse(json);
 		return locations;
 	} catch (error) {
-		logZodError(error);
+		logZodError(error, json);
 
 		// fallback config on error or missing
 		return {};

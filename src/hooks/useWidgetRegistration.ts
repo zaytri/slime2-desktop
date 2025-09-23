@@ -58,7 +58,7 @@ export default function useWidgetRegistration() {
 
 					registerWidget(widgetId);
 				} catch (error) {
-					logZodError(error);
+					logZodError(error, event.payload);
 				}
 			},
 		);
@@ -88,6 +88,10 @@ export default function useWidgetRegistration() {
 						let slottedAccount: Account | null = null;
 
 						for (const account of Object.values(accounts)) {
+							if (account.reauthorize) {
+								continue;
+							}
+
 							if (
 								account.service === accountSlot.service &&
 								account.type === accountSlot.type &&

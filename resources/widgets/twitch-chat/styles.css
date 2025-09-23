@@ -4,7 +4,7 @@
 	--default-font-name: 'Nunito';
 	--default-font-size: 14px;
 	--default-font-weight: normal;
-	--default-font-color: white;
+	--default-font-color: black;
 	--default-bg-color: transparent;
 	--font-name: var(--custom-font-name, var(--default-font-name));
 	--font-weight: var(--custom-font-weight, var(--default-font-weight));

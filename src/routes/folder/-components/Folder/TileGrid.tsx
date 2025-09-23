@@ -2,6 +2,7 @@ import useTileFolder, {
 	TILES_PER_PAGE,
 } from '@/contexts/tile_locations/useTileFolder';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
+import useTileMetas from '@/contexts/tile_metas/useTileMetas';
 import { memo } from 'react';
 import Tile from '../Tile';
 import EmptyTile from '../Tile/EmptyTile';
@@ -13,13 +14,14 @@ type FolderPageProps = {
 const TileGrid = memo(function TileGrid({ folderId }: FolderPageProps) {
 	const { getPage } = useTileFolder(folderId);
 	const { tileMeta: folderTileMeta } = useTileMeta(folderId);
+	const tileMetas = useTileMetas();
 
 	return (
 		<div className='grid flex-1 grid-cols-5 gap-0'>
 			{getPage(0).map((tile, index) => {
 				const tileIndex = index + 0 * TILES_PER_PAGE;
 
-				return tile.id ? (
+				return tile.id && tileMetas[tile.id] ? (
 					<Tile
 						key={tileIndex}
 						id={tile.id}

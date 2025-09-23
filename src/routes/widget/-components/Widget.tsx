@@ -7,6 +7,7 @@ import ChatBubbleSvg from '@/components/svg/ChatBubbleSvg';
 import useTileLocation from '@/contexts/tile_locations/useTileLocation';
 import useTileLocations from '@/contexts/tile_locations/useTileLocations';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
+import { useWidgetMeta } from '@/contexts/widget_metas/useWidgetMeta';
 import { getTileIconSrc } from '@/helpers/media';
 import { DEV_WIDGET_SERVER_PORT, PROD_PORT } from '@/helpers/serverBaseUrl';
 import { mockTwitchChatMessage } from '@/helpers/services/twitch/twitchMock';
@@ -17,6 +18,7 @@ import WidgetSettings from './WidgetSettings';
 const Widget = memo(function Widget() {
 	const { widgetId } = useParams({ from: '/widget/$widgetId' });
 	const { tileMeta } = useTileMeta(widgetId);
+	const { widgetMeta } = useWidgetMeta(widgetId);
 	const tileLocation = useTileLocation(widgetId);
 	const tileLocations = useTileLocations();
 
@@ -42,6 +44,7 @@ const Widget = memo(function Widget() {
 
 				<HeaderButton
 					icon={<ChatBubbleSvg className='size-7' />}
+					removeAnimation
 					onClick={() => {
 						Object.values(tileLocations).forEach(location => {
 							if (location.id.startsWith('widget_')) {
@@ -53,12 +56,15 @@ const Widget = memo(function Widget() {
 					Simulate Message
 				</HeaderButton>
 
-				<HeaderButton
-					icon={<ChainLinkSvg className='size-7' />}
-					externalHref={`http://localhost:${import.meta.env.PROD ? `${PROD_PORT}/widget` : DEV_WIDGET_SERVER_PORT}/?widgetId=${widgetId}`}
-				>
-					Open Overlay
-				</HeaderButton>
+				{widgetMeta.import && (
+					<HeaderButton
+						icon={<ChainLinkSvg className='size-7' />}
+						removeAnimation
+						externalHref={`http://localhost:${import.meta.env.PROD ? `${PROD_PORT}/widget` : DEV_WIDGET_SERVER_PORT}/?widgetId=${widgetId}`}
+					>
+						Open Overlay
+					</HeaderButton>
+				)}
 			</Header>
 
 			<WidgetSettings />

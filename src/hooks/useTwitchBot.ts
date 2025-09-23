@@ -9,6 +9,11 @@ export default function useTwitchBot() {
 	const widgetMetas = useWidgetMetas();
 	const twitchBots = useRef(new Map<string, Worker>());
 
+	function disconnectBot(widgetId: string) {
+		twitchBots.current.get(widgetId)?.terminate();
+		twitchBots.current.delete(widgetId);
+	}
+
 	function connectBot(
 		widgetId: string,
 		botPath: string,
@@ -16,8 +21,7 @@ export default function useTwitchBot() {
 	) {
 		if (twitchBots.current.has(widgetId)) {
 			if (reconnect) {
-				twitchBots.current.get(widgetId)?.terminate();
-				twitchBots.current.delete(widgetId);
+				disconnectBot(widgetId);
 			} else {
 				return;
 			}
@@ -55,7 +59,7 @@ export default function useTwitchBot() {
 							reply_parent_message_id,
 						);
 					} catch (error) {
-						logZodError(error);
+						logZodError(error, data);
 					}
 					break;
 				}
@@ -103,8 +107,16 @@ export default function useTwitchBot() {
 		};
 	}, [widgetMetas]);
 
-	// hook for directly passing the widget message data directly into the bots
+	// hook for other events
 	useEffect(() => {
+		const directMessageTypes = [
+			'twitch-event',
+			'widget-values',
+			'widget-accounts',
+			'widget-response',
+		];
+
+		// directly passing the above events into the bots
 		function widgetMessageListener(
 			event: CustomEvent<{
 				widgetId: string;
@@ -118,20 +130,27 @@ export default function useTwitchBot() {
 			});
 		}
 
-		const messageTypes = [
-			'twitch-event',
-			'widget-values',
-			'widget-accounts',
-			'widget-response',
-		];
-		messageTypes.forEach(type => {
+		directMessageTypes.forEach(type => {
 			addEventListener(type, widgetMessageListener as EventListener);
 		});
 
+		// disconnect bot if widget is deleted
+		function widgetDeleteListener(event: CustomEvent<{ widgetId: string }>) {
+			const { widgetId } = event.detail;
+			disconnectBot(widgetId);
+		}
+
+		addEventListener('widget-delete', widgetDeleteListener as EventListener);
+
 		return () => {
-			messageTypes.forEach(type => {
+			directMessageTypes.forEach(type => {
 				removeEventListener(type, widgetMessageListener as EventListener);
 			});
+
+			removeEventListener(
+				'widget-delete',
+				widgetDeleteListener as EventListener,
+			);
 		};
 	}, []);
 }

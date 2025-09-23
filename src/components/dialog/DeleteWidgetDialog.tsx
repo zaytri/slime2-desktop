@@ -41,6 +41,11 @@ const DeleteWidgetDialog = memo(function DeleteWidgetDialog({
 							closeDialog();
 							await deleteWidget(id);
 							removeTile(id);
+							dispatchEvent(
+								new CustomEvent('widget-delete', {
+									detail: { widgetId: id },
+								}),
+							);
 						}}
 					>
 						Delete

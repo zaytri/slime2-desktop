@@ -1,6 +1,6 @@
 import DialogHeader from '@/components/dialog/DialogHeader';
 import { useDialog } from '@/contexts/dialog/useDialog';
-import { useSystemFonts } from '@/helpers/queryHooks';
+import { useSystemFonts } from '@/helpers/query';
 import { Checkbox, Field, Input, Label } from '@headlessui/react';
 import { memo, useEffect, useRef, useState } from 'react';
 

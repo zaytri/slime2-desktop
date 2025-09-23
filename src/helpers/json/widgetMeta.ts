@@ -13,7 +13,7 @@ export async function loadWidgetMeta(id: string): Promise<WidgetMeta> {
 		const meta = WidgetMeta.parse(json);
 		return meta;
 	} catch (error) {
-		logZodError(error);
+		logZodError(error, json);
 		throw error;
 	}
 }

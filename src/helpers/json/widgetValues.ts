@@ -9,9 +9,15 @@ import { queueSaveJson } from './queueSaveJson';
 export async function loadWidgetValues(id: string): Promise<WidgetValues> {
 	try {
 		const json = await loadJson(await widgetValuesPath(id));
-		return WidgetValues.parse(json);
+
+		try {
+			return WidgetValues.parse(json);
+		} catch (error) {
+			logZodError(error, json);
+			return {};
+		}
 	} catch (error) {
-		logZodError(error);
+		console.error(error);
 		return {};
 	}
 }

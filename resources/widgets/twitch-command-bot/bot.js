@@ -1,8 +1,9 @@
 const Widget = {
+	values: {},
 	botAccount: {},
 };
 
-// Listeners
+// Message Receivers
 // ***************************************************************************
 
 onmessage = message => {
@@ -19,21 +20,26 @@ onmessage = message => {
 	}
 };
 
-function widgetValuesListener(eventDetail) {
-	console.log('slime2:widget-values', eventDetail);
+function widgetValuesListener(messageData) {
+	console.log('slime2:widget-values', messageData);
+
+	Widget.values = messageData;
 }
 
-function widgetAccountsListener(eventDetail) {
-	console.log('slime2:widget-accounts', eventDetail);
+function widgetAccountsListener(messageData) {
+	console.log('slime2:widget-accounts', messageData);
 
-	const { accounts } = eventDetail;
+	const { accounts } = messageData;
 	Widget.botAccount = accounts[1];
 }
 
-function twitchEventListener(eventDetail) {
-	console.log('slime2:twitch-event', eventDetail.type, eventDetail);
+function twitchEventListener(messageData) {
+	console.log('slime2:twitch-event', messageData.type, messageData);
 
-	const { type, data } = eventDetail;
+	// ignore mock events
+	// if (messageData.mock) return;
+
+	const { type, data } = messageData;
 	switch (type) {
 		case 'channel.chat.message':
 			return handleChatMessage(data);
@@ -51,33 +57,47 @@ function handleChatMessage(data) {
 		return;
 	}
 
-	sendChatMessage(
-		Widget.botAccount.id,
-		broadcaster_user_id,
-		Widget.botAccount.serviceId,
-		'hewwo',
-		message_id,
-	);
+	Widget.values['basic-commands'].forEach(id => {
+		const command = Widget.values[`${id}.command`].toLowerCase();
+		const aliases = Widget.values[`${id}.aliases`];
+		const response = Widget.values[`${id}.response`];
+
+		for (const alias of [command, ...aliases]) {
+			if (message.text.toLowerCase().startsWith(alias.toLowerCase())) {
+				sendChatMessage(
+					response,
+					{
+						slime2_account_id: Widget.botAccount.id,
+						twitch_broadcaster_id: broadcaster_user_id,
+						twitch_bot_id: Widget.botAccount.serviceId,
+					},
+					message_id,
+				);
+				break;
+			}
+		}
+	});
 }
 
-// Senders
+// Message Senders
 // ***************************************************************************
 
 function sendChatMessage(
-	account_id,
-	broadcaster_id,
-	sender_id,
 	message,
-	reply_parent_message_id,
+	accounts,
+	reply_parent_message_id, // optional
 ) {
-	postMessage({
-		type: 'send-chat-message',
-		data: {
-			account_id,
-			broadcaster_id,
-			sender_id,
-			message,
-			reply_parent_message_id,
-		},
+	const { slime2_account_id, twitch_broadcaster_id, twitch_bot_id } = accounts;
+
+	send('send-chat-message', {
+		account_id: slime2_account_id,
+		broadcaster_id: twitch_broadcaster_id,
+		sender_id: twitch_bot_id,
+		message,
+		reply_parent_message_id,
 	});
+}
+
+function send(type, data) {
+	postMessage({ type, data });
 }

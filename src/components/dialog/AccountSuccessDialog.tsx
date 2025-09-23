@@ -65,7 +65,13 @@ const AccountSuccessDialog = memo(function AccountSuccessDialog({
 						{({ checked }) => (
 							<>
 								<Label className='flex-1 cursor-pointer py-1 pl-2 text-left'>
-									Set as default account?
+									Set as default{' '}
+									<strong>
+										{authenticatedAccount.type === 'read'
+											? '📖 Event Reader'
+											: '🤖 Chat Bot'}
+									</strong>{' '}
+									account?
 								</Label>
 								<div className='group rounded-1.5 mr-1 inline-flex h-6 w-11 cursor-pointer items-center bg-stone-300 text-stone-400 transition group-data-checked:bg-lime-600 group-data-checked:text-lime-700 group-data-focus:outline-2 group-data-focus:outline-black'>
 									<span className='rounded-1 size-4 translate-x-1 cursor-pointer bg-white p-1 shadow transition group-data-checked:translate-x-6'>

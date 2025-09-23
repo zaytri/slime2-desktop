@@ -1,4 +1,5 @@
 import { Link, LinkComponentProps, useRouter } from '@tanstack/react-router';
+import clsx from 'clsx';
 import { memo, PropsWithChildren } from 'react';
 
 type HeaderButtonProps = {
@@ -8,6 +9,7 @@ type HeaderButtonProps = {
 	linkTo?: LinkComponentProps['to'];
 	linkParams?: LinkComponentProps['params'];
 	externalHref?: string;
+	removeAnimation?: boolean;
 };
 
 const HeaderButton = memo(function HeaderButton({
@@ -18,16 +20,28 @@ const HeaderButton = memo(function HeaderButton({
 	externalHref,
 	children,
 	icon,
+	removeAnimation = false,
 }: PropsWithChildren<HeaderButtonProps>) {
 	const router = useRouter();
 
-	const className =
-		'group over:gap-2 over:bg-amber-900 over:text-amber-200 over:px-2 flex h-10 items-center justify-center gap-0 rounded-lg text-amber-900';
+	const className = clsx(
+		'group over:bg-amber-900 over:text-amber-200 over:px-2 flex h-10 items-center justify-center rounded-lg text-amber-900',
+		removeAnimation
+			? 'gap-2 px-2 bg-amber-200 border-2 border-amber-900'
+			: 'over:gap-2 gap-0',
+	);
 
 	const buttonChildren = (
 		<>
 			{icon}
-			<span className='group-over:text-lg group-over:opacity-100 text-[.1px] text-nowrap opacity-0 transition-[font-size]'>
+			<span
+				className={clsx(
+					'group-over:text-lg group-over:opacity-100 text-nowrap',
+					removeAnimation
+						? 'text-lg'
+						: 'text-[.1px] opacity-0 transition-[font-size]',
+				)}
+			>
 				{children}
 			</span>
 		</>

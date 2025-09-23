@@ -18,7 +18,7 @@ export async function loadAccounts(): Promise<Accounts> {
 		const accounts = Accounts.parse(json);
 		return accounts;
 	} catch (error) {
-		logZodError(error);
+		logZodError(error, json);
 
 		// fallback to empty
 		return {};
@@ -30,12 +30,13 @@ export async function saveAccounts(accounts: Accounts): Promise<void> {
 }
 
 export async function getTokens(accountId: string): Promise<Tokens> {
+	const secret = await getSecretKey(accountId);
+
 	try {
-		const secret = await getSecretKey(accountId);
 		const tokens = JSON.parse(secret);
 		return Tokens.parse(tokens);
 	} catch (error) {
-		logZodError(error);
+		logZodError(error, secret);
 		throw error;
 	}
 }

@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -6,6 +6,7 @@ import AccountsProvider from './contexts/accounts/AccountsProvider';
 import TileLocationsProvider from './contexts/tile_locations/TileLocationsProvider';
 import TileMetasProvider from './contexts/tile_metas/TileMetasProvider';
 import WidgetMetasProvider from './contexts/widget_metas/WidgetMetasProvider';
+import { queryClient } from './helpers/query';
 import { routeTree } from './routeTree.gen';
 import './styles.css';
 
@@ -18,9 +19,6 @@ declare module '@tanstack/react-router' {
 		router: typeof router;
 	}
 }
-
-// Create a react query client
-const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>

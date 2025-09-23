@@ -12,9 +12,9 @@ const ACCOUNT_TYPE_OPTIONS: {
 }[] = [
 	{
 		value: 'read',
-		title: '📖 Read-Only',
+		title: '📖 Event Reader',
 		description:
-			'Allows widgets to read data from events (such as follows, subscriptions, etc.) and chat messages.',
+			'Allows widgets to read data from events such as follows, subscriptions, chat messages, etc.',
 	},
 	{
 		value: 'bot',

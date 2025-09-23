@@ -40,6 +40,23 @@ const WidgetMetasProvider = memo(function WidgetMetasProvider({
 		loadWidgetMetas();
 	}, [locations, widgetMetas]);
 
+	useEffect(() => {
+		// remove widgetMeta if widget is deleted
+		function widgetDeleteListener(event: CustomEvent<{ widgetId: string }>) {
+			const { widgetId } = event.detail;
+			dispatch({ type: 'delete', id: widgetId });
+		}
+
+		addEventListener('widget-delete', widgetDeleteListener as EventListener);
+
+		return () => {
+			removeEventListener(
+				'widget-delete',
+				widgetDeleteListener as EventListener,
+			);
+		};
+	}, [dispatch]);
+
 	return (
 		<WidgetMetasContext value={widgetMetas}>
 			<WidgetMetasDispatchContext value={dispatch}>

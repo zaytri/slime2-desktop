@@ -4,7 +4,7 @@
 	"version": "1.0.0",
 	"homepage": "https://slime2.stream/",
 	"support": "https://forums.slime2.stream/",
-	"icon": "icon.jpg",
+	"icon": "icon.png",
 	"bot": "bot.js",
 	"accounts": [
 		{

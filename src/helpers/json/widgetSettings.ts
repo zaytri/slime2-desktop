@@ -7,12 +7,12 @@ import { tileFolderPath } from './jsonPaths';
 // functions
 
 export async function loadWidgetSettings(id: string): Promise<WidgetSettings> {
+	const json = await loadJson(await settingsPath(id));
 	try {
-		const json = await loadJson(await settingsPath(id));
 		const data = WidgetSettings.parse(json);
 		return data;
 	} catch (error) {
-		logZodError(error);
+		logZodError(error, json);
 		throw error;
 	}
 }
