@@ -64,7 +64,9 @@
 				],
 				"style-src": ["'self'", "https://fonts.googleapis.com"],
 				"font-src": ["https://fonts.gstatic.com"],
-				"img-src": ["'self'", "http://localhost:*", "https:", "data:"]
+				"img-src": ["'self'", "http://localhost:*", "https:", "data:"],
+				"worker-src": ["'self'", "http://localhost:*", "blob:"],
+				"script-src-elem": ["'self'", "http://localhost:*"]
 			}
 		}
 	}
