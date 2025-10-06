@@ -304,6 +304,43 @@ pub fn clean_tiles_folder(app: &AppHandle) -> io::Result<()> {
 	Ok(())
 }
 
+pub fn generate_widget_config(
+	app: &AppHandle,
+	widget_id: String,
+) -> io::Result<()> {
+	let core_path = widget_files_core_path(app, widget_id.clone());
+
+	// extract tile meta from widget meta
+	let meta = load_widget_meta(core_path)?;
+
+	// path to tile config folder
+	let config_path = tile_config_path(app, widget_id.clone());
+
+	// get icon path from widget meta, or get default icon path if empty
+	let icon_source_path = if meta.icon.clone().is_empty() {
+		assets_path(app).join(default_widget_image_name())
+	} else {
+		widget_files_core_path(app, widget_id.clone())
+			.join("config")
+			.join(meta.icon.clone())
+	};
+
+	// copy icon into config/icon and get the icon file name
+	let icon_file_name =
+		copy_file(&icon_source_path, config_path.join("icon"))?;
+
+	// create meta.json for the widget tile
+	create_tile_meta(
+		config_path,
+		TileMeta {
+			icon: format!("icon/{}", icon_file_name),
+			..meta
+		},
+	)?;
+
+	Ok(())
+}
+
 // get path to widget_server folder (built by src-widget)
 pub fn widget_server_path(app: &AppHandle) -> PathBuf {
 	app.path()

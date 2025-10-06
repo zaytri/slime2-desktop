@@ -9,6 +9,7 @@
 		"dev": "concurrently --kill-others -n TAURI,WIDGET -c green.bold,yellow.bold \"tauri dev\" \"npm:widget:dev\"",
 		"build": "tauri build",
 		"build:debug": "tauri build --debug",
+		"build:devtools": "tauri build --features devtools",
 		"tauri": "tauri",
 		"icon": "npm run tauri icon",
 		"before:dev": "npm run clean:target && vite && npm run widget:build && npm run icon",

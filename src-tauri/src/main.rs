@@ -73,7 +73,7 @@ async fn main() {
 			commands::send_websocket_message,
 			commands::copy_widget,
 			commands::delete_widget,
-			commands::install_widget,
+			commands::install_custom_widget,
 			commands::install_default_widget,
 			commands::extract_widget_details,
 			commands::load_json,

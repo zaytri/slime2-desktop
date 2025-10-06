@@ -2,9 +2,7 @@
 // Websocket commmands found under server/websocket/ws_commands.rs
 
 use crate::{
-	file::{
-		self, TileMeta, create_tile_meta, load_widget_meta, tile_config_path,
-	},
+	file,
 	secret::{delete_secret, get_secret, set_secret},
 	server,
 };
@@ -74,15 +72,16 @@ pub async fn copy_widget(
 		));
 	}
 
-	let new_config_path = tile_config_path(&app_handle, new_widget_id.clone());
+	let new_config_path =
+		file::tile_config_path(&app_handle, new_widget_id.clone());
 
 	match file::load_json(new_config_path.join("meta")) {
 		Ok(tile_meta_json) => {
-			match serde_json::from_str::<TileMeta>(&tile_meta_json) {
+			match serde_json::from_str::<file::TileMeta>(&tile_meta_json) {
 				Ok(tile_meta) => {
 					if let Err(error) = file::create_tile_meta(
 						new_config_path,
-						TileMeta {
+						file::TileMeta {
 							name: format!("{} (copy)", tile_meta.name),
 							icon: tile_meta.icon,
 							color: tile_meta.color,
@@ -182,6 +181,7 @@ pub async fn install_default_widget(
 	app_handle: AppHandle,
 ) -> Result<String, String> {
 	let new_widget_id = generate_widget_id();
+
 	let core_path =
 		file::widget_files_core_path(&app_handle, new_widget_id.clone());
 
@@ -196,52 +196,11 @@ pub async fn install_default_widget(
 		));
 	}
 
-	// extract tile meta from widget meta
-	let meta = match load_widget_meta(core_path) {
-		Ok(config) => config,
-		Err(error) => {
-			return Err(format!(
-				"Failed to load meta.json for default widget \"{}\": {}",
-				widget_name, error
-			));
-		}
-	};
-
-	// path to tile config folder
-	let config_path =
-		file::tile_config_path(&app_handle, new_widget_id.clone());
-
-	// get icon path from widget meta, or get default icon path if empty
-	let icon_source_path = if meta.icon.clone().is_empty() {
-		file::assets_path(&app_handle).join(file::default_widget_image_name())
-	} else {
-		file::widget_files_core_path(&app_handle, new_widget_id.clone())
-			.join("config")
-			.join(meta.icon.clone())
-	};
-
-	// copy icon into config/icon and get the icon file name
-	let icon_file_name =
-		match file::copy_file(&icon_source_path, config_path.join("icon")) {
-			Ok(file_name) => file_name,
-			Err(error) => {
-				return Err(format!(
-					"Failed to copy icon file for default widget \"{}\": {}",
-					widget_name, error
-				));
-			}
-		};
-
-	// create meta.json for the widget tile
-	if let Err(error) = create_tile_meta(
-		config_path,
-		TileMeta {
-			icon: format!("icon/{}", icon_file_name),
-			..meta
-		},
-	) {
+	if let Err(error) =
+		file::generate_widget_config(&app_handle, new_widget_id.clone())
+	{
 		return Err(format!(
-			"Failed to create tile meta.json for default widget \"{}\": {}",
+			"Failed to generate widget config for default widget \"{}\": {}",
 			widget_name, error
 		));
 	}
@@ -250,7 +209,7 @@ pub async fn install_default_widget(
 }
 
 #[tauri::command]
-pub async fn install_widget(
+pub async fn install_custom_widget(
 	zip_path: &str,
 	app_handle: AppHandle,
 ) -> Result<String, String> {
@@ -264,12 +223,18 @@ pub async fn install_widget(
 		}
 	};
 
+	// change this to copying to temp folder first and checking contents
+
 	if let Err(error) = file::copy_zip(
 		archive,
 		file::widget_files_core_path(&app_handle, new_widget_id.clone()),
 	) {
 		return Err(format!("Failed to copy zip contents: {}", error));
 	}
+
+	// copy to correct folder after checking contents
+
+	// generate widget config for icon
 
 	Ok(new_widget_id)
 }

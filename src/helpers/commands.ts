@@ -8,8 +8,8 @@ export async function sendWebsocketMessage(
 	return invoke('send_websocket_message', { message, channel });
 }
 
-export async function installWidget(zipPath: string): Promise<string> {
-	return invoke('install_widget', { zipPath });
+export async function installCustomWidget(zipPath: string): Promise<string> {
+	return invoke('install_custom_widget', { zipPath });
 }
 
 export async function installDefaultWidget(
