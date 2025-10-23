@@ -233,30 +233,6 @@ pub fn unzip(path: &Path) -> io::Result<ZipArchive<File>> {
 	let file = fs::File::open(path)?;
 	let archive = ZipArchive::new(file)?;
 
-	// check decompressed zip file size
-	if let Some(decompressed_size) = archive.decompressed_size() {
-		if decompressed_size == 0 {
-			return Err(io::Error::new(
-				io::ErrorKind::Other,
-				"Zip file is empty!",
-			));
-		} else if decompressed_size > 1024 * 1024 * 1024 {
-			// 1024 * 1024 * 1024 bytes = 1GB
-			// widget installation zips should never be close to 1GB
-			// potential malware or incorrect zip
-			return Err(io::Error::new(
-				io::ErrorKind::Other,
-				"Contents of zip file are over 1GB!",
-			));
-		}
-	} else {
-		// might happen if it's password protected? or some other corruption
-		return Err(io::Error::new(
-			io::ErrorKind::Other,
-			"Failed to calculate decompressed size of zip file!",
-		));
-	}
-
 	Ok(archive)
 }
 

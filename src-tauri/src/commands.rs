@@ -196,6 +196,7 @@ pub async fn install_default_widget(
 		));
 	}
 
+	// generate widget config for icon
 	if let Err(error) =
 		file::generate_widget_config(&app_handle, new_widget_id.clone())
 	{
@@ -216,15 +217,19 @@ pub async fn install_custom_widget(
 	let new_widget_id = generate_widget_id();
 	let source_path = Path::new(zip_path);
 
-	let archive = match file::unzip(source_path) {
+	let mut archive = match file::unzip(source_path) {
 		Ok(archive) => archive,
 		Err(error) => {
 			return Err(format!("Failed to open zip: {}", error));
 		}
 	};
 
-	// change this to copying to temp folder first and checking contents
+	// check if zip contains meta.json
+	if let Err(error) = archive.by_name("config/meta.json") {
+		return Err(format!("Zip file is missing config/meta.json! {}", error));
+	}
 
+	// extract zip into slime2
 	if let Err(error) = file::copy_zip(
 		archive,
 		file::widget_files_core_path(&app_handle, new_widget_id.clone()),
@@ -232,9 +237,15 @@ pub async fn install_custom_widget(
 		return Err(format!("Failed to copy zip contents: {}", error));
 	}
 
-	// copy to correct folder after checking contents
-
 	// generate widget config for icon
+	if let Err(error) =
+		file::generate_widget_config(&app_handle, new_widget_id.clone())
+	{
+		return Err(format!(
+			"Failed to generate widget config for custom widget: {}",
+			error
+		));
+	}
 
 	Ok(new_widget_id)
 }

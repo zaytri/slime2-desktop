@@ -2,7 +2,12 @@ import DialogHeader from '@/components/dialog/DialogHeader';
 import PlusSvg from '@/components/svg/PlusSvg';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useTileLocationsDispatch } from '@/contexts/tile_locations/useTileLocationsDispatch';
-import { createWidgetFolder, installDefaultWidget } from '@/helpers/commands';
+import {
+	createWidgetFolder,
+	installCustomWidget,
+	installDefaultWidget,
+} from '@/helpers/commands';
+import { openZip } from '@/helpers/openFile';
 import clsx from 'clsx';
 import { memo } from 'react';
 
@@ -45,6 +50,20 @@ const CreateTileDialog = memo(function CreateTileDialog({
 						Twitch Command Bot Widget
 					</CreateButton>
 
+					<CreateButton
+						className='rounded-slime'
+						onClick={async () => {
+							const zipPath = await openZip();
+							if (!zipPath) return;
+
+							const id = await installCustomWidget(zipPath);
+							addTile({ id, index, folderId });
+							closeDialog();
+						}}
+					>
+						Custom Widget
+					</CreateButton>
+
 					{folderId === 'main' && false && (
 						<CreateButton
 							className='rounded-10%'
@@ -82,7 +101,7 @@ const CreateButton = memo(function CreateButton({
 		<button
 			type='button'
 			onClick={onClick}
-			className='group ease-bounce over:scale-125 first:over:-rotate-3 last:over:rotate-3 peer-over:scale-75 peer-over:opacity-50 flex flex-col items-center gap-2 transition-transform'
+			className='group ease-bounce over:scale-125 peer-over:scale-75 peer-over:opacity-50 flex flex-col items-center gap-2 transition-transform'
 		>
 			<div
 				className={clsx(
