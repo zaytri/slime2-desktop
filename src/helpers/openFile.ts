@@ -1,4 +1,4 @@
-import { open, save } from '@tauri-apps/plugin-dialog';
+import { open } from '@tauri-apps/plugin-dialog';
 
 export async function openImage(): Promise<null | string> {
 	return open({
@@ -48,18 +48,6 @@ export async function openAudioMultiple(): Promise<null | string[]> {
 export async function openZip(): Promise<null | string> {
 	return open({
 		title: 'Import Widget ZIP',
-		filters: [
-			{
-				name: 'Zip File',
-				extensions: ['zip'],
-			},
-		],
-	});
-}
-
-export async function saveZip(): Promise<null | string> {
-	return save({
-		title: 'Export Widget ZIP',
 		filters: [
 			{
 				name: 'Zip File',

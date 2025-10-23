@@ -29,7 +29,7 @@ tauri-plugin-shell = "2"
 tauri-plugin-single-instance = "2.3.4"
 tokio = { version = "1", features = ["full"] }
 warp = "0.3"
-zip = "2"
+zip = "6"
 
 [features]
 devtools = ["tauri/devtools"]
