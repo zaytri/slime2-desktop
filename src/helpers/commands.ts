@@ -12,6 +12,13 @@ export async function installCustomWidget(zipPath: string): Promise<string> {
 	return invoke('install_custom_widget', { zipPath });
 }
 
+export async function packageCustomWidget(
+	widgetId: string,
+	zipPath: string,
+): Promise<string> {
+	return invoke('package_custom_widget', { widgetId, zipPath });
+}
+
 export async function installDefaultWidget(
 	widgetName: string,
 ): Promise<string> {

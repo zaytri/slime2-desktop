@@ -87,7 +87,8 @@ async fn main() {
 			commands::save_temp_widget_file,
 			commands::get_secret_key,
 			commands::set_secret_key,
-			commands::delete_secret_key
+			commands::delete_secret_key,
+			commands::package_custom_widget
 		])
 		.run(tauri::generate_context!())
 		.expect("Error while running Tauri app!");

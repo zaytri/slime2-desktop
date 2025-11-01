@@ -8,10 +8,13 @@ import useTileLocation from '@/contexts/tile_locations/useTileLocation';
 import useTileLocations from '@/contexts/tile_locations/useTileLocations';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import { useWidgetMeta } from '@/contexts/widget_metas/useWidgetMeta';
+import { packageCustomWidget } from '@/helpers/commands';
 import { getTileIconSrc } from '@/helpers/media';
+import { saveZip } from '@/helpers/saveFile';
 import { DEV_WIDGET_SERVER_PORT, PROD_PORT } from '@/helpers/serverBaseUrl';
 import { mockTwitchChatMessage } from '@/helpers/services/twitch/twitchMock';
 import { useParams } from '@tanstack/react-router';
+import { revealItemInDir } from '@tauri-apps/plugin-opener';
 import { memo } from 'react';
 import WidgetSettings from './WidgetSettings';
 
@@ -41,6 +44,24 @@ const Widget = memo(function Widget() {
 				)}
 
 				<HeaderText className='flex-1'>{tileMeta.name}</HeaderText>
+
+				<HeaderButton
+					icon={null}
+					removeAnimation
+					onClick={async () => {
+						const zipPath = await saveZip();
+						if (!zipPath) return;
+
+						try {
+							await packageCustomWidget(widgetId, zipPath);
+							await revealItemInDir(zipPath);
+						} catch (error) {
+							console.error(error);
+						}
+					}}
+				>
+					Export Widget
+				</HeaderButton>
 
 				<HeaderButton
 					icon={<ChatBubbleSvg className='size-7' />}

@@ -12,11 +12,13 @@ use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::{
-	fs,
-	io::Read,
+	fs::{self, File},
+	io::{Read, Write},
 	path::{Path, PathBuf},
 };
 use tauri::AppHandle;
+use walkdir::WalkDir;
+use zip::write::SimpleFileOptions;
 
 // file_path must not include ".json" extension
 #[tauri::command]
@@ -225,7 +227,7 @@ pub async fn install_custom_widget(
 	};
 
 	// check if zip contains meta.json
-	if let Err(error) = archive.by_name("config/meta.json") {
+	if let Err(error) = archive.by_name("config\\meta.json") {
 		return Err(format!("Zip file is missing config/meta.json! {}", error));
 	}
 
@@ -248,6 +250,129 @@ pub async fn install_custom_widget(
 	}
 
 	Ok(new_widget_id)
+}
+
+// reference: https://github.com/zip-rs/zip2/blob/master/examples/write_dir.rs
+#[tauri::command]
+pub async fn package_custom_widget(
+	widget_id: &str,
+	zip_path: &str,
+	app_handle: AppHandle,
+) -> Result<String, String> {
+	let source_path =
+		file::widget_files_core_path(&app_handle, widget_id.to_string());
+
+	let widget_core_iterator = WalkDir::new(source_path.clone())
+		.into_iter()
+		.filter_map(|entry| {
+			return match entry.ok() {
+				Some(entry) => {
+					// filter out OS files such as .DS_Store and Thumbs.db
+					if junk_file::is_junk(entry.file_name()) {
+						return None;
+					} else {
+						return Some(entry);
+					};
+				}
+				None => None,
+			};
+		});
+
+	let destination_path = Path::new(zip_path);
+	let file = match File::create(destination_path) {
+		Ok(file) => file,
+		Err(error) => {
+			return Err(format!(
+				"Failed to create destination file: {}",
+				error
+			));
+		}
+	};
+
+	let mut zip_writer = zip::ZipWriter::new(file);
+	let mut buffer = Vec::new();
+	let zip_options = SimpleFileOptions::default();
+	for entry in widget_core_iterator {
+		let path = entry.path();
+		let name = match path.strip_prefix(source_path.clone()) {
+			Ok(name) => name,
+			// ignore file if strip prefix fails
+			Err(error) => {
+				println!("Error stripping prefix: {}", error);
+				continue;
+			}
+		};
+		let path_as_string = match name.to_str() {
+			Some(string) => string,
+			// ignore file if not valid UTF-8
+			None => {
+				println!("Found path failing UTF-8 validation!");
+				continue;
+			}
+		};
+
+		// write file or directory explicitly
+		// some unzip tools unzip files with directory paths correctly, some do not!
+		if path.is_file() {
+			if let Err(error) =
+				zip_writer.start_file(path_as_string, zip_options)
+			{
+				// ignore file if starting to write fails
+				println!("Error starting to write to zip: {}", error);
+				if let Err(error) = zip_writer.abort_file() {
+					println!("Error aborting zip write: {}", error);
+				};
+				continue;
+			}
+
+			let mut file = match File::open(path) {
+				Ok(file) => file,
+				// ignore file if it can't be opened
+				Err(error) => {
+					println!("Error opening file: {}", error);
+					if let Err(error) = zip_writer.abort_file() {
+						println!("Error aborting zip write: {}", error);
+					};
+					continue;
+				}
+			};
+
+			if let Err(error) = file.read_to_end(&mut buffer) {
+				// ignore file and clear buffer if it can't be read to end
+				buffer.clear();
+				println!("Error reading file: {}", error);
+				if let Err(error) = zip_writer.abort_file() {
+					println!("Error aborting zip write: {}", error);
+				};
+				continue;
+			}
+
+			if let Err(error) = zip_writer.write_all(&buffer) {
+				// ignore file and clear buffer if it can't be fully written
+				buffer.clear();
+				println!("Error writing file: {}", error);
+				if let Err(error) = zip_writer.abort_file() {
+					println!("Error aborting zip write: {}", error);
+				};
+				continue;
+			}
+
+			buffer.clear();
+		} else if !name.as_os_str().is_empty() {
+			// only if not root! avoids path spec / warning
+			// and mapname conversion failed error on unzip
+			if let Err(error) =
+				zip_writer.add_directory(path_as_string, zip_options)
+			{
+				println!("Error adding directory to zip: {}", error);
+			};
+		}
+	}
+
+	return match zip_writer.finish() {
+		Ok(_) => Ok(zip_path.to_string()),
+		Err(error) => Err(format!("Failed to write zip file: {}", error)),
+	};
 }
 
 #[tauri::command]
