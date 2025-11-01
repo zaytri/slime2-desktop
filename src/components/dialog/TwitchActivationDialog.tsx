@@ -5,6 +5,7 @@ import { Account, setTokens } from '@/helpers/json/accounts';
 import twitchApi from '@/helpers/services/twitch/twitchApi';
 import twitchAuth from '@/helpers/services/twitch/twitchAuth';
 import { memo, useEffect, useState } from 'react';
+import ExternalLink from '../ExternalLink';
 import LinkifyText from '../LinkifyText';
 import AccountSuccessDialog from './AccountSuccessDialog';
 import DialogHeader from './DialogHeader';
@@ -89,16 +90,15 @@ const TwitchActivationDialog = memo(function TwitchActivationDialog({
 				<p className='font-quicksand'>
 					Click the button below and enter the activation code.
 				</p>
-				<a
+				<ExternalLink
 					href={verificationUri}
-					target='_blank'
 					className='rounded-2 over:translate-y-0.5 over:bg-none over:shadow-none flex-1 border-2 border-emerald-800 bg-lime-400 bg-linear-to-b from-lime-300 from-50% to-lime-400 to-50% py-2 text-center text-xl font-medium text-emerald-900 shadow-[0_2px] shadow-emerald-800'
 					onClick={() => {
 						setActivating(true);
 					}}
 				>
 					Activate
-				</a>
+				</ExternalLink>
 				<LinkifyText className='text-3.5 font-quicksand text-stone-500 max-w-96'>
 					If the button does not work, you can also go to
 					https://www.twitch.tv/activate and enter the code there.

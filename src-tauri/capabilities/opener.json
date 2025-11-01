@@ -1,0 +1,10 @@
+{
+	"identifier": "opener",
+	"description": "This capability allows opening URLs and revealing files in directories using the default file explorer",
+	"windows": ["main"],
+	"permissions": [
+		"opener:allow-default-urls",
+		"opener:allow-open-url",
+		"opener:allow-reveal-item-in-dir"
+	]
+}

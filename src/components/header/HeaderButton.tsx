@@ -1,6 +1,7 @@
 import { Link, LinkComponentProps, useRouter } from '@tanstack/react-router';
 import clsx from 'clsx';
-import { memo, PropsWithChildren } from 'react';
+import { memo } from 'react';
+import ExternalLink from '../ExternalLink';
 
 type HeaderButtonProps = {
 	icon: React.ReactNode;
@@ -21,7 +22,7 @@ const HeaderButton = memo(function HeaderButton({
 	children,
 	icon,
 	removeAnimation = false,
-}: PropsWithChildren<HeaderButtonProps>) {
+}: Props.WithChildren<HeaderButtonProps>) {
 	const router = useRouter();
 
 	const className = clsx(
@@ -74,9 +75,9 @@ const HeaderButton = memo(function HeaderButton({
 
 	if (externalHref) {
 		return (
-			<a href={externalHref} target='_blank' className={className}>
+			<ExternalLink href={externalHref} className={className}>
 				{buttonChildren}
-			</a>
+			</ExternalLink>
 		);
 	}
 

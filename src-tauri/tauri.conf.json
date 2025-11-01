@@ -47,7 +47,8 @@
 				"file",
 				"event",
 				"version",
-				"watcher"
+				"watcher",
+				"opener"
 			],
 			"csp": {
 				"default-src": ["'self'", "http://localhost:*"],

@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import Linkify from 'linkify-react';
 import { memo } from 'react';
+import ExternalLink from './ExternalLink';
 
 type LinkifyTextProps = {
 	linkClassName?: string;
@@ -24,6 +25,14 @@ const LinkifyText = memo(function LinkifyText(
 				target: '_blank',
 				nl2br: true, // converts \n line breaks to <br> tags
 				className: clsx('inline underline', linkClassName),
+				render: ({ attributes, content }) => {
+					const { href, class: className } = attributes;
+					return (
+						<ExternalLink href={href} className={className}>
+							{content}
+						</ExternalLink>
+					);
+				},
 			}}
 		/>
 	);
