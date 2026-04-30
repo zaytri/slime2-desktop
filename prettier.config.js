@@ -1,8 +1,8 @@
 export default {
 	plugins: [
 		'prettier-plugin-organize-imports',
-		'prettier-plugin-tailwindcss',
 		'prettier-plugin-jsdoc',
+		'prettier-plugin-tailwindcss', // MUST be last to work
 	],
 	arrowParens: 'avoid',
 	semi: true,
@@ -10,5 +10,6 @@ export default {
 	jsxSingleQuote: true,
 	trailingComma: 'all',
 	tailwindFunctions: ['clsx'],
+	tailwindStylesheet: './src/styles.css',
 	useTabs: true,
 };

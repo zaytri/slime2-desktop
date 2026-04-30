@@ -2,8 +2,9 @@
 	"name": "Chat",
 	"creator": "Zaytri",
 	"version": "1.0.0",
-	"homepage": "https://zaytri.com/",
+	"website": "https://zaytri.com/",
 	"support": "https://zaytri.com/",
+	"type": ["overlay"],
 	"icon": "bird.jpg",
 	"import": {
 		"js": ["script.js", "https://colorjs.io/dist/color.global.min.js"],

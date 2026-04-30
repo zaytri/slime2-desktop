@@ -1,6 +1,6 @@
-import { TileSlot } from '@/contexts/tile_locations/useTileFolder';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import { getTileIconSrc } from '@/helpers/media';
+import type { TileSlot } from '@@/json/tileLocations';
 import clsx from 'clsx';
 import { memo } from 'react';
 
@@ -23,7 +23,7 @@ const TileImage = memo(function TileImage({ id, type }: WidgetTileProps) {
 		>
 			<img
 				src={getTileIconSrc(id, tileMeta.icon)}
-				className='smooth-image flex-1 object-contain rounded-10% '
+				className='flex-1 rounded-10% object-contain smooth-image'
 			/>
 		</div>
 	);

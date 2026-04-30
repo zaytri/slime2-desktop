@@ -1,0 +1,149 @@
+import { i18nStringTransform } from '@/helpers/i18n';
+import type { WidgetSettings } from '@@/json/widgetSettings';
+import BookSvg from '@@/svg/BookSvg';
+import UserSvg from '@@/svg/UserSvg';
+
+type WidgetSettingsSidebarProps = {
+	onClickCategory: (categoryId: string) => void;
+	onClickSection: (sectionId: string, isMultiSection: boolean) => void;
+	settings: WidgetSettings;
+	topScrollId: string;
+	aboutId: string;
+	accountsId?: string;
+};
+
+export default function WidgetSettingsSidebar({
+	settings,
+	onClickCategory,
+	onClickSection,
+	topScrollId,
+	aboutId,
+	accountsId,
+}: WidgetSettingsSidebarProps) {
+	return (
+		<aside className='relative flex w-56 flex-col justify-between gap-4 border-t border-zinc-500 pt-5 font-fredoka'>
+			<h2 className='absolute -top-px right-px text-3 text-zinc-400'>
+				CATEGORIES
+			</h2>
+			<div className='flex flex-col gap-1 overflow-y-auto text-white'>
+				{accountsId && (
+					<SidebarCategory
+						label={
+							<>
+								<UserSvg className='-mt-0.5 size-5' />
+								<p>Accounts</p>
+							</>
+						}
+						onClick={() => {
+							onClickCategory(accountsId);
+						}}
+						active={accountsId === topScrollId}
+					/>
+				)}
+
+				{Object.entries(settings).map(([categoryId, category]) => {
+					return (
+						<SidebarCategory
+							key={categoryId}
+							label={i18nStringTransform(category.label)}
+							onClick={() => {
+								onClickCategory(categoryId);
+							}}
+							active={categoryId === topScrollId}
+						>
+							<ul className='flex list-disc flex-col pl-6'>
+								{Object.entries(category.settings).map(
+									([sectionId, section]) => {
+										if (
+											section.type !== 'section' &&
+											section.type !== 'multi-section'
+										)
+											return null;
+
+										return (
+											<SidebarSubcategory
+												key={sectionId}
+												onClick={() => {
+													onClickSection(
+														sectionId,
+														section.type === 'multi-section',
+													);
+												}}
+											>
+												{i18nStringTransform(section.label)}
+											</SidebarSubcategory>
+										);
+									},
+								)}
+							</ul>
+						</SidebarCategory>
+					);
+				})}
+
+				<SidebarCategory
+					label={
+						<>
+							<BookSvg className='-mt-0.5 size-5' />
+							<p>About</p>
+						</>
+					}
+					onClick={() => {
+						onClickCategory(aboutId);
+					}}
+					active={aboutId === topScrollId}
+				/>
+			</div>
+		</aside>
+	);
+}
+
+type SidebarCategoryProps = {
+	label: React.ReactNode;
+	onClick: VoidFunction;
+	active: boolean;
+};
+
+function SidebarCategory({
+	label,
+	children,
+	onClick,
+	active,
+}: Props.WithChildren<SidebarCategoryProps>) {
+	return (
+		<section
+			data-active={active || undefined}
+			className='flex flex-col overflow-hidden rounded-1 p-1 -outline-offset-1 has-focus-visible:bg-white/10 has-focus-visible:outline has-focus-visible:outline-white/20 data-active:bg-white/10 data-active:outline data-active:outline-white/20 over:bg-white/10 over:outline over:outline-white/20'
+		>
+			<button
+				className='px-1 text-left text-5 font-medium uppercase outline-offset-1! over:underline'
+				onClick={onClick}
+			>
+				<h3 className='flex items-center gap-2 *:drop-shadow-[0_2px_#0008]'>
+					{label}
+				</h3>
+			</button>
+
+			{children}
+		</section>
+	);
+}
+
+type SidebarSubcategoryProps = {
+	onClick: VoidFunction;
+};
+
+function SidebarSubcategory({
+	onClick,
+	children,
+}: Props.WithChildren<SidebarSubcategoryProps>) {
+	return (
+		<li>
+			<button
+				className='text-left text-4.5 outline-offset-1! over:underline'
+				onClick={onClick}
+			>
+				{children}
+			</button>
+		</li>
+	);
+}

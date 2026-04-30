@@ -1,0 +1,36 @@
+import { Account } from '@/helpers/json/accounts';
+import YoutubeSvg from '@@/svg/YoutubeSvg';
+import TwitchSvg from '../svg/TwitchSvg';
+import Tag from './Tag';
+
+type AccountServiceTagProps = {
+	service: Account['service'];
+	mini?: boolean;
+};
+
+export default function AccountServiceTag({
+	service,
+	mini,
+}: AccountServiceTagProps) {
+	switch (service) {
+		case 'twitch':
+			return (
+				<Tag
+					label='Twitch'
+					icon={<TwitchSvg className='size-4' />}
+					className='border-violet-700 bg-[#9146FF]'
+					mini={mini}
+				/>
+			);
+		case 'youtube':
+			return (
+				<Tag
+					label='YouTube'
+					icon={<YoutubeSvg className='size-4' />}
+					className='border-rose-700 bg-rose-600'
+				/>
+			);
+		default:
+			return null;
+	}
+}

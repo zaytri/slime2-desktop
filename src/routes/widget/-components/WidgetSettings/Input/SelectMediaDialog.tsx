@@ -1,4 +1,5 @@
 import DialogHeader from '@/components/dialog/DialogHeader';
+import InputDescription from '@/components/input_fields/InputDescription';
 import MediaInputPreview from '@/components/MediaInputPreview';
 import { SelectMediaPayload } from '@/contexts/dialog/DialogType';
 import { useDialog } from '@/contexts/dialog/useDialog';
@@ -12,7 +13,6 @@ import {
 	openVideo,
 	VIDEO_FORMATS,
 } from '@/helpers/openFile';
-import InputDescription from '@/routes/widget/-components/WidgetSettings/Input/InputDescription';
 import { useParams } from '@tanstack/react-router';
 import clsx from 'clsx';
 import { memo, useState } from 'react';
@@ -78,7 +78,7 @@ const SelectMediaDialog = memo(function SelectMediaDialog({
 					<>
 						<div
 							className={clsx(
-								'bg-alpha-checkerboard rounded-1 flex w-128 items-center justify-center overflow-hidden border border-white outline outline-stone-300 has-focus-visible:outline-2 has-focus-visible:outline-black',
+								'flex w-128 items-center justify-center overflow-hidden rounded-1 border border-white bg-alpha-checkerboard outline outline-stone-300 has-focus-visible:outline-2 has-focus-visible:outline-black',
 								type === 'image' && 'p-1',
 								type === 'audio' &&
 									'overflow-visible border-none bg-none outline-none',
@@ -89,7 +89,7 @@ const SelectMediaDialog = memo(function SelectMediaDialog({
 
 						<button
 							type='button'
-							className='rounded-2 over:translate-y-0.5 over:bg-none over:shadow-none flex-1 border-2 border-emerald-800 bg-lime-400 bg-linear-to-b from-lime-300 from-50% to-lime-400 to-50% py-2 text-xl font-medium text-emerald-900 shadow-[0_2px] shadow-emerald-800'
+							className='flex-1 rounded-2 border-2 border-emerald-800 bg-lime-400 bg-linear-to-b from-lime-300 from-50% to-lime-400 to-50% py-2 text-xl font-medium text-emerald-900 shadow-[0_2px] shadow-emerald-800 over:translate-y-0.5 over:bg-none over:shadow-none'
 							onClick={async () => {
 								if (value) {
 									const fileName = await saveTempWidgetFile(value, widgetId);
@@ -118,5 +118,7 @@ function fileFormats(type: SelectMediaPayload['type']): string[] {
 			return VIDEO_FORMATS;
 		case 'audio':
 			return AUDIO_FORMATS;
+		default:
+			return [];
 	}
 }

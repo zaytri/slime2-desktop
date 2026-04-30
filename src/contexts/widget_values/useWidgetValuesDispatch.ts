@@ -1,4 +1,4 @@
-import { WidgetValue, WidgetValues } from '@/helpers/json/widgetValues';
+import { WidgetValue, type WidgetValues } from '@/helpers/json/widgetValues';
 import { createContext, useContext } from 'react';
 import { contextErrorMessage, deepCopyObject } from '../common';
 
@@ -16,6 +16,10 @@ type WidgetValuesAction =
 			type: 'duplicate';
 			sourceKey: string;
 			newKey: string;
+	  }
+	| {
+			type: 'replace';
+			values: WidgetValues;
 	  };
 
 export const WidgetValuesDispatchContext = createContext<
@@ -46,7 +50,11 @@ export function useWidgetValuesDispatch() {
 		dispatch({ type: 'duplicate', sourceKey, newKey });
 	};
 
-	return { set, setMultiple, duplicate };
+	const replace = (values: WidgetValues) => {
+		dispatch({ type: 'replace', values });
+	};
+
+	return { set, setMultiple, duplicate, replace };
 }
 
 export function widgetValuesReducer(
@@ -66,12 +74,22 @@ export function widgetValuesReducer(
 
 			return newState;
 		}
+		case 'replace': {
+			const { values } = action;
+
+			// deep copy data
+			const newState: WidgetValues = deepCopyObject(values);
+
+			// return entirely new state
+			return newState;
+		}
 		case 'set': {
 			const { key, value } = action;
 			const newState = deepCopyObject(state);
 
 			// deep copy data
-			const newValue: WidgetValue = deepCopyObject(value);
+			const newValue: WidgetValue =
+				value === undefined ? undefined : deepCopyObject(value);
 
 			// set new widget value
 			newState[key] = newValue;
@@ -85,9 +103,11 @@ export function widgetValuesReducer(
 			if (state[sourceKey] === undefined) return state;
 
 			const newState = deepCopyObject(state);
+			const sourceValue = newState[sourceKey];
 
 			// deep copy source data
-			const copiedValue: WidgetValue = deepCopyObject(newState[sourceKey]);
+			const copiedValue: WidgetValue =
+				sourceValue === undefined ? undefined : deepCopyObject(sourceValue);
 
 			// set new widget value
 			newState[newKey] = copiedValue;

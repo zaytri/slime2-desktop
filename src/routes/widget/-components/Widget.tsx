@@ -12,7 +12,7 @@ import { packageCustomWidget } from '@/helpers/commands';
 import { getTileIconSrc } from '@/helpers/media';
 import { saveZip } from '@/helpers/saveFile';
 import { DEV_WIDGET_SERVER_PORT, PROD_PORT } from '@/helpers/serverBaseUrl';
-import { mockTwitchChatMessage } from '@/helpers/services/twitch/twitchMock';
+import { twitchMockChatMessage } from '@/helpers/services/twitch/twitchMockChatMessage';
 import { useParams } from '@tanstack/react-router';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
 import { memo } from 'react';
@@ -39,7 +39,7 @@ const Widget = memo(function Widget() {
 				{tileMeta.icon && (
 					<img
 						src={getTileIconSrc(widgetId, tileMeta.icon)}
-						className='rounded-2 smooth-image size-10 object-contain'
+						className='size-10 rounded-2 object-contain smooth-image'
 					/>
 				)}
 
@@ -69,7 +69,7 @@ const Widget = memo(function Widget() {
 					onClick={() => {
 						Object.values(tileLocations).forEach(location => {
 							if (location.id.startsWith('widget_')) {
-								mockTwitchChatMessage(location.id);
+								twitchMockChatMessage(location.id);
 							}
 						});
 					}}

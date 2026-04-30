@@ -25,6 +25,17 @@ type AccountsAction =
 	| {
 			type: 'remove';
 			id: string;
+	  }
+	| {
+			type: 'slot';
+			accountId: string;
+			widgetId: string;
+			slotIndex: number;
+	  }
+	| {
+			type: 'copy-widget-accounts';
+			sourceWidgetId: string;
+			destinationWidgetId: string;
 	  };
 
 export const AccountsDispatchContext = createContext<
@@ -56,7 +67,32 @@ export function useAccountsDispatch() {
 		dispatch({ type: 'set-default', accountId, accountService, accountType });
 	};
 
-	return { addAccount, removeAccount, setDefaultAccount };
+	const slotAccount = (
+		accountId: string,
+		widgetId: string,
+		slotIndex: number,
+	) => {
+		dispatch({ type: 'slot', accountId, widgetId, slotIndex });
+	};
+
+	const copyWidgetAccounts = (
+		sourceWidgetId: string,
+		destinationWidgetId: string,
+	) => {
+		dispatch({
+			type: 'copy-widget-accounts',
+			sourceWidgetId,
+			destinationWidgetId,
+		});
+	};
+
+	return {
+		addAccount,
+		removeAccount,
+		setDefaultAccount,
+		slotAccount,
+		copyWidgetAccounts,
+	};
 }
 
 export function accountsReducer(
@@ -102,6 +138,33 @@ export function accountsReducer(
 
 			delete newState[action.id];
 			break;
+		}
+		case 'slot': {
+			const { slotIndex, accountId, widgetId } = action;
+
+			Object.values(newState).forEach(account => {
+				if (account.id === accountId) {
+					// add account to slot
+					newState[account.id].widgets[widgetId] = slotIndex;
+				} else if (newState[account.id].widgets[widgetId] === slotIndex) {
+					// remove other accounts from slot
+					delete newState[account.id].widgets[widgetId];
+				}
+			});
+
+			break;
+		}
+		case 'copy-widget-accounts': {
+			const { sourceWidgetId, destinationWidgetId } = action;
+
+			Object.values(newState).forEach(account => {
+				const sourceSlotIndex: number | undefined =
+					newState[account.id].widgets[sourceWidgetId];
+
+				if (sourceSlotIndex !== undefined) {
+					newState[account.id].widgets[destinationWidgetId] = sourceSlotIndex;
+				}
+			});
 		}
 	}
 

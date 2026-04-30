@@ -5,12 +5,12 @@ import PencilSvg from '@/components/svg/PencilSvg';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import useTileFolder, {
 	TILES_PER_PAGE,
-	TileSlot,
 } from '@/contexts/tile_locations/useTileFolder';
 import { useTileLocationsDispatch } from '@/contexts/tile_locations/useTileLocationsDispatch';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import { copyWidget } from '@/helpers/commands';
 import { TileColor } from '@/helpers/tileColors';
+import type { TileSlot } from '@@/json/tileLocations';
 import { Menu, MenuItem, useMenuStore } from '@ariakit/react';
 import { useNavigate } from '@tanstack/react-router';
 import { memo, useState } from 'react';
@@ -84,7 +84,7 @@ const Tile = memo(function Tile({
 				</TileAnimationWrapper>
 			</button>
 			<Menu
-				className='rounded-2 text-3.5 flex w-32 flex-col border border-stone-300 bg-white p-2 shadow data-focus:outline-2'
+				className='flex w-32 flex-col rounded-2 border border-stone-300 bg-white p-2 text-3.5 shadow data-focus:outline-2'
 				store={menuStore}
 				modal
 				getAnchorRect={() => menuAnchorRect}

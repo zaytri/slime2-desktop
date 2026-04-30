@@ -37,9 +37,10 @@ const WidgetMeta = z.object({
 	creator: z.string(),
 	version: z.string(),
 	versionApi: z.optional(z.string()),
-	homepage: z.optional(z.string()),
+	website: z.optional(z.string()),
 	support: z.optional(z.string()),
 	icon: z.optional(z.string()),
+	type: z.array(z.literal(['bot', 'overlay'])),
 	import: z.catch(
 		z.optional(
 			z.object({
@@ -49,14 +50,11 @@ const WidgetMeta = z.object({
 		),
 		undefined,
 	),
-	bot: z.optional(z.string()),
 	accounts: z.catch(
 		z.array(
 			z.object({
 				type: z.literal(['read', 'bot', 'mod']),
 				service: z.literal(['twitch', 'youtube']),
-				// if the widget can be used without this account
-				optional: z.optional(z.boolean()),
 			}),
 		),
 		[],

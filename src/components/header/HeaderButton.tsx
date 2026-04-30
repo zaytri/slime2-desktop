@@ -1,89 +1,32 @@
-import { Link, LinkComponentProps, useRouter } from '@tanstack/react-router';
 import clsx from 'clsx';
 import { memo } from 'react';
-import ExternalLink from '../ExternalLink';
 
 type HeaderButtonProps = {
 	icon: React.ReactNode;
-	onClick?: VoidFunction;
-	back?: boolean;
-	linkTo?: LinkComponentProps['to'];
-	linkParams?: LinkComponentProps['params'];
-	externalHref?: string;
-	removeAnimation?: boolean;
+	label: string;
+	onClick: VoidFunction;
 };
 
 const HeaderButton = memo(function HeaderButton({
 	onClick,
-	back,
-	linkTo,
-	linkParams,
-	externalHref,
-	children,
 	icon,
-	removeAnimation = false,
-}: Props.WithChildren<HeaderButtonProps>) {
-	const router = useRouter();
-
-	const className = clsx(
-		'group over:bg-amber-900 over:text-amber-200 over:px-2 flex h-10 items-center justify-center rounded-lg text-amber-900',
-		removeAnimation
-			? 'gap-2 px-2 bg-amber-200 border-2 border-amber-900'
-			: 'over:gap-2 gap-0',
-	);
-
-	const buttonChildren = (
-		<>
-			{icon}
-			<span
-				className={clsx(
-					'group-over:text-lg group-over:opacity-100 text-nowrap',
-					removeAnimation
-						? 'text-lg'
-						: 'text-[.1px] opacity-0 transition-[font-size]',
-				)}
-			>
-				{children}
-			</span>
-		</>
-	);
-
-	// https://github.com/TanStack/router/discussions/181#discussioncomment-12718709
-	if (back) {
-		return (
-			<Link
-				to='/'
-				onClick={event => {
-					event.preventDefault();
-					router.history.back();
-					return false;
-				}}
-				className={className}
-			>
-				{buttonChildren}
-			</Link>
-		);
-	}
-
-	if (linkTo) {
-		return (
-			<Link to={linkTo} params={linkParams} className={className}>
-				{buttonChildren}
-			</Link>
-		);
-	}
-
-	if (externalHref) {
-		return (
-			<ExternalLink href={externalHref} className={className}>
-				{buttonChildren}
-			</ExternalLink>
-		);
-	}
-
+	className,
+	label,
+}: Props.WithClassName<HeaderButtonProps>) {
 	return (
-		<button type='button' className={className} onClick={onClick}>
-			{buttonChildren}
+		<button
+			type='button'
+			className={clsx(
+				'relative flex overflow-hidden rounded-2 border bg-linear-to-b p-2 text-4.5 font-bold over:bg-none over:outline-4 over:outline-offset-4',
+				className,
+			)}
+			onClick={onClick}
+		>
+			<div className='absolute inset-0 bottom-1/2 bg-linear-to-b from-white/30 to-white/20'></div>
+			<div className='relative flex flex-1 items-center gap-2 drop-shadow-[0_1px_3px_#FFFB]'>
+				{icon}
+				<p className='-mb-0.5'>{label}</p>
+			</div>
 		</button>
 	);
 });

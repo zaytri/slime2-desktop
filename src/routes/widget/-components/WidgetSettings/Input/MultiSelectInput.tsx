@@ -5,7 +5,7 @@ import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { Checkbox, Field, Fieldset, Label, Legend } from '@headlessui/react';
 import { memo } from 'react';
 import { z } from 'zod/mini';
-import InputDescription from './InputDescription';
+import InputDescription from '../../../../../components/input_fields/InputDescription';
 
 const MultiSelectInput = memo(function MultiSelectInput(
 	setting: Props.WithId<WidgetSetting.Input.MultiSelect>,

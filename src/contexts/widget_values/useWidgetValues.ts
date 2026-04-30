@@ -1,10 +1,6 @@
-import { WidgetValues } from '@/helpers/json/widgetValues';
+import type { WidgetValues } from '@@/json/widgetValues';
 import { createContext, useContext } from 'react';
 import { contextErrorMessage } from '../common';
-
-export const WidgetValuesContext = createContext<WidgetValues | undefined>(
-	undefined,
-);
 
 export default function useWidgetValues(): WidgetValues {
 	const context = useContext(WidgetValuesContext);
@@ -17,3 +13,7 @@ export default function useWidgetValues(): WidgetValues {
 
 	return context;
 }
+
+export const WidgetValuesContext = createContext<WidgetValues | undefined>(
+	undefined,
+);

@@ -11,7 +11,7 @@ export async function loadWidgetValues(id: string): Promise<WidgetValues> {
 		const json = await loadJson(await widgetValuesPath(id));
 
 		try {
-			return WidgetValues.parse(json);
+			return WidgetValuesParser.parse(json);
 		} catch (error) {
 			logZodError(error, json);
 			return {};
@@ -48,5 +48,5 @@ const WidgetValue = z.union([
 ]);
 export type WidgetValue = z.infer<typeof WidgetValue>;
 
-const WidgetValues = z.record(z.string(), WidgetValue);
-export type WidgetValues = z.infer<typeof WidgetValues>;
+export const WidgetValuesParser = z.record(z.string(), WidgetValue);
+export type WidgetValues = z.infer<typeof WidgetValuesParser>;

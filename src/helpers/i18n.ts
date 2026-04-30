@@ -19,6 +19,29 @@ export function i18nStringTransform(i18nString: I18nString): string {
 	return Object.values(i18nString)[0];
 }
 
+export function i18nUndefined(value?: I18nString): string | undefined {
+	return value ? i18nStringTransform(value) : undefined;
+}
+
+export function i18nSearch(
+	searchString: string,
+	stringToSearch?: I18nString,
+): boolean {
+	if (stringToSearch === undefined) return false;
+
+	if (typeof stringToSearch === 'string')
+		return stringToSearch.includes(searchString);
+
+	const i18StringsToSearch = Object.values(stringToSearch);
+	for (let i18StringToSearch of i18StringsToSearch) {
+		if (i18StringToSearch.includes(searchString)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 export const I18nString = z.union([
 	z.string(),
 	z.record(z.string(), z.string()),

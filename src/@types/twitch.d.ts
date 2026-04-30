@@ -99,8 +99,8 @@ namespace Twitch {
 			| Follow
 			| Raid
 			| ShoutoutCreate
-			| ChannelPointsAutomaticRedeem
-			| ChannelPointsCustomRedeem
+			| ChannelPointsAutomaticRewardRedemption
+			| ChannelPointsCustomRewardRedemption
 			| BitsUse
 			| Cheer
 			| AdBreakBegin
@@ -155,10 +155,7 @@ namespace Twitch {
 				| 'user_intro'
 				| 'power_ups_message_effect'
 				| 'power_ups_gigantified_emote';
-			message: {
-				text: string;
-				fragments: MessageFragment[];
-			};
+			message: Message;
 
 			// if this message is a cheer
 			cheer?: {
@@ -183,6 +180,9 @@ namespace Twitch {
 
 			// if this message is a custom channel point redemption
 			channel_points_custom_reward_id?: string;
+
+			// if this message is a power up message effect
+			channel_points_animation_id?: PowerUpsMessageEffect;
 
 			// if message is from a shared chat, where the message was sent
 			// in a channel other than the broadcaster channel
@@ -209,8 +209,9 @@ namespace Twitch {
 		type ChatNotification = With.BroadcasterDetails<
 			{
 				// chatter details
-				chatter_user_id: string;
-				chatter_user_name: string;
+				chatter_user_id?: string;
+				chatter_user_name?: string;
+				chatter_user_login?: string;
 				chatter_is_anonymous: boolean;
 				badges: Badge[];
 				color: string;
@@ -220,7 +221,7 @@ namespace Twitch {
 
 				// notice details
 				message_id: string;
-				message: MessageFragment[];
+				message: Message;
 
 				// if message is from a shared chat, where the message was sent
 				// in a channel other than the broadcaster channel
@@ -324,6 +325,13 @@ namespace Twitch {
 							};
 						};
 				  }
+				| {
+						notice_type: 'watch_streak';
+						watch_streak: {
+							streak_count: number;
+							channel_points_awarded: number;
+						};
+				  }
 			)
 		>;
 
@@ -340,30 +348,28 @@ namespace Twitch {
 
 		// when bits are used, such as with cheers or power-ups
 		type BitsUse = With.BroadcasterDetails<
-			{
-				// bits user details
-				user_id: string;
-				user_login: string;
-				user_name: string;
+			| ({
+					// bits user details
+					user_id: string;
+					user_login: string;
+					user_name: string;
 
-				bits: number;
+					bits: number;
 
-				// if cheer or message_effect power-up
-				message?: {
-					text: string;
-					fragments: MessageFragment[];
-				};
-			} & {
-				type: 'cheer';
-			} & {
-				type: 'power_up';
-				power_up:
-					| {
-							type: 'celebration' | 'gigantify_an_emote';
-							emote: { id: string; name: string };
-					  }
-					| { type: 'message_effect'; message_effect_id: string };
-			}
+					// if cheer or message_effect power-up
+					message?: Message;
+			  } & {
+					type: 'cheer';
+			  })
+			| {
+					type: 'power_up';
+					power_up:
+						| {
+								type: 'celebration' | 'gigantify_an_emote';
+								emote: { id: string; name: string };
+						  }
+						| { type: 'message_effect'; message_effect_id: string };
+			  }
 		>;
 
 		// when a user cheers
@@ -420,7 +426,7 @@ namespace Twitch {
 			};
 
 			cumulative_months: number;
-			streak_months: number;
+			streak_months?: number;
 			duration_months: number;
 		}>;
 
@@ -452,7 +458,7 @@ namespace Twitch {
 		}>;
 
 		// when an automatic channel point reward is redeemed
-		type ChannelPointsAutomaticRedeem = With.BroadcasterDetails<{
+		type ChannelPointsAutomaticRewardRedemption = With.BroadcasterDetails<{
 			// redeemer details
 			user_id: string;
 			user_login: string;
@@ -460,31 +466,32 @@ namespace Twitch {
 
 			id: string;
 			redeemed_at: string; // RFC3339 format
-			reward: {
-				channel_points: number;
-			} & {
-				type: 'single_message_bypass_sub_mode' | 'send_highlighted_messaage';
-			} & {
-				type:
-					| 'random_sub_emote_unlock'
-					| 'chosen_sub_emote_unlock'
-					| 'chosen_modified_sub_emote_unlock';
-				emote: {
-					id: string;
-					name: string;
-				};
-			};
+			reward:
+				| ({
+						channel_points: number;
+				  } & {
+						type:
+							| 'single_message_bypass_sub_mode'
+							| 'send_highlighted_messaage';
+				  })
+				| {
+						type:
+							| 'random_sub_emote_unlock'
+							| 'chosen_sub_emote_unlock'
+							| 'chosen_modified_sub_emote_unlock';
+						emote: {
+							id: string;
+							name: string;
+						};
+				  };
 
 			// if reward type is send_highlighted_message
 			// or single_message_bypass_sub_mode
-			message?: {
-				text: string;
-				fragments: MessageFragment[];
-			};
+			message?: Message;
 		}>;
 
 		// when a custom channel point reward is redeemed
-		type ChannelPointsCustomRedeem = With.BroadcasterDetails<{
+		type ChannelPointsCustomRewardRedemption = With.BroadcasterDetails<{
 			// redeemer details
 			user_id: string;
 			user_login: string;
@@ -498,7 +505,7 @@ namespace Twitch {
 			reward: {
 				id: string;
 				title: string;
-				cost: string;
+				cost: number;
 				prompt: string; // reward description
 			};
 		}>;
@@ -581,13 +588,11 @@ namespace Twitch {
 
 		// when a hype train begins (may be sent after HypeTrainProgress)
 		type HypeTrainBegin = With.HypeTrainDetails<{
-			last_contribution: HypeTrainContribution;
 			expires_at: string;
 		}>;
 
 		// when a hype train makes progress
 		type HypeTrainProgress = With.HypeTrainDetails<{
-			last_contribution: HypeTrainContribution;
 			expires_at: string;
 		}>;
 
@@ -725,6 +730,80 @@ namespace Twitch {
 		};
 	}
 
+	namespace EventSub {
+		type Param = {
+			type: Type;
+			version: string;
+			condition?: Record<string, string>;
+		};
+
+		// all of the eventsub types that slime2 subscribes to
+		type Type =
+			// chat
+			| 'channel.chat.clear'
+			| 'channel.chat.clear_user_messages'
+			| 'channel.chat.message'
+			| 'channel.chat.message_delete'
+			| 'channel.chat.notification'
+
+			// follow
+			| 'channel.follow'
+
+			// raid
+			| 'channel.raid'
+
+			// shoutout
+			| 'channel.shoutout.create'
+
+			// channel points
+			| 'channel.channel_points_custom_reward_redemption.add'
+			| 'channel.channel_points_automatic_reward_redemption.add'
+
+			// hype train
+			| 'channel.hype_train.begin'
+			| 'channel.hype_train.progress'
+			| 'channel.hype_train.end'
+
+			// bits
+			| 'channel.bits.use'
+			| 'channel.cheer'
+
+			// ad break
+			| 'channel.ad_break.begin'
+
+			// subscriptions
+			| 'channel.subscribe'
+			| 'channel.subscription.gift'
+			| 'channel.subscription.message'
+
+			// polls
+			| 'channel.poll.begin'
+			| 'channel.poll.progress'
+			| 'channel.poll.end'
+
+			// predictions
+			| 'channel.prediction.begin'
+			| 'channel.prediction.progress'
+			| 'channel.prediction.lock'
+			| 'channel.prediction.end'
+
+			// charity
+			| 'channel.charity_campaign.donate'
+			| 'channel.charity_campaign.start'
+			| 'channel.charity_campaign.progress'
+			| 'channel.charity_campaign.stop'
+
+			// goal
+			| 'channel.goal.begin'
+			| 'channel.goal.progress'
+			| 'channel.goal.end';
+	}
+
+	type Message = {
+		text: string;
+		fragments: MessageFragment[];
+	};
+
 	type MessageFragment = {
 		text: string;
 	} & (
@@ -734,7 +813,7 @@ namespace Twitch {
 				cheermote: {
 					prefix: string;
 					bits: number;
-					tier: number;
+					tier: CheerTier;
 				};
 		  }
 		| {
@@ -756,6 +835,8 @@ namespace Twitch {
 		  }
 	);
 
+	type PowerUpsMessageEffect = 'cosmic-abyss' | 'simmer' | 'rainbow-eclipse';
+
 	type Badge = {
 		set_id: string;
 		id: string;
@@ -763,6 +844,8 @@ namespace Twitch {
 	};
 
 	type SubTier = '1000' | '2000' | '3000';
+
+	type CheerTier = 1 | 100 | 1000 | 5000 | 10000 | 100000;
 
 	type HypeTrainContribution = {
 		user_id: string;
@@ -828,7 +911,7 @@ namespace Twitch {
 		type CommunitySubGift = {
 			id: string;
 			total: number;
-			sub_tier: SubGift;
+			sub_tier: SubTier;
 			cumulative_total?: number;
 		};
 
@@ -863,7 +946,7 @@ namespace Twitch {
 		};
 
 		type Announcement = {
-			color: string;
+			color: 'PRIMARY' | 'BLUE' | 'GREEN' | 'ORANGE' | 'PURPLE';
 		};
 	}
 
@@ -975,10 +1058,14 @@ namespace Twitch {
 				total: number;
 				progress: number;
 				goal: number;
-				level: number;
 				top_contributions: HypeTrainContribution[];
+				level: number;
+				all_time_high_level: number;
+				all_time_high_total: number;
 				started_at: string;
-				is_golden_kappa_train: boolean;
+				type: 'treasure' | 'golden_kappa' | 'regular';
+				is_shared_train: boolean;
+				shared_train_participants?: BroadcasterDetails[];
 			}>;
 	}
 }

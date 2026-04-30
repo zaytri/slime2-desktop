@@ -1,10 +1,12 @@
-import { useContext } from 'react';
-import { WidgetSettingParentContext } from './useWidgetSettingParent';
+import { useMemo } from 'react';
+import useWidgetSettingParent from './useWidgetSettingParent';
 
 export default function useWidgetValueKey(id: string) {
-	const parentId = useContext(WidgetSettingParentContext);
+	const parentId = useWidgetSettingParent();
 
-	return parentId ? getWidgetValueChildKey(parentId, id) : id;
+	return useMemo(() => {
+		return parentId ? getWidgetValueChildKey(parentId, id) : id;
+	}, [parentId]);
 }
 
 export function getWidgetValueChildKey(parentId: string, id: string) {

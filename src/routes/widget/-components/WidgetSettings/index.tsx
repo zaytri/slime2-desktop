@@ -5,8 +5,8 @@ import type {
 	WidgetSetting,
 	WidgetSettings,
 } from '@/helpers/json/widgetSettings';
-import { useWidgetSettings } from '@/helpers/query';
 import useScrollTopObserver from '@/hooks/useScrollTopObserver';
+import { useWidgetSettingsQuery } from '@/hooks/useWidgetSettingsQuery';
 import { useParams } from '@tanstack/react-router';
 import { memo, useRef } from 'react';
 import CategorySetting from './CategorySetting';
@@ -16,7 +16,7 @@ const WidgetSettings = memo(function WidgetSettings() {
 	const { widgetId } = useParams({ from: '/widget/$widgetId' });
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-	const widgetSettingsQuery = useWidgetSettings(widgetId);
+	const widgetSettingsQuery = useWidgetSettingsQuery(widgetId);
 	const { widgetMeta } = useWidgetMeta(widgetId);
 	const settings: WidgetSettings = widgetSettingsQuery.data ?? {};
 

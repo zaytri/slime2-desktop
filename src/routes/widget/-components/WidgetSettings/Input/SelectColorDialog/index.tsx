@@ -1,11 +1,14 @@
-import ColorInputPreview from '@/components/ColorInputPreview';
+import ColorInputPreview from '@/components/color/ColorInputPreview';
 import DialogHeader from '@/components/dialog/DialogHeader';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { Field, Input, Label } from '@headlessui/react';
 import { HsvaColor, hsvaToRgba, rgbaToHsva } from '@uiw/react-color';
 import { memo, useState } from 'react';
+import {
+	hsvaToString,
+	stringToHsva,
+} from '../../../../../../helpers/colorConversion';
 import AlphaSlider from './AlphaSlider';
-import { hsvaToString, stringToHsva } from './colorConversion';
 import HueSlider from './HueSlider';
 import RgbaInput from './RgbaInput';
 import SaturationGrid from './SaturationGrid';
@@ -146,7 +149,7 @@ const SelectColorDialog = memo(function SelectColorDialog({
 
 				<button
 					type='button'
-					className='rounded-2 over:translate-y-0.5 over:bg-none over:shadow-none flex-1 border-2 border-emerald-800 bg-lime-400 bg-linear-to-b from-lime-300 from-50% to-lime-400 to-50% py-2 text-xl font-medium text-emerald-900 shadow-[0_2px] shadow-emerald-800'
+					className='flex-1 rounded-2 border-2 border-emerald-800 bg-lime-400 bg-linear-to-b from-lime-300 from-50% to-lime-400 to-50% py-2 text-xl font-medium text-emerald-900 shadow-[0_2px] shadow-emerald-800 over:translate-y-0.5 over:bg-none over:shadow-none'
 					onClick={() => {
 						if (stringValue && CSS.supports('color', stringValue)) {
 							onSave(stringValue);

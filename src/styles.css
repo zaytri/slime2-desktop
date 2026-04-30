@@ -2,8 +2,8 @@
 
 @theme {
 	--font-fredoka: 'Fredoka', sans-serif;
-	--font-quicksand: 'Quicksand', sans-serif;
-	--font-radio-canada: 'Radio Canada', sans-serif;
+	--font-nunito: 'Nunito', sans-serif;
+	--font-poetsen: 'Poetsen One', sans-serif;
 	--animate-bounce-in:
 		fade 0.15s reverse forwards,
 		expand 0.15s cubic-bezier(0.43, -0.5, 0.62, 1.5) forwards;
@@ -41,7 +41,7 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-text-size-adjust: 100%;
-	@apply font-radio-canada;
+	@apply font-nunito;
 }
 
 body,
@@ -51,12 +51,29 @@ body,
 	display: flex;
 }
 
-button:focus-visible {
-	outline-offset: 4px;
+button {
+	&:focus-visible {
+		outline-offset: 4px;
+	}
+	&:hover {
+		cursor: pointer;
+	}
+	&:disabled {
+		cursor: not-allowed;
+	}
 }
 
-button:hover {
-	cursor: pointer;
+/* Hide number spin buttons in WebKit browsers */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* Hide number spin buttons in Firefox */
+input[type='number'] {
+	-moz-appearance: textfield;
+	appearance: textfield;
 }
 
 @media (prefers-reduced-motion) {
@@ -66,14 +83,19 @@ button:hover {
 	}
 }
 
+.disable-animations * {
+	transition: none !important;
+	animation-duration: 0s !important;
+}
+
 /* "over" variant that adds styles for both :hover and :focus-visible */
 @custom-variant over {
 	@media (hover: hover) {
-		&:hover {
+		&:hover:not(:disabled) {
 			@slot;
 		}
 	}
-	&:focus-visible {
+	&:focus-visible:not(:disabled) {
 		@slot;
 	}
 }
@@ -103,7 +125,7 @@ button:hover {
 
 @utility bg-alpha-checkerboard {
 	--square-size: 8px;
-	--color-1: var(--color-stone-200);
+	--color-1: var(--color-neutral-200);
 	--color-2: white;
 	background-position:
 		0px 0px,
@@ -128,28 +150,74 @@ button:hover {
 		);
 }
 
+@utility animated-tab-panel {
+	/* Transition setup */
+	transition-property: opacity, translate;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+	transition-duration: 300ms;
+
+	/* Default opacity/sliding effect (from/to the left) */
+	:has(> [data-previous]) > & {
+		opacity: 0;
+		translate: -100%;
+	}
+
+	/* Sliding from/to the right */
+	:is([data-previous], [data-open]) ~ & {
+		translate: 100%;
+	}
+
+	/* Enter state */
+	&[data-enter] {
+		opacity: 100%;
+		translate: 0;
+	}
+
+	/* Prevent stacking */
+	&:not([data-open]) {
+		position: absolute;
+		inset: 0;
+	}
+}
+
+@utility dark-container {
+	@apply rounded-2 border border-zinc-500 bg-linear-to-b from-zinc-800/90 to-zinc-900/90 inset-shadow-[0_5px_15px_5px_#0002] outline-2 outline-zinc-900/50;
+}
+
+@utility light-container {
+	@apply rounded-2 border border-white bg-zinc-200 bg-linear-to-b from-zinc-100 to-zinc-200 outline-2 outline-white/50;
+}
+
 @utility input-wrapper {
-	@apply rounded-2 flex w-full overflow-hidden border border-stone-300 bg-white px-2 py-1 text-left outline-offset-0! outline-black has-data-focus:outline-2 data-focus:outline-2;
+	@apply flex w-full overflow-hidden rounded-2 border-2 border-zinc-300 bg-white px-2 py-1 text-left outline outline-offset-0! outline-white has-data-focus:outline-4 has-data-focus:-outline-offset-2! has-data-focus:outline-lime-600 data-focus:outline-4 data-focus:-outline-offset-2! data-focus:outline-lime-600 data-open:outline-4 data-open:-outline-offset-2! data-open:outline-lime-600;
+}
+
+@utility input-wrapper-focus-visible {
+	@apply has-focus-visible:outline-4 has-focus-visible:-outline-offset-2! has-focus-visible:outline-lime-600!;
+}
+
+@utility input-wrapper-over {
+	@apply over:outline-4 over:-outline-offset-2! over:outline-lime-600!;
+}
+
+@utility input-wrapper-has-hover {
+	@apply has-hover:outline-4 has-hover:-outline-offset-2! has-hover:outline-lime-600;
 }
 
 @utility input-class {
-	@apply font-quicksand outline-none placeholder:text-stone-400;
+	@apply outline-none placeholder:text-zinc-400;
 }
 
 @utility input-label {
-	@apply text-3 font-medium;
+	@apply text-3.5 font-bold;
 }
 
 @utility input-select-option {
-	@apply cursor-pointer rounded-full border border-stone-300 bg-stone-200 px-1.5 py-0.5 font-medium text-stone-500 outline-black data-checked:border-lime-700 data-checked:bg-lime-600 data-checked:text-white data-over:outline-2;
+	@apply cursor-pointer rounded-1 border border-zinc-400 bg-zinc-200 px-1.5 py-0.5 text-3.5 font-semibold text-zinc-500 -outline-offset-1! outline-lime-600 data-checked:border-black data-checked:bg-zinc-700! data-checked:text-white! data-checked:text-shadow-[0_1px_#0006] data-over:bg-lime-200 data-over:text-lime-800 data-over:outline-3;
 }
 
 @utility mini-menu-item {
-	@apply rounded-2 flex cursor-pointer items-center gap-2 px-2 py-1 text-left outline-stone-400 data-active-item:bg-stone-200 data-active-item:font-medium data-focus:outline-2 data-over:bg-stone-200 data-over:font-medium;
-}
-
-@utility button-choose-file {
-	@apply rounded-2 over:translate-y-0.5 over:from-stone-300 over:to-stone-200 over:shadow-none font-quicksand w-full border border-white bg-stone-400 bg-linear-to-b from-stone-200 to-stone-300 py-0.5 font-medium text-stone-700 shadow-[0_2px_0_1px] shadow-stone-400 outline outline-stone-400 focus-visible:outline-2 focus-visible:outline-offset-0! focus-visible:outline-black;
+	@apply flex cursor-pointer items-center gap-2 rounded-2 px-2 py-1 text-left outline-stone-400 data-active-item:bg-stone-200 data-active-item:font-medium data-focus:outline-2 data-over:bg-stone-200 data-over:font-medium;
 }
 
 @utility rounded-* {

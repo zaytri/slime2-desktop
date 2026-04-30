@@ -1,5 +1,7 @@
 import { open } from '@tauri-apps/plugin-dialog';
 
+export type MediaType = 'audio' | 'image' | 'video';
+
 export async function openImage(): Promise<null | string> {
 	return open({
 		title: 'Choose Image File',
@@ -55,6 +57,19 @@ export async function openZip(): Promise<null | string> {
 			},
 		],
 	});
+}
+
+export function getMediaFormats(type: MediaType): string[] {
+	switch (type) {
+		case 'image':
+			return IMAGE_FORMATS;
+		case 'video':
+			return VIDEO_FORMATS;
+		case 'audio':
+			return AUDIO_FORMATS;
+		default:
+			return [];
+	}
 }
 
 export const IMAGE_FORMATS = [

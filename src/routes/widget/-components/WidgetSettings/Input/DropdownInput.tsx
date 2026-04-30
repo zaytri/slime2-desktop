@@ -12,7 +12,7 @@ import {
 } from '@headlessui/react';
 import { memo } from 'react';
 import { z } from 'zod/mini';
-import InputDescription from './InputDescription';
+import InputDescription from '../../../../../components/input_fields/InputDescription';
 
 const DropdownInput = memo(function DropdownInput(
 	setting: Props.WithId<WidgetSetting.Input.Dropdown>,
@@ -40,7 +40,7 @@ const DropdownInput = memo(function DropdownInput(
 	return (
 		<Field>
 			<Listbox value={value} onChange={setWidgetValue}>
-				<ListboxButton className='input-wrapper group flex-col'>
+				<ListboxButton className='group input-wrapper flex-col'>
 					<label className='input-label'>
 						{i18nStringTransform(setting.label)}
 					</label>
@@ -50,7 +50,7 @@ const DropdownInput = memo(function DropdownInput(
 							{value === undefined ? placeholder : optionLabels.get(value)}
 						</p>
 
-						<div className='rounded-1 flex size-5 items-center justify-center group-data-over:bg-black group-data-over:text-white group-data-over:outline-2'>
+						<div className='flex size-5 items-center justify-center rounded-1 group-data-over:bg-black group-data-over:text-white group-data-over:outline-2'>
 							<TriangleDownSvg className='size-3 pt-0.5' />
 						</div>
 					</div>
@@ -62,7 +62,7 @@ const DropdownInput = memo(function DropdownInput(
 						gap: 6,
 						padding: 32,
 					}}
-					className='font-quicksand rounded-2 flex w-(--button-width) flex-col bg-white shadow-md outline-2'
+					className='font-quicksand flex w-(--button-width) flex-col rounded-2 bg-white shadow-md outline-2'
 				>
 					{setting.options.map(option => {
 						return (

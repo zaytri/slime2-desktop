@@ -5,7 +5,7 @@ import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { Field, Input, Label, Textarea } from '@headlessui/react';
 import { memo } from 'react';
 import { z } from 'zod/mini';
-import InputDescription from './InputDescription';
+import InputDescription from '../../../../../components/input_fields/InputDescription';
 
 const TextInput = memo(function TextInput(
 	setting: Props.WithId<

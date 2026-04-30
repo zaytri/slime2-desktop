@@ -7,7 +7,7 @@ import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { Field, Label, Switch } from '@headlessui/react';
 import { memo } from 'react';
 import { z } from 'zod/mini';
-import InputDescription from './InputDescription';
+import InputDescription from '../../../../../components/input_fields/InputDescription';
 
 const ToggleInput = memo(function ToggleInput(
 	setting: Props.WithId<WidgetSetting.Input.Toggle>,
@@ -23,7 +23,7 @@ const ToggleInput = memo(function ToggleInput(
 	return (
 		<Field>
 			<Switch
-				className='input-wrapper group cursor-pointer items-center justify-between p-0'
+				className='group input-wrapper cursor-pointer items-center justify-between p-0'
 				checked={value}
 				onChange={checked => {
 					setWidgetValue(checked);
@@ -51,8 +51,8 @@ const ToggleInput = memo(function ToggleInput(
 						<Label className='flex-1 cursor-pointer py-1 pl-2 text-left'>
 							{i18nStringTransform(setting.label)}
 						</Label>
-						<div className='group rounded-1.5 mr-1 inline-flex h-6 w-11 cursor-pointer items-center bg-stone-300 text-stone-400 transition group-data-checked:bg-lime-600 group-data-checked:text-lime-700 group-data-focus:outline-2 group-data-focus:outline-black'>
-							<span className='rounded-1 size-4 translate-x-1 cursor-pointer bg-white p-1 shadow transition group-data-checked:translate-x-6'>
+						<div className='group mr-1 inline-flex h-6 w-11 cursor-pointer items-center rounded-1.5 bg-stone-300 text-stone-400 transition group-data-checked:bg-lime-600 group-data-checked:text-lime-700 group-data-focus:outline-2 group-data-focus:outline-black'>
+							<span className='size-4 translate-x-1 cursor-pointer rounded-1 bg-white p-1 shadow transition group-data-checked:translate-x-6'>
 								{checked ? (
 									<CheckSvg className='size-full' />
 								) : (

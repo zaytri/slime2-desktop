@@ -8,7 +8,7 @@ import { Field, Label } from '@headlessui/react';
 import clsx from 'clsx';
 import { memo } from 'react';
 import { z } from 'zod/mini';
-import InputDescription from './InputDescription';
+import InputDescription from '../../../../../components/input_fields/InputDescription';
 import SelectFontDialog from './SelectFontDialog';
 
 const FontInput = memo(function FontInput(
@@ -34,7 +34,7 @@ const FontInput = memo(function FontInput(
 		<Field>
 			<button
 				type='button'
-				className='input-wrapper group flex-col'
+				className='group input-wrapper flex-col'
 				onClick={openSelectFontDialog}
 				// allows using arrow right/down to open the select font dialog
 				onKeyDown={event => {
@@ -59,7 +59,7 @@ const FontInput = memo(function FontInput(
 						{value || placeholder}
 					</p>
 
-					<div className='rounded-1 group-over:bg-black group-over:text-white flex size-5 items-center justify-center p-1 group-data-over:outline-2'>
+					<div className='flex size-5 items-center justify-center rounded-1 p-1 group-over:bg-black group-over:text-white group-data-over:outline-2'>
 						<TriangleRightSvg className='-mt-1 size-2' />
 					</div>
 				</div>

@@ -1,4 +1,4 @@
-import ColorInputPreview from '@/components/ColorInputPreview';
+import ColorInputPreview from '@/components/color/ColorInputPreview';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import useWidgetValueKey from '@/contexts/widget_setting_parent/useWidgetValueKey';
 import { useWidgetValue } from '@/contexts/widget_values/useWidgetValue';
@@ -8,7 +8,7 @@ import { Field, Label } from '@headlessui/react';
 import clsx from 'clsx';
 import { memo } from 'react';
 import { z } from 'zod/mini';
-import InputDescription from './InputDescription';
+import InputDescription from '../../../../../components/input_fields/InputDescription';
 import SelectColorDialog from './SelectColorDialog';
 
 const ColorInput = memo(function ColorInput(
@@ -30,7 +30,7 @@ const ColorInput = memo(function ColorInput(
 		<Field>
 			<button
 				type='button'
-				className='input-wrapper group items-center gap-2'
+				className='group input-wrapper items-center gap-2'
 				onClick={() => {
 					openDialog(
 						<SelectColorDialog value={value} onSave={setWidgetValue} />,

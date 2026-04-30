@@ -1,6 +1,5 @@
-import DialogHeader from '@/components/dialog/DialogHeader';
 import { useDialog } from '@/contexts/dialog/useDialog';
-import { useSystemFonts } from '@/helpers/query';
+import { useSystemFontsQuery } from '@/hooks/useSystemFontsQuery';
 import { Checkbox, Field, Input, Label } from '@headlessui/react';
 import { memo, useEffect, useRef, useState } from 'react';
 
@@ -15,7 +14,7 @@ const SelectFontDialog = memo(function SelectFontDialog({
 }: SelectFontDialogProps) {
 	const { closeDialog } = useDialog();
 	const [search, setSearch] = useState('');
-	const { data } = useSystemFonts();
+	const { data } = useSystemFontsQuery();
 	const scrollRef = useRef<HTMLDivElement>(null);
 
 	// scroll the selected font into view
@@ -36,9 +35,7 @@ const SelectFontDialog = memo(function SelectFontDialog({
 	);
 
 	return (
-		<div>
-			<DialogHeader>Select Font</DialogHeader>
-
+		<div className='bg-white p-2'>
 			<div className='flex flex-col gap-2'>
 				<Field>
 					<div className='input-wrapper flex-col'>
@@ -56,7 +53,7 @@ const SelectFontDialog = memo(function SelectFontDialog({
 					</div>
 				</Field>
 
-				<div className='rounded-2 flex h-[calc(100vh-250px)] border border-stone-300 bg-white py-1 pr-1 has-focus-visible:outline-2'>
+				<div className='flex h-[calc(100vh-250px)] rounded-2 border border-stone-300 bg-white py-1 pr-1 has-focus-visible:outline-2'>
 					<div
 						className='flex-1 overflow-auto outline-none'
 						ref={scrollRef}

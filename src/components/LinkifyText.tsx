@@ -1,13 +1,12 @@
 import clsx from 'clsx';
 import Linkify from 'linkify-react';
-import { memo } from 'react';
 import ExternalLink from './ExternalLink';
 
 type LinkifyTextProps = {
 	linkClassName?: string;
 };
 
-const LinkifyText = memo(function LinkifyText(
+export default function LinkifyText(
 	props: React.DetailedHTMLProps<
 		React.HTMLAttributes<HTMLParagraphElement>,
 		HTMLParagraphElement
@@ -19,8 +18,8 @@ const LinkifyText = memo(function LinkifyText(
 	return (
 		<Linkify
 			{...rest}
-			className={clsx('break-words', className)}
-			as='p'
+			className={clsx('wrap-break-word', className)}
+			as='div'
 			options={{
 				target: '_blank',
 				nl2br: true, // converts \n line breaks to <br> tags
@@ -36,6 +35,4 @@ const LinkifyText = memo(function LinkifyText(
 			}}
 		/>
 	);
-});
-
-export default LinkifyText;
+}

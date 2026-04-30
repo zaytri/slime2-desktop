@@ -139,6 +139,11 @@ const twitchAuth = {
 			}
 
 			resolve(tokens);
+
+			// remove from validation promises map 5 seconds after resolve
+			setTimeout(() => {
+				validationPromises.delete(accountId);
+			}, 5 * 1000);
 		});
 
 		validationPromises.set(accountId, promise);

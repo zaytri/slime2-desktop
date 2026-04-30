@@ -48,7 +48,7 @@ export function useTileLocationsDispatch() {
 		dispatch({ type: 'move-to-folder', id, folderId });
 	};
 
-	const moveTile = (
+	const swapTile = (
 		id: string,
 		id2: string = '',
 		newIndex: number,
@@ -70,7 +70,7 @@ export function useTileLocationsDispatch() {
 	return {
 		addTile,
 		dropTileInFolder,
-		moveTile,
+		swapTile,
 		removeTile,
 	};
 }

@@ -116,6 +116,8 @@ pub async fn copy_widget(
 
 #[tauri::command]
 pub async fn create_widget_folder(
+	folder_name: &str,
+	color: &str,
 	app_handle: AppHandle,
 ) -> Result<String, String> {
 	let new_folder_id = generate_widget_folder_id();
@@ -134,8 +136,8 @@ pub async fn create_widget_folder(
 	};
 
 	let tile_meta = match serde_json::to_string_pretty(&json!({
-		"name": "New Folder",
-		"color": "green",
+		"name": folder_name,
+		"color": color,
 		"icon": format!("icon/{}", icon_file_name)
 	})) {
 		Ok(json) => json,

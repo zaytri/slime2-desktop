@@ -1,7 +1,5 @@
-/**
- * Only works with objects that are completely JSON-serializable!
- */
-export function deepCopyObject<T>(object: T): T {
+/** Only works with objects that are completely JSON-serializable! */
+export function deepCopyObject<T>(object: NonUndefined<T>): NonUndefined<T> {
 	return JSON.parse(JSON.stringify(object));
 }
 
@@ -14,3 +12,5 @@ export type AsyncContext<DataType> = {
 	error: boolean;
 	data: DataType | undefined;
 };
+
+type NonUndefined<T> = T extends undefined ? never : T;

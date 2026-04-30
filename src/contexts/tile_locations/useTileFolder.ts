@@ -1,56 +1,38 @@
 import { TileLocation, TileLocations } from '@/helpers/json/tileLocations';
-import { useCallback } from 'react';
 import useTileLocations from './useTileLocations';
 
-export const TILES_PER_PAGE = 15;
-export const PAGES_PER_FOLDER = 5;
-
-export type TileSlot = TileLocation & {
-	type: 'widget' | 'folder' | 'empty';
-};
+export const TILES_PER_PAGE = 20;
 
 export default function useTileFolder(folderId: string) {
 	const locations = useTileLocations();
 	const tileLocationMap = mapTileFolderLocationsByIndex(locations, folderId);
 
-	// whether or not the folder is completely full
-	const full = tileLocationMap.size >= TILES_PER_PAGE * PAGES_PER_FOLDER;
+	// number of widgets within folder
+	const widgetCount = tileLocationMap.size;
 
-	// whether or not the folder is empty
-	const empty = tileLocationMap.size === 0;
-
-	// get an array of tile slots for the specified page
-	const getPage = useCallback(
-		(page: number): TileSlot[] => {
-			// put tiles into an array using their indices
-			return [...Array(TILES_PER_PAGE).keys()].map(index => {
-				const pageIndex = index + page * TILES_PER_PAGE;
-				const tile = tileLocationMap.get(pageIndex);
-
-				// empty tile slot
-				if (!tile) {
-					return {
-						id: '',
-						index: pageIndex,
-						folderId,
-						type: 'empty',
-					};
-				}
-
-				return {
-					...tile,
-					type: tile.id.startsWith('widget')
-						? 'widget'
-						: tile.id.startsWith('folder')
-							? 'folder'
-							: 'empty', // just in case, shouldn't ever happen
-				};
-			});
+	// calculate page count based on highest index within folder
+	const highestIndex = [...tileLocationMap.keys()].reduce(
+		(highest, current) => {
+			return current > highest ? current : highest;
 		},
-		[tileLocationMap],
+		0,
 	);
+	const pageCount = Math.floor(highestIndex / TILES_PER_PAGE) + 1;
 
-	return { getPage, status: { full, empty } };
+	function nextAvailableIndex(startIndex: number) {
+		let availableIndex = startIndex + 1;
+
+		while (tileLocationMap.has(availableIndex)) {
+			availableIndex++;
+		}
+
+		return {
+			availableIndex,
+			page: Math.floor(availableIndex / TILES_PER_PAGE),
+		};
+	}
+
+	return { pageCount, widgetCount, nextAvailableIndex };
 }
 
 // map all tiles of the specified folder by index

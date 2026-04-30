@@ -244,6 +244,9 @@ type ExtractSettingType<T extends NonCategorySetting['type']> = Extract<
 >;
 
 export namespace WidgetSetting {
+	export type BaseSetting = z.infer<typeof BaseSetting>;
+	export type OptionValue = z.infer<typeof OptionValue>;
+
 	export type Settings = WidgetSettings;
 
 	export type Category = CategorySetting;

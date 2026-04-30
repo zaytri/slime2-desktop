@@ -7,7 +7,7 @@ import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { Field, Input, Label } from '@headlessui/react';
 import { memo, useState } from 'react';
 import { z } from 'zod/mini';
-import InputDescription from './InputDescription';
+import InputDescription from '../../../../../components/input_fields/InputDescription';
 
 const MultiTextInput = memo(function MultiTextInput(
 	setting: Props.WithId<WidgetSetting.Input.MultiText>,
@@ -38,7 +38,7 @@ const MultiTextInput = memo(function MultiTextInput(
 						return (
 							<button
 								key={`${value}-${index}`}
-								className='text-3.5 group over:bg-rose-200 flex items-center gap-1.5 rounded-full border border-stone-300 bg-stone-200 px-1.5 outline-offset-0!'
+								className='group flex items-center gap-1.5 rounded-full border border-stone-300 bg-stone-200 px-1.5 text-3.5 outline-offset-0! over:bg-rose-200'
 								onClick={() => {
 									removeValueAtIndex(index);
 								}}
@@ -79,7 +79,7 @@ const MultiTextInput = memo(function MultiTextInput(
 								}}
 							>
 								<p>{value}</p>
-								<XSvg className='group-over:text-rose-700 size-2 text-stone-400' />
+								<XSvg className='size-2 text-stone-400 group-over:text-rose-700' />
 							</button>
 						);
 					})}
@@ -94,7 +94,7 @@ const MultiTextInput = memo(function MultiTextInput(
 									? i18nStringTransform(setting.placeholder)
 									: undefined
 							}
-							className='input-class peer w-40'
+							className='peer w-40 input-class'
 							onChange={event => {
 								setInputValue(event.target.value);
 							}}

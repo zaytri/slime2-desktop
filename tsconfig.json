@@ -22,6 +22,9 @@
 
 		/* Custom Import Path Prefix */
 		"paths": {
+			"@@/svg/*": ["./src/components/svg/*"],
+			"@@/dialog/*": ["./src/components/dialog/*"],
+			"@@/json/*": ["./src/helpers/json/*"],
 			"@/*": ["./src/*"]
 		}
 	},

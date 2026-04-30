@@ -1,7 +1,7 @@
 import { deepCopyObject } from '@/contexts/common';
 import { sendWebsocketMessage } from './commands';
 import { WidgetSetting, WidgetSettings } from './json/widgetSettings';
-import { WidgetValues } from './json/widgetValues';
+import type { WidgetValues } from './json/widgetValues';
 
 export async function sendWidgetValues(
 	widgetId: string,
@@ -42,6 +42,28 @@ export async function sendTwitchEvent(
 	);
 }
 
+export async function sendMockTwitchEvent(
+	widgetId: string,
+	eventType: Twitch.EventSub.Type,
+	eventVersion: string,
+	eventTimestamp: string,
+	data: unknown,
+) {
+	const accountId = 'mock_event';
+	const eventId = `mock_event_${eventTimestamp}`;
+
+	return sendTwitchEvent(
+		accountId,
+		widgetId,
+		eventId,
+		eventType,
+		eventVersion,
+		eventTimestamp,
+		data,
+		true,
+	);
+}
+
 export async function sendWidgetAccounts(widgetId: string, data: unknown) {
 	return sendWidgetMessage(
 		widgetId,
@@ -71,6 +93,18 @@ export async function sendWidgetResponse(
 
 export async function sendWidgetCoreChange(widgetId: string) {
 	return sendWidgetMessage(widgetId, 'widget-core-change', null, true);
+}
+
+export async function sendWidgetButtonClick(
+	widgetId: string,
+	buttonId: string,
+) {
+	return sendWidgetMessage(
+		widgetId,
+		'widget-button-click',
+		{ id: buttonId },
+		true,
+	);
 }
 
 async function sendWidgetMessage(

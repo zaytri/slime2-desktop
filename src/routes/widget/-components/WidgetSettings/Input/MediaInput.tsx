@@ -14,7 +14,7 @@ import { useParams } from '@tanstack/react-router';
 import clsx from 'clsx';
 import { memo } from 'react';
 import { z } from 'zod/mini';
-import InputDescription from './InputDescription';
+import InputDescription from '../../../../../components/input_fields/InputDescription';
 import SelectMediaDialog from './SelectMediaDialog';
 
 const MediaInput = memo(function MediaInput(
@@ -66,7 +66,7 @@ const MediaInput = memo(function MediaInput(
 					{value && (
 						<div
 							className={clsx(
-								'bg-alpha-checkerboard rounded-1 group relative flex flex-1 items-center justify-center overflow-hidden border border-white outline outline-stone-300 has-focus-visible:outline-2 has-focus-visible:outline-black',
+								'group relative flex flex-1 items-center justify-center overflow-hidden rounded-1 border border-white bg-alpha-checkerboard outline outline-stone-300 has-focus-visible:outline-2 has-focus-visible:outline-black',
 								mediaType === 'image' && 'p-1',
 								mediaType === 'audio' &&
 									'overflow-visible border-none bg-none pr-2 outline-none',
@@ -85,7 +85,7 @@ const MediaInput = memo(function MediaInput(
 
 							<button
 								className={clsx(
-									'rounded-1 over:bg-rose-800 over:text-white absolute top-1 right-1 border border-white/50 bg-rose-300 bg-gradient-to-b px-1 py-1.5 text-rose-800 opacity-0 outline outline-rose-700 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-0! focus-visible:outline-black',
+									'absolute top-1 right-1 rounded-1 border border-white/50 bg-rose-300 bg-gradient-to-b px-1 py-1.5 text-rose-800 opacity-0 outline outline-rose-700 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-0! focus-visible:outline-black over:bg-rose-800 over:text-white',
 									mediaType === 'audio' && '-top-1! -right-1!',
 								)}
 								onClick={() => {

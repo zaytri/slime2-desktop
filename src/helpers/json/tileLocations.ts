@@ -38,6 +38,9 @@ const TileLocation = z.object({
 	folderId: z.string(),
 });
 export type TileLocation = z.infer<typeof TileLocation>;
+export type TileSlot = TileLocation & {
+	type: 'widget' | 'folder' | 'empty';
+};
 
 const TileLocations = z.record(z.string(), TileLocation);
 export type TileLocations = z.infer<typeof TileLocations>;

@@ -12,7 +12,7 @@ const SectionSetting = memo(function SectionSetting({
 		<section className='rounded-2 border border-white bg-stone-100 outline outline-stone-300'>
 			<h3
 				id={id}
-				className='text-5 scroll-mt-4 border-b border-white px-4 py-2 font-medium'
+				className='scroll-mt-4 border-b border-white px-4 py-2 text-5 font-medium'
 			>
 				{i18nStringTransform(label)}
 			</h3>

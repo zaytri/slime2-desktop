@@ -59,6 +59,32 @@ export async function deleteTokens(accountId: string) {
 	await deleteSecretKey(accountId);
 }
 
+export function generateAccountId(
+	service: Account['service'],
+	type: Account['type'],
+	serviceId: string,
+) {
+	return `${service}_${type}_${serviceId}`;
+}
+
+export function groupAccounts(accounts: Account[]): {
+	defaultAccounts: Account[];
+	otherAccounts: Account[];
+} {
+	const defaultAccounts: Account[] = [];
+	const otherAccounts: Account[] = [];
+
+	accounts.forEach(account => {
+		if (account.default) {
+			defaultAccounts.push(account);
+		} else {
+			otherAccounts.push(account);
+		}
+	});
+
+	return { defaultAccounts, otherAccounts };
+}
+
 async function accountsPath() {
 	return mainConfigPath('accounts');
 }

@@ -14,11 +14,7 @@ export default function useTwitchBot() {
 		twitchBots.current.delete(widgetId);
 	}
 
-	function connectBot(
-		widgetId: string,
-		botPath: string,
-		reconnect: boolean = false,
-	) {
+	function connectBot(widgetId: string, reconnect: boolean = false) {
 		if (twitchBots.current.has(widgetId)) {
 			if (reconnect) {
 				disconnectBot(widgetId);
@@ -27,7 +23,7 @@ export default function useTwitchBot() {
 			}
 		}
 		// timestamp for cache busting
-		const botScriptUrl = `${serverBaseUrl.tiles}/tile/${widgetId}/core/${botPath}?timestamp=${Date.now()}`;
+		const botScriptUrl = `${serverBaseUrl.tiles}/tile/${widgetId}/core/bot.js?timestamp=${Date.now()}`;
 
 		// blob is necessary to deal with CORS
 		// https://gist.github.com/sterlingwes/077b685c22ad6bdc04464db454b5f9f9
@@ -78,8 +74,8 @@ export default function useTwitchBot() {
 	useEffect(() => {
 		// initial bot connect
 		Object.entries(widgetMetas).forEach(([widgetId, widgetMeta]) => {
-			if (widgetMeta.bot) {
-				connectBot(widgetId, widgetMeta.bot);
+			if (widgetMeta.type.includes('bot')) {
+				connectBot(widgetId);
 			}
 		});
 
@@ -88,9 +84,8 @@ export default function useTwitchBot() {
 			event: CustomEvent<{ widgetId: string }>,
 		) {
 			const { widgetId } = event.detail;
-			const botPath = widgetMetas[widgetId]?.bot;
-			if (botPath) {
-				connectBot(widgetId, botPath, true);
+			if (widgetMetas[widgetId].type.includes('bot')) {
+				connectBot(widgetId, true);
 			}
 		}
 
@@ -114,6 +109,7 @@ export default function useTwitchBot() {
 			'widget-values',
 			'widget-accounts',
 			'widget-response',
+			'widget-button-click',
 		];
 
 		// directly passing the above events into the bots

@@ -1,5 +1,6 @@
 //? Tauri Command Guide: https://tauri.app/v1/guides/features/command
 import { invoke } from '@tauri-apps/api/core';
+import type { DefaultWidgetId } from './defaultWidgets';
 
 export async function sendWebsocketMessage(
 	message: string,
@@ -20,7 +21,7 @@ export async function packageCustomWidget(
 }
 
 export async function installDefaultWidget(
-	widgetName: string,
+	widgetName: DefaultWidgetId,
 ): Promise<string> {
 	return invoke('install_default_widget', { widgetName });
 }
@@ -50,12 +51,18 @@ export async function saveJson(
 	jsonObject: unknown,
 	filePath: string,
 ): Promise<void> {
-	const jsonString = JSON.stringify(jsonObject, null, 2);
+	const jsonString = JSON.stringify(jsonObject, null, '\t');
 	return invoke('save_json', { jsonString, filePath });
 }
 
-export async function createWidgetFolder(): Promise<string> {
-	return invoke('create_widget_folder');
+export async function createWidgetFolder(
+	folderName?: string,
+	color?: string,
+): Promise<string> {
+	return invoke('create_widget_folder', {
+		folderName: folderName ?? 'New Folder',
+		color: color ?? 'green',
+	});
 }
 
 export async function deleteWidgetFolder(folderId: string): Promise<void> {

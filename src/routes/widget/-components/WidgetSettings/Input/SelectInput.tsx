@@ -12,7 +12,7 @@ import {
 } from '@headlessui/react';
 import { memo } from 'react';
 import { z } from 'zod/mini';
-import InputDescription from './InputDescription';
+import InputDescription from '../../../../../components/input_fields/InputDescription';
 
 const SelectInput = memo(function SelectInput(
 	setting: Props.WithId<WidgetSetting.Input.Select>,

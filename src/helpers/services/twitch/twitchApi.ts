@@ -17,11 +17,7 @@ const twitchApi = {
 	async createEventSub(
 		account: Account,
 		sessionId: string,
-		data: {
-			type: string;
-			version: string;
-			condition?: Record<string, string>;
-		},
+		data: Twitch.EventSub.Param,
 	) {
 		return twitchApiPost<Twitch.ApiResponse.CreateEventSub>(
 			'/eventsub/subscriptions',
@@ -157,10 +153,10 @@ async function twitchApiDelete<T = any, R = AxiosResponse<T>, D = any>(
 }
 
 function createEventSubParams(
-	type: string,
+	type: Twitch.EventSub.Type,
 	version?: string,
 	condition?: Record<string, string>,
-) {
+): Twitch.EventSub.Param {
 	return {
 		type,
 		version: version ?? '1',
@@ -168,16 +164,21 @@ function createEventSubParams(
 	};
 }
 
-export function createEventSubParamsList(userId: string) {
+/** If these change, update the related mock events! */
+export function createEventSubParamsList(
+	userId: string,
+): Twitch.EventSub.Param[] {
 	return [
 		// chat
-		...[
-			'channel.chat.clear',
-			'channel.chat.clear_user_messages',
-			'channel.chat.message',
-			'channel.chat.message_delete',
-			'channel.chat.notification',
-		].map(type =>
+		...(
+			[
+				'channel.chat.clear',
+				'channel.chat.clear_user_messages',
+				'channel.chat.message',
+				'channel.chat.message_delete',
+				'channel.chat.notification',
+			] as Twitch.EventSub.Type[]
+		).map(type =>
 			createEventSubParams(type, '1', {
 				broadcaster_user_id: userId,
 				user_id: userId,
@@ -208,45 +209,55 @@ export function createEventSubParamsList(userId: string) {
 			'2',
 		),
 
-		...[
-			// bits
-			'channel.bits.use',
-			'channel.cheer',
+		// hype train
+		...(
+			[
+				'channel.hype_train.begin',
+				'channel.hype_train.progress',
+				'channel.hype_train.end',
+			] as Twitch.EventSub.Type[]
+		).map(type =>
+			createEventSubParams(type, '2', {
+				broadcaster_user_id: userId,
+			}),
+		),
 
-			// ad break
-			'channel.ad_break.begin',
+		...(
+			[
+				// bits
+				'channel.bits.use',
+				'channel.cheer',
 
-			// subscriptions
-			'channel.subscribe',
-			'channel.subscription.gift',
-			'channel.subscription.message',
+				// ad break
+				'channel.ad_break.begin',
 
-			// polls
-			'channel.poll.begin',
-			'channel.poll.progress',
-			'channel.poll.end',
+				// subscriptions
+				'channel.subscribe',
+				'channel.subscription.gift',
+				'channel.subscription.message',
 
-			// predictions
-			'channel.prediction.begin',
-			'channel.prediction.progress',
-			'channel.prediction.lock',
-			'channel.prediction.end',
+				// polls
+				'channel.poll.begin',
+				'channel.poll.progress',
+				'channel.poll.end',
 
-			// charity
-			'channel.charity_campaign.donate',
-			'channel.charity_campaign.start',
-			'channel.charity_campaign.progress',
-			'channel.charity_campaign.stop',
+				// predictions
+				'channel.prediction.begin',
+				'channel.prediction.progress',
+				'channel.prediction.lock',
+				'channel.prediction.end',
 
-			// goal
-			'channel.goal.begin',
-			'channel.goal.progress',
-			'channel.goal.end',
+				// charity
+				'channel.charity_campaign.donate',
+				'channel.charity_campaign.start',
+				'channel.charity_campaign.progress',
+				'channel.charity_campaign.stop',
 
-			// hype train
-			'channel.hype_train.begin',
-			'channel.hype_train.progress',
-			'channel.hype_train.end',
-		].map(type => createEventSubParams(type)),
+				// goal
+				'channel.goal.begin',
+				'channel.goal.progress',
+				'channel.goal.end',
+			] as Twitch.EventSub.Type[]
+		).map(type => createEventSubParams(type)),
 	];
 }

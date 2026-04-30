@@ -1,47 +1,26 @@
 import { Account } from '@/helpers/json/accounts';
-import { memo } from 'react';
-import TwitchIconColorSvg from './svg/TwitchIconColorSvg';
+import AccountServiceTag from './tag/AccountServiceTag';
+import { AccountDefaultTag } from './tag/AccountStatusTag';
+import AccountTypeTag from './tag/AccountTypeTag';
 
 type AccountPreviewProps = {
 	account: Account;
 };
 
-function accountTypeEmoji(account: Account) {
-	switch (account.type) {
-		case 'read':
-			return '📖';
-		case 'bot':
-			return '🤖';
-		case 'mod':
-			return '🛡️';
-	}
-}
-
-const AccountPreview = memo(function AccountPreview({
-	account,
-}: AccountPreviewProps) {
+export default function AccountPreview({ account }: AccountPreviewProps) {
 	return (
-		<div className='flex flex-col items-center gap-1'>
-			<div className='relative'>
-				<div className='absolute inset-1 -z-10 rounded-full bg-white'></div>
-				<img className='size-24 rounded-full' src={account.image} />
-				{account.reauthorize && (
-					<div className='absolute top-0 rounded-full bg-rose-900 px-2 font-bold text-white'>
-						REAUTH
-					</div>
-				)}
-				<div className='select-none absolute bottom-0 left-0 text-6.5  [font-kerning:none] -ml-1.5 -mb-1.5'>
-					{accountTypeEmoji(account)}
+		<div className='flex items-center gap-3 rounded-2 bg-white px-3 py-2 outline-2 outline-zinc-300'>
+			<img src={account.image} className='size-14 rounded-2 smooth-image' />
+
+			<div className='flex flex-col gap-1'>
+				<p className='flex-1 text-4.5 font-bold'>{account.displayName}</p>
+
+				<div className='flex items-center gap-1 text-3.5 font-bold'>
+					<AccountServiceTag service={account.service} />
+					<AccountTypeTag type={account.type} />
+					{account.default && <AccountDefaultTag />}
 				</div>
-
-				{account.service === 'twitch' && (
-					<TwitchIconColorSvg className='absolute bottom-0 right-0 size-6' />
-				)}
 			</div>
-
-			<p>{account.displayName}</p>
 		</div>
 	);
-});
-
-export default AccountPreview;
+}

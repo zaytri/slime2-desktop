@@ -5,7 +5,7 @@ import { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { Field, Input, Label } from '@headlessui/react';
 import { memo } from 'react';
 import { z } from 'zod/mini';
-import InputDescription from './InputDescription';
+import InputDescription from '../../../../../components/input_fields/InputDescription';
 
 const SliderInput = memo(function SliderInput(
 	setting: Props.WithId<WidgetSetting.Input.Slider>,
@@ -72,7 +72,7 @@ const SliderInput = memo(function SliderInput(
 						min={min}
 						max={max}
 						step={step}
-						className='input-class w-12 text-right'
+						className='w-12 text-right input-class'
 						onChange={onChange}
 						onWheel={event => {
 							// prevents using mouse wheel to increment/decrement number

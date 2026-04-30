@@ -12,7 +12,6 @@ import {
 	DisclosureButton,
 	DisclosurePanel,
 } from '@headlessui/react';
-import { useLocation, useNavigate } from '@tanstack/react-router';
 import { nanoid } from 'nanoid';
 import { memo, useEffect, useRef } from 'react';
 import { z } from 'zod/mini';
@@ -26,8 +25,6 @@ const MultiSectionSetting = memo(function MultiSectionSetting({
 }: Props.WithId<WidgetSetting.MultiSection>) {
 	const { widgetValue, setWidgetValue } = useWidgetValue(id);
 	const { duplicate, set } = useWidgetValuesDispatch();
-	const { hash, state: locationState } = useLocation();
-	const navigate = useNavigate();
 	const { openDialog } = useDialog();
 	const mainDisclosureButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -58,10 +55,10 @@ const MultiSectionSetting = memo(function MultiSectionSetting({
 	return (
 		<Disclosure
 			as='section'
-			className='rounded-2 group/parent flex flex-col border border-white bg-stone-100 outline outline-stone-300'
+			className='group/parent flex flex-col rounded-2 border border-white bg-stone-100 outline outline-stone-300'
 		>
 			<DisclosureButton
-				className='rounded-2 group/parent flex items-center px-4 outline-offset-0!'
+				className='group/parent flex items-center rounded-2 px-4 outline-offset-0!'
 				ref={mainDisclosureButtonRef}
 				onClick={() => {
 					navigate({ href: `#${id}` });
@@ -69,12 +66,12 @@ const MultiSectionSetting = memo(function MultiSectionSetting({
 			>
 				<h3
 					id={id}
-					className='text-5 flex-1 scroll-mt-4 py-2 text-left font-medium'
+					className='flex-1 scroll-mt-4 py-2 text-left text-5 font-medium'
 				>
 					{i18nStringTransform(label)}
 				</h3>
 
-				<div className='rounded-1 flex items-center justify-center p-1 group-data-open/parent:rotate-180 group-data-over/parent:bg-black group-data-over/parent:text-white group-data-over/parent:outline-2'>
+				<div className='flex items-center justify-center rounded-1 p-1 group-data-open/parent:rotate-180 group-data-over/parent:bg-black group-data-over/parent:text-white group-data-over/parent:outline-2'>
 					<TriangleDownSvg className='size-4 pt-1' />
 				</div>
 			</DisclosureButton>
@@ -83,7 +80,7 @@ const MultiSectionSetting = memo(function MultiSectionSetting({
 				<div className='-mx-4 h-px bg-stone-300 shadow'></div>
 				<button
 					type='button'
-					className='rounded-2 over:translate-y-0.5 over:from-stone-300 over:to-stone-200 over:shadow-none font-quicksand w-full flex-1 border border-white bg-stone-400 bg-linear-to-b from-stone-200 to-stone-300 py-1 font-medium text-stone-700 shadow-[0_2px_0_1px] shadow-stone-400 outline outline-stone-400 focus-visible:outline-2 focus-visible:outline-offset-0! focus-visible:outline-black'
+					className='w-full flex-1 rounded-2 border border-white bg-stone-400 bg-linear-to-b from-stone-200 to-stone-300 py-1 font-quicksand font-medium text-stone-700 shadow-[0_2px_0_1px] shadow-stone-400 outline outline-stone-400 focus-visible:outline-2 focus-visible:outline-offset-0! focus-visible:outline-black over:translate-y-0.5 over:from-stone-300 over:to-stone-200 over:shadow-none'
 					onClick={() => {
 						openDialog(
 							<RenameDialog

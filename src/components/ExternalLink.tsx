@@ -1,12 +1,11 @@
 import { openUrl } from '@tauri-apps/plugin-opener';
-import { memo } from 'react';
 
 type ExternalLinkProps = {
 	href: string;
 	onClick?: React.DOMAttributes<HTMLButtonElement>['onClick'];
 };
 
-const ExternalLink = memo(function ExternalLink({
+export default function ExternalLink({
 	href,
 	onClick,
 	children,
@@ -26,6 +25,4 @@ const ExternalLink = memo(function ExternalLink({
 			{children}
 		</button>
 	);
-});
-
-export default ExternalLink;
+}

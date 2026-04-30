@@ -13,9 +13,17 @@ export function useDialog(): DialogState {
 
 type DialogState = {
 	component: React.ReactNode;
-	openDialog: (component: React.ReactNode, onCancel?: VoidFunction) => void;
+	openDialog: (
+		title: string,
+		component: React.ReactNode,
+		onCancel?: VoidFunction,
+	) => void;
 	closeDialog: VoidFunction;
 	onCancel?: VoidFunction;
+	title: string;
+	setTitle: (title: string) => void;
+	onBack?: VoidFunction;
+	setOnBack: (onBack?: VoidFunction) => void;
 };
 
 export const DialogContext = createContext<DialogState | undefined>(undefined);

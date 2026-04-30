@@ -1,25 +1,25 @@
 import clsx from 'clsx';
-import { memo } from 'react';
 
 type MediaInputPreviewProps = {
 	type: 'image' | 'video' | 'audio';
 	src: string;
 };
 
-const MediaInputPreview = memo(function MediaInputPreview({
+export default function MediaInputPreview({
 	type,
 	src,
-}: MediaInputPreviewProps) {
-	const className = 'max-h-64 object-scale-down';
+	className: customClassName,
+}: Props.WithClassName<MediaInputPreviewProps>) {
+	const className = clsx('object-scale-down smooth-image', customClassName);
 
 	switch (type) {
 		case 'image':
-			return <img className={clsx(className, 'drop-shadow')} src={src} />;
+			return <img className={clsx(className)} src={src} />;
 		case 'video':
 			return (
 				<video
 					controls
-					className={clsx(className, 'w-full drop-shadow')}
+					className={clsx(className, 'size-full')}
 					src={src}
 					onLoadStart={lowerVolume}
 				/>
@@ -30,7 +30,7 @@ const MediaInputPreview = memo(function MediaInputPreview({
 					controls
 					className={clsx(
 						className,
-						'w-full overflow-hidden rounded-full border border-white outline-2 outline-stone-300 focus-visible:outline-black',
+						'w-full overflow-hidden rounded-full border border-white outline-2 outline-zinc-300 focus-visible:outline-4 focus-visible:outline-lime-600',
 					)}
 					src={src}
 					onLoadStart={lowerVolume}
@@ -39,9 +39,7 @@ const MediaInputPreview = memo(function MediaInputPreview({
 		default:
 			return null;
 	}
-});
-
-export default MediaInputPreview;
+}
 
 function lowerVolume(
 	event: React.SyntheticEvent<HTMLVideoElement | HTMLAudioElement, Event>,

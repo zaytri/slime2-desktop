@@ -2,7 +2,7 @@ import { useDialog } from '@/contexts/dialog/useDialog';
 import { Account } from '@/helpers/json/accounts';
 import twitchAuth from '@/helpers/services/twitch/twitchAuth';
 import { memo, useState } from 'react';
-import TwitchIconSvg from '../svg/TwitchIconSvg';
+import TwitchSvg from '../svg/TwitchSvg';
 import DialogHeader from './DialogHeader';
 import TwitchActivationDialog from './TwitchActivationDialog';
 
@@ -23,7 +23,7 @@ const AccountLoginDialog = memo(function AccountLoginDialog({
 			{loading ? null : (
 				<div className='pt-5'>
 					<button
-						className='rounded-2 bg-[#9146FF] font-radio-canada text-5 p-3 text-white flex gap-2 items-center w-full justify-center group over:translate-y-0.5 over:bg-none over:shadow-none border-2 border-violet-900 bg-linear-to-b from-[#9146FF] to-violet-600 from-50% to-50% shadow-[0_2px] shadow-violet-900'
+						className='group flex w-full items-center justify-center gap-2 rounded-2 border-2 border-violet-900 bg-[#9146FF] bg-linear-to-b from-[#9146FF] from-50% to-violet-600 to-50% p-3 font-radio-canada text-5 text-white shadow-[0_2px] shadow-violet-900 over:translate-y-0.5 over:bg-none over:shadow-none'
 						onClick={() => {
 							setLoading(true);
 
@@ -42,7 +42,7 @@ const AccountLoginDialog = memo(function AccountLoginDialog({
 							});
 						}}
 					>
-						<TwitchIconSvg className='size-6' />
+						<TwitchSvg className='size-6' />
 						Twitch
 					</button>
 				</div>
