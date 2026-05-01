@@ -1,0 +1,12 @@
+{
+	"name": "Slime2 Command Bot",
+	"creator": "Slime2",
+	"version": "1.0.0",
+	"website": "https://slime2.stream/",
+	"support": "https://forums.slime2.stream/",
+	"type": ["bot"],
+	"accounts": [
+		{ "type": "read", "service": "twitch" },
+		{ "type": "bot", "service": "twitch" }
+	]
+}

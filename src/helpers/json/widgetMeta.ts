@@ -10,7 +10,7 @@ export async function loadWidgetMeta(id: string): Promise<WidgetMeta> {
 	const path = await widgetMetaPath(id);
 	const json = await loadJson(path);
 	try {
-		const meta = WidgetMeta.parse(json);
+		const meta = WidgetMetaZ.parse(json);
 		return meta;
 	} catch (error) {
 		logZodError(error, json);
@@ -32,14 +32,12 @@ async function widgetMetaPath(id: string) {
 
 // zod and types
 
-const WidgetMeta = z.object({
+export const WidgetMetaZ = z.object({
 	name: z.string(),
 	creator: z.string(),
 	version: z.string(),
-	versionApi: z.optional(z.string()),
 	website: z.optional(z.string()),
 	support: z.optional(z.string()),
-	icon: z.optional(z.string()),
 	type: z.array(z.literal(['bot', 'overlay'])),
 	import: z.catch(
 		z.optional(
@@ -62,4 +60,4 @@ const WidgetMeta = z.object({
 
 	channel: z.catch(z.optional(z.array(z.string())), undefined),
 });
-export type WidgetMeta = z.infer<typeof WidgetMeta>;
+export type WidgetMeta = z.infer<typeof WidgetMetaZ>;

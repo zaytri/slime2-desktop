@@ -19,7 +19,7 @@ export default function SettingsPanel() {
 
 					{appVersionQuery.data && (
 						<p className='self-end text-3.5 font-bold'>
-							slime2 v{appVersionQuery.data}
+							Slime2 v{appVersionQuery.data}
 						</p>
 					)}
 

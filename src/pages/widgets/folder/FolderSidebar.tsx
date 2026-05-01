@@ -81,7 +81,7 @@ function SelectedTilePreview({ tile, tileMeta }: SelectedTilePreviewProps) {
 					<p className='text-center text-5'>Move into this empty slot?</p>
 				) : (
 					<>
-						<h2 className='font-mochiy text-5'>Click to create!</h2>
+						<h2 className='font-mochiy text-6'>Click to create!</h2>
 						<img className='h-48' src={slime2tv}></img>
 
 						<div className='flex flex-1 items-end'>

@@ -1,18 +1,18 @@
 {
-	"name": "Chat",
+	"name": "Test Widget for Testing",
 	"creator": "Zaytri",
 	"version": "1.0.0",
 	"website": "https://zaytri.com/",
 	"support": "https://zaytri.com/",
 	"type": ["overlay"],
-	"icon": "bird.jpg",
 	"import": {
 		"js": ["script.js", "https://colorjs.io/dist/color.global.min.js"],
 		"css": ["styles.css"]
 	},
-	"scope": {
-		"read": {
-			"service": ["twitch"]
-		}
-	}
+	"accounts": [
+		{ "type": "read", "service": "twitch" },
+		{ "type": "bot", "service": "twitch" },
+		{ "type": "mod", "service": "twitch" },
+		{ "type": "read", "service": "youtube" }
+	]
 }

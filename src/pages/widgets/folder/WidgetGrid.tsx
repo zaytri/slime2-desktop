@@ -236,6 +236,10 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 											});
 										}}
 										onCreateCustomWidget={async zipPath => {
+											// TODO use this
+											// const zipPath = await openZip();
+											// if (!zipPath) return;
+
 											const id = await installCustomWidget(zipPath);
 											addTile({
 												id,

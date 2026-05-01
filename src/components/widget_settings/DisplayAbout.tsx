@@ -52,12 +52,10 @@ export default function DisplayAbout({ widgetId }: DisplayAboutProps) {
 				</div>
 
 				<div className='flex flex-1 gap-3 rounded-1.5 bg-white px-3 py-2 outline-2 outline-zinc-300'>
-					{widgetMeta.icon && (
-						<img
-							src={getWidgetIconSrc(widgetId, widgetMeta.icon)}
-							className='size-22 rounded-1 object-contain smooth-image'
-						/>
-					)}
+					<img
+						src={getWidgetIconSrc(widgetId)}
+						className='size-22 rounded-1 object-contain smooth-image'
+					/>
 
 					<LinkifyText
 						className='flex flex-1 flex-col'

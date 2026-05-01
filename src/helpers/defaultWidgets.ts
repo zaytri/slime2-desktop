@@ -9,57 +9,57 @@ export type DefaultWidget = {
 };
 
 export type DefaultWidgetId =
-	| 'twitch-chat-box'
-	| 'twitch-alert-box'
-	| 'twitch-event-label'
-	| 'twitch-goal-bar'
-	| 'twitch-command-bot'
-	| 'twitch-timer-bot'
+	| 'slime2-chat-box'
+	| 'slime2-alert-box'
+	| 'slime2-event-label'
+	| 'slime2-goal-bar'
+	| 'slime2-command-bot'
+	| 'slime2-timer-bot'
 	| 'test';
 
-const defaultWidgets: Record<DefaultWidgetId, DefaultWidget> = {
-	'twitch-chat-box': {
+const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
+	'slime2-chat-box': {
 		name: 'Chat Box',
 		type: 'overlay',
 		icon: ChatOverlayIcon,
 		description: 'Display chat messages',
 	},
-	'twitch-alert-box': {
+	'slime2-alert-box': {
 		name: 'Alert Box',
 		type: 'overlay',
 		icon: ChatOverlayIcon,
 		description: 'Display custom alerts for events',
 	},
-	'twitch-event-label': {
+	'slime2-event-label': {
 		name: 'Event Label',
 		type: 'overlay',
 		icon: ChatOverlayIcon,
 		description: 'Text display for the latest events',
 	},
-	'twitch-goal-bar': {
-		name: 'Goal Bar',
-		type: 'overlay',
-		icon: ChatOverlayIcon,
-		description: 'Progression bar for a specified goal',
-	},
-	test: {
-		name: 'test',
-		type: 'overlay',
-		icon: ChatOverlayIcon,
-		description: '',
-	},
-	'twitch-command-bot': {
+	// 'slime2-goal-bar': {
+	// 	name: 'Goal Bar',
+	// 	type: 'overlay',
+	// 	icon: ChatOverlayIcon,
+	// 	description: 'Progression bar for a specified goal',
+	// },
+	// test: {
+	// 	name: 'test',
+	// 	type: 'overlay',
+	// 	icon: ChatOverlayIcon,
+	// 	description: '',
+	// },
+	'slime2-command-bot': {
 		name: 'Command Bot',
 		type: 'bot',
 		icon: ChatBotIcon,
 		description: 'Responds to custom chat commands',
 	},
-	'twitch-timer-bot': {
-		name: 'Timer Bot',
-		type: 'bot',
-		icon: ChatBotIcon,
-		description: 'Sends chat messages periodically',
-	},
+	// 'slime2-timer-bot': {
+	// 	name: 'Timer Bot',
+	// 	type: 'bot',
+	// 	icon: ChatBotIcon,
+	// 	description: 'Sends chat messages periodically',
+	// },
 };
 
 export function groupDefaultWidgets() {

@@ -24,7 +24,7 @@ struct SingleInstancePayload {
 
 #[tokio::main]
 async fn main() {
-	println!("Welcome to slime2!");
+	println!("Welcome to Slime2!");
 
 	let connections = server::websocket::WebsocketConnections::default();
 

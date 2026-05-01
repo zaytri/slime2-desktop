@@ -9,7 +9,6 @@ use crate::{
 use chrono::Local;
 use font_kit::source::SystemSource;
 use nanoid::nanoid;
-use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::{
 	fs::{self, File},
@@ -77,6 +76,7 @@ pub async fn copy_widget(
 	let new_config_path =
 		file::tile_config_path(&app_handle, new_widget_id.clone());
 
+	// all this just to add (copy) to the name of the new widget
 	match file::load_json(new_config_path.join("meta")) {
 		Ok(tile_meta_json) => {
 			match serde_json::from_str::<file::TileMeta>(&tile_meta_json) {
@@ -477,30 +477,25 @@ pub async fn extract_widget_details(zip_path: &str) -> Result<String, String> {
 		}
 	};
 
-	// check if config.json exists
-	let Ok(mut file) = archive.by_name("config.json") else {
-		return Err(String::from("File config.json not found!"));
+	archive
+		.file_names()
+		.for_each(|file_name| println!("{}", file_name));
+
+	// necessary for OS-friendly path
+	let meta_path = Path::new("config").join("meta.json");
+
+	// check if meta.json exists
+	let Ok(mut file) = archive.by_name(meta_path.to_str().unwrap()) else {
+		return Err(String::from("File meta.json not found!"));
 	};
 
-	// read config.json into a string
-	let mut config_contents = String::new();
-	if let Err(error) = file.read_to_string(&mut config_contents) {
-		return Err(format!("Error reading config.json: {}", error));
+	// read meta.json into a string
+	let mut meta_contents = String::new();
+	if let Err(error) = file.read_to_string(&mut meta_contents) {
+		return Err(format!("Error reading meta.json: {}", error));
 	}
 
-	// deserialize config.json into a Config
-	let config = match serde_json::from_str::<Config>(&config_contents) {
-		Ok(config) => config,
-		Err(error) => {
-			return Err(format!(
-				"Failed to deserialize config.json into a Config: {}",
-				error
-			));
-		}
-	};
-
-	// return widget name and author
-	Ok(format!("{} by {}", config.name, config.author))
+	Ok(meta_contents)
 }
 
 // thanks to https://github.com/tauri-apps/tauri/discussions/9616
@@ -551,12 +546,6 @@ pub async fn delete_secret_key(key: &str) -> Result<(), String> {
 			));
 		}
 	};
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-struct Config {
-	name: String,
-	author: String,
 }
 
 fn generate_widget_id() -> String {

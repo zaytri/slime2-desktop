@@ -5,6 +5,7 @@ import PageProvider from '@/contexts/pages/PageProvider';
 import { usePage } from '@/contexts/pages/usePage';
 import type { DefaultWidgetId } from '@/helpers/defaultWidgets';
 import { useEffect, useState } from 'react';
+import CreateCustomWidgetPage from './CreateCustomWidgetPage';
 import CreateFolderPage from './CreateFolderPage';
 import CreateStartPage from './CreateStartPage';
 import CreateWidgetPage from './CreateWidgetPage';
@@ -16,7 +17,7 @@ type CreateTileDialogProps = {
 	onCreateCustomWidget: (zipPath: string) => void;
 };
 
-export type CreateTilePages = 'start' | 'folder' | 'widgets' | 'custom_widget';
+export type CreateTilePages = 'start' | 'folder' | 'widgets' | 'custom';
 
 export type CreateTileContext = CreateTileDialogProps;
 
@@ -47,7 +48,7 @@ export default function CreateTileDialog({
 					});
 				}
 				break;
-			case 'custom_widget':
+			case 'custom':
 				setTitle('Import Custom Widget');
 				setOnBack(() => {
 					setPage('widgets');
@@ -88,8 +89,8 @@ function CreatePage() {
 			return <CreateWidgetPage />;
 		case 'folder':
 			return <CreateFolderPage />;
-		case 'custom_widget':
-			return <CreateCustomWidget />;
+		case 'custom':
+			return <CreateCustomWidgetPage />;
 		default:
 			return <p>missing!</p>;
 	}

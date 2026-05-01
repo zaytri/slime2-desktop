@@ -43,7 +43,6 @@ pub fn save_json(json_string: &str, mut file_path: PathBuf) -> io::Result<()> {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 struct WidgetMetaForTileMeta {
 	name: String,
-	icon: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -73,14 +72,10 @@ pub fn load_widget_meta(core_path: PathBuf) -> io::Result<TileMeta> {
 	let meta = serde_json::from_str::<WidgetMetaForTileMeta>(&json_string)?;
 
 	let name = meta.name;
-	let icon = match meta.icon {
-		Some(value) => value,
-		None => String::from(""),
-	};
 
 	return Ok(TileMeta {
 		name,
-		icon,
+		icon: String::from("icon/icon.png"),
 		color: String::from("green"),
 	});
 }
@@ -292,18 +287,26 @@ pub fn generate_widget_config(
 	// path to tile config folder
 	let config_path = tile_config_path(app, widget_id.clone());
 
-	// get icon path from widget meta, or get default icon path if empty
-	let icon_source_path = if meta.icon.clone().is_empty() {
-		assets_path(app).join(default_widget_image_name())
-	} else {
-		widget_files_core_path(app, widget_id.clone())
-			.join("config")
-			.join(meta.icon.clone())
-	};
+	// path to core icon
+	let core_icon_path = widget_files_core_path(app, widget_id.clone())
+		.join("config")
+		.join("icon.png");
+
+	// path to tile icon folder
+	let destination_folder_path = config_path.join("icon");
 
 	// copy icon into config/icon and get the icon file name
 	let icon_file_name =
-		copy_file(&icon_source_path, config_path.join("icon"))?;
+		match copy_file(&core_icon_path, destination_folder_path.clone()) {
+			Ok(file_name) => Ok(file_name),
+			Err(_error) => {
+				// on error, fallback to default widget icon
+				let default_icon_path =
+					assets_path(app).join(default_widget_image_name());
+
+				copy_file(&default_icon_path, destination_folder_path)
+			}
+		}?;
 
 	// create meta.json for the widget tile
 	create_tile_meta(

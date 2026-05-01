@@ -10,9 +10,9 @@ export function getTempFileSrc(fileName: string) {
 	return `${serverBaseUrl.preview}/preview/${fileName}?timestamp=${timestamp}`;
 }
 
-export function getWidgetIconSrc(id: string, filePath: string) {
+export function getWidgetIconSrc(id: string) {
 	const timestamp = Date.now();
-	return `${serverBaseUrl.tiles}/tile/${id}/core/config/${filePath}?timestamp=${timestamp}`;
+	return `${serverBaseUrl.tiles}/tile/${id}/core/config/icon.png?timestamp=${timestamp}`;
 }
 
 export function getWidgetMediaCoreSrc(id: string, filePath: string) {
