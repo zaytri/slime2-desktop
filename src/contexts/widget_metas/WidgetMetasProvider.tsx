@@ -1,5 +1,5 @@
 import { loadWidgetMeta } from '@/helpers/json/widgetMeta';
-import { memo, useCallback, useEffect, useReducer } from 'react';
+import { useCallback, useEffect, useReducer } from 'react';
 import useTileLocations from '../tile_locations/useTileLocations';
 import { WidgetMetasContext } from './useWidgetMetas';
 import {
@@ -7,9 +7,7 @@ import {
 	widgetMetasReducer,
 } from './useWidgetMetasDispatch';
 
-const WidgetMetasProvider = memo(function WidgetMetasProvider({
-	children,
-}: Props.WithChildren) {
+export default function WidgetMetasProvider({ children }: Props.WithChildren) {
 	const locations = useTileLocations();
 	const [widgetMetas, dispatch] = useReducer(widgetMetasReducer, {});
 
@@ -64,6 +62,4 @@ const WidgetMetasProvider = memo(function WidgetMetasProvider({
 			</WidgetMetasDispatchContext>
 		</WidgetMetasContext>
 	);
-});
-
-export default WidgetMetasProvider;
+}

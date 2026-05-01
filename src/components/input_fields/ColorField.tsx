@@ -14,7 +14,7 @@ import {
 import { Field, Input, Label } from '@headlessui/react';
 import { HsvaColor, hsvaToRgba, rgbaToHsva } from '@uiw/react-color';
 import clsx from 'clsx';
-import { memo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import ColorPreview from '../color/ColorPreview';
 
 type ColorFieldProps = {
@@ -25,7 +25,7 @@ type ColorFieldProps = {
 	description?: string;
 };
 
-const ColorField = memo(function ColorField({
+export default function ColorField({
 	label,
 	value,
 	onChange,
@@ -98,7 +98,7 @@ const ColorField = memo(function ColorField({
 					gutter={8}
 					wrapperProps={{ style: { left: 0 } }}
 				>
-					<div className='flex gap-4 rounded-2 bg-white p-4 outline-4 outline-lime-600'>
+					<div className='flex gap-4 rounded-2 bg-white p-4 shadow-[0_2px_10px_#0006] outline-4 outline-lime-600'>
 						<SaturationGrid
 							hsva={hsvaValue}
 							onChange={newColor => {
@@ -184,6 +184,4 @@ const ColorField = memo(function ColorField({
 			<InputDescription>{description}</InputDescription>
 		</Field>
 	);
-});
-
-export default ColorField;
+}

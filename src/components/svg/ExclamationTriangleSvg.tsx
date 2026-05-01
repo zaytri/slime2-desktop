@@ -1,7 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const ExclamationTriangleSvg = memo(function ExclamationTriangleSvg({
+export default function ExclamationTriangleSvg({
 	className,
 }: Props.WithClassName) {
 	return (
@@ -19,6 +18,4 @@ const ExclamationTriangleSvg = memo(function ExclamationTriangleSvg({
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default ExclamationTriangleSvg;
+}

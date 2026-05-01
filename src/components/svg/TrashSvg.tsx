@@ -1,7 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const TrashSvg = memo(function TrashSvg({ className }: Props.WithClassName) {
+export default function TrashSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg
@@ -18,6 +17,4 @@ const TrashSvg = memo(function TrashSvg({ className }: Props.WithClassName) {
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default TrashSvg;
+}

@@ -18,8 +18,8 @@ export default function SimulateEvent({
 	);
 
 	return (
-		<div className='flex flex-col gap-2 rounded-2 border-2 border-zinc-300 bg-white p-4 pt-2 outline outline-white has-over:outline-4 has-over:-outline-offset-2 has-over:outline-lime-600'>
-			<h2 className='flex items-center justify-between gap-2 font-fredoka text-5.5 font-medium text-shadow-[0_1px_white]'>
+		<div className='flex flex-col gap-3 rounded-2 border-2 border-zinc-300 bg-white p-4 pt-2 outline outline-white has-over:outline-4 has-over:-outline-offset-2 has-over:outline-lime-600'>
+			<h2 className='flex items-center justify-between gap-2 font-mochiy text-4.5 text-zinc-800'>
 				{label}
 			</h2>
 

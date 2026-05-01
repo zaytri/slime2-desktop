@@ -3,7 +3,7 @@
 @theme {
 	--font-fredoka: 'Fredoka', sans-serif;
 	--font-nunito: 'Nunito', sans-serif;
-	--font-poetsen: 'Poetsen One', sans-serif;
+	--font-mochiy: 'Mochiy Pop One', sans-serif;
 	--animate-bounce-in:
 		fade 0.15s reverse forwards,
 		expand 0.15s cubic-bezier(0.43, -0.5, 0.62, 1.5) forwards;
@@ -213,7 +213,7 @@ input[type='number'] {
 }
 
 @utility input-select-option {
-	@apply cursor-pointer rounded-1 border border-zinc-400 bg-zinc-200 px-1.5 py-0.5 text-3.5 font-semibold text-zinc-500 -outline-offset-1! outline-lime-600 data-checked:border-black data-checked:bg-zinc-700! data-checked:text-white! data-checked:text-shadow-[0_1px_#0006] data-over:bg-lime-200 data-over:text-lime-800 data-over:outline-3;
+	@apply flex cursor-pointer rounded-1 border border-zinc-400 bg-zinc-200 px-1.5 py-0.5 font-semibold text-zinc-500 -outline-offset-1! outline-lime-600 data-checked:border-black data-checked:bg-zinc-700! data-checked:text-white! data-checked:text-shadow-[0_1px_#0006] data-over:bg-lime-200 data-over:text-lime-800 data-over:outline-3;
 }
 
 @utility mini-menu-item {

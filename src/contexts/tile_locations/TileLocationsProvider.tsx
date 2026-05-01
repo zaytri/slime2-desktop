@@ -1,12 +1,12 @@
 import { loadTileLocations } from '@/helpers/json/tileLocations';
-import { memo, useEffect, useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { TileLocationsContext } from './useTileLocations';
 import {
 	TileLocationsDispatchContext,
 	tileLocationsReducer,
 } from './useTileLocationsDispatch';
 
-const TileLocationsProvider = memo(function TileLocationsProvider({
+export default function TileLocationsProvider({
 	children,
 }: Props.WithChildren) {
 	const [tileLocations, dispatch] = useReducer(tileLocationsReducer, {});
@@ -27,6 +27,4 @@ const TileLocationsProvider = memo(function TileLocationsProvider({
 			</TileLocationsDispatchContext>
 		</TileLocationsContext>
 	);
-});
-
-export default TileLocationsProvider;
+}

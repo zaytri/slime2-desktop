@@ -14,10 +14,8 @@ export default function SimulatorPanel() {
 			<div className='flex flex-1 flex-col gap-4 overflow-hidden dark-container p-6 pt-4'>
 				<div className='flex items-center gap-4 text-white text-shadow-[0_2px_black]'>
 					<h1 className='flex flex-1 items-center gap-4'>
-						<PaperAirplaneSvg className='size-6 drop-shadow-[0_2px_black]' />
-						<p className='-mb-0.5 flex-1 font-fredoka text-6 font-medium'>
-							Event Simulator
-						</p>
+						<PaperAirplaneSvg className='-mb-0.5 size-6 drop-shadow-[0_2px_black]' />
+						<p className='flex-1 font-mochiy text-5'>Event Simulator</p>
 					</h1>
 
 					<div className='inline-flex items-center gap-2 self-end text-4.5 font-bold'>

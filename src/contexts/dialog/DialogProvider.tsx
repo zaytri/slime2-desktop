@@ -1,12 +1,10 @@
 import Dialog from '@/components/dialog/Dialog';
 import clsx from 'clsx';
-import { memo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSettings } from '../settings/useSettings';
 import { DialogContext } from './useDialog';
 
-const DialogProvider = memo(function DialogProvider({
-	children,
-}: Props.WithChildren) {
+export default function DialogProvider({ children }: Props.WithChildren) {
 	const dialogRef = useRef<HTMLDialogElement>(null);
 	const [component, setComponent] = useState<React.ReactNode>(null);
 	const [onCancel, setOnCancel] = useState<VoidFunction>();
@@ -60,6 +58,4 @@ const DialogProvider = memo(function DialogProvider({
 			</dialog>
 		</DialogContext>
 	);
-});
-
-export default DialogProvider;
+}

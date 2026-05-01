@@ -19,6 +19,8 @@ export default function MediaInputPreview({
 			return (
 				<video
 					controls
+					controlsList='nodownload noplaybackrate'
+					disablePictureInPicture
 					className={clsx(className, 'size-full')}
 					src={src}
 					onLoadStart={lowerVolume}
@@ -28,6 +30,7 @@ export default function MediaInputPreview({
 			return (
 				<audio
 					controls
+					controlsList='nodownload noplaybackrate'
 					className={clsx(
 						className,
 						'w-full overflow-hidden rounded-full border border-white outline-2 outline-zinc-300 focus-visible:outline-4 focus-visible:outline-lime-600',

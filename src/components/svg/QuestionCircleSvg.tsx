@@ -1,9 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const QuestionCircleSvg = memo(function QuestionCircleSvg({
-	className,
-}: Props.WithClassName) {
+export default function QuestionCircleSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg viewBox='0 0 431.855 431.855' fill='currentColor'>
@@ -27,6 +24,4 @@ const QuestionCircleSvg = memo(function QuestionCircleSvg({
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default QuestionCircleSvg;
+}

@@ -10,7 +10,7 @@ import {
 } from '@/helpers/openFile';
 import { capitalizeWord } from '@/helpers/string';
 import clsx from 'clsx';
-import { memo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import MediaIcon from '../MediaIcon';
 import MediaInputPreview from '../MediaInputPreview';
 import DialogCancelButton from './DialogButton/DialogCancelButton';
@@ -22,7 +22,7 @@ type MediaSelectDialogProps = {
 	onSave: (value: string) => void;
 };
 
-const MediaSelectDialog = memo(function MediaSelectDialog({
+export default function MediaSelectDialog({
 	type,
 	onSave,
 }: MediaSelectDialogProps) {
@@ -47,7 +47,7 @@ const MediaSelectDialog = memo(function MediaSelectDialog({
 						<MediaInputPreview
 							type={type}
 							src={getTempFileSrc(value)}
-							className='max-h-80 min-h-24'
+							className={clsx('max-h-80', type !== 'audio' && 'min-h-24')}
 						/>
 					</div>
 				)}
@@ -55,7 +55,7 @@ const MediaSelectDialog = memo(function MediaSelectDialog({
 				<div className='flex flex-col gap-2'>
 					<button
 						type='button'
-						className='relative flex rounded-2 border border-white bg-zinc-200 bg-linear-to-b from-zinc-200 to-zinc-300 px-2 py-2 text-4.5 font-bold text-zinc-700 outline-2 outline-offset-0! outline-zinc-400 over:bg-lime-200 over:bg-none over:text-lime-800 over:outline-4 over:outline-lime-600'
+						className='relative flex rounded-2 border border-white bg-zinc-200 bg-linear-to-b from-zinc-200 to-zinc-300 px-2 py-2 font-fredoka text-4.5 font-medium text-zinc-700 outline-2 outline-offset-0! outline-zinc-400 over:bg-lime-200 over:bg-none over:text-lime-800 over:outline-4 over:outline-lime-600'
 						ref={imageDialogButtonRef}
 						onClick={async () => {
 							let filePath = null;
@@ -79,8 +79,8 @@ const MediaSelectDialog = memo(function MediaSelectDialog({
 						}}
 					>
 						<div className='absolute inset-0 bottom-1/2 bg-linear-to-b from-white/30 to-white/20'></div>
-						<div className='relative flex flex-1 items-center justify-center gap-2 drop-shadow-[0_1px_3px_#FFFB]'>
-							<MediaIcon type={type} className='size-5' />
+						<div className='relative flex flex-1 items-center justify-center gap-3 drop-shadow-[0_1px_3px_#FFFB]'>
+							<MediaIcon type={type} className='h-5' />
 							<p>
 								Select <span>{capitalType}</span>
 							</p>
@@ -107,6 +107,4 @@ const MediaSelectDialog = memo(function MediaSelectDialog({
 			</div>
 		</DialogContent>
 	);
-});
-
-export default MediaSelectDialog;
+}

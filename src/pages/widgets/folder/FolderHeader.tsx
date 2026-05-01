@@ -36,13 +36,13 @@ export default function FolderHeader() {
 				<HeaderIcon src={getTileIconSrc(folderId, tileMeta.icon)} />
 			)}
 
-			<h1 className='line-clamp-1 flex-1 font-fredoka text-6 font-medium text-white text-shadow-[0_2px_black]'>
+			<h1 className='line-clamp-1 flex-1 font-mochiy text-5 text-white text-shadow-[0_2px_black]'>
 				{tileMeta.name}
 			</h1>
 
 			<HeaderButton
 				label='Edit'
-				icon={<PencilSvg className='size-5' />}
+				icon={PencilSvg}
 				className='border-cyan-300 bg-cyan-300 from-cyan-300 to-sky-400 text-sky-900 over:outline-cyan-600'
 				onClick={() => {
 					editTile(folderId, 'folder');

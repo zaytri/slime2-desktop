@@ -17,6 +17,7 @@ type SimulateTwitchSubscriptionDialogProps = {
 		text: string,
 		streakMonths: number,
 		totalMonths: number,
+		prime: boolean,
 	) => void;
 };
 
@@ -24,7 +25,7 @@ export default function SimulateTwitchSubscriptionDialog({
 	onSend,
 }: SimulateTwitchSubscriptionDialogProps) {
 	const [name, setName] = useState('');
-	const [tier, setTier] = useState<Twitch.SubTier>('1000');
+	const [tier, setTier] = useState<Twitch.SubTier | 'prime'>('1000');
 	const [resub, setResub] = useState(false);
 	const [text, setText] = useState('');
 	const [totalMonths, setTotalMonths] = useState(50);
@@ -53,6 +54,7 @@ export default function SimulateTwitchSubscriptionDialog({
 						value={tier}
 						onChange={setTier}
 						options={[
+							{ label: 'Prime', value: 'prime' },
 							{ label: 'Tier 1', value: '1000' },
 							{ label: 'Tier 2', value: '2000' },
 							{ label: 'Tier 3', value: '3000' },
@@ -111,11 +113,12 @@ export default function SimulateTwitchSubscriptionDialog({
 
 						onSend(
 							trimmedName || namePlaceholder,
-							tier,
+							tier === 'prime' ? '1000' : tier,
 							resub,
 							trimmedText || textPlaceholder,
 							streakMonths,
 							totalMonths,
+							tier === 'prime',
 						);
 					}}
 				>

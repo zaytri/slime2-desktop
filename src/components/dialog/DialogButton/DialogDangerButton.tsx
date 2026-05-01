@@ -1,5 +1,4 @@
 import TrashSvg from '@/components/svg/TrashSvg';
-import { memo } from 'react';
 import DialogActionButton from './DialogActionButton';
 
 type DialogDangerButtonProps = {
@@ -7,7 +6,7 @@ type DialogDangerButtonProps = {
 	disabled?: boolean;
 };
 
-const DialogDangerButton = memo(function DialogDangerButton({
+export default function DialogDangerButton({
 	onClick,
 	children,
 	disabled,
@@ -19,9 +18,7 @@ const DialogDangerButton = memo(function DialogDangerButton({
 			className='border-rose-100 bg-rose-200 from-rose-200 to-rose-300 text-rose-900 outline-rose-700 over:outline-rose-700'
 		>
 			<TrashSvg className='size-4.5' />
-			<p className='-mb-0.5'>{children}</p>
+			<p>{children}</p>
 		</DialogActionButton>
 	);
-});
-
-export default DialogDangerButton;
+}

@@ -1,9 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const DoubleSquareSvg = memo(function DoubleSquareSvg({
-	className,
-}: Props.WithClassName) {
+export default function DoubleSquareSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg viewBox='0 0 115.77 122.88' fill='currentColor'>
@@ -15,6 +12,4 @@ const DoubleSquareSvg = memo(function DoubleSquareSvg({
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default DoubleSquareSvg;
+}

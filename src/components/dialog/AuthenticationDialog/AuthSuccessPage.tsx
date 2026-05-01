@@ -7,11 +7,11 @@ import { useDialog } from '@/contexts/dialog/useDialog';
 import { usePageContext } from '@/contexts/pages/usePageContext';
 import { Account } from '@/helpers/json/accounts';
 import { capitalizeWord } from '@/helpers/string';
-import { memo, useState } from 'react';
+import { useState } from 'react';
 import { AuthenticationContext } from '.';
 import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
 
-const AuthSuccessPage = memo(function AuthSuccessPage() {
+export default function AuthSuccessPage() {
 	const { accountId } = usePageContext<AuthenticationContext>();
 	const { account, setAccount } = useAccount(accountId);
 	const accounts = useAccounts();
@@ -88,6 +88,4 @@ const AuthSuccessPage = memo(function AuthSuccessPage() {
 			</div>
 		</div>
 	);
-});
-
-export default AuthSuccessPage;
+}

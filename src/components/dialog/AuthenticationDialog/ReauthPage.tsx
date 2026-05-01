@@ -2,12 +2,11 @@ import AccountPreview from '@/components/AccountPreview';
 import { useAccount } from '@/contexts/accounts/useAccount';
 import { usePage } from '@/contexts/pages/usePage';
 import { usePageContext } from '@/contexts/pages/usePageContext';
-import { memo } from 'react';
 import { AuthenticationContext, AuthenticationPages } from '.';
 import DialogCancelButton from '../DialogButton/DialogCancelButton';
 import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
 
-const ReauthPage = memo(function ReauthPage() {
+export default function ReauthPage() {
 	const { service, accountId } = usePageContext<AuthenticationContext>();
 	const { account } = useAccount(accountId);
 	const { setPage } = usePage<AuthenticationPages>();
@@ -31,6 +30,4 @@ const ReauthPage = memo(function ReauthPage() {
 			</div>
 		</div>
 	);
-});
-
-export default ReauthPage;
+}

@@ -14,7 +14,7 @@ import {
 	DisclosurePanel,
 } from '@headlessui/react';
 import clsx from 'clsx';
-import { memo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { z } from 'zod/mini';
 import GenericDeleteDialog from '../dialog/GenericDeleteDialog';
 import TextField from '../input_fields/TextField';
@@ -29,7 +29,7 @@ type SettingMultiSubsectionProps = {
 	onDuplicate: (sourceName: string) => void;
 };
 
-const SettingMultiSubsection = memo(function SettingMultiSubsection({
+export default function SettingMultiSubsection({
 	id,
 	onDelete,
 	onDuplicate,
@@ -65,7 +65,9 @@ const SettingMultiSubsection = memo(function SettingMultiSubsection({
 					className='group/sub z-10 flex flex-1 items-center gap-2 rounded-2 border border-white bg-zinc-100 bg-linear-to-b from-zinc-100 to-zinc-200/50 px-4 py-2 outline-2 outline-offset-0! outline-zinc-400/50 data-open:rounded-b-0 data-open:bg-none over:bg-lime-200 over:bg-none over:text-green-900 over:outline-4 over:outline-lime-600'
 					ref={disclosureButtonRef}
 				>
-					<h4 className='flex-1 text-left text-4.5 font-semibold'>{value}</h4>
+					<h4 className='flex-1 text-left font-fredoka text-5 font-medium'>
+						{value}
+					</h4>
 
 					<div className='flex items-center justify-center rounded-1 p-1 group-data-open/sub:rotate-180 group-data-over/sub:bg-lime-600 group-data-over/sub:text-lime-200 group-data-over/sub:outline-none'>
 						<TriangleDownSvg className='size-4' />
@@ -84,13 +86,13 @@ const SettingMultiSubsection = memo(function SettingMultiSubsection({
 							/>
 							<button
 								type='button'
-								className='relative flex rounded-2 border border-white bg-zinc-200 bg-linear-to-b from-zinc-200 to-zinc-300 px-2 py-0.5 text-4.5 font-bold text-zinc-700 outline-2 outline-offset-0! outline-zinc-400 over:bg-lime-200 over:bg-none over:text-lime-800 over:outline-4 over:outline-lime-600'
+								className='relative flex rounded-2 border border-white bg-zinc-200 bg-linear-to-b from-zinc-200 to-zinc-300 px-2 py-0.5 font-fredoka text-4.5 font-medium text-zinc-700 outline-2 outline-offset-0! outline-zinc-400 over:bg-lime-200 over:bg-none over:text-lime-800 over:outline-4 over:outline-lime-600'
 								onClick={renameSubsection}
 							>
 								<div className='absolute inset-0 bottom-1/2 bg-linear-to-b from-white/30 to-white/20'></div>
 								<div className='relative flex flex-1 items-center gap-2 drop-shadow-[0_1px_3px_#FFFB]'>
 									<PencilSvg className='size-4' />
-									<p className='-mb-0.5'>Save</p>
+									<p>Save</p>
 								</div>
 							</button>
 						</div>
@@ -136,9 +138,7 @@ const SettingMultiSubsection = memo(function SettingMultiSubsection({
 			</DisclosurePanel>
 		</Disclosure>
 	);
-});
-
-export default SettingMultiSubsection;
+}
 
 type SubsectionActionProps = {
 	icon: React.ReactNode;
@@ -147,7 +147,7 @@ type SubsectionActionProps = {
 	dangerAction?: boolean;
 };
 
-const SubsectionAction = memo(function SubsectionAction({
+function SubsectionAction({
 	label,
 	icon,
 	onClick,
@@ -189,4 +189,4 @@ const SubsectionAction = memo(function SubsectionAction({
 			</Tooltip>
 		</TooltipProvider>
 	);
-});
+}

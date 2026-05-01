@@ -1,5 +1,4 @@
 import { Field, Input, Label } from '@headlessui/react';
-import { memo } from 'react';
 
 type RgbaInputProps = {
 	label: string;
@@ -7,11 +6,7 @@ type RgbaInputProps = {
 	onChange: (value: number) => void;
 };
 
-const RgbaInput = memo(function RgbaInput({
-	label,
-	value,
-	onChange,
-}: RgbaInputProps) {
+export default function RgbaInput({ label, value, onChange }: RgbaInputProps) {
 	return (
 		<Field className='input-wrapper flex flex-col bg-white px-2 py-0'>
 			<Label className='text-3 font-medium'>{label}</Label>
@@ -33,6 +28,4 @@ const RgbaInput = memo(function RgbaInput({
 			/>
 		</Field>
 	);
-});
-
-export default RgbaInput;
+}

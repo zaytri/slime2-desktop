@@ -75,7 +75,7 @@ export default function SimulateTwitchChatMessageDialog({
 						value={message}
 						placeholder={messagePlaceholder}
 						onChange={setMessage}
-						rows={3}
+						rows={2}
 						description='(Emotes cannot be simulated)'
 					/>
 

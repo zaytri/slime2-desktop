@@ -50,7 +50,7 @@ export default function DropdownField<V>({
 
 				<ListboxOptions
 					anchor={{ to: 'bottom', gap: 0, padding: 48 }}
-					className='z-10 flex w-(--button-width) flex-col rounded-2 bg-white outline-4 -outline-offset-2 outline-lime-600'
+					className='z-10 flex w-(--button-width) flex-col rounded-2 bg-white shadow-[0_2px_10px_#0006] outline-4 -outline-offset-2 outline-lime-600'
 				>
 					{options.map(option => {
 						return (

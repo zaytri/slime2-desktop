@@ -1,7 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const PlusSvg = memo(function PlusSvg({ className }: Props.WithClassName) {
+export default function PlusSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg
@@ -17,6 +16,4 @@ const PlusSvg = memo(function PlusSvg({ className }: Props.WithClassName) {
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default PlusSvg;
+}

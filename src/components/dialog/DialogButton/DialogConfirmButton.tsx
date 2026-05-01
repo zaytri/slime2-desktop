@@ -1,6 +1,5 @@
 import CheckSvg from '@/components/svg/CheckSvg';
 import clsx from 'clsx';
-import { memo } from 'react';
 import DialogActionButton from './DialogActionButton';
 
 type DialogConfirmButtonProps = {
@@ -9,7 +8,7 @@ type DialogConfirmButtonProps = {
 	icon?: React.ReactNode;
 };
 
-const DialogConfirmButton = memo(function DialogConfirmButton({
+export default function DialogConfirmButton({
 	onClick,
 	disabled,
 	children,
@@ -30,9 +29,7 @@ const DialogConfirmButton = memo(function DialogConfirmButton({
 			)}
 		>
 			{icon || <CheckSvg className='size-4.5' />}
-			<p className='-mb-0.5'>{children}</p>
+			<p>{children}</p>
 		</DialogActionButton>
 	);
-});
-
-export default DialogConfirmButton;
+}

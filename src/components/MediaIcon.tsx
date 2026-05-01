@@ -1,6 +1,5 @@
 import { MediaType } from '@/helpers/openFile';
-import { memo } from 'react';
-import MusicNotesSvg from './svg/MusicNotesSvg';
+import MusicNoteSvg from './svg/MusicNoteSvg';
 import PhotoSvg from './svg/PhotoSvg';
 import VideoCameraSvg from './svg/VideoCameraSvg';
 
@@ -8,13 +7,13 @@ type MediaIconProps = {
 	type: MediaType;
 };
 
-const MediaIcon = memo(function MediaIcon({
+export default function MediaIcon({
 	type,
 	className,
 }: Props.WithClassName<MediaIconProps>) {
 	switch (type) {
 		case 'audio':
-			return <MusicNotesSvg className={className} />;
+			return <MusicNoteSvg className={className} />;
 		case 'image':
 			return <PhotoSvg className={className} />;
 		case 'video':
@@ -22,6 +21,4 @@ const MediaIcon = memo(function MediaIcon({
 		default:
 			return null;
 	}
-});
-
-export default MediaIcon;
+}

@@ -1,12 +1,11 @@
 import LinkifyText from '@/components/LinkifyText';
 import { Description } from '@headlessui/react';
-import { memo } from 'react';
 
 type InputDescriptionProps = {
 	id?: string;
 };
 
-const InputDescription = memo(function InputDescription({
+export default function InputDescription({
 	children,
 	id,
 }: Props.WithChildren<InputDescriptionProps>) {
@@ -28,6 +27,4 @@ const InputDescription = memo(function InputDescription({
 			{children}
 		</Description>
 	);
-});
-
-export default InputDescription;
+}

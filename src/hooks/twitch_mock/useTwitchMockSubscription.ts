@@ -20,6 +20,7 @@ export default function useTwitchMockSubscription() {
 		text: string,
 		streakMonths: number,
 		totalMonths: number,
+		prime: boolean,
 	) {
 		widgetIds.forEach(widgetId => {
 			if (resub) {
@@ -29,11 +30,13 @@ export default function useTwitchMockSubscription() {
 					text,
 					streakMonths,
 					totalMonths,
+					prime,
 				});
 			} else {
 				sendMockSub(widgetId, {
 					displayName,
 					tier,
+					prime,
 				});
 			}
 		});
@@ -45,6 +48,9 @@ export default function useTwitchMockSubscription() {
 		const resub = Random.boolean();
 		const text = randomMockMessage(true).text;
 		const totalMonths = Random.integer(2, 100);
+
+		// 50% chance of tier 1 sub being a prime sub
+		const prime = tier === '1000' && Random.boolean();
 
 		// 50% chance of no streak
 		const streakMonths = Random.boolean()
@@ -62,11 +68,13 @@ export default function useTwitchMockSubscription() {
 					text,
 					streakMonths,
 					totalMonths,
+					prime,
 				});
 			} else {
 				sendMockSub(widgetId, {
 					displayName,
 					tier,
+					prime,
 				});
 			}
 		});
@@ -78,12 +86,12 @@ export default function useTwitchMockSubscription() {
 type MockSubData = {
 	displayName: string;
 	tier: Twitch.SubTier;
-	gift?: boolean;
+	prime: boolean;
 };
 
 async function sendMockSub(
 	widgetId: string,
-	{ displayName, tier, gift = false }: MockSubData,
+	{ displayName, tier, prime }: MockSubData,
 ) {
 	const timestamp = mockTimeStamp();
 	const mockUser = mockUserDetails(displayName);
@@ -96,7 +104,7 @@ async function sendMockSub(
 		user_login: mockUser.login,
 		user_name: mockUser.name,
 		tier,
-		is_gift: gift,
+		is_gift: false,
 	};
 
 	const subChatNotificationEvent: Twitch.WebsocketEvent.ChatNotification = {
@@ -115,7 +123,7 @@ async function sendMockSub(
 		notice_type: 'sub',
 		sub: {
 			sub_tier: tier,
-			is_prime: false,
+			is_prime: prime,
 			duration_months: 1,
 		},
 	};
@@ -144,11 +152,12 @@ type MockResubData = {
 	totalMonths: number;
 	streakMonths: number;
 	text: string;
+	prime: boolean;
 };
 
 async function sendMockResub(
 	widgetId: string,
-	{ displayName, tier, text, totalMonths, streakMonths }: MockResubData,
+	{ displayName, tier, text, totalMonths, streakMonths, prime }: MockResubData,
 ) {
 	const timestamp = mockTimeStamp();
 	const mockUser = mockUserDetails(displayName);
@@ -186,7 +195,7 @@ async function sendMockResub(
 			duration_months: 1,
 			streak_months: streakMonths,
 			sub_tier: tier,
-			is_prime: false,
+			is_prime: prime,
 			is_gift: false,
 			gifter_is_anonymous: true,
 		},

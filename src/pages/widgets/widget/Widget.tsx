@@ -2,11 +2,10 @@ import { useWidgetId } from '@/contexts/widget_id/useWidgetId';
 import WidgetValuesProvider from '@/contexts/widget_values/WidgetValuesProvider';
 import { useWidgetSettingsQuery } from '@/hooks/useWidgetSettingsQuery';
 import type { WidgetSettings as WidgetSettingsType } from '@@/json/widgetSettings';
-import { memo } from 'react';
 import WidgetHeader from './WidgetHeader';
 import WidgetSettings from './WidgetSettings';
 
-const Widget = memo(function Widget() {
+export default function Widget() {
 	const widgetId = useWidgetId();
 	const widgetSettingsQuery = useWidgetSettingsQuery(widgetId);
 	const widgetSettings: WidgetSettingsType = widgetSettingsQuery.data ?? {};
@@ -31,6 +30,4 @@ const Widget = memo(function Widget() {
 			</div>
 		</WidgetValuesProvider>
 	);
-});
-
-export default Widget;
+}

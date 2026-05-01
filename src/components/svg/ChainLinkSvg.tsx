@@ -1,9 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const ChainLinkSvg = memo(function ChainLinkSvg({
-	className,
-}: Props.WithClassName) {
+export default function ChainLinkSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg
@@ -19,6 +16,4 @@ const ChainLinkSvg = memo(function ChainLinkSvg({
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default ChainLinkSvg;
+}

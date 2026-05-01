@@ -92,9 +92,9 @@ function BadgeOption({ value, label, image, onChange }: BadgeOptionProps) {
 				checked={value}
 				onChange={onChange}
 				onKeyDown={onKeyDown}
-				className='group/check flex rounded-1 border border-zinc-400 bg-zinc-200 px-1.5 py-0.5 font-semibold text-zinc-500 -outline-offset-1 outline-lime-600 data-checked:border-black data-checked:bg-zinc-700! data-checked:text-white! data-checked:text-shadow-[0_1px_#0006] data-over:bg-lime-200 data-over:text-green-800 data-over:outline-3'
+				className='group/check input-select-option'
 			>
-				<Label className='flex cursor-pointer items-center gap-1 text-3.5 select-none'>
+				<Label className='flex cursor-pointer items-center gap-1 select-none'>
 					<img
 						src={image}
 						className='size-4 rounded-0.5 grayscale group-data-checked/check:grayscale-0 group-data-over/check:grayscale-0'

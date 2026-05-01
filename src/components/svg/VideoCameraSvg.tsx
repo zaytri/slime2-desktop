@@ -1,9 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const VideoCameraSvg = memo(function VideoCameraSvg({
-	className,
-}: Props.WithClassName) {
+export default function VideoCameraSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg viewBox='0 0 112.16 122.88' fillRule='evenodd' fill='currentColor'>
@@ -11,6 +8,4 @@ const VideoCameraSvg = memo(function VideoCameraSvg({
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default VideoCameraSvg;
+}

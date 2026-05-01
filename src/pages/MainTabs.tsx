@@ -1,4 +1,5 @@
 import FontLoader from '@/components/FontLoader';
+import MoveModeBanner from '@/components/MoveModeBanner';
 import GearSvg from '@/components/svg/GearSvg';
 import GridSvg from '@/components/svg/GridSvg';
 import UserSvg from '@/components/svg/UserSvg';
@@ -10,7 +11,6 @@ import { useSettings } from '@/contexts/settings/useSettings';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import useTileSwap from '@/contexts/tile_swap/useTileSwap';
 import WidgetsPanelProvider from '@/contexts/widgets_panel/WidgetsPanelProvider';
-import { getTileIconSrc } from '@/helpers/media';
 import { TileColor } from '@/helpers/tileColors';
 import useTwitchBot from '@/hooks/useTwitchBot';
 import useTwitchWebsocket from '@/hooks/useTwitchWebsocket';
@@ -182,7 +182,7 @@ export default MainTabs;
 
 const StyledTab = forwardRef<
 	ComponentRef<typeof Tab>,
-	TabProps & { icon?: React.ElementType }
+	TabProps & { icon: SvgComponent }
 >(function StyledTab(props, ref) {
 	const { children, className, icon: Icon, ...rest } = props;
 
@@ -195,16 +195,14 @@ const StyledTab = forwardRef<
 			ref={ref}
 			{...rest}
 			className={clsx(
-				'group relative flex h-10 flex-1 overflow-hidden rounded-t-4 border border-white/50 border-b-zinc-800 px-4 py-1 text-left text-6 transition-[height] ease-out focus-visible:outline-4 focus-visible:outline-offset-4! focus-visible:outline-white aria-selected:h-full aria-selected:border-b-0 aria-selected:text-9 over:h-full',
+				'group relative flex h-10 flex-1 overflow-hidden rounded-t-4 border border-white/50 border-b-zinc-800 px-4 py-1 text-left text-5 transition-[height] ease-out focus-visible:outline-4 focus-visible:outline-offset-4! focus-visible:outline-white aria-selected:h-full aria-selected:border-b-0 aria-selected:text-7 over:h-full',
 				props.className,
 			)}
 		>
 			<div className='absolute inset-0 bottom-[45%] bg-linear-to-b from-white/30 to-white/20'></div>
 			<div className='flex flex-1 items-center gap-3 drop-shadow-[0_0_5px_#FFFB]'>
-				{Icon && (
-					<Icon className='aspect-square h-5 w-auto group-aria-selected:h-7'></Icon>
-				)}
-				<div className='font-poetsen'>{children}</div>
+				<Icon className='-mb-px h-5 group-aria-selected:-mb-0.5 group-aria-selected:h-7'></Icon>
+				<div className='font-mochiy'>{children}</div>
 			</div>
 		</Tab>
 	);
@@ -242,40 +240,4 @@ function AccountsNotification() {
 	} else {
 		return null;
 	}
-}
-
-type MoveModeBannerProps = {
-	slotId: string;
-	onEscape: VoidFunction;
-};
-
-function MoveModeBanner({ slotId, onEscape }: MoveModeBannerProps) {
-	const { tileMeta } = useTileMeta(slotId);
-
-	return (
-		<div className='absolute inset-0 z-20 flex items-center justify-center gap-8 bg-black/85 px-4 font-fredoka text-7 font-medium text-white backdrop-blur-xs text-shadow-[0_1px_black]'>
-			<div className='flex items-center gap-2'>
-				<p>Moving</p>
-				<div className='flex items-center gap-2 rounded-2 border-2 border-lime-200 px-2 py-1'>
-					<img
-						src={getTileIconSrc(slotId, tileMeta.icon)}
-						className='max-h-10 max-w-20 rounded-1 object-contain smooth-image'
-					/>
-					<p className='line-clamp-1 text-6 text-lime-200'>{tileMeta.name}</p>
-				</div>
-			</div>
-
-			<div className='flex items-center gap-4'>
-				<p className='whitespace-nowrap'>To exit move mode, press</p>
-				<button
-					type='button'
-					className='relative flex overflow-hidden rounded-2 border border-zinc-100 bg-zinc-200 bg-linear-to-b from-zinc-200 to-zinc-300 px-2 py-1.5 font-fredoka text-5 font-medium text-zinc-700 outline-2 outline-offset-0! outline-zinc-400 over:bg-lime-200 over:bg-none over:text-lime-800 over:outline-4 over:-outline-offset-1! over:outline-lime-600'
-					onClick={onEscape}
-				>
-					<div className='absolute inset-0 bottom-1/2 bg-linear-to-b from-white/30 to-white/20'></div>
-					<p className='relative flex-1 text-shadow-[0_1px_3px_#FFFB]'>Esc</p>
-				</button>
-			</div>
-		</div>
-	);
 }

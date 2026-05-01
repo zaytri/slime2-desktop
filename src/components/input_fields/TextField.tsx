@@ -1,6 +1,5 @@
 import InputDescription from '@/components/input_fields/InputDescription';
 import { Field, Input, Label } from '@headlessui/react';
-import { memo } from 'react';
 
 type TextFieldProps = {
 	label?: string;
@@ -12,7 +11,7 @@ type TextFieldProps = {
 	onEnterKey?: VoidFunction;
 };
 
-const TextField = memo(function TextField({
+export default function TextField({
 	label,
 	placeholder,
 	description,
@@ -50,6 +49,4 @@ const TextField = memo(function TextField({
 			<InputDescription>{description}</InputDescription>
 		</Field>
 	);
-});
-
-export default TextField;
+}

@@ -10,7 +10,6 @@ import {
 	ListboxOptions,
 } from '@headlessui/react';
 import clsx from 'clsx';
-import { memo } from 'react';
 
 type FontFieldProps = {
 	value: string;
@@ -20,7 +19,7 @@ type FontFieldProps = {
 	placeholder?: string;
 };
 
-const FontField = memo(function FontField({
+export default function FontField({
 	value,
 	onChange,
 	label,
@@ -51,7 +50,7 @@ const FontField = memo(function FontField({
 
 				<ListboxOptions
 					anchor={{ to: 'bottom', gap: 0, padding: 48 }}
-					className='z-10 flex w-(--button-width) flex-col rounded-2 bg-white outline-4 -outline-offset-2 outline-lime-600'
+					className='z-10 flex w-(--button-width) flex-col rounded-2 bg-white shadow-[0_2px_10px_#0006] outline-4 -outline-offset-2 outline-lime-600'
 				>
 					{isLoading ? (
 						<p className='px-3 py-1'>Loading local fonts...</p>
@@ -85,6 +84,4 @@ const FontField = memo(function FontField({
 			<InputDescription>{description}</InputDescription>
 		</Field>
 	);
-});
-
-export default FontField;
+}

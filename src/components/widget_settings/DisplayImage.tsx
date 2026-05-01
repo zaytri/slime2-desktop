@@ -1,6 +1,5 @@
 import { useWidgetId } from '@/contexts/widget_id/useWidgetId';
 import { getWidgetMediaCoreSrc } from '@/helpers/media';
-import { memo } from 'react';
 
 type DisplayImageProps = {
 	label: string;
@@ -8,11 +7,7 @@ type DisplayImageProps = {
 	alt: string;
 };
 
-const DisplayImage = memo(function DisplayImage({
-	label,
-	src,
-	alt,
-}: DisplayImageProps) {
+export default function DisplayImage({ label, src, alt }: DisplayImageProps) {
 	const widgetId = useWidgetId();
 
 	return (
@@ -26,6 +21,4 @@ const DisplayImage = memo(function DisplayImage({
 			/>
 		</div>
 	);
-});
-
-export default DisplayImage;
+}

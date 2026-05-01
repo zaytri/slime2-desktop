@@ -1,9 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const ChatBubbleSvg = memo(function ChatBubbleSvg({
-	className,
-}: Props.WithClassName) {
+export default function ChatBubbleSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg fill='currentColor' viewBox='0 0 121.83 122.88'>
@@ -14,6 +11,4 @@ const ChatBubbleSvg = memo(function ChatBubbleSvg({
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default ChatBubbleSvg;
+}

@@ -1,10 +1,8 @@
 import useWidgetSettingParent from '@/contexts/widget_setting_parent/useWidgetSettingParent';
 import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidgetValueKey';
 import useWidgetValues from '@/contexts/widget_values/useWidgetValues';
-import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValuesDispatch';
 import { i18nStringTransform, i18nUndefined } from '@/helpers/i18n';
 import type { WidgetSetting as WidgetSettingType } from '@@/json/widgetSettings';
-import { memo } from 'react';
 import WidgetSetting from './WidgetSetting';
 
 type SettingsGroupProps = {
@@ -14,12 +12,9 @@ type SettingsGroupProps = {
 		| WidgetSettingType.MultiSection['settings'];
 };
 
-const SettingsGroup = memo(function SettingsGroup({
-	settings,
-}: SettingsGroupProps) {
+export default function SettingsGroup({ settings }: SettingsGroupProps) {
 	const values = useWidgetValues();
 	const parentId = useWidgetSettingParent();
-	const { set } = useWidgetValuesDispatch();
 
 	return (
 		<>
@@ -36,8 +31,6 @@ const SettingsGroup = memo(function SettingsGroup({
 					});
 
 				if (!conditionsMet) return null;
-
-				const widgetValue = values[id];
 
 				const label = i18nStringTransform(setting.label);
 
@@ -56,8 +49,6 @@ const SettingsGroup = memo(function SettingsGroup({
 					<WidgetSetting
 						key={id}
 						id={id}
-						widgetValue={widgetValue}
-						setWidgetValue={set}
 						{...setting}
 						label={label}
 						placeholder={placeholder}
@@ -68,6 +59,4 @@ const SettingsGroup = memo(function SettingsGroup({
 			})}
 		</>
 	);
-});
-
-export default SettingsGroup;
+}

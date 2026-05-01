@@ -1,9 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const ArrowLeftSvg = memo(function ArrowLeftSvg({
-	className,
-}: Props.WithClassName) {
+export default function ArrowLeftSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg
@@ -19,6 +16,4 @@ const ArrowLeftSvg = memo(function ArrowLeftSvg({
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default ArrowLeftSvg;
+}

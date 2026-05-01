@@ -2,7 +2,6 @@ import InputDescription from '@/components/input_fields/InputDescription';
 import CheckSvg from '@/components/svg/CheckSvg';
 import XSvg from '@/components/svg/XSvg';
 import { Field, Label, Switch } from '@headlessui/react';
-import { memo } from 'react';
 
 type ToggleFieldProps = {
 	value: boolean;
@@ -11,7 +10,7 @@ type ToggleFieldProps = {
 	description?: string;
 };
 
-const ToggleField = memo(function ToggleField({
+export default function ToggleField({
 	value,
 	onChange,
 	label,
@@ -62,6 +61,4 @@ const ToggleField = memo(function ToggleField({
 			<InputDescription>{description}</InputDescription>
 		</Field>
 	);
-});
-
-export default ToggleField;
+}

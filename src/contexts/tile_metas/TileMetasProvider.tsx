@@ -1,5 +1,5 @@
 import { loadTileMeta } from '@/helpers/json/tileMeta';
-import { memo, useCallback, useEffect, useReducer } from 'react';
+import { useCallback, useEffect, useReducer } from 'react';
 import useTileLocations from '../tile_locations/useTileLocations';
 import { TileMetasContext } from './useTileMetas';
 import {
@@ -7,9 +7,7 @@ import {
 	tileMetasReducer,
 } from './useTileMetasDispatch';
 
-const TileMetasProvider = memo(function TileMetasProvider({
-	children,
-}: Props.WithChildren) {
+export default function TileMetasProvider({ children }: Props.WithChildren) {
 	const locations = useTileLocations();
 	const [tileMetas, dispatch] = useReducer(tileMetasReducer, {});
 
@@ -47,6 +45,4 @@ const TileMetasProvider = memo(function TileMetasProvider({
 			</TileMetasDispatchContext>
 		</TileMetasContext>
 	);
-});
-
-export default TileMetasProvider;
+}

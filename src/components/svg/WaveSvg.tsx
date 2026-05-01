@@ -1,7 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const WaveSvg = memo(function WaveSvg({ className }: Props.WithClassName) {
+export default function WaveSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg viewBox='0 0 400 400' fill='currentColor'>
@@ -9,6 +8,4 @@ const WaveSvg = memo(function WaveSvg({ className }: Props.WithClassName) {
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default WaveSvg;
+}

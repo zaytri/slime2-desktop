@@ -1,7 +1,7 @@
+import useWidgetValueKey from '@/contexts/widget_setting_parent/useWidgetValueKey';
+import { useWidgetValue } from '@/contexts/widget_values/useWidgetValue';
 import { i18nStringTransform } from '@/helpers/i18n';
 import type { WidgetSetting as WidgetSettingType } from '@/helpers/json/widgetSettings';
-import type { WidgetValue } from '@@/json/widgetValues';
-import { useCallback } from 'react';
 import { z } from 'zod/mini';
 import ColorField from '../input_fields/ColorField';
 import DropdownField from '../input_fields/DropdownField';
@@ -25,8 +25,6 @@ import WidgetButton from './WidgetButton';
 
 type WidgetSettingProps = {
 	id: string;
-	widgetValue: WidgetValue;
-	setWidgetValue: (key: string, value: WidgetValue) => void;
 	label: string;
 	placeholder?: string;
 	description?: string;
@@ -35,14 +33,15 @@ type WidgetSettingProps = {
 
 export default function WidgetSetting({
 	id,
-	widgetValue,
-	setWidgetValue,
 	label,
 	placeholder,
 	description,
 	alt,
 	...setting
 }: WidgetSettingProps) {
+	const key = useWidgetValueKey(id);
+	const { widgetValue, setWidgetValue } = useWidgetValue(key);
+
 	const options =
 		'options' in setting
 			? setting.options.map(option => {
@@ -52,13 +51,6 @@ export default function WidgetSetting({
 					};
 				})
 			: [];
-
-	const onChange = useCallback(
-		(value: WidgetValue) => {
-			setWidgetValue(id, value);
-		},
-		[id],
-	);
 
 	switch (setting.type) {
 		case 'text-display': {
@@ -74,7 +66,7 @@ export default function WidgetSetting({
 					value={z
 						.catch(z.string(), setting.defaultValue ?? '')
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					placeholder={placeholder}
 					description={description}
 				/>
@@ -87,7 +79,7 @@ export default function WidgetSetting({
 					value={z
 						.catch(z.string(), setting.defaultValue ?? '')
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					placeholder={placeholder}
 					description={description}
 				/>
@@ -100,7 +92,7 @@ export default function WidgetSetting({
 					values={z
 						.catch(z.array(z.string()), setting.defaultValue ?? [])
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					placeholder={placeholder}
 					description={description}
 				/>
@@ -113,7 +105,7 @@ export default function WidgetSetting({
 					value={z
 						.catch(z.nullable(z.number()), setting.defaultValue ?? null)
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					placeholder={placeholder}
 					description={description}
 					step={setting.step}
@@ -136,7 +128,7 @@ export default function WidgetSetting({
 								: Math.max(Math.min(setting.defaultValue, max), min),
 						)
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					description={description}
 					step={setting.step}
 					min={min}
@@ -154,7 +146,7 @@ export default function WidgetSetting({
 							setting.defaultValue ?? options[0].value,
 						)
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					options={options}
 					placeholder={placeholder}
 					description={description}
@@ -171,7 +163,7 @@ export default function WidgetSetting({
 							setting.defaultValue ?? options[0].value,
 						)
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					options={options}
 					description={description}
 				/>
@@ -187,7 +179,7 @@ export default function WidgetSetting({
 							setting.defaultValue ?? [],
 						)
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					options={options}
 					description={description}
 				/>
@@ -200,7 +192,7 @@ export default function WidgetSetting({
 					value={z
 						.catch(z.boolean(), setting.defaultValue ?? false)
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					description={description}
 				/>
 			);
@@ -212,7 +204,7 @@ export default function WidgetSetting({
 					value={z
 						.catch(z.string(), setting.defaultValue ?? '')
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					description={description}
 					placeholder={placeholder}
 				/>
@@ -225,7 +217,7 @@ export default function WidgetSetting({
 					value={z
 						.catch(z.string(), setting.defaultValue ?? '')
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					description={description}
 					placeholder={placeholder}
 				/>
@@ -239,7 +231,7 @@ export default function WidgetSetting({
 					value={z
 						.catch(z.string(), setting.defaultValue ?? '')
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					description={description}
 				/>
 			);
@@ -252,7 +244,7 @@ export default function WidgetSetting({
 					value={z
 						.catch(z.string(), setting.defaultValue ?? '')
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					description={description}
 				/>
 			);
@@ -265,7 +257,7 @@ export default function WidgetSetting({
 					value={z
 						.catch(z.string(), setting.defaultValue ?? '')
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					description={description}
 				/>
 			);
@@ -278,7 +270,7 @@ export default function WidgetSetting({
 					values={z
 						.catch(z.array(z.string()), setting.defaultValue ?? [])
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					description={description}
 				/>
 			);
@@ -291,7 +283,7 @@ export default function WidgetSetting({
 					values={z
 						.catch(z.array(z.string()), setting.defaultValue ?? [])
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					description={description}
 				/>
 			);
@@ -304,17 +296,17 @@ export default function WidgetSetting({
 					values={z
 						.catch(z.array(z.string()), setting.defaultValue ?? [])
 						.parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					description={description}
 				/>
 			);
 		}
 		case 'button': {
-			return <WidgetButton id={id} label={label} />;
+			return <WidgetButton id={key} label={label} />;
 		}
 		case 'section': {
 			return (
-				<SettingSection id={id} label={label}>
+				<SettingSection id={key} label={label}>
 					<SettingsGroup settings={setting.settings} />
 				</SettingSection>
 			);
@@ -322,10 +314,10 @@ export default function WidgetSetting({
 		case 'multi-section': {
 			return (
 				<SettingMultiSection
-					id={id}
+					id={key}
 					label={label}
 					values={z.catch(z.array(z.string()), []).parse(widgetValue)}
-					onChange={onChange}
+					onChange={setWidgetValue}
 					settings={setting.settings}
 				/>
 			);

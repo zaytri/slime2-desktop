@@ -1,12 +1,10 @@
-import { memo } from 'react';
-
 type ColorGridPointerProps = {
 	left?: string | number;
 	top?: string | number;
 	color: string;
 };
 
-const ColorGridPointer = memo(function ColorGridPointer({
+export default function ColorGridPointer({
 	left,
 	top,
 	color,
@@ -20,6 +18,4 @@ const ColorGridPointer = memo(function ColorGridPointer({
 			<div className='absolute inset-0 bottom-5/12 rounded-b-100% border-t border-white/50 bg-linear-to-b from-white/40 to-white/15'></div>
 		</div>
 	);
-});
-
-export default ColorGridPointer;
+}

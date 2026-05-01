@@ -1,7 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const GearSvg = memo(function GearSvg({ className }: Props.WithClassName) {
+export default function GearSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg viewBox='0 0 122.88 122.878' fill='currentColor'>
@@ -13,6 +12,4 @@ const GearSvg = memo(function GearSvg({ className }: Props.WithClassName) {
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default GearSvg;
+}

@@ -31,15 +31,15 @@ export default function AuthTypePage() {
 					value='read'
 					description='Reads event data from this account such as follows, subscriptions, chat messages, etc.'
 				>
-					<BookSvg className='size-4.5' />
-					<p className='-mb-0.5'>Read Account</p>
+					<BookSvg className='h-4.5' />
+					<p>Read Account</p>
 				</AuthTypeOption>
 				<AuthTypeOption
 					value='bot'
 					description='Can send chat messages from this account.'
 				>
-					<ChatBubbleSvg className='size-4.5' />
-					<p className='-mb-0.5'>Bot Account</p>
+					<ChatBubbleSvg className='h-4.5' />
+					<p>Bot Account</p>
 				</AuthTypeOption>
 			</RadioGroup>
 
@@ -72,18 +72,18 @@ function AuthTypeOption({
 	description,
 }: Props.WithChildren<AuthTypeOptionProps>) {
 	return (
-		<Field className='rounded-2 bg-white text-zinc-600 outline-2 -outline-offset-1 outline-zinc-300 has-data-checked:outline-lime-600 over:bg-lime-200 over:text-green-900 over:outline-4 over:outline-lime-600'>
+		<Field className='rounded-2 bg-white text-zinc-600 outline-2 -outline-offset-1 outline-zinc-300 has-data-checked:outline-zinc-800 over:bg-lime-200 over:text-green-900 over:outline-4 over:outline-lime-600'>
 			<Radio
 				value={value}
 				className='group/radio flex cursor-pointer flex-col overflow-hidden rounded-2 outline-offset-4 outline-lime-600 focus-visible:outline-4'
 			>
-				<Label className='relative flex cursor-pointer items-center gap-2 px-3 pt-2 pb-1.5 text-5 font-bold select-none group-data-checked/radio:bg-lime-600 group-data-checked/radio:text-white *:group-data-checked/radio:drop-shadow-[0_1px_#0006]'>
+				<Label className='relative flex cursor-pointer items-center gap-2.5 px-4 pt-2 pb-1.5 font-fredoka text-5 font-medium select-none group-data-checked/radio:bg-zinc-700 group-data-checked/radio:text-white *:group-data-checked/radio:drop-shadow-[0_1px_#0006]'>
 					{children}
 					<div className='absolute top-2 right-3 bottom-1.5 hidden items-center group-data-checked/radio:flex'>
 						<CheckSvg className='size-4.5' />
 					</div>
 				</Label>
-				<Description className='cursor-pointer px-3 pt-1 pb-2 text-3.5 font-semibold'>
+				<Description className='cursor-pointer px-4 pt-1 pb-2 text-3.5 font-semibold'>
 					{description}
 				</Description>
 			</Radio>

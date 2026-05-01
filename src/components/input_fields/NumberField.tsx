@@ -1,6 +1,5 @@
 import InputDescription from '@/components/input_fields/InputDescription';
 import { Field, Input, Label } from '@headlessui/react';
-import { memo } from 'react';
 
 type NumberFieldProps = {
 	label: string;
@@ -13,7 +12,7 @@ type NumberFieldProps = {
 	max?: number;
 };
 
-const NumberField = memo(function NumberField({
+export default function NumberField({
 	label,
 	placeholder,
 	description,
@@ -66,6 +65,4 @@ const NumberField = memo(function NumberField({
 			<InputDescription>{description}</InputDescription>
 		</Field>
 	);
-});
-
-export default NumberField;
+}

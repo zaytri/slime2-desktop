@@ -12,7 +12,7 @@ import { getTileIconSrc } from '@/helpers/media';
 import { DEV_WIDGET_SERVER_PORT, PROD_PORT } from '@/helpers/serverBaseUrl';
 import useEditTile from '@/hooks/useEditTile';
 import CopyPasteWidgetDataDialog from '@@/dialog/CopyPasteWidgetDataDialog';
-import ExportZipDialog from '@@/dialog/ExportZip';
+import ExportZipDialog from '@@/dialog/ExportZipDialog';
 import OverlayURLDialog from '@@/dialog/OverlayURLDialog';
 import ArrowLeftRightSvg from '@@/svg/ArrowLeftRightSvg';
 import ArrowLeftSvg from '@@/svg/ArrowLeftSvg';
@@ -56,7 +56,7 @@ export default function WidgetHeader() {
 				<HeaderIcon src={getTileIconSrc(widgetId, tileMeta.icon)} />
 			)}
 
-			<h1 className='line-clamp-1 flex-1 font-fredoka text-6 font-medium text-white text-shadow-[0_2px_black]'>
+			<h1 className='line-clamp-1 flex-1 font-mochiy text-5 text-white text-shadow-[0_2px_black]'>
 				{tileMeta.name}
 			</h1>
 
@@ -125,7 +125,7 @@ export default function WidgetHeader() {
 
 			<HeaderButton
 				label='Edit'
-				icon={<PencilSvg className='size-5' />}
+				icon={PencilSvg}
 				className='border-cyan-300 bg-cyan-300 from-cyan-300 to-sky-400 text-sky-900 over:outline-cyan-600'
 				onClick={() => {
 					editTile(widgetId, 'widget');
@@ -137,7 +137,7 @@ export default function WidgetHeader() {
 			{widgetMeta.type.includes('overlay') && (
 				<HeaderButton
 					label='Overlay URL'
-					icon={<ChainLinkSvg className='size-5' />}
+					icon={ChainLinkSvg}
 					className='border-yellow-300 bg-yellow-300 from-yellow-300 to-amber-400 text-amber-900 over:outline-yellow-600'
 					onClick={() => {
 						openDialog(
@@ -161,8 +161,8 @@ function ImportExportButton() {
 	return (
 		<HeaderButton
 			label='Copy/Paste'
-			icon={<ArrowLeftRightSvg className='size-5' />}
-			className='border-lime-300 bg-lime-300 from-lime-300 to-green-400 text-lime-900 over:outline-lime-600'
+			icon={ArrowLeftRightSvg}
+			className='border-lime-400 bg-lime-300 from-lime-400 to-green-400 text-green-900 over:outline-green-600'
 			onClick={() => {
 				openDialog(
 					'Copy/Paste Widget Settings',

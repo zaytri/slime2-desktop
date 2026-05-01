@@ -1,6 +1,5 @@
 import InputDescription from '@/components/input_fields/InputDescription';
 import { Field, Input, Label } from '@headlessui/react';
-import { memo } from 'react';
 
 type SliderFieldProps = {
 	label: string;
@@ -12,7 +11,7 @@ type SliderFieldProps = {
 	max?: number;
 };
 
-const SliderField = memo(function SliderField({
+export default function SliderField({
 	label,
 	value,
 	onChange,
@@ -77,6 +76,4 @@ const SliderField = memo(function SliderField({
 			<InputDescription>{description}</InputDescription>
 		</Field>
 	);
-});
-
-export default SliderField;
+}

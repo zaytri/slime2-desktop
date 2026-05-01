@@ -1,6 +1,5 @@
 import { hsvaToString } from '@/helpers/colorConversion';
 import { HsvaColor, Saturation, SaturationProps } from '@uiw/react-color';
-import { memo } from 'react';
 import ColorGridPointer from './ColorGridPointer';
 
 type SaturationGridProps = {
@@ -8,7 +7,7 @@ type SaturationGridProps = {
 	onChange: NonNullable<SaturationProps['onChange']>;
 };
 
-const SaturationGrid = memo(function SaturationGrid({
+export default function SaturationGrid({
 	onChange,
 	hsva,
 }: SaturationGridProps) {
@@ -31,6 +30,4 @@ const SaturationGrid = memo(function SaturationGrid({
 			/>
 		</div>
 	);
-});
-
-export default SaturationGrid;
+}

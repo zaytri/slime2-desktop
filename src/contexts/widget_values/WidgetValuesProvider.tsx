@@ -4,7 +4,7 @@ import {
 	saveWidgetValues,
 } from '@/helpers/json/widgetValues';
 import { sendWidgetValues } from '@/helpers/widgetMessage';
-import { memo, useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { WidgetValuesContext } from './useWidgetValues';
 import {
 	WidgetValuesDispatchContext,
@@ -16,7 +16,7 @@ type WidgetValuesProviderProps = {
 	settings: WidgetSettings;
 };
 
-const WidgetValuesProvider = memo(function WidgetValuesProvider({
+export default function WidgetValuesProvider({
 	children,
 	settings,
 	id,
@@ -49,6 +49,4 @@ const WidgetValuesProvider = memo(function WidgetValuesProvider({
 			</WidgetValuesDispatchContext>
 		</WidgetValuesContext>
 	);
-});
-
-export default WidgetValuesProvider;
+}

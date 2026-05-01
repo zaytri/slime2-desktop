@@ -1,7 +1,6 @@
-import { memo } from 'react';
 import { WidgetSettingParentContext } from './useWidgetSettingParent';
 
-const WidgetSettingParentProvider = memo(function WidgetSettingParentProvider({
+export default function WidgetSettingParentProvider({
 	id,
 	children,
 }: Props.WithId<Props.WithChildren>) {
@@ -10,6 +9,4 @@ const WidgetSettingParentProvider = memo(function WidgetSettingParentProvider({
 			{children}
 		</WidgetSettingParentContext>
 	);
-});
-
-export default WidgetSettingParentProvider;
+}

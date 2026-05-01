@@ -1,7 +1,6 @@
 import InputDescription from '@/components/input_fields/InputDescription';
 import { Field, Label, Textarea } from '@headlessui/react';
 import clsx from 'clsx';
-import { memo } from 'react';
 
 type TextAreaFieldProps = {
 	label: string;
@@ -14,7 +13,7 @@ type TextAreaFieldProps = {
 	spellCheck?: boolean;
 };
 
-const TextAreaField = memo(function TextAreaField({
+export default function TextAreaField({
 	label,
 	placeholder,
 	description,
@@ -46,6 +45,4 @@ const TextAreaField = memo(function TextAreaField({
 			<InputDescription>{description}</InputDescription>
 		</Field>
 	);
-});
-
-export default TextAreaField;
+}

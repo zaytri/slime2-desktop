@@ -8,7 +8,7 @@ import {
 	scrollToElement,
 	widgetSettingsScrollContainerId,
 } from '@/helpers/scroll';
-import { memo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import WidgetSettingsSidebar from './WidgetSettingsSidebar';
 
 type WidgetSettingsProps = {
@@ -16,7 +16,7 @@ type WidgetSettingsProps = {
 	settings: WidgetSettings;
 };
 
-const WidgetSettings = memo(function WidgetSettings({
+export default function WidgetSettings({
 	widgetId,
 	settings,
 }: WidgetSettingsProps) {
@@ -139,6 +139,4 @@ const WidgetSettings = memo(function WidgetSettings({
 			</section>
 		</div>
 	);
-});
-
-export default WidgetSettings;
+}

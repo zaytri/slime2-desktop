@@ -3,7 +3,7 @@ import ArrowTurnDownLeftSvg from '@/components/svg/ArrowTurnDownLeftSvg';
 import XSvg from '@/components/svg/XSvg';
 import { Field, Input, Label } from '@headlessui/react';
 import clsx from 'clsx';
-import { memo, useState } from 'react';
+import { useState } from 'react';
 
 type MultiTextFieldProps = {
 	label: string;
@@ -13,7 +13,7 @@ type MultiTextFieldProps = {
 	placeholder?: string;
 };
 
-const MultiTextField = memo(function MultiTextField({
+export default function MultiTextField({
 	label,
 	values,
 	onChange,
@@ -146,6 +146,4 @@ const MultiTextField = memo(function MultiTextField({
 			<InputDescription>{description}</InputDescription>
 		</Field>
 	);
-});
-
-export default MultiTextField;
+}

@@ -1,9 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const TriangleDownSvg = memo(function TriangleDownSvg({
-	className,
-}: Props.WithClassName) {
+export default function TriangleDownSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg
@@ -22,6 +19,4 @@ const TriangleDownSvg = memo(function TriangleDownSvg({
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default TriangleDownSvg;
+}

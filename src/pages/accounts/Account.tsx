@@ -25,13 +25,12 @@ import {
 	MenuProvider,
 } from '@ariakit/react';
 import clsx from 'clsx';
-import { memo } from 'react';
 
 type AccountProps = {
 	account: AccountType;
 };
 
-const Account = memo(function Account({ account }: AccountProps) {
+export default function Account({ account }: AccountProps) {
 	const { openDialog } = useDialog();
 	const { removeAccount, setDefaultAccount } = useAccountsDispatch();
 	const { setAccount } = useAccount(account.id);
@@ -213,6 +212,4 @@ const Account = memo(function Account({ account }: AccountProps) {
 			</div>
 		</div>
 	);
-});
-
-export default Account;
+}

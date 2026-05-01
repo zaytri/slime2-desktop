@@ -1,6 +1,5 @@
 import { hsvaToString } from '@/helpers/colorConversion';
 import { Alpha, HsvaColor } from '@uiw/react-color';
-import { memo } from 'react';
 import ColorSliderPointer from './ColorSliderPointer';
 
 type AlphaSliderProps = {
@@ -8,10 +7,7 @@ type AlphaSliderProps = {
 	onChange: (newAlpha: { a: number }) => void;
 };
 
-const AlphaSlider = memo(function AlphaSlider({
-	hsva,
-	onChange,
-}: AlphaSliderProps) {
+export default function AlphaSlider({ hsva, onChange }: AlphaSliderProps) {
 	return (
 		<div className='h-48 rounded-1 border border-white outline outline-zinc-400 has-focus-visible:outline-3 has-focus-visible:outline-black over:outline-3 over:outline-black'>
 			<Alpha
@@ -30,6 +26,4 @@ const AlphaSlider = memo(function AlphaSlider({
 			/>
 		</div>
 	);
-});
-
-export default AlphaSlider;
+}

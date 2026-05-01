@@ -67,7 +67,7 @@ function SelectedTilePreview({ tile, tileMeta }: SelectedTilePreviewProps) {
 	if (!tile) {
 		return (
 			<div className='flex flex-1 flex-col items-center gap-2 font-bold text-white text-shadow-[0_2px_black]'>
-				<h1 className='text-6'>Welcome to Slime2!</h1>
+				<h1 className='font-mochiy text-6'>Welcome to Slime2!</h1>
 				<img className='h-48' src={slime2tv}></img>
 				<p>Select a slime tile to get started</p>
 			</div>
@@ -81,7 +81,7 @@ function SelectedTilePreview({ tile, tileMeta }: SelectedTilePreviewProps) {
 					<p className='text-center text-5'>Move into this empty slot?</p>
 				) : (
 					<>
-						<h2 className='text-6'>Click to create!</h2>
+						<h2 className='font-mochiy text-5'>Click to create!</h2>
 						<img className='h-48' src={slime2tv}></img>
 
 						<div className='flex flex-1 items-end'>
@@ -125,7 +125,7 @@ function SelectedTilePreview({ tile, tileMeta }: SelectedTilePreviewProps) {
 				</div>
 			</div>
 
-			<h2 className='line-clamp-2 text-center text-5 font-bold text-white text-shadow-[0_2px_black]'>
+			<h2 className='line-clamp-2 text-center font-mochiy text-4.5 text-white text-shadow-[0_2px_black]'>
 				{tileMeta.name}
 			</h2>
 			{tile.type === 'widget' && <WidgetTags widgetId={tile.id} />}

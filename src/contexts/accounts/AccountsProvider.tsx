@@ -5,16 +5,14 @@ import {
 	loadAccounts,
 } from '@/helpers/json/accounts';
 import twitchApi from '@/helpers/services/twitch/twitchApi';
-import { memo, useEffect, useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { AccountsContext } from './useAccounts';
 import {
 	AccountsDispatchContext,
 	accountsReducer,
 } from './useAccountsDispatch';
 
-const AccountsProvider = memo(function AccountsProvider({
-	children,
-}: Props.WithChildren) {
+export default function AccountsProvider({ children }: Props.WithChildren) {
 	const [accounts, dispatch] = useReducer(accountsReducer, {});
 
 	function setAccounts(accounts: Accounts) {
@@ -87,6 +85,4 @@ const AccountsProvider = memo(function AccountsProvider({
 			</AccountsDispatchContext>
 		</AccountsContext>
 	);
-});
-
-export default AccountsProvider;
+}

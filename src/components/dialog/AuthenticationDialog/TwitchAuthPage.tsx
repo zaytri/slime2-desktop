@@ -9,13 +9,13 @@ import twitchApi from '@/helpers/services/twitch/twitchApi';
 import twitchAuth from '@/helpers/services/twitch/twitchAuth';
 import { Description, Field, Input, Label } from '@headlessui/react';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { memo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AuthenticationContext, AuthenticationPages } from '.';
 import DialogCancelButton from '../DialogButton/DialogCancelButton';
 
 const SERVICE: Account['service'] = 'twitch';
 
-const TwitchAuthPage = memo(function TwitchAuthPage() {
+export default function TwitchAuthPage() {
 	const { type, setAccountId } = usePageContext<AuthenticationContext>();
 	const { setPage } = usePage<AuthenticationPages>();
 
@@ -112,12 +112,12 @@ const TwitchAuthPage = memo(function TwitchAuthPage() {
 					<div className='input-wrapper flex w-full overflow-visible p-0'>
 						<Input
 							value={dcf.user_code}
-							className='min-w-0 flex-1 pr-1 pl-2 text-7 font-bold tracking-[0.2em] input-class'
+							className='min-w-0 flex-1 pr-1 pl-6 text-7 font-bold tracking-[0.2em] input-class'
 							readOnly
 						/>
 						<button
 							type='button'
-							className='relative flex rounded-2 border border-white bg-lime-200 bg-linear-to-b from-lime-200 to-lime-300 p-2 font-bold text-lime-800 outline-2 outline-offset-0! outline-lime-600 over:bg-lime-200 over:bg-none over:text-lime-800 over:outline-4 over:outline-lime-600'
+							className='relative flex rounded-2 border border-white bg-lime-200 bg-linear-to-b from-lime-200 to-lime-300 p-2 font-fredoka font-medium text-lime-800 outline-2 outline-offset-0! outline-lime-600 over:bg-lime-200 over:bg-none over:text-lime-800 over:outline-4 over:outline-lime-600'
 							onClick={async () => {
 								await writeText(dcf.user_code);
 								setCopied(true);
@@ -174,6 +174,4 @@ const TwitchAuthPage = memo(function TwitchAuthPage() {
 			</div>
 		</div>
 	);
-});
-
-export default TwitchAuthPage;
+}

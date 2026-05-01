@@ -1,7 +1,6 @@
-import { memo } from 'react';
 import SvgWrapper from './SvgWrapper';
 
-const ShieldSvg = memo(function ShieldSvg({ className }: Props.WithClassName) {
+export default function ShieldSvg({ className }: Props.WithClassName) {
 	return (
 		<SvgWrapper className={className}>
 			<svg viewBox='0 0 111.824 122.88' fill='currentColor'>
@@ -13,6 +12,4 @@ const ShieldSvg = memo(function ShieldSvg({ className }: Props.WithClassName) {
 			</svg>
 		</SvgWrapper>
 	);
-});
-
-export default ShieldSvg;
+}

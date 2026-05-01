@@ -1,11 +1,9 @@
-import { memo } from 'react';
-
 type ColorSliderPointerProps = {
 	top?: string;
 	color: string;
 };
 
-const ColorSliderPointer = memo(function ColorSliderPointer({
+export default function ColorSliderPointer({
 	top,
 	color,
 }: ColorSliderPointerProps) {
@@ -22,6 +20,4 @@ const ColorSliderPointer = memo(function ColorSliderPointer({
 			<div className='absolute inset-0 bottom-1/2 border-t border-white/50 bg-linear-to-b from-white/40 to-white/15'></div>
 		</div>
 	);
-});
-
-export default ColorSliderPointer;
+}
