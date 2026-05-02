@@ -1,4 +1,5 @@
 import { deepCopyObject } from '@/contexts/common';
+import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidgetValueKey';
 import { sendWebsocketMessage } from './commands';
 import { WidgetSetting, WidgetSettings } from './json/widgetSettings';
 import type { WidgetValues } from './json/widgetValues';
@@ -152,7 +153,10 @@ function mergeDefaultValues(
 					subsections.forEach(subsectionId => {
 						Object.entries(setting.settings).forEach(
 							([subsettingId, subsetting]) => {
-								const fullSubsettingId = `${subsectionId}.${subsettingId}`;
+								const fullSubsettingId = getWidgetValueChildKey(
+									subsectionId,
+									subsettingId,
+								);
 
 								mergeValue(fullSubsettingId, subsetting, mergedValues);
 							},
@@ -191,5 +195,13 @@ function mergeValue(
 		values[settingId] === undefined
 	) {
 		values[settingId] = setting.defaultValue;
+	}
+
+	// handle volume subvalue for audio and video
+	if (setting.type === 'audio-input' || setting.type === 'video-input') {
+		const volumeId = getWidgetValueChildKey(settingId, 'volume');
+		if (values[volumeId] === undefined) {
+			values[volumeId] = 20; // default volume to 20
+		}
 	}
 }

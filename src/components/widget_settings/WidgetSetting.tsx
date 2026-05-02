@@ -63,14 +63,16 @@ export default function WidgetSetting({
 				})
 			: [];
 
+	function setWidgetValue(value: WidgetValue) {
+		setValue(key, value);
+	}
+
+	// Any subvalues added here also need to be handled in mergeDefaultValues
+
 	// default volume to 20, ensure it's between 0 and 100
 	const volume = z
 		.catch(z.number().check(z.gte(0), z.lte(100)), 20)
 		.parse(getSubValue('volume'));
-
-	function setWidgetValue(value: WidgetValue) {
-		setValue(key, value);
-	}
 
 	function setSubValue(subKey: string, value: WidgetValue) {
 		setValue(getWidgetValueChildKey(key, subKey), value);
