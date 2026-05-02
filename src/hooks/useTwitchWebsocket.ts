@@ -356,6 +356,7 @@ export default function useTwitchWebsocket() {
 			Object.values(accounts).map(async account => {
 				if (account.reauthorize) return;
 
+				// only run on twitch read accounts
 				if (
 					account.service === 'twitch' &&
 					account.type === 'read' &&

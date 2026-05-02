@@ -79,6 +79,20 @@ const twitchApi = {
 		);
 	},
 
+	async getChannelFollower(
+		accountId: string,
+		broadcasterId: string,
+		userId: string,
+	) {
+		return twitchApiGet<Twitch.ApiResponse.GetFollowers>(
+			'/channels/followers',
+			accountId,
+			{
+				params: { broadcaster_id: broadcasterId, user_id: userId },
+			},
+		);
+	},
+
 	async sendChatMessage(
 		account_id: string,
 		broadcaster_id: string,

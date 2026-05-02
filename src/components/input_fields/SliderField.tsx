@@ -41,7 +41,24 @@ export default function SliderField({
 			<div className='input-wrapper flex-col'>
 				<Label className='input-label'>{label}</Label>
 
-				<div className='flex items-center gap-2'>
+				<div className='flex items-center gap-2 py-1'>
+					<input
+						autoComplete='off'
+						aria-autocomplete='none'
+						type='number'
+						value={value}
+						min={min}
+						max={max}
+						step={step}
+						className='w-16 rounded-1 bg-zinc-700 text-center font-semibold text-white outline outline-black text-shadow-[0_1px_#0006] over:bg-white over:text-black over:outline-3! over:outline-lime-600 over:text-shadow-none'
+						onChange={onChangeInput}
+						onWheel={event => {
+							// prevents using mouse wheel to increment/decrement number
+							// since mouse wheel also scrolls the entire settings container
+							event.currentTarget.blur();
+						}}
+					/>
+
 					<Input
 						autoComplete='off'
 						aria-autocomplete='none'
@@ -50,25 +67,8 @@ export default function SliderField({
 						min={min}
 						max={max}
 						step={step}
-						className='my-1.5 flex-1 cursor-pointer rounded-full outline-none'
+						className='mx-2 flex-1 cursor-pointer rounded-0.5 outline-offset-3 outline-lime-700'
 						onChange={onChangeInput}
-					/>
-
-					<Input
-						autoComplete='off'
-						aria-autocomplete='none'
-						type='number'
-						value={value}
-						min={min}
-						max={max}
-						step={step}
-						className='w-16 rounded-1 bg-zinc-700 text-center font-semibold text-white outline outline-black text-shadow-[0_1px_#0006] over:bg-lime-200 over:text-lime-800 over:outline-2! over:outline-lime-600 over:text-shadow-none'
-						onChange={onChangeInput}
-						onWheel={event => {
-							// prevents using mouse wheel to increment/decrement number
-							// since mouse wheel also scrolls the entire settings container
-							event.currentTarget.blur();
-						}}
 					/>
 				</div>
 			</div>

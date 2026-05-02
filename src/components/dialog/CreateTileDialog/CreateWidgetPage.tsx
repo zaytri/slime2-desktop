@@ -75,7 +75,7 @@ function DefaultWidgetList({
 						<button
 							key={widgetId}
 							type='button'
-							className='group/button flex flex-1 items-center gap-3 rounded-2 border border-white bg-zinc-100 px-2 py-1 text-zinc-800 outline-2 outline-offset-0! outline-zinc-400 over:bg-lime-200 over:text-green-900 over:outline-4 over:outline-lime-600'
+							className='group/button flex flex-1 items-center gap-3 rounded-2 border border-white bg-zinc-100 px-2 py-1 text-zinc-800 outline-2 outline-offset-0! outline-zinc-400 over:bg-lime-200 over:text-emerald-900 over:outline-4 over:outline-lime-600'
 							onClick={() => {
 								onCreateDefaultWidget(widgetId);
 								closeDialog();

@@ -32,7 +32,7 @@ export default function SettingMultiSection({
 	onChange,
 	settings,
 }: SettingMultiSectionProps) {
-	const { set, duplicate } = useWidgetValuesDispatch();
+	const { setValue: set, duplicate } = useWidgetValuesDispatch();
 	const [newName, setNewName] = useState<string>('');
 
 	const disclosureButtonRef = useRef<HTMLButtonElement>(null);
@@ -54,7 +54,7 @@ export default function SettingMultiSection({
 	}
 
 	return (
-		<Disclosure as='section' className='flex flex-col'>
+		<Disclosure as='section' className='my-1 flex flex-col'>
 			<DisclosureButton
 				className='group/button z-10 flex items-center rounded-2 border border-white bg-zinc-50 bg-linear-to-b from-zinc-50 to-zinc-100 px-4 text-zinc-800 outline-2 outline-zinc-300 text-shadow-[0_1px_white] data-open:rounded-b-0 data-open:bg-none over:bg-lime-200 over:bg-none over:text-green-900 over:outline-4 over:outline-offset-0! over:outline-lime-600 over:text-shadow-none'
 				id={id}

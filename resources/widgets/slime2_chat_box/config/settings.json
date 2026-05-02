@@ -1,70 +1,302 @@
 {
-	"textCategory": {
-		"label": "Text",
+	"message-category": {
+		"label": "Message",
 		"settings": {
-			"font-name": {
-				"label": "Font Name",
-				"type": "font-input"
+			"font-section": {
+				"label": "Text",
+				"type": "section",
+				"settings": {
+					"font-name": {
+						"label": "Font",
+						"type": "font-input"
+					},
+					"font-size": {
+						"label": "Font Size (px)",
+						"type": "number-input",
+						"defaultValue": 14,
+						"min": 1,
+						"step": 1
+					},
+					"font-weight": {
+						"label": "Font Weight",
+						"type": "select-input",
+						"defaultValue": "normal",
+						"options": [
+							{ "label": "Normal", "value": "normal" },
+							{ "label": "Bold", "value": "bold" },
+							{ "label": "100", "value": 100 },
+							{ "label": "200", "value": 200 },
+							{ "label": "300", "value": 300 },
+							{ "label": "400", "value": 400 },
+							{ "label": "500", "value": 500 },
+							{ "label": "600", "value": 600 },
+							{ "label": "700", "value": 700 },
+							{ "label": "800", "value": 800 },
+							{ "label": "900", "value": 900 }
+						]
+					},
+					"max-lines": {
+						"label": "Max Lines",
+						"type": "slider-input",
+						"defaultValue": 4,
+						"min": 1,
+						"max": 10,
+						"step": 1
+					}
+				}
 			},
-			"font-size": {
-				"label": "Font Size (px)",
-				"type": "number-input",
-				"min": 0,
-				"step": 1,
-				"defaultValue": 14
+			"color-section": {
+				"label": "Color",
+				"type": "section",
+				"settings": {
+					"username-color": {
+						"label": "Username Color",
+						"type": "select-input",
+						"defaultValue": "twitch-light",
+						"options": [
+							{ "label": "Twitch", "value": "twitch" },
+							{ "label": "Twitch Light", "value": "twitch-light" },
+							{ "label": "Twitch Dark", "value": "twitch-dark" },
+							{ "label": "Custom", "value": "custom" }
+						]
+					},
+					"custom-username-color": {
+						"label": "Custom Username Color",
+						"type": "color-input",
+						"condition": {
+							"username-color": "custom"
+						},
+						"defaultValue": "black"
+					},
+					"message-color": {
+						"label": "Message Color",
+						"type": "color-input",
+						"defaultValue": "black"
+					}
+				}
 			},
-			"font-weight": {
-				"label": "Font Weight",
+
+			"direction-section": {
+				"label": "Direction",
+				"type": "section",
+				"settings": {
+					"direction-axis": {
+						"label": "Axis",
+						"type": "select-input",
+						"defaultValue": "vertical",
+						"options": [
+							{ "label": "Vertical", "value": "vertical" },
+							{ "label": "Horizontal", "value": "horizontal" }
+						]
+					},
+					"direction-vertical-flow": {
+						"label": "Vertical Flow",
+						"type": "select-input",
+						"condition": { "direction-axis": "vertical" },
+						"defaultValue": "to-top",
+						"options": [
+							{ "label": "Bottom to Top", "value": "to-top" },
+							{ "label": "Top to Bottom", "value": "to-bottom" }
+						]
+					},
+					"direction-vertical-alignment": {
+						"label": "Vertical Alignment",
+						"type": "select-input",
+						"condition": { "direction-axis": "vertical" },
+						"defaultValue": "left",
+						"options": [
+							{ "label": "Left", "value": "left" },
+							{ "label": "Right", "value": "right" }
+						]
+					},
+					"direction-horizontal-flow": {
+						"label": "Horizontal Flow",
+						"type": "select-input",
+						"condition": { "direction-axis": "horizontal" },
+						"defaultValue": "to-left",
+						"options": [
+							{ "label": "Right to Left", "value": "to-left" },
+							{ "label": "Left to Right", "value": "to-right" }
+						]
+					},
+					"direction-horizontal-alignment": {
+						"label": "Horizontal Alignment",
+						"type": "select-input",
+						"condition": { "direction-axis": "horizontal" },
+						"defaultValue": "top",
+						"options": [
+							{ "label": "Top", "value": "top" },
+							{ "label": "Bottom", "value": "bottom" }
+						]
+					}
+				}
+			},
+			"badges-section": {
+				"label": "Badges",
+				"type": "section",
+				"settings": {
+					"show-badges": {
+						"label": "Show Badges",
+						"type": "toggle-input",
+						"defaultValue": true
+					}
+				}
+			},
+			"pronouns-section": {
+				"label": "Pronouns",
+				"type": "section",
+				"settings": {
+					"pronouns-text": {
+						"label": "User pronouns are sourced from https://pr.alejo.io/ and https://pronoundb.org/",
+						"type": "text-display"
+					},
+					"pronouns-display": {
+						"label": "Pronouns Display",
+						"type": "select-input",
+						"defaultValue": "lowercase",
+						"options": [
+							{ "label": "Lowercase", "value": "lowercase" },
+							{ "label": "Capitalized", "value": "capitalize" },
+							{ "label": "Uppercase", "value": "uppercase" },
+							{ "label": "Hidden", "value": "hidden" }
+						]
+					}
+				}
+			}
+		}
+	},
+
+	"animation-category": {
+		"label": "Animation",
+		"settings": {
+			"entrance-animation": {
+				"label": "Entrance Animation",
 				"type": "select-input",
-				"defaultValue": "normal",
+				"defaultValue": "none",
 				"options": [
-					{ "label": "Normal", "value": "normal" },
-					{ "label": "Bold", "value": "bold" },
-					{ "label": "100", "value": 100 },
-					{ "label": "200", "value": 200 },
-					{ "label": "300", "value": 300 },
-					{ "label": "400", "value": 400 },
-					{ "label": "500", "value": 500 },
-					{ "label": "600", "value": 600 },
-					{ "label": "700", "value": 700 },
-					{ "label": "800", "value": 800 },
-					{ "label": "900", "value": 900 }
+					{ "label": "Fade", "value": "fade" },
+					{ "label": "Fade Left", "value": "fade-left" },
+					{ "label": "Fade Right", "value": "fade-right" },
+					{ "label": "None", "value": "none" }
+				]
+			},
+			"exit-animation": {
+				"label": "Exit Animation",
+				"type": "select-input",
+				"defaultValue": "none",
+				"options": [
+					{ "label": "Fade", "value": "fade" },
+					{ "label": "Fade Left", "value": "fade-left" },
+					{ "label": "Fade Right", "value": "fade-right" },
+					{ "label": "None", "value": "none" }
 				]
 			}
 		}
 	},
-	"colorCategory": {
-		"label": "Color",
+	"lifetime-category": {
+		"label": "Lifetime",
 		"settings": {
-			"username-color": {
-				"label": "Username Color",
-				"type": "select-input",
-				"defaultValue": "twitch-light",
-				"options": [
-					{ "label": "Twitch", "value": "twitch" },
-					{ "label": "Twitch Light", "value": "twitch-light" },
-					{ "label": "Twitch Dark", "value": "twitch-dark" },
-					{ "label": "Custom", "value": "custom" }
-				]
+			"delay": {
+				"label": "Message Delay (seconds)",
+				"type": "slider-input",
+				"defaultValue": 0,
+				"min": 0,
+				"max": 30,
+				"step": 1
 			},
-			"custom-username-color": {
-				"label": "Custom Username Color",
-				"type": "color-input",
-				"condition": {
-					"username-color": "custom"
-				},
-				"defaultValue": "black",
-				"description": "This will only be applied when you select \"Custom\" above."
+			"max-messages": {
+				"label": "Max Messages",
+				"type": "slider-input",
+				"description": "The oldest messages beyond the max will be automatically removed",
+				"defaultValue": 50,
+				"min": 1,
+				"max": 200,
+				"step": 1
 			},
-			"message-color": {
-				"label": "Message Text Color",
-				"type": "color-input",
-				"defaultValue": "black"
+			"expire-messages": {
+				"label": "Hide messages after some time?",
+				"type": "toggle-input",
+				"defaultValue": false
 			},
-			"background-color": {
-				"label": "Background Color",
-				"type": "color-input",
-				"defaultValue": "transparent"
+			"hide-time": {
+				"label": "Hide Time (seconds)",
+				"type": "number-input",
+				"condition": { "expire-messages": true },
+				"defaultValue": 300,
+				"min": 1,
+				"step": 1
+			}
+		}
+	},
+	"filters-category": {
+		"label": "Filters",
+		"settings": {
+			"user-filters": {
+				"label": "User Filters",
+				"type": "section",
+				"settings": {
+					"hide-users": {
+						"label": "Hide Users",
+						"type": "multi-text-input",
+						"defaultValue": [
+							"Sery_Bot",
+							"Nightbot",
+							"StreamElements",
+							"Streamlabs"
+						],
+						"placeholder": "Chatter Name"
+					},
+					"follower-only": {
+						"label": "Follower Only Mode",
+						"type": "toggle-input",
+						"defaultValue": false
+					},
+					"follow-age": {
+						"label": "Minimum follow age (hours)",
+						"type": "number-input",
+						"condition": { "follower-only": true },
+						"defaultValue": 0,
+						"min": 0,
+						"step": "any",
+						"description": "Will only show messages from followers that have followed for at least this many hours"
+					}
+				}
+			},
+			"message-filters": {
+				"label": "Message Filters",
+				"type": "section",
+				"settings": {
+					"hide-prefixes": {
+						"label": "Hide messages starting with:",
+						"type": "multi-text-input",
+						"defaultValue": ["!"],
+						"placeholder": "Prefix"
+					},
+					"hide-words": {
+						"label": "Hide messages containing these words:",
+						"type": "multi-text-input",
+						"placeholder": "Bad Word"
+					}
+				}
+			}
+		}
+	},
+	"sound-category": {
+		"label": "Sound Effect",
+		"settings": {
+			"sound": {
+				"label": "Sound",
+				"type": "audio-input",
+				"description": "Play this sound effect for every chat message"
+			},
+			"sound-cooldown": {
+				"label": "Cooldown (seconds)",
+				"type": "slider-input",
+				"defaultValue": 5,
+				"min": 0,
+				"max": 600,
+				"step": 1,
+				"description": "Minimum time between playing sounds"
 			}
 		}
 	}

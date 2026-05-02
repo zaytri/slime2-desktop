@@ -1,11 +1,16 @@
+import useAccounts from '@/contexts/accounts/useAccounts';
 import { getPronouns } from '@/helpers/services/pronouns';
+import { getTwitchFollowDate } from '@/helpers/services/twitch/twitchFollowDate';
 import { sendWidgetResponse } from '@/helpers/widgetMessage';
 import logZodError from '@/helpers/zodError';
+import type { Account } from '@@/json/accounts';
 import { listen } from '@tauri-apps/api/event';
 import { useEffect } from 'react';
 import { z } from 'zod/mini';
 
 export default function useWidgetRequest() {
+	const accounts = useAccounts();
+
 	useEffect(() => {
 		const unlistenPromise = listen<z.infer<typeof WidgetRequest>>(
 			'widget-request',
@@ -21,6 +26,21 @@ export default function useWidgetRequest() {
 								request.request_type,
 								request.request_id,
 								pronouns,
+							);
+							break;
+						}
+						case 'get-twitch-follow-date': {
+							const { user_id, account_id } = request.payload;
+							const account: Account | undefined = accounts[account_id];
+							let followDate: string | null = null;
+							if (account) {
+								followDate = await getTwitchFollowDate(account, user_id);
+							}
+							sendWidgetResponse(
+								request.widget_id,
+								request.request_type,
+								request.request_id,
+								followDate,
 							);
 							break;
 						}
@@ -51,6 +71,14 @@ export default function useWidgetRequest() {
 	}, []);
 }
 
+const FollowDateRequest = z.object({
+	request_type: z.literal('get-twitch-follow-date'),
+	payload: z.object({
+		user_id: z.string(),
+		account_id: z.string(),
+	}),
+});
+
 const PronounsRequest = z.object({
 	request_type: z.literal('get-pronouns'),
 	payload: z.object({
@@ -65,5 +93,5 @@ const WidgetRequest = z.intersection(
 		request_id: z.string(),
 		widget_id: z.string(),
 	}),
-	z.discriminatedUnion('request_type', [PronounsRequest]),
+	z.discriminatedUnion('request_type', [PronounsRequest, FollowDateRequest]),
 );

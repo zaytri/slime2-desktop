@@ -718,6 +718,19 @@ namespace Twitch {
 			}[];
 		};
 
+		type GetFollowers = {
+			data: {
+				user_id: string;
+				user_login: string;
+				user_name: string;
+				followed_at: string;
+			}[];
+			pagination: {
+				cursor?: string;
+			};
+			total: number;
+		};
+
 		type SendMessage = {
 			data: {
 				message_id: string;

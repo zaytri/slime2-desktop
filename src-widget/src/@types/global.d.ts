@@ -4,6 +4,8 @@ declare var slime2: {
 		userId: string,
 		username: string,
 	) => Promise<string[] | null>;
+	getTwitchFollowDate: (
+		accountId: string,
+		userId: string
+	) => Promise<string | null>
 };
-
-declare var obsstudio;

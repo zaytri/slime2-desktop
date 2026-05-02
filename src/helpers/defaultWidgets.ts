@@ -44,12 +44,12 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 	// 	icon: ChatOverlayIcon,
 	// 	description: 'Progression bar for a specified goal',
 	// },
-	// test: {
-	// 	name: 'test',
-	// 	type: 'overlay',
-	// 	icon: ChatOverlayIcon,
-	// 	description: '',
-	// },
+	test: {
+		name: 'test',
+		type: 'overlay',
+		icon: EventLabelIcon,
+		description: '',
+	},
 	slime2_command_bot: {
 		name: 'Command Bot',
 		type: 'bot',

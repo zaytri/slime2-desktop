@@ -10,7 +10,7 @@ const WebSocketEvent = z.object({
 	data: z.unknown(),
 });
 
-const RequestType = z.union([z.literal('get-pronouns')]);
+const RequestType = z.literal(['get-pronouns', 'get-twitch-follow-date']);
 type RequestType = z.infer<typeof RequestType>;
 
 const ResponseEventData = z.object({
@@ -63,6 +63,13 @@ export default function useSlime2Websocket() {
 				username,
 			});
 		};
+
+		globalThis.slime2.getTwitchFollowDate = (accountId, userId) => {
+			return sendRequest('get-twitch-follow-date', {
+				account_id: accountId,
+				user_id: userId
+			})
+		}
 
 		// send registration message to slime2 upon open connection
 		const openListener = () => {

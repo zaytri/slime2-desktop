@@ -156,7 +156,7 @@ function WidgetTags({ widgetId }: WidgetTagsProps) {
 	const services = getWidgetMetaServices(widgetMeta);
 
 	return (
-		<div className='flex gap-3 rounded-2 font-bold *:outline-2 *:outline-white'>
+		<div className='flex flex-wrap justify-center gap-3 rounded-2 font-bold *:outline-2 *:outline-white'>
 			{services.includes('twitch') && <AccountServiceTag service='twitch' />}
 			{services.includes('youtube') && <AccountServiceTag service='youtube' />}
 			{widgetMeta.type.includes('bot') && <WidgetTypeTag type='bot' />}

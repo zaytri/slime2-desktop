@@ -56,7 +56,7 @@ export default function MultiTextField({
 						return (
 							<button
 								key={`${value}-${index}`}
-								className='group -outline-offset-2!over:bg-rose-200 flex items-center gap-1.5 rounded-1 border border-zinc-400 bg-zinc-200 px-1.5 text-3.5 -outline-offset-1! over:bg-rose-200 over:text-rose-900 over:outline-3 over:outline-rose-700'
+								className='group -outline-offset-2!over:bg-rose-200 flex items-center gap-1.5 rounded-1 border border-zinc-400 bg-zinc-200 px-1.5 font-semibold text-zinc-800 -outline-offset-1! over:bg-rose-200 over:text-rose-900 over:outline-3 over:outline-rose-700'
 								onClick={() => {
 									removeValueAtIndex(index);
 								}}

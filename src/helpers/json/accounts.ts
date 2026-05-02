@@ -94,12 +94,12 @@ async function accountsPath() {
 const Account = z.object({
 	id: z.string(),
 	serviceId: z.string(),
-	service: z.union([z.literal('twitch'), z.literal('youtube')]),
+	service: z.literal(['twitch', 'youtube']),
 	username: z.string(),
 	displayName: z.string(),
 	image: z.string(),
 	scopes: z.array(z.string()),
-	type: z.union([z.literal('read'), z.literal('bot'), z.literal('mod')]),
+	type: z.literal(['read', 'bot', 'mod']),
 	reauthorize: z.boolean(),
 	// keys are widget IDs, values are indices
 	widgets: z.catch(z.record(z.string(), z.number().check(z.nonnegative())), {}),

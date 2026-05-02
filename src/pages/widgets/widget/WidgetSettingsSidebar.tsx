@@ -22,75 +22,79 @@ export default function WidgetSettingsSidebar({
 }: WidgetSettingsSidebarProps) {
 	return (
 		<aside className='relative flex w-56 flex-col justify-between gap-4 border-t border-zinc-500 pt-2'>
-			<h2 className='sr-only'>Categories</h2>
+			<h2 className='absolute top-0 right-0 text-3 text-zinc-500 uppercase'>
+				Settings
+			</h2>
 
-			<div className='flex flex-col gap-1 overflow-y-auto text-white'>
-				{accountsId && (
+			<div className='mt-3 flex-1 overflow-y-auto'>
+				<div className='flex flex-1 flex-col gap-1 text-white'>
+					{accountsId && (
+						<SidebarCategory
+							label={
+								<>
+									<UserSvg className='size-5 drop-shadow-[0_2px_#0008]' />
+									<p>Accounts</p>
+								</>
+							}
+							onClick={() => {
+								onClickCategory(accountsId);
+							}}
+							active={accountsId === topScrollId}
+						/>
+					)}
+
+					{Object.entries(settings).map(([categoryId, category]) => {
+						return (
+							<SidebarCategory
+								key={categoryId}
+								label={i18nStringTransform(category.label)}
+								onClick={() => {
+									onClickCategory(categoryId);
+								}}
+								active={categoryId === topScrollId}
+							>
+								<ul className='flex list-disc flex-col pl-6'>
+									{Object.entries(category.settings).map(
+										([sectionId, section]) => {
+											if (
+												section.type !== 'section' &&
+												section.type !== 'multi-section'
+											)
+												return null;
+
+											return (
+												<SidebarSubcategory
+													key={sectionId}
+													onClick={() => {
+														onClickSection(
+															sectionId,
+															section.type === 'multi-section',
+														);
+													}}
+												>
+													{i18nStringTransform(section.label)}
+												</SidebarSubcategory>
+											);
+										},
+									)}
+								</ul>
+							</SidebarCategory>
+						);
+					})}
+
 					<SidebarCategory
 						label={
 							<>
-								<UserSvg className='size-5 drop-shadow-[0_2px_#0008]' />
-								<p>Accounts</p>
+								<BookSvg className='size-5 drop-shadow-[0_2px_#0008]' />
+								<p>About</p>
 							</>
 						}
 						onClick={() => {
-							onClickCategory(accountsId);
+							onClickCategory(aboutId);
 						}}
-						active={accountsId === topScrollId}
+						active={aboutId === topScrollId}
 					/>
-				)}
-
-				{Object.entries(settings).map(([categoryId, category]) => {
-					return (
-						<SidebarCategory
-							key={categoryId}
-							label={i18nStringTransform(category.label)}
-							onClick={() => {
-								onClickCategory(categoryId);
-							}}
-							active={categoryId === topScrollId}
-						>
-							<ul className='flex list-disc flex-col pl-6'>
-								{Object.entries(category.settings).map(
-									([sectionId, section]) => {
-										if (
-											section.type !== 'section' &&
-											section.type !== 'multi-section'
-										)
-											return null;
-
-										return (
-											<SidebarSubcategory
-												key={sectionId}
-												onClick={() => {
-													onClickSection(
-														sectionId,
-														section.type === 'multi-section',
-													);
-												}}
-											>
-												{i18nStringTransform(section.label)}
-											</SidebarSubcategory>
-										);
-									},
-								)}
-							</ul>
-						</SidebarCategory>
-					);
-				})}
-
-				<SidebarCategory
-					label={
-						<>
-							<BookSvg className='size-5 drop-shadow-[0_2px_#0008]' />
-							<p>About</p>
-						</>
-					}
-					onClick={() => {
-						onClickCategory(aboutId);
-					}}
-					active={aboutId === topScrollId}
-				/>
+				</div>
 			</div>
 		</aside>
 	);
@@ -111,13 +115,13 @@ function SidebarCategory({
 	return (
 		<section
 			data-active={active || undefined}
-			className='flex flex-col overflow-hidden rounded-1 p-1 -outline-offset-1 has-focus-visible:bg-white/10 has-focus-visible:outline has-focus-visible:outline-white/20 data-active:bg-white/10 data-active:outline data-active:outline-white/20 over:bg-white/10 over:outline over:outline-white/20'
+			className='flex flex-col overflow-hidden rounded-1 px-1 -outline-offset-1 has-focus-visible:bg-white/10 has-focus-visible:outline has-focus-visible:outline-white/20 data-active:bg-white/10 data-active:outline data-active:outline-white/20 over:bg-white/10 over:outline over:outline-white/20'
 		>
 			<button
-				className='px-1 text-left outline-offset-1! over:underline'
+				className='px-1 text-left outline-none over:underline'
 				onClick={onClick}
 			>
-				<h3 className='flex items-center gap-2 font-mochiy text-4.5 text-shadow-[0_2px_#0008]'>
+				<h3 className='flex items-center gap-2 font-fredoka text-5 font-medium text-shadow-[0_2px_#0008]'>
 					{label}
 				</h3>
 			</button>
@@ -138,7 +142,7 @@ function SidebarSubcategory({
 	return (
 		<li>
 			<button
-				className='text-left font-fredoka text-4.5 outline-offset-1! text-shadow-[0_2px_#0008] over:underline'
+				className='text-left font-fredoka text-4.5 outline-none text-shadow-[0_2px_#0008] over:underline'
 				onClick={onClick}
 			>
 				{children}

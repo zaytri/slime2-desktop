@@ -27,7 +27,7 @@ export default function AccountServiceTag({
 				<Tag
 					label='YouTube'
 					icon={<YoutubeSvg className='size-4' />}
-					className='border-rose-700 bg-rose-600'
+					className='border-rose-950 bg-rose-800'
 				/>
 			);
 		default:

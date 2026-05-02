@@ -1,13 +1,22 @@
-import useWidgetValueKey from '@/contexts/widget_setting_parent/useWidgetValueKey';
+import { useWidgetId } from '@/contexts/widget_id/useWidgetId';
+import useWidgetValueKey, {
+	getWidgetValueChildKey,
+} from '@/contexts/widget_setting_parent/useWidgetValueKey';
 import { useWidgetValue } from '@/contexts/widget_values/useWidgetValue';
+import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValuesDispatch';
+import { saveTempWidgetFile } from '@/helpers/commands';
 import { i18nStringTransform } from '@/helpers/i18n';
 import type { WidgetSetting as WidgetSettingType } from '@/helpers/json/widgetSettings';
+import {
+	getWidgetMediaCoreSrc,
+	getWidgetMediaCustomSrc,
+} from '@/helpers/media';
+import type { WidgetValue } from '@@/json/widgetValues';
 import { z } from 'zod/mini';
 import ColorField from '../input_fields/ColorField';
 import DropdownField from '../input_fields/DropdownField';
 import FontField from '../input_fields/FontField';
 import MediaField from '../input_fields/MediaField';
-import MultiMediaField from '../input_fields/MultiMediaField';
 import MultiSelectField from '../input_fields/MultiSelectField';
 import MultiTextField from '../input_fields/MultiTextField';
 import NumberField from '../input_fields/NumberField';
@@ -39,8 +48,10 @@ export default function WidgetSetting({
 	alt,
 	...setting
 }: WidgetSettingProps) {
+	const widgetId = useWidgetId();
 	const key = useWidgetValueKey(id);
-	const { widgetValue, setWidgetValue } = useWidgetValue(key);
+	const { setValue } = useWidgetValuesDispatch();
+	const { widgetValue, getSubValue } = useWidgetValue(key);
 
 	const options =
 		'options' in setting
@@ -51,6 +62,36 @@ export default function WidgetSetting({
 					};
 				})
 			: [];
+
+	// default volume to 20, ensure it's between 0 and 100
+	const volume = z
+		.catch(z.number().check(z.gte(0), z.lte(100)), 20)
+		.parse(getSubValue('volume'));
+
+	function setWidgetValue(value: WidgetValue) {
+		setValue(key, value);
+	}
+
+	function setSubValue(subKey: string, value: WidgetValue) {
+		setValue(getWidgetValueChildKey(key, subKey), value);
+	}
+
+	async function onChangeMedia(newValue: string, newVolume?: number) {
+		if (
+			newValue === '' ||
+			newValue.startsWith('https://') ||
+			newValue.startsWith('http://')
+		) {
+			setWidgetValue(newValue);
+		} else {
+			const fileName = await saveTempWidgetFile(newValue, widgetId);
+			setWidgetValue(`${LOCAL_MEDIA_PREFIX}${fileName}`);
+		}
+
+		if (newVolume !== undefined) {
+			setSubValue('volume', newVolume);
+		}
+	}
 
 	switch (setting.type) {
 		case 'text-display': {
@@ -228,10 +269,8 @@ export default function WidgetSetting({
 				<MediaField
 					type='image'
 					label={label}
-					value={z
-						.catch(z.string(), setting.defaultValue ?? '')
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
+					value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
+					onChange={onChangeMedia}
 					description={description}
 				/>
 			);
@@ -241,11 +280,10 @@ export default function WidgetSetting({
 				<MediaField
 					type='video'
 					label={label}
-					value={z
-						.catch(z.string(), setting.defaultValue ?? '')
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
+					value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
+					onChange={onChangeMedia}
 					description={description}
+					volume={volume}
 				/>
 			);
 		}
@@ -254,50 +292,10 @@ export default function WidgetSetting({
 				<MediaField
 					type='audio'
 					label={label}
-					value={z
-						.catch(z.string(), setting.defaultValue ?? '')
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
+					value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
+					onChange={onChangeMedia}
 					description={description}
-				/>
-			);
-		}
-		case 'multi-image-input': {
-			return (
-				<MultiMediaField
-					type='image'
-					label={label}
-					values={z
-						.catch(z.array(z.string()), setting.defaultValue ?? [])
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					description={description}
-				/>
-			);
-		}
-		case 'multi-audio-input': {
-			return (
-				<MultiMediaField
-					type='audio'
-					label={label}
-					values={z
-						.catch(z.array(z.string()), setting.defaultValue ?? [])
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					description={description}
-				/>
-			);
-		}
-		case 'multi-video-input': {
-			return (
-				<MultiMediaField
-					type='video'
-					label={label}
-					values={z
-						.catch(z.array(z.string()), setting.defaultValue ?? [])
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					description={description}
+					volume={volume}
 				/>
 			);
 		}
@@ -325,4 +323,20 @@ export default function WidgetSetting({
 		default:
 			return null;
 	}
+}
+
+const LOCAL_MEDIA_PREFIX = 'local:';
+
+function getMediaValue(
+	widgetId: string,
+	value: WidgetValue,
+	defaultValue?: string,
+) {
+	const src = z.catch(z.string(), defaultValue ?? '').parse(value);
+
+	return src === '' || src.startsWith('https://') || src.startsWith('http://')
+		? src
+		: src.startsWith(LOCAL_MEDIA_PREFIX)
+			? getWidgetMediaCustomSrc(widgetId, src)
+			: getWidgetMediaCoreSrc(widgetId, src);
 }

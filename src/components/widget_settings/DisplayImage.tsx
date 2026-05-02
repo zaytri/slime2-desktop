@@ -11,7 +11,7 @@ export default function DisplayImage({ label, src, alt }: DisplayImageProps) {
 	const widgetId = useWidgetId();
 
 	return (
-		<div className='flex flex-col items-start gap-2 rounded-2 border border-white bg-zinc-100 bg-linear-to-b from-zinc-50 to-zinc-100 p-2 font-medium outline-2 outline-zinc-300'>
+		<div className='flex flex-col items-start gap-2 rounded-2 border-2 border-zinc-600 bg-white p-2 font-medium'>
 			<p className='font-medium'>{label}</p>
 			<img
 				className='max-h-64 rounded-2'

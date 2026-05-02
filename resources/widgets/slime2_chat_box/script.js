@@ -24,7 +24,7 @@ addEventListener('slime2:widget-accounts', widgetAccountsListener);
 addEventListener('slime2:twitch-event', twitchEventListener);
 
 function widgetValuesListener(event) {
-	console.log('slime2:widget-values', event.detail);
+	Widget.values = event.detail;
 
 	const widgetElement = document.getElementById('widget');
 
@@ -40,10 +40,8 @@ function widgetValuesListener(event) {
 		widgetElement.classList.remove(...classes);
 	}
 
-	Widget.values = event.detail;
-
 	// quotation marks around font name is necessary
-	// for font names that contain spaces
+	// to handle font names that contain spaces
 	setStyle('--custom-font-name', `"${Widget.values['font-name']}"`);
 	setStyle('--custom-font-size', `${Widget.values['font-size']}px`);
 	setStyle('--custom-font-weight', Widget.values['font-weight']);

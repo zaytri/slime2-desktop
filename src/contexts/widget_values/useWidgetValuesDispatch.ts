@@ -38,7 +38,7 @@ export function useWidgetValuesDispatch() {
 		);
 	}
 
-	const set = (key: string, value: WidgetValue) => {
+	const setValue = (key: string, value: WidgetValue) => {
 		dispatch({ type: 'set', key, value });
 	};
 
@@ -54,7 +54,7 @@ export function useWidgetValuesDispatch() {
 		dispatch({ type: 'replace', values });
 	};
 
-	return { set, setMultiple, duplicate, replace };
+	return { setValue, setMultiple, duplicate, replace };
 }
 
 export function widgetValuesReducer(

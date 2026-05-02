@@ -1,5 +1,6 @@
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useWidgetValue } from '@/contexts/widget_values/useWidgetValue';
+import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValuesDispatch';
 import { widgetSettingsScrollContainerId } from '@/helpers/scroll';
 import useAutoScrollDisclosureOpen from '@/hooks/useAutoScrollDisclosureOpen';
 import {
@@ -35,7 +36,8 @@ export default function SettingMultiSubsection({
 	onDuplicate,
 	children,
 }: Props.WithChildren<SettingMultiSubsectionProps>) {
-	const { widgetValue, setWidgetValue } = useWidgetValue(id);
+	const { widgetValue } = useWidgetValue(id);
+	const { setValue } = useWidgetValuesDispatch();
 	const [renaming, setRenaming] = useState(false);
 	const { openDialog } = useDialog();
 
@@ -54,7 +56,7 @@ export default function SettingMultiSubsection({
 
 		const newSubsectionName = newName.trim();
 		if (newSubsectionName) {
-			setWidgetValue(newSubsectionName);
+			setValue(id, newSubsectionName);
 		}
 	}
 
@@ -133,7 +135,7 @@ export default function SettingMultiSubsection({
 				</div>
 			</div>
 
-			<DisclosurePanel className='mt-0.5 flex flex-col gap-4 rounded-2 rounded-tl-0 border border-white bg-zinc-200 bg-linear-to-b from-zinc-100 to-zinc-100/50 p-4 outline-2 outline-zinc-400/50'>
+			<DisclosurePanel className='mt-0.5 flex flex-col gap-2 rounded-2 rounded-tl-0 border border-white bg-zinc-200 bg-linear-to-b from-zinc-100 to-zinc-100/50 p-4 outline-2 outline-zinc-400/50'>
 				{children}
 			</DisclosurePanel>
 		</Disclosure>

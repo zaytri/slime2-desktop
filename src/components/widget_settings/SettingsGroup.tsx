@@ -22,12 +22,23 @@ export default function SettingsGroup({ settings }: SettingsGroupProps) {
 				const conditionsMet =
 					!setting.condition ||
 					Object.entries(setting.condition).every(dependency => {
+						// settings within multisubsections can only be dependent
+						// on other settings within that same multisubsection
 						const [dependentId, dependentValue] = dependency;
 						const trueDependentId = parentId
 							? getWidgetValueChildKey(parentId, dependentId)
 							: dependentId;
 
-						return values[trueDependentId] === dependentValue;
+						const dependentSetting = settings[dependentId];
+						const dependentDefaultValue =
+							'defaultValue' in dependentSetting
+								? dependentSetting.defaultValue
+								: undefined;
+
+						return (
+							dependentValue ===
+							(values[trueDependentId] ?? dependentDefaultValue)
+						);
 					});
 
 				if (!conditionsMet) return null;
