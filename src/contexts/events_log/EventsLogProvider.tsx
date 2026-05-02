@@ -1,0 +1,48 @@
+import { loadEventsLog } from '@@/json/eventsLog';
+import { useCallback, useEffect, useReducer } from 'react';
+import useAccounts from '../accounts/useAccounts';
+import { EventsLogContext } from './useEventsLog';
+import {
+	EventsLogDispatchContext,
+	eventsLogReducer,
+} from './useEventsLogDispatch';
+
+export default function EventsLogProvider({ children }: Props.WithChildren) {
+	const accounts = useAccounts();
+	const [eventsLogMap, dispatch] = useReducer(eventsLogReducer, {});
+
+	const getEventsLog = useCallback(
+		async (accountId: string) => {
+			const eventsLog = await loadEventsLog(accountId);
+			dispatch({ type: 'set', id: accountId, log: eventsLog });
+		},
+		[dispatch],
+	);
+
+	useEffect(() => {
+		async function loadAllEventsLogs() {
+			const loadPromises: Promise<void>[] = [];
+
+			// loop thru all accounts, loading event logs if they don't
+			// already exist in the event logs map
+			Object.keys(accounts).forEach(accountId => {
+				if (!eventsLogMap[accountId]) {
+					loadPromises.push(getEventsLog(accountId));
+				}
+			});
+
+			// simultaneously load all event logs
+			await Promise.all(loadPromises);
+		}
+
+		loadAllEventsLogs();
+	}, [accounts, eventsLogMap]);
+
+	return (
+		<EventsLogContext value={eventsLogMap}>
+			<EventsLogDispatchContext value={dispatch}>
+				{children}
+			</EventsLogDispatchContext>
+		</EventsLogContext>
+	);
+}

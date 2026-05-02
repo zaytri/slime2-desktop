@@ -54,7 +54,7 @@ export default function SimulateTwitchSubscriptionDialog({
 						value={tier}
 						onChange={setTier}
 						options={[
-							{ label: 'Prime', value: 'prime' },
+							// { label: 'Prime', value: 'prime' },
 							{ label: 'Tier 1', value: '1000' },
 							{ label: 'Tier 2', value: '2000' },
 							{ label: 'Tier 3', value: '3000' },

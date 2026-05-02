@@ -1,4 +1,5 @@
 import useAccounts from '@/contexts/accounts/useAccounts';
+import useEventsLog from '@/contexts/events_log/useEventsLog';
 import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
 import { Account } from '@/helpers/json/accounts';
 import { loadWidgetSettings } from '@/helpers/json/widgetSettings';
@@ -14,6 +15,7 @@ import { z } from 'zod/mini';
 
 export default function useWidgetRegistration() {
 	const accounts = useAccounts();
+	const eventsLog = useEventsLog();
 	const widgetMetas = useWidgetMetas();
 	const [registeredWidgets, setRegisteredWidgets] = useState<
 		Record<string, boolean>
@@ -142,6 +144,7 @@ export default function useWidgetRegistration() {
 
 							return {
 								...accountData,
+								eventsLog: eventsLog[account.id] || [],
 								cheermotes: cheermotesResponse.data.data,
 								channelBadges: channelChatBadgesResponse.data.data,
 								globalBadges: globalBadgesResponse.data.data,

@@ -1,5 +1,7 @@
-import ChatBotIcon from '@/assets/icons/bot_chat.png';
-import ChatOverlayIcon from '@/assets/icons/overlay_chat.png';
+import AlertBoxIcon from '@/assets/icons/slime2_alert_box.png';
+import ChatBoxIcon from '@/assets/icons/slime2_chat_box.png';
+import CommandBotIcon from '@/assets/icons/slime2_command_bot.png';
+import EventLabelIcon from '@/assets/icons/slime2_event_label.png';
 
 export type DefaultWidget = {
 	type: 'bot' | 'overlay';
@@ -9,34 +11,34 @@ export type DefaultWidget = {
 };
 
 export type DefaultWidgetId =
-	| 'slime2-chat-box'
-	| 'slime2-alert-box'
-	| 'slime2-event-label'
-	| 'slime2-goal-bar'
-	| 'slime2-command-bot'
-	| 'slime2-timer-bot'
+	| 'slime2_chat_box'
+	| 'slime2_alert_box'
+	| 'slime2_event_label'
+	| 'slime2_goal_bar'
+	| 'slime2_command_bot'
+	| 'slime2_timer_bot'
 	| 'test';
 
 const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
-	'slime2-chat-box': {
+	slime2_chat_box: {
 		name: 'Chat Box',
 		type: 'overlay',
-		icon: ChatOverlayIcon,
+		icon: ChatBoxIcon,
 		description: 'Display chat messages',
 	},
-	'slime2-alert-box': {
+	slime2_alert_box: {
 		name: 'Alert Box',
 		type: 'overlay',
-		icon: ChatOverlayIcon,
+		icon: AlertBoxIcon,
 		description: 'Display custom alerts for events',
 	},
-	'slime2-event-label': {
+	slime2_event_label: {
 		name: 'Event Label',
 		type: 'overlay',
-		icon: ChatOverlayIcon,
+		icon: EventLabelIcon,
 		description: 'Text display for the latest events',
 	},
-	// 'slime2-goal-bar': {
+	// 'slime2_goal_bar': {
 	// 	name: 'Goal Bar',
 	// 	type: 'overlay',
 	// 	icon: ChatOverlayIcon,
@@ -48,13 +50,13 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 	// 	icon: ChatOverlayIcon,
 	// 	description: '',
 	// },
-	'slime2-command-bot': {
+	slime2_command_bot: {
 		name: 'Command Bot',
 		type: 'bot',
-		icon: ChatBotIcon,
+		icon: CommandBotIcon,
 		description: 'Responds to custom chat commands',
 	},
-	// 'slime2-timer-bot': {
+	// 'slime2_timer_bot': {
 	// 	name: 'Timer Bot',
 	// 	type: 'bot',
 	// 	icon: ChatBotIcon,

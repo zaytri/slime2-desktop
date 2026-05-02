@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import AccountsProvider from './contexts/accounts/AccountsProvider';
 import DialogProvider from './contexts/dialog/DialogProvider';
+import EventsLogProvider from './contexts/events_log/EventsLogProvider';
 import FolderIdProvider from './contexts/folder_id/FolderIdProvider';
 import SettingsProvider from './contexts/settings/SettingsProvider';
 import TileLocationsProvider from './contexts/tile_locations/TileLocationsProvider';
@@ -23,11 +24,13 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 						<TileMetasProvider>
 							<WidgetMetasProvider>
 								<AccountsProvider>
-									<TileSwapProvider>
-										<DialogProvider>
-											<MainTabs />
-										</DialogProvider>
-									</TileSwapProvider>
+									<EventsLogProvider>
+										<TileSwapProvider>
+											<DialogProvider>
+												<MainTabs />
+											</DialogProvider>
+										</TileSwapProvider>
+									</EventsLogProvider>
 								</AccountsProvider>
 							</WidgetMetasProvider>
 						</TileMetasProvider>

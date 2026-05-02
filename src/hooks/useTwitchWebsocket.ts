@@ -1,5 +1,6 @@
 import useAccounts from '@/contexts/accounts/useAccounts';
 import { useAccountsDispatch } from '@/contexts/accounts/useAccountsDispatch';
+import { useEventsLogDispatch } from '@/contexts/events_log/useEventsLogDispatch';
 import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
 import { Account, deleteTokens } from '@/helpers/json/accounts';
 import twitchApi, {
@@ -15,6 +16,7 @@ export default function useTwitchWebsocket() {
 	const widgetMetas = useWidgetMetas();
 	const accounts = useAccounts();
 	const { addAccount: updateAccount } = useAccountsDispatch();
+	const { logEvent } = useEventsLogDispatch();
 
 	const twitchWebsockets = useRef(new Map<string, WebSocket | 'connecting'>());
 
@@ -164,6 +166,117 @@ export default function useTwitchWebsocket() {
 									account.default)
 							) {
 								relatedWidgets.push(widgetId);
+
+								const { subscription_type, message_timestamp: timestamp } =
+									notificationMessage.metadata;
+								const { event } = notificationMessage.payload;
+
+								// log specific events to json for event labels
+								switch (subscription_type) {
+									case 'channel.follow': {
+										const followEvent = event as Twitch.WebsocketEvent.Follow;
+										logEvent(account.id, {
+											type: 'follow',
+											timestamp,
+											data: {
+												user_id: followEvent.user_id,
+												user_login: followEvent.user_login,
+												user_name: followEvent.user_name,
+											},
+										});
+										break;
+									}
+
+									case 'channel.subscribe': {
+										const subEvent = event as Twitch.WebsocketEvent.Subscribe;
+
+										// don't log individual subs from a gift sub
+										if (!subEvent.is_gift) {
+											logEvent(account.id, {
+												type: 'sub',
+												timestamp,
+												data: {
+													user_id: subEvent.user_id,
+													user_login: subEvent.user_login,
+													user_name: subEvent.user_name,
+													tier: subEvent.tier,
+												},
+											});
+										}
+										break;
+									}
+
+									case 'channel.subscription.message': {
+										const resubEvent =
+											event as Twitch.WebsocketEvent.SubscriptionMessage;
+
+										logEvent(account.id, {
+											type: 'resub',
+											timestamp,
+											data: {
+												user_id: resubEvent.user_id,
+												user_login: resubEvent.user_login,
+												user_name: resubEvent.user_name,
+												tier: resubEvent.tier,
+												cumulative_months: resubEvent.cumulative_months,
+												streak_months: resubEvent.streak_months,
+											},
+										});
+										break;
+									}
+
+									case 'channel.subscription.gift': {
+										const subGiftEvent =
+											event as Twitch.WebsocketEvent.SubscriptionGift;
+
+										logEvent(account.id, {
+											type: 'sub_gift',
+											timestamp,
+											data: {
+												user_id: subGiftEvent.user_id,
+												user_login: subGiftEvent.user_login,
+												user_name: subGiftEvent.user_name,
+												is_anonymous: subGiftEvent.is_anonymous,
+												tier: subGiftEvent.tier,
+												total: subGiftEvent.total,
+												cumulative_total: subGiftEvent.cumulative_total,
+											},
+										});
+										break;
+									}
+
+									case 'channel.raid': {
+										const raidEvent = event as Twitch.WebsocketEvent.Raid;
+										logEvent(account.id, {
+											type: 'raid',
+											timestamp,
+											data: {
+												user_id: raidEvent.from_broadcaster_user_id,
+												user_login: raidEvent.from_broadcaster_user_login,
+												user_name: raidEvent.from_broadcaster_user_name,
+												viewers: raidEvent.viewers,
+											},
+										});
+
+										break;
+									}
+
+									case 'channel.cheer': {
+										const cheerEvent = event as Twitch.WebsocketEvent.Cheer;
+										logEvent(account.id, {
+											type: 'cheer',
+											timestamp,
+											data: {
+												user_id: cheerEvent.user_id,
+												user_login: cheerEvent.user_login,
+												user_name: cheerEvent.user_name,
+												bits: cheerEvent.bits,
+											},
+										});
+
+										break;
+									}
+								}
 							}
 						});
 					});

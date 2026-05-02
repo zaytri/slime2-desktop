@@ -27,7 +27,7 @@ namespace Twitch {
 		type Notification = {
 			metadata: With.WebsocketMetadata<{
 				message_type: 'notification';
-				subscription_type: string;
+				subscription_type: EventSub.Type;
 				subscription_version: string;
 			}>;
 			payload: {

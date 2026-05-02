@@ -1,0 +1,13 @@
+{
+	"name": "Slime2 Chat Box",
+	"creator": "Slime2",
+	"version": "1.0.0",
+	"website": "https://slime2.stream/",
+	"support": "https://forums.slime2.stream/",
+	"type": ["overlay"],
+	"import": {
+		"js": ["script.js", "https://colorjs.io/dist/color.global.min.js"],
+		"css": ["styles.css"]
+	},
+	"accounts": [{ "type": "read", "service": "twitch" }]
+}
