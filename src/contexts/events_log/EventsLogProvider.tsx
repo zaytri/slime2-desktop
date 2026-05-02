@@ -23,11 +23,11 @@ export default function EventsLogProvider({ children }: Props.WithChildren) {
 		async function loadAllEventsLogs() {
 			const loadPromises: Promise<void>[] = [];
 
-			// loop thru all accounts, loading event logs if they don't
-			// already exist in the event logs map
-			Object.keys(accounts).forEach(accountId => {
-				if (!eventsLogMap[accountId]) {
-					loadPromises.push(getEventsLog(accountId));
+			// loop thru all read accounts, loading event logs
+			// if they don't already exist in the event logs map
+			Object.values(accounts).forEach(account => {
+				if (account.type === 'read' && !eventsLogMap[account.id]) {
+					loadPromises.push(getEventsLog(account.id));
 				}
 			});
 

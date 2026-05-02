@@ -23,8 +23,8 @@ export default function TileMetasProvider({ children }: Props.WithChildren) {
 		async function loadTileMetas() {
 			const loadPromises: Promise<void>[] = [];
 
-			// loop thru all tile ids, loading tile metas if they don't
-			// already exist in the tile metas map
+			// loop thru all tile ids, loading tile metas
+			// if they don't already exist in the tile metas map
 			Object.keys(locations).forEach(id => {
 				if (!tileMetas[id]) {
 					loadPromises.push(getTileMeta(id));

@@ -23,8 +23,8 @@ export default function WidgetMetasProvider({ children }: Props.WithChildren) {
 		async function loadWidgetMetas() {
 			const loadPromises: Promise<void>[] = [];
 
-			// loop thru all location ids, loading widget metas if they don't
-			// already exist in the widget metas map
+			// loop thru all location ids, loading widget metas
+			// if they don't already exist in the widget metas map
 			Object.keys(locations).forEach(id => {
 				if (id.startsWith('widget_') && !widgetMetas[id]) {
 					loadPromises.push(getWidgetMeta(id));
