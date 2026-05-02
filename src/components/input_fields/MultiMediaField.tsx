@@ -62,7 +62,7 @@ export default function MultiMediaField({
 								const src =
 									value.startsWith('https://') || value.startsWith('http://')
 										? value
-										: value.startsWith('custom/')
+										: value.startsWith('local:')
 											? getWidgetMediaCustomSrc(widgetId, value)
 											: getWidgetMediaCoreSrc(widgetId, value);
 
@@ -135,12 +135,19 @@ export default function MultiMediaField({
 									`File Select`,
 									<MediaSelectDialog
 										type={type}
-										onSave={async value => {
-											const fileName = await saveTempWidgetFile(
-												value,
-												widgetId,
-											);
-											onChange([`custom/${fileName}`, ...values]);
+										onSave={async newValue => {
+											if (
+												newValue.startsWith('https://') ||
+												newValue.startsWith('http://')
+											) {
+												onChange([newValue, ...values]);
+											} else {
+												const fileName = await saveTempWidgetFile(
+													newValue,
+													widgetId,
+												);
+												onChange([`local:${fileName}`, ...values]);
+											}
 										}}
 									/>,
 								);

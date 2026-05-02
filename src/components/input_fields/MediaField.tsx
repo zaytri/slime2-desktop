@@ -40,7 +40,7 @@ export default function MediaField({
 	const src =
 		value.startsWith('https://') || value.startsWith('http://')
 			? value
-			: value.startsWith('custom/')
+			: value.startsWith('local:')
 				? getWidgetMediaCustomSrc(widgetId, value)
 				: getWidgetMediaCoreSrc(widgetId, value);
 
@@ -112,12 +112,19 @@ export default function MediaField({
 									`File Select`,
 									<MediaSelectDialog
 										type={type}
-										onSave={async value => {
-											const fileName = await saveTempWidgetFile(
-												value,
-												widgetId,
-											);
-											onChange(`custom/${fileName}`);
+										onSave={async newValue => {
+											if (
+												newValue.startsWith('https://') ||
+												newValue.startsWith('http://')
+											) {
+												onChange(newValue);
+											} else {
+												const fileName = await saveTempWidgetFile(
+													newValue,
+													widgetId,
+												);
+												onChange(`local:${fileName}`);
+											}
 										}}
 									/>,
 								);
@@ -132,7 +139,7 @@ export default function MediaField({
 							</div>
 						</button>
 
-						<div className='text-3.5 text-zinc-500'>
+						<div className='text-3.5 font-medium text-zinc-500'>
 							<p>Allowed file types:</p>
 							<p>{getMediaFormats(type).join(', ')}</p>
 						</div>

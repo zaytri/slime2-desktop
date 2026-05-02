@@ -22,6 +22,6 @@ export function getWidgetMediaCoreSrc(id: string, filePath: string) {
 
 export function getWidgetMediaCustomSrc(id: string, customFileName: string) {
 	const timestamp = Date.now();
-	const [_custom, fileName] = customFileName.split('/');
+	const [_local, fileName] = customFileName.split(':');
 	return `${serverBaseUrl.tiles}/tile/${id}/config/assets/${fileName}?timestamp=${timestamp}`;
 }

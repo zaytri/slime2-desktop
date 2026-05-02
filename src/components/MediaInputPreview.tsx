@@ -33,7 +33,7 @@ export default function MediaInputPreview({
 					controlsList='nodownload noplaybackrate'
 					className={clsx(
 						className,
-						'w-full overflow-hidden rounded-full border border-white outline-2 outline-zinc-300 focus-visible:outline-4 focus-visible:outline-lime-600',
+						'w-full overflow-hidden rounded-full border border-white outline-2 outline-zinc-400 focus-visible:outline-4 focus-visible:outline-lime-600',
 					)}
 					src={src}
 					onLoadStart={lowerVolume}
