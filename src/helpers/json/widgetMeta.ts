@@ -25,6 +25,12 @@ export async function saveWidgetMeta(
 	queueSaveJson(data, await widgetMetaPath(id));
 }
 
+export function getWidgetMetaServices(widgetMeta: WidgetMeta) {
+	return widgetMeta.accounts.map(account => {
+		return account.service;
+	});
+}
+
 async function widgetMetaPath(id: string) {
 	const folderPath = await tileFolderPath(id);
 	return `${folderPath}/core/config/meta`;

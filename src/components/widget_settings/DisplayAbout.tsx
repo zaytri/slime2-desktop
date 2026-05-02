@@ -1,5 +1,6 @@
 import { useWidgetMeta } from '@/contexts/widget_metas/useWidgetMeta';
 import { getWidgetIconSrc } from '@/helpers/media';
+import { getWidgetMetaServices } from '@@/json/widgetMeta';
 import LinkifyText from '../LinkifyText';
 import AccountServiceTag from '../tag/AccountServiceTag';
 import WidgetTypeTag from '../tag/WidgetTypeTag';
@@ -10,28 +11,12 @@ type DisplayAboutProps = {
 
 export default function DisplayAbout({ widgetId }: DisplayAboutProps) {
 	const { widgetMeta } = useWidgetMeta(widgetId);
-
-	const usesService = {
-		twitch: false,
-		youtube: false,
-	};
-
-	widgetMeta.accounts.forEach(account => {
-		switch (account.service) {
-			case 'twitch':
-				usesService.twitch = true;
-				break;
-			case 'youtube':
-				usesService.youtube = true;
-				break;
-			default: // nothing
-		}
-	});
+	const services = getWidgetMetaServices(widgetMeta);
 
 	return (
 		<div className='flex gap-4 rounded-2 border border-white bg-zinc-100 bg-linear-to-b from-zinc-50 to-zinc-100 p-3 pt-2 outline-2 outline-zinc-300'>
 			<div className='flex flex-1 flex-col gap-2'>
-				<div className='flex items-center gap-3'>
+				<div className='flex items-center gap-6'>
 					<h3 className='flex-1 text-shadow-[0_1px_white]'>
 						<span className='font-mochiy text-4.5 text-zinc-800'>
 							{widgetMeta.name}
@@ -42,8 +27,12 @@ export default function DisplayAbout({ widgetId }: DisplayAboutProps) {
 					</h3>
 
 					<div className='flex gap-1 font-semibold'>
-						{usesService.twitch && <AccountServiceTag service='twitch' />}
-						{usesService.youtube && <AccountServiceTag service='youtube' />}
+						{services.includes('twitch') && (
+							<AccountServiceTag service='twitch' />
+						)}
+						{services.includes('youtube') && (
+							<AccountServiceTag service='youtube' />
+						)}
 						{widgetMeta.type.includes('bot') && <WidgetTypeTag type='bot' />}
 						{widgetMeta.type.includes('overlay') && (
 							<WidgetTypeTag type='overlay' />
@@ -61,12 +50,12 @@ export default function DisplayAbout({ widgetId }: DisplayAboutProps) {
 						className='flex flex-1 flex-col'
 						linkClassName='text-green-700 font-semibold'
 					>
-						<AboutDetail label='Creator'>{widgetMeta.creator}</AboutDetail>
+						<MetaDetail label='Creator'>{widgetMeta.creator}</MetaDetail>
 						{widgetMeta.website && (
-							<AboutDetail label='Website'>{widgetMeta.website}</AboutDetail>
+							<MetaDetail label='Website'>{widgetMeta.website}</MetaDetail>
 						)}
 						{widgetMeta.support && (
-							<AboutDetail label='Support'>{widgetMeta.support}</AboutDetail>
+							<MetaDetail label='Support'>{widgetMeta.support}</MetaDetail>
 						)}
 					</LinkifyText>
 				</div>
@@ -75,14 +64,11 @@ export default function DisplayAbout({ widgetId }: DisplayAboutProps) {
 	);
 }
 
-type AboutDetailProps = {
+type MetaDetailProps = {
 	label: string;
 };
 
-function AboutDetail({
-	label,
-	children,
-}: Props.WithChildren<AboutDetailProps>) {
+function MetaDetail({ label, children }: Props.WithChildren<MetaDetailProps>) {
 	return (
 		<p className='text-4.5'>
 			<strong className='pr-1.5 font-fredoka font-medium text-zinc-800'>

@@ -14,6 +14,7 @@ import { getTileIconSrc } from '@/helpers/media';
 import { tileColorClasses } from '@/helpers/tileColors';
 import type { TileSlot } from '@@/json/tileLocations';
 import type { TileMeta } from '@@/json/tileMeta';
+import { getWidgetMetaServices } from '@@/json/widgetMeta';
 import ArrowLeftSvg from '@@/svg/ArrowLeftSvg';
 import ArrowRightSvg from '@@/svg/ArrowRightSvg';
 import GridSvg from '@@/svg/GridSvg';
@@ -150,32 +151,16 @@ type WidgetTagsProps = {
 
 function WidgetTags({ widgetId }: WidgetTagsProps) {
 	const { widgetMeta } = useWidgetMeta(widgetId);
-	const accounts = widgetMeta?.accounts || [];
-	const type = widgetMeta?.type || [];
+	if (!widgetMeta) return null;
 
-	const usesService = {
-		twitch: false,
-		youtube: false,
-	};
-
-	accounts.forEach(account => {
-		switch (account.service) {
-			case 'twitch':
-				usesService.twitch = true;
-				break;
-			case 'youtube':
-				usesService.youtube = true;
-				break;
-			default: // nothing
-		}
-	});
+	const services = getWidgetMetaServices(widgetMeta);
 
 	return (
 		<div className='flex gap-3 rounded-2 font-bold *:outline-2 *:outline-white'>
-			{usesService.twitch && <AccountServiceTag service='twitch' />}
-			{usesService.youtube && <AccountServiceTag service='youtube' />}
-			{type.includes('bot') && <WidgetTypeTag type='bot' />}
-			{type.includes('overlay') && <WidgetTypeTag type='overlay' />}
+			{services.includes('twitch') && <AccountServiceTag service='twitch' />}
+			{services.includes('youtube') && <AccountServiceTag service='youtube' />}
+			{widgetMeta.type.includes('bot') && <WidgetTypeTag type='bot' />}
+			{widgetMeta.type.includes('overlay') && <WidgetTypeTag type='overlay' />}
 		</div>
 	);
 }

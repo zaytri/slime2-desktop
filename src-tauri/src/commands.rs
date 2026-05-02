@@ -477,10 +477,6 @@ pub async fn extract_widget_details(zip_path: &str) -> Result<String, String> {
 		}
 	};
 
-	archive
-		.file_names()
-		.for_each(|file_name| println!("{}", file_name));
-
 	// necessary for OS-friendly path
 	let meta_path = Path::new("config").join("meta.json");
 
