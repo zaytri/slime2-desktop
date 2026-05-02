@@ -37,7 +37,9 @@ export default function FontField({
 
 						<p
 							className={clsx(value ? 'text-black' : 'text-zinc-400')}
-							style={{ fontFamily: `"${value}", sans-serif` }}
+							style={{
+								fontFamily: value ? `"${value}", sans-serif` : undefined,
+							}}
 						>
 							{value || placeholder || 'Select font...'}
 						</p>
