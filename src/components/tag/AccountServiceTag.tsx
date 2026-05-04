@@ -17,7 +17,7 @@ export default function AccountServiceTag({
 			return (
 				<Tag
 					label='Twitch'
-					icon={<TwitchSvg className='size-4' />}
+					icon={<TwitchSvg className='h-4' />}
 					className='border-violet-700 bg-[#9146FF]'
 					mini={mini}
 				/>
@@ -26,8 +26,9 @@ export default function AccountServiceTag({
 			return (
 				<Tag
 					label='YouTube'
-					icon={<YoutubeSvg className='size-4' />}
+					icon={<YoutubeSvg className='h-4' />}
 					className='border-rose-950 bg-rose-800'
+					mini={mini}
 				/>
 			);
 		default:
