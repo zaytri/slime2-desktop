@@ -25,7 +25,6 @@ import SliderField from '../input_fields/SliderField';
 import TextAreaField from '../input_fields/TextAreaField';
 import TextField from '../input_fields/TextField';
 import ToggleField from '../input_fields/ToggleField';
-import DisplayImage from './DisplayImage';
 import DisplayText from './DisplayText';
 import SettingMultiSection from './SettingMultiSection';
 import SettingSection from './SettingSection';
@@ -99,9 +98,9 @@ export default function WidgetSetting({
 		case 'text-display': {
 			return <DisplayText label={label} />;
 		}
-		case 'image-display': {
-			return <DisplayImage label={label} src={setting.src} alt={alt} />;
-		}
+		// case 'image-display': {
+		// 	return <DisplayImage label={label} src={setting.src} alt={alt} />;
+		// }
 		case 'text-input': {
 			return (
 				<TextField
