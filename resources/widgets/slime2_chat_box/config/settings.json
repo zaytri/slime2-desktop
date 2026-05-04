@@ -75,7 +75,54 @@
 					}
 				}
 			},
-
+			"outline-section": {
+				"label": "Outline",
+				"settings": {
+					"use-outline": {
+						"label": "Use Outline?",
+						"type": "toggle-input",
+						"defaultValue": false,
+						"description": "Applies an outline around the message text, badges, and emotes"
+					},
+					"outline-thickness": {
+						"label": "Thickness",
+						"type": "slider-input",
+						"defaultValue": 2,
+						"min": 1,
+						"max": 5,
+						"step": 1
+					},
+					"outline-color": {
+						"label": "Color",
+						"type": "color-input",
+						"defaultValue": "black"
+					},
+					"outline-blur": {
+						"label": "Blur",
+						"type": "slider-input",
+						"defaultValue": 0,
+						"min": 0,
+						"max": 5,
+						"step": 1
+					},
+					"outline-offset-x": {
+						"label": "Horizontal Offset ",
+						"type": "slider-input",
+						"defaultValue": 0,
+						"min": -5,
+						"max": 5,
+						"step": 1
+					},
+					"outline-offset-y": {
+						"label": "Vertical Offset ",
+						"type": "slider-input",
+						"defaultValue": 0,
+						"min": -5,
+						"max": 5,
+						"step": 1
+					}
+				}
+			},
 			"direction-section": {
 				"label": "Direction",
 				"type": "section",
