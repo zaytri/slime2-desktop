@@ -150,17 +150,27 @@ type WidgetTagsProps = {
 };
 
 function WidgetTags({ widgetId }: WidgetTagsProps) {
+	const { folderId } = useFolderId();
 	const { widgetMeta } = useWidgetMeta(widgetId);
 	if (!widgetMeta) return null;
 
 	const services = getWidgetMetaServices(widgetMeta);
+	const mini = folderId !== 'main';
 
 	return (
 		<div className='flex flex-wrap justify-center gap-3 rounded-2 font-bold *:outline-2 *:outline-white'>
-			{services.includes('twitch') && <AccountServiceTag service='twitch' />}
-			{services.includes('youtube') && <AccountServiceTag service='youtube' />}
-			{widgetMeta.type.includes('bot') && <WidgetTypeTag type='bot' />}
-			{widgetMeta.type.includes('overlay') && <WidgetTypeTag type='overlay' />}
+			{services.includes('twitch') && (
+				<AccountServiceTag service='twitch' mini={mini} />
+			)}
+			{services.includes('youtube') && (
+				<AccountServiceTag service='youtube' mini={mini} />
+			)}
+			{widgetMeta.type.includes('bot') && (
+				<WidgetTypeTag type='bot' mini={mini} />
+			)}
+			{widgetMeta.type.includes('overlay') && (
+				<WidgetTypeTag type='overlay' mini={mini} />
+			)}
 		</div>
 	);
 }
