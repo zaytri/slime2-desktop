@@ -419,17 +419,36 @@ type SlimeIconProps = {
 };
 
 function SlimeIcon({ src, type }: SlimeIconProps) {
+	const [aspectRatio, setAspectRatio] = useState(1);
+	const paddingTop = `${Math.min(aspectRatio * 16, 40)}%`;
+	const paddingBottom = `${Math.min(aspectRatio * 5, 10)}%`;
+
 	if (!src) return null;
 
 	return (
 		<div
+			data-aspect={aspectRatio}
 			className={clsx(
-				'absolute inset-1 flex items-center justify-center overflow-hidden p-1.5',
+				'absolute inset-1 flex justify-center overflow-hidden p-1',
 				type === 'widget' && 'rounded-slime',
-				type === 'folder' && 'rounded-10%',
 			)}
+			style={
+				type === 'widget'
+					? {
+							paddingTop,
+							paddingBottom,
+						}
+					: undefined
+			}
 		>
-			<img src={src} className='max-h-full max-w-full' />
+			<img
+				src={src}
+				onLoad={event => {
+					const img = event.currentTarget;
+					setAspectRatio(img.naturalWidth / img.naturalHeight);
+				}}
+				className='tile-image max-h-full max-w-full rounded-1 object-scale-down smooth-image'
+			/>
 		</div>
 	);
 }
