@@ -3,7 +3,7 @@ import ArrowTurnDownLeftSvg from '@/components/svg/ArrowTurnDownLeftSvg';
 import XSvg from '@/components/svg/XSvg';
 import { Field, Input, Label } from '@headlessui/react';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 type MultiTextFieldProps = {
 	label: string;
@@ -21,6 +21,7 @@ export default function MultiTextField({
 	placeholder,
 }: MultiTextFieldProps) {
 	const [inputValue, setInputValue] = useState<string>('');
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	function removeValueAtIndex(index: number) {
 		const newValues = [...values];
@@ -56,7 +57,7 @@ export default function MultiTextField({
 						return (
 							<button
 								key={`${value}-${index}`}
-								className='group -outline-offset-2!over:bg-rose-200 flex items-center gap-1.5 rounded-1 border border-zinc-400 bg-zinc-200 px-1.5 font-semibold text-zinc-800 -outline-offset-1! over:bg-rose-200 over:text-rose-900 over:outline-3 over:outline-rose-700'
+								className='group -outline-offset-2!over:bg-rose-200 flex items-center gap-1.5 rounded-1 border border-zinc-400 bg-zinc-200 px-1.5 text-3.5 font-semibold text-zinc-800 -outline-offset-1! over:bg-rose-200 over:text-rose-900 over:outline-3 over:outline-rose-700'
 								onClick={() => {
 									removeValueAtIndex(index);
 								}}
@@ -108,6 +109,7 @@ export default function MultiTextField({
 
 					<div className='flex items-center gap-1'>
 						<Input
+							ref={inputRef}
 							autoComplete='off'
 							aria-autocomplete='none'
 							value={inputValue}
@@ -140,6 +142,13 @@ export default function MultiTextField({
 						/>
 						<ArrowTurnDownLeftSvg className='hidden size-3 text-zinc-500 peer-data-focus:block' />
 					</div>
+
+					<div
+						className='flex-1 cursor-text'
+						onClick={() => {
+							inputRef.current?.focus();
+						}}
+					></div>
 				</div>
 			</div>
 
