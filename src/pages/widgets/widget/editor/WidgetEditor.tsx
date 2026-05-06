@@ -1,0 +1,110 @@
+import HeaderBackButton from '@/components/header/HeaderBackButton';
+import HeaderButton from '@/components/header/HeaderButton';
+import { useDialog } from '@/contexts/dialog/useDialog';
+import { useWidgetId } from '@/contexts/widget_id/useWidgetId';
+import { useWidgetMeta } from '@/contexts/widget_metas/useWidgetMeta';
+import GenericDeleteDialog from '@@/dialog/GenericDeleteDialog';
+import type { WidgetMeta } from '@@/json/widgetMeta';
+import {
+	updateWidgetSettings,
+	type WidgetSettings,
+} from '@@/json/widgetSettings';
+import ArrowDownTraySvg from '@@/svg/ArrowDownTraySvg';
+import { useState } from 'react';
+import WidgetMetaEditor from './WidgetMetaEditor';
+import WidgetSettingsEditor from './WidgetSettingsEditor';
+
+type WidgetEditorProps = {
+	settings: WidgetSettings;
+	onBack: VoidFunction;
+};
+
+export default function WidgetEditor({ settings, onBack }: WidgetEditorProps) {
+	const widgetId = useWidgetId();
+	const { widgetMeta, setWidgetMeta } = useWidgetMeta(widgetId);
+	const { openDialog } = useDialog();
+	const [newSettings, setNewSettings] = useState<WidgetSettings>(settings);
+	const [newWidgetMeta, setNewWidgetMeta] = useState<WidgetMeta>(widgetMeta);
+	const [hasChanges, setHasChanges] = useState(false);
+	const [saving, setSaving] = useState(false);
+
+	function onChangeSettings(value: WidgetSettings) {
+		setNewSettings(value);
+		setHasChanges(true);
+	}
+
+	function onChangeMeta(value: WidgetMeta) {
+		setNewWidgetMeta(value);
+		setHasChanges(true);
+	}
+
+	async function onSave() {
+		if (!hasChanges) {
+			onBack();
+		} else {
+			setSaving(true);
+			await updateWidgetSettings(widgetId, newSettings);
+			setWidgetMeta(newWidgetMeta);
+			setSaving(false);
+			onBack();
+		}
+	}
+
+	return (
+		<div className='flex flex-1 p-4'>
+			<div className='flex flex-1 flex-col gap-4 overflow-hidden dark-container p-6 pt-4'>
+				<div className='-ml-2 flex items-center gap-4 text-white text-shadow-[0_2px_black]'>
+					<HeaderBackButton
+						onClick={() => {
+							if (hasChanges) {
+								openDialog(
+									'Unsaved Changes',
+									<GenericDeleteDialog
+										onDelete={() => {
+											onBack();
+										}}
+										actionText='Discard Changes and Exit'
+									>
+										<p>
+											You have some <strong>unsaved changes</strong>!
+										</p>
+										<p>
+											Exiting the Widget Editor now will{' '}
+											<strong>discard</strong> these changes. Are you sure you
+											want to leave?
+										</p>
+									</GenericDeleteDialog>,
+								);
+							} else {
+								onBack();
+							}
+						}}
+					/>
+
+					<h1 className='flex flex-1 items-center gap-4'>
+						<p className='flex-1 font-mochiy text-5'>Widget Core Editor</p>
+					</h1>
+
+					<HeaderButton
+						icon={ArrowDownTraySvg}
+						label={saving ? 'Saving...' : 'Save and Exit'}
+						disabled={saving}
+						className='border-lime-400 bg-lime-300 from-lime-400 to-green-400 text-green-900 over:outline-green-600'
+						onClick={() => {
+							onSave();
+						}}
+					/>
+				</div>
+
+				<div className='-m-1 flex flex-1 gap-4 overflow-hidden border-t border-zinc-600 p-1 pt-2'>
+					<WidgetMetaEditor value={newWidgetMeta} onChange={onChangeMeta} />
+
+					<WidgetSettingsEditor
+						value={newSettings}
+						onChange={onChangeSettings}
+					/>
+				</div>
+			</div>
+		</div>
+	);
+}

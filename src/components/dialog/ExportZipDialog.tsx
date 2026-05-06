@@ -1,3 +1,4 @@
+import { useDialog } from '@/contexts/dialog/useDialog';
 import { packageCustomWidget } from '@/helpers/commands';
 import { saveZip } from '@/helpers/saveFile';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
@@ -10,6 +11,8 @@ type ExportZipDialogProps = {
 };
 
 export default function ExportZipDialog({ widgetId }: ExportZipDialogProps) {
+	const { closeDialog } = useDialog();
+
 	return (
 		<DialogContent className='flex w-96 flex-col justify-between gap-6 p-4'>
 			<div className='flex flex-col gap-2'>
@@ -37,6 +40,8 @@ export default function ExportZipDialog({ widgetId }: ExportZipDialogProps) {
 						} catch (error) {
 							console.error(error);
 						}
+
+						closeDialog();
 					}}
 				>
 					Export

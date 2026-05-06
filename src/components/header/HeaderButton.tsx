@@ -1,9 +1,10 @@
 import clsx from 'clsx';
 
 type HeaderButtonProps = {
-	icon: SvgComponent;
+	icon?: SvgComponent;
 	label: string;
 	onClick: VoidFunction;
+	disabled?: boolean;
 };
 
 export default function HeaderButton({
@@ -11,10 +12,12 @@ export default function HeaderButton({
 	icon: Icon,
 	className,
 	label,
+	disabled,
 }: Props.WithClassName<HeaderButtonProps>) {
 	return (
 		<button
 			type='button'
+			disabled={disabled}
 			className={clsx(
 				'relative flex overflow-hidden rounded-2 border bg-linear-to-b px-2 py-1 font-fredoka text-5 font-medium over:bg-none over:outline-4 over:outline-offset-4',
 				className,
@@ -23,7 +26,7 @@ export default function HeaderButton({
 		>
 			<div className='absolute inset-0 bottom-1/2 bg-linear-to-b from-white/30 to-white/20'></div>
 			<div className='relative flex flex-1 items-center gap-2.5 drop-shadow-[0_1px_3px_#FFFB]'>
-				<Icon className='size-5' />
+				{Icon && <Icon className='size-5' />}
 				<p>{label}</p>
 			</div>
 		</button>

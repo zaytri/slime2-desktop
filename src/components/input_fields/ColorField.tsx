@@ -23,6 +23,7 @@ type ColorFieldProps = {
 	onChange: (value: string) => void;
 	placeholder?: string;
 	description?: string;
+	compact?: boolean;
 };
 
 export default function ColorField({
@@ -31,6 +32,7 @@ export default function ColorField({
 	onChange,
 	placeholder,
 	description,
+	compact = false,
 }: ColorFieldProps) {
 	const context = usePopoverContext();
 	const popoverStore = usePopoverStore({ store: context });
@@ -49,6 +51,62 @@ export default function ColorField({
 	}
 
 	const [popoverOpen, setPopoverOpen] = useState(false);
+
+	if (compact) {
+		return (
+			<Field>
+				<PopoverProvider
+					store={popoverStore}
+					placement='top-start'
+					setOpen={setPopoverOpen}
+				>
+					<div
+						className={clsx(
+							'group/color flex items-center overflow-hidden rounded-1 bg-zinc-700 outline outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-lime-600',
+							popoverOpen && 'bg-green-800 outline-3 outline-lime-600',
+						)}
+						onClick={() => {
+							inputRef.current?.focus();
+						}}
+					>
+						{label && (
+							<Label className='cursor-pointer px-2 text-3.5 font-bold whitespace-nowrap text-white'>
+								{label}
+							</Label>
+						)}
+
+						<div className='flex flex-1 items-center gap-1.5 bg-white pl-1.5'>
+							{/* color preview box */}
+							<PopoverAnchor className='cursor-pointer'>
+								<ColorPreview color={value} className='size-5' />
+							</PopoverAnchor>
+
+							<Input
+								size={1}
+								value={value}
+								onChange={event => {
+									onStringChange(event.target.value);
+								}}
+								placeholder={placeholder || 'Select color...'}
+								className='min-w-0 flex-1 py-0.5 pr-1 outline-none placeholder:text-zinc-400'
+								autoCorrect='off'
+								autoCapitalize='off'
+								autoComplete='off'
+								aria-autocomplete='none'
+								ref={inputRef}
+								onFocusCapture={event => {
+									popoverStore.setDisclosureElement(event.currentTarget);
+									popoverStore.show();
+								}}
+							/>
+						</div>
+					</div>
+
+					<ColorPopover hsva={hsvaValue} onHsvaChange={onHsvaChange} />
+				</PopoverProvider>
+			</Field>
+		);
+	}
 
 	return (
 		<Field>
@@ -72,7 +130,7 @@ export default function ColorField({
 					</PopoverAnchor>
 
 					<div className='flex flex-1 flex-col'>
-						<Label className='input-label'>{label}</Label>
+						<Label className='cursor-pointer input-label'>{label}</Label>
 
 						<Input
 							value={value}
@@ -83,6 +141,8 @@ export default function ColorField({
 							className='input-class'
 							autoComplete='off'
 							aria-autocomplete='none'
+							autoCorrect='off'
+							autoCapitalize='off'
 							ref={inputRef}
 							onFocusCapture={event => {
 								popoverStore.setDisclosureElement(event.currentTarget);
@@ -92,96 +152,107 @@ export default function ColorField({
 					</div>
 				</div>
 
-				<Popover
-					autoFocusOnShow={false}
-					className='z-50'
-					gutter={8}
-					wrapperProps={{ style: { left: 0 } }}
-				>
-					<div className='flex gap-4 rounded-2 bg-white p-4 shadow-[0_2px_10px_#0006] outline-4 outline-lime-600'>
-						<SaturationGrid
-							hsva={hsvaValue}
-							onChange={newColor => {
-								const newHsva = { ...hsvaValue, ...newColor, a: hsvaValue.a };
-								onHsvaChange(newHsva);
-							}}
-						/>
-
-						<HueSlider
-							hue={hsvaValue.h}
-							onChange={newHue => {
-								const newHsva = { ...hsvaValue, ...newHue };
-								onHsvaChange(newHsva);
-							}}
-						/>
-
-						<AlphaSlider
-							hsva={hsvaValue}
-							onChange={newAlpha => {
-								const newHsva = { ...hsvaValue, ...newAlpha };
-								onHsvaChange(newHsva);
-							}}
-						/>
-
-						<div className='flex flex-col justify-between'>
-							<RgbaInput
-								label='Red'
-								value={hsvaToRgba(hsvaValue).r}
-								onChange={newRed => {
-									const rgbaValue = hsvaToRgba(hsvaValue);
-									onHsvaChange(
-										rgbaToHsva({
-											...rgbaValue,
-											r: Math.min(Math.max(newRed, 0), 255),
-										}),
-									);
-								}}
-							/>
-
-							<RgbaInput
-								label='Green'
-								value={hsvaToRgba(hsvaValue).g}
-								onChange={newGreen => {
-									const rgbaValue = hsvaToRgba(hsvaValue);
-									onHsvaChange(
-										rgbaToHsva({
-											...rgbaValue,
-											g: Math.min(Math.max(newGreen, 0), 255),
-										}),
-									);
-								}}
-							/>
-
-							<RgbaInput
-								label='Blue'
-								value={hsvaToRgba(hsvaValue).b}
-								onChange={newBlue => {
-									const rgbaValue = hsvaToRgba(hsvaValue);
-									onHsvaChange(
-										rgbaToHsva({
-											...rgbaValue,
-											b: Math.min(Math.max(newBlue, 0), 255),
-										}),
-									);
-								}}
-							/>
-
-							<RgbaInput
-								label='Alpha'
-								value={Math.round(hsvaValue.a * 255)}
-								onChange={newAlpha => {
-									onHsvaChange({
-										...hsvaValue,
-										a: Math.min(Math.max(newAlpha, 0), 255) / 255,
-									});
-								}}
-							/>
-						</div>
-					</div>
-				</Popover>
+				<ColorPopover hsva={hsvaValue} onHsvaChange={onHsvaChange} />
 			</PopoverProvider>
 
 			<InputDescription>{description}</InputDescription>
 		</Field>
+	);
+}
+
+type ColorPopoverProps = {
+	hsva: HsvaColor;
+	onHsvaChange: (hsva: HsvaColor) => void;
+};
+
+function ColorPopover({ hsva, onHsvaChange }: ColorPopoverProps) {
+	return (
+		<Popover
+			autoFocusOnShow={false}
+			className='z-50'
+			gutter={8}
+			wrapperProps={{ style: { left: 0 } }}
+		>
+			<div className='flex gap-4 rounded-2 bg-white p-4 shadow-[0_2px_10px_#0006] outline-4 outline-lime-600'>
+				<SaturationGrid
+					hsva={hsva}
+					onChange={newColor => {
+						const newHsva = { ...hsva, ...newColor, a: hsva.a };
+						onHsvaChange(newHsva);
+					}}
+				/>
+
+				<HueSlider
+					hue={hsva.h}
+					onChange={newHue => {
+						const newHsva = { ...hsva, ...newHue };
+						onHsvaChange(newHsva);
+					}}
+				/>
+
+				<AlphaSlider
+					hsva={hsva}
+					onChange={newAlpha => {
+						const newHsva = { ...hsva, ...newAlpha };
+						onHsvaChange(newHsva);
+					}}
+				/>
+
+				<div className='flex flex-col justify-between'>
+					<RgbaInput
+						label='Red'
+						value={hsvaToRgba(hsva).r}
+						onChange={newRed => {
+							const rgbaValue = hsvaToRgba(hsva);
+							onHsvaChange(
+								rgbaToHsva({
+									...rgbaValue,
+									r: Math.min(Math.max(newRed, 0), 255),
+								}),
+							);
+						}}
+					/>
+
+					<RgbaInput
+						label='Green'
+						value={hsvaToRgba(hsva).g}
+						onChange={newGreen => {
+							const rgbaValue = hsvaToRgba(hsva);
+							onHsvaChange(
+								rgbaToHsva({
+									...rgbaValue,
+									g: Math.min(Math.max(newGreen, 0), 255),
+								}),
+							);
+						}}
+					/>
+
+					<RgbaInput
+						label='Blue'
+						value={hsvaToRgba(hsva).b}
+						onChange={newBlue => {
+							const rgbaValue = hsvaToRgba(hsva);
+							onHsvaChange(
+								rgbaToHsva({
+									...rgbaValue,
+									b: Math.min(Math.max(newBlue, 0), 255),
+								}),
+							);
+						}}
+					/>
+
+					<RgbaInput
+						label='Alpha'
+						value={Math.round(hsva.a * 255)}
+						onChange={newAlpha => {
+							onHsvaChange({
+								...hsva,
+								a: Math.min(Math.max(newAlpha, 0), 255) / 255,
+							});
+						}}
+					/>
+				</div>
+			</div>
+		</Popover>
 	);
 }

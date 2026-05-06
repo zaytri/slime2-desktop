@@ -22,7 +22,7 @@ export default function WidgetSettingsSidebar({
 }: WidgetSettingsSidebarProps) {
 	return (
 		<aside className='relative flex w-56 flex-col justify-between gap-4 border-t border-zinc-500 pt-2'>
-			<h2 className='absolute top-0 right-0 text-3 text-zinc-500 uppercase'>
+			<h2 className='absolute top-0 right-0 text-3 font-semibold text-zinc-500 uppercase'>
 				Settings
 			</h2>
 

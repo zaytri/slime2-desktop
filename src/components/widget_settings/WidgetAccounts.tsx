@@ -73,7 +73,9 @@ export default function WidgetAccounts({ widgetId }: WidgetAccountsProps) {
 				return (
 					<Field
 						key={
-							slottedAccount?.id || `empty_${service}_${type}_slot_${slotIndex}`
+							slottedAccount?.id
+								? `${slottedAccount.id}_slot_${slotIndex}`
+								: `empty_${service}_${type}_slot_${slotIndex}`
 						}
 					>
 						<Label className='sr-only capitalize'>

@@ -1,5 +1,6 @@
 import InputDescription from '@/components/input_fields/InputDescription';
 import { Field, Input, Label } from '@headlessui/react';
+import { useEffect, useRef } from 'react';
 
 type SliderFieldProps = {
 	label: string;
@@ -20,6 +21,26 @@ export default function SliderField({
 	min = 0, // default min to 0
 	max = 100, // default max to 100
 }: SliderFieldProps) {
+	const numberInputRef = useRef<HTMLInputElement>(null);
+
+	// prevents using mouse wheel to increment/decrement number
+	// since mouse wheel also scrolls the entire container
+	useEffect(() => {
+		const inputElement = numberInputRef.current;
+		if (!inputElement) return;
+
+		function onWheel(event: WheelEvent) {
+			event.preventDefault();
+		}
+
+		// passive: false is what makes this work
+		inputElement.addEventListener('wheel', onWheel, { passive: false });
+
+		return () => {
+			inputElement.removeEventListener('wheel', onWheel);
+		};
+	}, [numberInputRef.current]);
+
 	function onChangeInput(event: React.ChangeEvent<HTMLInputElement>) {
 		const { value } = event.target;
 
@@ -43,6 +64,7 @@ export default function SliderField({
 
 				<div className='flex items-center gap-2 py-1'>
 					<input
+						ref={numberInputRef}
 						autoComplete='off'
 						aria-autocomplete='none'
 						type='number'
@@ -52,11 +74,6 @@ export default function SliderField({
 						step={step}
 						className='w-16 rounded-1 bg-zinc-700 text-center font-semibold text-white outline outline-black text-shadow-[0_1px_#0006] over:bg-white over:text-black over:outline-3! over:outline-lime-600 over:text-shadow-none'
 						onChange={onChangeInput}
-						onWheel={event => {
-							// prevents using mouse wheel to increment/decrement number
-							// since mouse wheel also scrolls the entire settings container
-							event.currentTarget.blur();
-						}}
 					/>
 
 					<Input

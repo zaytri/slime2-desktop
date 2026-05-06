@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import AccountsProvider from './contexts/accounts/AccountsProvider';
@@ -10,10 +10,9 @@ import TileLocationsProvider from './contexts/tile_locations/TileLocationsProvid
 import TileMetasProvider from './contexts/tile_metas/TileMetasProvider';
 import TileSwapProvider from './contexts/tile_swap/TileSwapProvider';
 import WidgetMetasProvider from './contexts/widget_metas/WidgetMetasProvider';
+import { queryClient } from './helpers/queryClient';
 import MainTabs from './pages/MainTabs';
 import './styles.css';
-
-const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>

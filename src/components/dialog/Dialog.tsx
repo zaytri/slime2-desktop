@@ -1,5 +1,6 @@
 import XSvg from '@/components/svg/XSvg';
 import { useDialog } from '@/contexts/dialog/useDialog';
+import { DialogDismiss, DialogHeading } from '@ariakit/react';
 import ArrowLeftSvg from '../svg/ArrowLeftSvg';
 
 export default function Dialog({ children }: Props.WithChildren) {
@@ -28,19 +29,27 @@ export default function Dialog({ children }: Props.WithChildren) {
 							)}
 
 							{/* title */}
-							<h2 className='flex-1 pl-2 text-5 font-bold text-white text-shadow-[0_2px_#0008]'>
+							<DialogHeading className='flex-1 pl-2 text-5 font-bold text-white text-shadow-[0_2px_#0008]'>
 								{title}
-							</h2>
+							</DialogHeading>
 
 							{/* close button */}
-							<button
+							<DialogDismiss
 								type='button'
 								className='flex items-center rounded-lg p-2 text-white over:text-rose-200 over:outline-4 over:-outline-offset-3! over:outline-rose-400'
-								onClick={onCancel ?? close}
+								onClick={event => {
+									event.preventDefault();
+
+									if (onCancel) {
+										onCancel();
+									} else {
+										close();
+									}
+								}}
 							>
 								<span className='sr-only'>Close</span>
 								<XSvg className='-mt-0.5 size-4 drop-shadow-[0_2px_#0008]' />
-							</button>
+							</DialogDismiss>
 						</div>
 					</div>
 

@@ -1,3 +1,4 @@
+import DevEditorModeProvider from '@/contexts/dev_editor_mode/DevEditorModeProvider';
 import SelectedTileProvider from '@/contexts/selected_tile/SelectedTileProvider';
 import WidgetIdProvider from '@/contexts/widget_id/WidgetIdProvider';
 import useWidgetsPanel from '@/contexts/widgets_panel/useWidgetsPanel';
@@ -17,7 +18,9 @@ export default function WidgetsPanel() {
 
 	return (
 		<WidgetIdProvider id={widgetId}>
-			<Widget />
+			<DevEditorModeProvider>
+				<Widget />
+			</DevEditorModeProvider>
 		</WidgetIdProvider>
 	);
 }

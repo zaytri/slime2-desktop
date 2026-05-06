@@ -1,13 +1,14 @@
 import { z } from 'zod/mini';
-import { loadJson } from '../commands';
+import { loadJson, saveJson } from '../commands';
 import { I18nString } from '../i18n';
+import { refetchQuery } from '../queryClient';
 import logZodError from '../zodError';
 import { tileFolderPath } from './jsonPaths';
 
 // functions
 
 export async function loadWidgetSettings(id: string): Promise<WidgetSettings> {
-	const json = await loadJson(await settingsPath(id));
+	const json = await loadJson(await widgetSettingsPath(id));
 	try {
 		const data = WidgetSettings.parse(json);
 		return data;
@@ -17,7 +18,17 @@ export async function loadWidgetSettings(id: string): Promise<WidgetSettings> {
 	}
 }
 
-async function settingsPath(id: string) {
+// saves and reloads settings (from useWidgetSettingsQuery)
+export async function updateWidgetSettings(
+	id: string,
+	settings: WidgetSettings,
+): Promise<void> {
+	const path = await widgetSettingsPath(id);
+	await saveJson(settings, path);
+	return refetchQuery(['widgetSettings', id]);
+}
+
+async function widgetSettingsPath(id: string) {
 	const folderPath = await tileFolderPath(id);
 	return `${folderPath}/core/config/settings`;
 }
@@ -201,20 +212,16 @@ const BaseSectionSetting = z.discriminatedUnion('type', [
 	FontInputSetting,
 ]);
 
+const NonGroupSetting = z.intersection(BaseSectionSetting, BaseSetting);
+
 const SectionSetting = z.object({
 	type: z.literal('section'),
-	settings: z.record(
-		z.string(),
-		z.intersection(BaseSectionSetting, BaseSetting),
-	),
+	settings: z.record(z.string(), NonGroupSetting),
 });
 
 const MultiSectionSetting = z.object({
 	type: z.literal('multi-section'),
-	settings: z.record(
-		z.string(),
-		z.intersection(BaseSetting, BaseSectionSetting),
-	),
+	settings: z.record(z.string(), NonGroupSetting),
 });
 
 const BaseCategorySetting = z.discriminatedUnion('type', [
@@ -246,11 +253,13 @@ type ExtractSettingType<T extends NonCategorySetting['type']> = Extract<
 export namespace WidgetSetting {
 	export type BaseSetting = z.infer<typeof BaseSetting>;
 	export type OptionValue = z.infer<typeof OptionValue>;
+	export type Options = z.infer<typeof Options>;
 
 	export type Settings = WidgetSettings;
 
 	export type Category = CategorySetting;
 	export type NonCategory = NonCategorySetting;
+	export type NonGroup = z.infer<typeof NonGroupSetting>;
 
 	export type Section = ExtractSettingType<'section'>;
 	export type MultiSection = ExtractSettingType<'multi-section'>;

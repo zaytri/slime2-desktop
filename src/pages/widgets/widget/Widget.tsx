@@ -1,7 +1,9 @@
+import useDevEditorMode from '@/contexts/dev_editor_mode/useDevEditorMode';
 import { useWidgetId } from '@/contexts/widget_id/useWidgetId';
 import WidgetValuesProvider from '@/contexts/widget_values/WidgetValuesProvider';
 import { useWidgetSettingsQuery } from '@/hooks/useWidgetSettingsQuery';
 import type { WidgetSettings as WidgetSettingsType } from '@@/json/widgetSettings';
+import WidgetEditor from './editor/WidgetEditor';
 import WidgetHeader from './WidgetHeader';
 import WidgetSettings from './WidgetSettings';
 
@@ -10,6 +12,18 @@ export default function Widget() {
 	const widgetSettingsQuery = useWidgetSettingsQuery(widgetId);
 	const widgetSettings: WidgetSettingsType = widgetSettingsQuery.data ?? {};
 	const { isLoading, isError } = widgetSettingsQuery;
+	const { setDevEditorMode, devEditorMode } = useDevEditorMode();
+
+	if (devEditorMode) {
+		return (
+			<WidgetEditor
+				settings={widgetSettings}
+				onBack={() => {
+					setDevEditorMode(false);
+				}}
+			/>
+		);
+	}
 
 	return (
 		<WidgetValuesProvider id={widgetId} settings={widgetSettings}>

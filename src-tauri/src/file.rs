@@ -176,7 +176,7 @@ fn read_file_name(file: &Path) -> io::Result<String> {
 	Ok(file_name.to_string())
 }
 
-pub fn copy_file(
+pub fn copy_file_to_folder(
 	source_file: &Path,
 	destination_folder: PathBuf,
 ) -> io::Result<String> {
@@ -296,17 +296,19 @@ pub fn generate_widget_config(
 	let destination_folder_path = config_path.join("icon");
 
 	// copy icon into config/icon and get the icon file name
-	let icon_file_name =
-		match copy_file(&core_icon_path, destination_folder_path.clone()) {
-			Ok(file_name) => Ok(file_name),
-			Err(_error) => {
-				// on error, fallback to default widget icon
-				let default_icon_path =
-					assets_path(app).join(default_widget_image_name());
+	let icon_file_name = match copy_file_to_folder(
+		&core_icon_path,
+		destination_folder_path.clone(),
+	) {
+		Ok(file_name) => Ok(file_name),
+		Err(_error) => {
+			// on error, fallback to default widget icon
+			let default_icon_path =
+				assets_path(app).join(default_widget_image_name());
 
-				copy_file(&default_icon_path, destination_folder_path)
-			}
-		}?;
+			copy_file_to_folder(&default_icon_path, destination_folder_path)
+		}
+	}?;
 
 	// create meta.json for the widget tile
 	create_tile_meta(

@@ -9,6 +9,7 @@ type TextFieldProps = {
 	description?: string;
 	autoFocus?: boolean;
 	onEnterKey?: VoidFunction;
+	compact?: boolean;
 };
 
 export default function TextField({
@@ -19,7 +20,44 @@ export default function TextField({
 	onChange,
 	autoFocus = false,
 	onEnterKey,
+	compact = false,
 }: TextFieldProps) {
+	function onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+		// only run this on this focused element
+		if (document.activeElement !== event.currentTarget) return;
+
+		if (onEnterKey && event.key === 'Enter') {
+			onEnterKey();
+		}
+	}
+
+	if (compact) {
+		return (
+			<Field className='flex items-center overflow-hidden rounded-1 bg-zinc-700 outline outline-zinc-800 has-data-focus:bg-green-800 has-data-focus:outline-3 has-data-focus:outline-lime-600'>
+				{label && (
+					<Label className='px-2 text-3.5 font-bold whitespace-nowrap text-white'>
+						{label}
+					</Label>
+				)}
+
+				<Input
+					value={value}
+					onChange={event => {
+						onChange(event.target.value);
+					}}
+					size={1}
+					placeholder={placeholder}
+					className='min-w-0 flex-1 bg-white py-0.5 pr-1 pl-1.5 outline-none placeholder:text-zinc-400'
+					autoCorrect='off'
+					autoCapitalize='off'
+					autoComplete='off'
+					aria-autocomplete='none'
+					onKeyDown={onKeyDown}
+				/>
+			</Field>
+		);
+	}
+
 	return (
 		<Field>
 			<div className='input-wrapper flex-col'>
@@ -35,14 +73,7 @@ export default function TextField({
 					autoComplete='off'
 					aria-autocomplete='none'
 					autoFocus={autoFocus}
-					onKeyDown={event => {
-						// only run this on this focused element
-						if (document.activeElement !== event.currentTarget) return;
-
-						if (onEnterKey && event.key === 'Enter') {
-							onEnterKey();
-						}
-					}}
+					onKeyDown={onKeyDown}
 				/>
 			</div>
 

@@ -1,5 +1,7 @@
+import HeaderBackButton from '@/components/header/HeaderBackButton';
 import HeaderButton from '@/components/header/HeaderButton';
 import HeaderIcon from '@/components/header/HeaderIcon';
+import useDevEditorMode from '@/contexts/dev_editor_mode/useDevEditorMode';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useSettings } from '@/contexts/settings/useSettings';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
@@ -15,7 +17,6 @@ import CopyPasteWidgetDataDialog from '@@/dialog/CopyPasteWidgetDataDialog';
 import ExportZipDialog from '@@/dialog/ExportZipDialog';
 import OverlayURLDialog from '@@/dialog/OverlayURLDialog';
 import ArrowLeftRightSvg from '@@/svg/ArrowLeftRightSvg';
-import ArrowLeftSvg from '@@/svg/ArrowLeftSvg';
 import ArrowUpTraySvg from '@@/svg/ArrowUpTraySvg';
 import ChainLinkSvg from '@@/svg/ChainLinkSvg';
 import EyeSvg from '@@/svg/EyeSvg';
@@ -39,18 +40,11 @@ export default function WidgetHeader() {
 	const { openDialog } = useDialog();
 	const { widgetMeta } = useWidgetMeta(widgetId);
 	const editTile = useEditTile();
+	const { setDevEditorMode } = useDevEditorMode();
 
 	return (
 		<header className='flex items-center gap-3'>
-			<button
-				type='button'
-				autoFocus
-				onClick={onBackWidget}
-				className='group/back rounded-1 p-2 text-white outline-offset-0! over:text-green-200 over:outline-4 over:outline-green-400'
-			>
-				<p className='sr-only'>Back</p>
-				<ArrowLeftSvg className='size-7 drop-shadow-[0_2px_black] group-over/back:drop-shadow-none' />
-			</button>
+			<HeaderBackButton onClick={onBackWidget} />
 
 			{tileMeta.icon && (
 				<HeaderIcon src={getTileIconSrc(widgetId, tileMeta.icon)} />
@@ -97,7 +91,7 @@ export default function WidgetHeader() {
 									/>
 								}
 							>
-								<EyeSvg className='size-5' />
+								<EyeSvg className='w-4.5' />
 								<p className='-mb-0.5'>Open Folder</p>
 							</MenuItem>
 
@@ -115,8 +109,23 @@ export default function WidgetHeader() {
 									/>
 								}
 							>
-								<ArrowUpTraySvg className='size-5' />
+								<ArrowUpTraySvg className='w-4.5' />
 								<p className='-mb-0.5'>Export ZIP</p>
+							</MenuItem>
+
+							<MenuItem
+								render={
+									<button
+										type='button'
+										className='flex items-center gap-2 rounded-1 px-2 py-1 outline-offset-0! *:drop-shadow-[0_1px_black] over:bg-green-900 over:text-green-200'
+										onClick={() => {
+											setDevEditorMode(true);
+										}}
+									/>
+								}
+							>
+								<PencilSvg className='w-4.5' />
+								<p className='-mb-0.5'>Widget Editor</p>
 							</MenuItem>
 						</Menu>
 					</MenuProvider>

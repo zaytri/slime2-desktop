@@ -1,3 +1,4 @@
+import HeaderBackButton from '@/components/header/HeaderBackButton';
 import HeaderButton from '@/components/header/HeaderButton';
 import HeaderIcon from '@/components/header/HeaderIcon';
 import { useFolderId } from '@/contexts/folder_id/useFolderId';
@@ -6,7 +7,6 @@ import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import useWidgetsPanel from '@/contexts/widgets_panel/useWidgetsPanel';
 import { getTileIconSrc } from '@/helpers/media';
 import useEditTile from '@/hooks/useEditTile';
-import ArrowLeftSvg from '@@/svg/ArrowLeftSvg';
 import PencilSvg from '@@/svg/PencilSvg';
 
 export default function FolderHeader() {
@@ -20,17 +20,11 @@ export default function FolderHeader() {
 
 	return (
 		<header className='flex items-center gap-3 dark-container p-4'>
-			<button
-				type='button'
-				autoFocus
+			<HeaderBackButton
 				onClick={() => {
 					onBackFolder(tileLocation.index);
 				}}
-				className='group/back rounded-1 p-2 text-white outline-offset-0! over:text-green-200 over:outline-4 over:outline-green-400'
-			>
-				<p className='sr-only'>Back</p>
-				<ArrowLeftSvg className='size-7 drop-shadow-[0_2px_black] group-over/back:drop-shadow-none' />
-			</button>
+			/>
 
 			{tileMeta.icon && (
 				<HeaderIcon src={getTileIconSrc(folderId, tileMeta.icon)} />

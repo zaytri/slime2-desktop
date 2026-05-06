@@ -63,7 +63,6 @@ export const WidgetMetaZ = z.object({
 		),
 		[],
 	),
-
-	channel: z.catch(z.optional(z.array(z.string())), undefined),
+	channels: z.catch(z.optional(z.array(z.string())), undefined),
 });
 export type WidgetMeta = z.infer<typeof WidgetMetaZ>;

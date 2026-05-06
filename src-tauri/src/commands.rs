@@ -125,7 +125,7 @@ pub async fn create_widget_folder(
 		.join(new_folder_id.clone())
 		.join("config");
 
-	let icon_file_name = match file::copy_file(
+	let icon_file_name = match file::copy_file_to_folder(
 		&file::assets_path(&app_handle).join(file::default_folder_image_name()),
 		new_folder_config_path.join("icon"),
 	) {
@@ -406,7 +406,7 @@ pub async fn temp_copy(
 	file_path: &str,
 	app_handle: AppHandle,
 ) -> Result<String, String> {
-	return match file::copy_file(
+	return match file::copy_file_to_folder(
 		Path::new(file_path),
 		file::temp_files_path(&app_handle),
 	) {
@@ -426,7 +426,7 @@ pub async fn save_temp_tile_icon(
 	tile_id: &str,
 	app_handle: AppHandle,
 ) -> Result<String, String> {
-	return match file::copy_file(
+	return match file::copy_file_to_folder(
 		file::temp_files_path(&app_handle).join(file_name).as_path(),
 		file::tiles_path(&app_handle)
 			.join(tile_id)
@@ -460,6 +460,32 @@ pub async fn save_temp_widget_file(
 		Err(error) => {
 			return Err(format!(
 				"Failed to copy widget asset from temp folder! {}",
+				error
+			));
+		}
+	};
+}
+
+#[tauri::command]
+pub async fn save_temp_widget_core_icon(
+	file_name: &str,
+	widget_id: &str,
+	app_handle: AppHandle,
+) -> Result<String, String> {
+	// overwrite instead of copying to a folder like the other ones
+	return match fs::copy(
+		file::temp_files_path(&app_handle).join(file_name).as_path(),
+		file::tiles_path(&app_handle)
+			.join(widget_id)
+			.join("core")
+			.join("config")
+			.join("icon")
+			.with_extension("png"),
+	) {
+		Ok(_bytes) => Ok(String::from("icon.png")),
+		Err(error) => {
+			return Err(format!(
+				"Failed to copy widget core icon from temp folder! {}",
 				error
 			));
 		}

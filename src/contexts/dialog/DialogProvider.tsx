@@ -1,21 +1,22 @@
 import Dialog from '@/components/dialog/Dialog';
+import { Dialog as AriakitDialog, useDialogStore } from '@ariakit/react';
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useSettings } from '../settings/useSettings';
 import { DialogContext } from './useDialog';
 
 export default function DialogProvider({ children }: Props.WithChildren) {
-	const dialogRef = useRef<HTMLDialogElement>(null);
 	const [component, setComponent] = useState<React.ReactNode>(null);
 	const [onCancel, setOnCancel] = useState<VoidFunction>();
 	const [onBack, setOnBack] = useState<VoidFunction>();
 	const [title, setTitle] = useState<string>('Missing Title!');
 	const { settings } = useSettings();
+	const dialogStore = useDialogStore();
 
 	function closeDialog() {
 		setComponent(null);
 		setOnCancel(undefined);
-		dialogRef.current?.close();
+		dialogStore.hide();
 	}
 
 	function openDialog(
@@ -27,7 +28,7 @@ export default function DialogProvider({ children }: Props.WithChildren) {
 		closeDialog();
 		setComponent(component);
 		setOnCancel(() => onCancel);
-		dialogRef.current?.showModal();
+		dialogStore.show();
 	}
 
 	return (
@@ -47,15 +48,18 @@ export default function DialogProvider({ children }: Props.WithChildren) {
 		>
 			{children}
 
-			<dialog
+			<AriakitDialog
+				store={dialogStore}
 				className={clsx(
-					'relative h-full max-h-none w-full max-w-none bg-transparent backdrop:bg-black/25 backdrop:shadow-[inset_0_0_200px_50px] backdrop:shadow-black/50 backdrop:backdrop-blur-[3px]',
+					'fixed inset-0 z-100 flex items-center justify-center bg-transparent',
 					settings.disableAnimations && 'disable-animations',
 				)}
-				ref={dialogRef}
+				backdrop={
+					<div className='bg-black/25 shadow-[inset_0_0_200px_50px] shadow-black/50 backdrop-blur-[3px]' />
+				}
 			>
 				<Dialog>{component}</Dialog>
-			</dialog>
+			</AriakitDialog>
 		</DialogContext>
 	);
 }

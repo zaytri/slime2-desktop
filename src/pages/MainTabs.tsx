@@ -66,7 +66,7 @@ function MainTabs() {
 					<div className='relative flex pt-6'>
 						<TabList
 							render={<nav />}
-							className='flex h-14 flex-1 items-end gap-4 px-4'
+							className='flex h-14 flex-1 items-end gap-3 px-7'
 						>
 							<StyledTab
 								disabled={movingTileMode}
