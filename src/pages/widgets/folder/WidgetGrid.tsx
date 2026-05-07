@@ -100,8 +100,9 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 	const tileRef = useRef<HTMLDivElement | null>(null);
 	const editTile = useEditTile();
 
-	const menuClassName =
-		'flex items-center gap-2 rounded-1 px-2 py-1 outline-offset-0! drop-shadow-[0_1px_black] outline-none over:bg-white over:text-zinc-800';
+	const menuItemClassName = clsx(
+		'flex items-center gap-2 rounded-1 px-2 py-1 outline-offset-0! drop-shadow-[0_1px_black] outline-none over:bg-white over:text-zinc-800',
+	);
 
 	useEffect(() => {
 		if (!tileRef.current || !sourceSlot || sourceSlot.id !== tile.id) return;
@@ -339,7 +340,7 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 					render={
 						<button
 							type='button'
-							className={menuClassName}
+							className={menuItemClassName}
 							onClick={() => {
 								// shouldn't happen but just in case...
 								if (tile.type === 'empty') return;
@@ -358,7 +359,7 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 					render={
 						<button
 							type='button'
-							className={menuClassName}
+							className={menuItemClassName}
 							onClick={() => {
 								// shouldn't happen but just in case...
 								if (tile.type === 'empty') return;
@@ -378,7 +379,7 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 						render={
 							<button
 								type='button'
-								className={menuClassName}
+								className={menuItemClassName}
 								onClick={async () => {
 									// shouldn't happen but just in case...
 									if (tile.type !== 'widget') return;

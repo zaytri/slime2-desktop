@@ -1,7 +1,7 @@
 import { deepCopyObject } from '@/contexts/common';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { i18nStringTransform } from '@/helpers/i18n';
-import type { WidgetSetting } from '@@/json/widgetSettings';
+import { SETTINGS_LABELS, type WidgetSetting } from '@@/json/widgetSettings';
 import CheckSvg from '@@/svg/CheckSvg';
 import PlusSvg from '@@/svg/PlusSvg';
 import XSvg from '@@/svg/XSvg';
@@ -111,29 +111,12 @@ export default function SetWidgetSettingDialog({
 
 	return (
 		<DialogContent className='flex max-h-100 w-160 flex-col justify-between overflow-hidden'>
-			<div className='flex flex-1 flex-col gap-2 overflow-y-auto p-4'>
-				<div className='grid flex-1 grid-cols-2 gap-x-4 gap-y-2'>
-					<div className='flex flex-col gap-1'>
-						<TextField
-							label='Unique ID'
-							compact
-							placeholder={isCategory ? 'my-category-id' : 'my-setting-id'}
-							autoFocus
-							value={newId}
-							onChange={setNewId}
-						/>
-
-						{idCollision && (
-							<strong className='text-3.5 text-rose-900'>
-								Error: ID already exists!
-							</strong>
-						)}
-					</div>
-
+			<div className='flex flex-col gap-2 overflow-y-auto p-4'>
+				<div className='grid flex-1 grid-cols-2 items-start gap-x-4 gap-y-2'>
 					{newData.type === 'text-display' ? (
 						<div className='order-last col-span-2'>
 							<TextAreaField
-								label='Text'
+								label='Label'
 								compact
 								placeholder='My Text'
 								value={newLabel}
@@ -149,6 +132,24 @@ export default function SetWidgetSettingDialog({
 							onChange={setNewLabel}
 						/>
 					)}
+
+					<div className='flex flex-col gap-1'>
+						<TextField
+							label='Unique ID'
+							compact
+							placeholder={isCategory ? 'my-category-id' : 'my-setting-id'}
+							autoFocus
+							value={newId}
+							onChange={setNewId}
+							inputClassName='font-mono!'
+						/>
+
+						{idCollision && (
+							<strong className='text-3.5 text-rose-900'>
+								Error: ID already exists!
+							</strong>
+						)}
+					</div>
 
 					{!isGroup && (
 						<>
@@ -195,32 +196,13 @@ export default function SetWidgetSettingDialog({
 											break;
 									}
 								}}
-								options={
-									[
-										{ label: 'Text Display', value: 'text-display' },
-										{ label: 'Button', value: 'button' },
-										{ label: 'Text Input', value: 'text-input' },
-										{ label: 'Text Area Input', value: 'text-area-input' },
-										{ label: 'Multi-Text Input', value: 'multi-text-input' },
-										{ label: 'Number Input', value: 'number-input' },
-										{ label: 'Slider Input', value: 'slider-input' },
-										{ label: 'Toggle Input', value: 'toggle-input' },
-										{ label: 'Dropdown Input', value: 'dropdown-input' },
-										{ label: 'Select Input', value: 'select-input' },
-										{
-											label: 'Multi-Select Input',
-											value: 'multi-select-input',
-										},
-										{ label: 'Color Input', value: 'color-input' },
-										{ label: 'Font Input', value: 'font-input' },
-										{ label: 'Image Input', value: 'image-input' },
-										{ label: 'Audio Input', value: 'audio-input' },
-										{ label: 'Video Input', value: 'video-input' },
-									] as {
-										label: string;
-										value: WidgetSetting.NonGroup['type'];
-									}[]
-								}
+								options={[...SETTINGS_LABELS.entries()]
+									.filter(([type]) => {
+										return type !== 'section' && type !== 'multi-section';
+									})
+									.map(([type, label]) => {
+										return { label, value: type };
+									})}
 							/>
 
 							{(newData.type === 'text-input' ||
@@ -556,6 +538,8 @@ function StepField({ value, onChange }: StepFieldProps) {
 	);
 }
 
+type DefaultValueOption = 'string' | 'number' | 'boolean';
+
 type OptionsFieldProps = {
 	values: WidgetSetting.Options;
 	onChange: (options: WidgetSetting.Options) => void;
@@ -639,17 +623,42 @@ function OptionsField({ values, onChange }: OptionsFieldProps) {
 	}
 
 	return (
-		<div className='col-span-2 flex flex-col gap-2'>
+		<div className='col-span-2 flex flex-col gap-2 py-2'>
 			<Fieldset className='relative flex flex-col gap-2'>
-				<Legend
-					as='div'
-					className='relative flex items-center self-start rounded-1 bg-zinc-700 px-2 py-0.5 font-extrabold whitespace-nowrap text-white outline outline-zinc-800'
-				>
-					<p>Options</p>
-					<div className='absolute inset-x-2 top-full'>
-						<div className='my-px h-16 w-full border-x border-zinc-500 bg-zinc-300'></div>
+				<div className='relative flex justify-between gap-2'>
+					<div className='absolute inset-0 flex items-center'>
+						<div className='h-5 flex-1 border border-zinc-500 bg-zinc-300'></div>
 					</div>
-				</Legend>
+
+					<Legend
+						as='div'
+						className='relative flex flex-1 items-center self-start rounded-1 bg-zinc-700 px-2 py-0.5 font-extrabold whitespace-nowrap text-white outline outline-zinc-800'
+					>
+						<p>Options</p>
+						<div className='absolute top-full left-1.5'>
+							<div className='my-px h-16 w-5 border-x border-zinc-500 bg-zinc-300'></div>
+						</div>
+					</Legend>
+
+					<div className='flex-1'>
+						<DropdownField
+							label='Option Type'
+							compact
+							value={valueType}
+							onChange={newValueType => {
+								setValueType(newValueType);
+								resetInputValue();
+							}}
+							options={
+								[
+									{ label: 'String', value: 'string' },
+									{ label: 'Number', value: 'number' },
+									{ label: 'Boolean', value: 'boolean' },
+								] as { label: string; value: DefaultValueOption }[]
+							}
+						/>
+					</div>
+				</div>
 
 				<div className='relative flex flex-1 flex-col gap-2'>
 					<div className='relative'>
@@ -675,22 +684,6 @@ function OptionsField({ values, onChange }: OptionsFieldProps) {
 						<div className='absolute inset-0 flex items-center'>
 							<div className='h-5 flex-1 border border-zinc-500 bg-zinc-300'></div>
 						</div>
-						<DropdownField
-							label='Value Type'
-							compact
-							value={valueType}
-							onChange={newValueType => {
-								setValueType(newValueType);
-								resetInputValue();
-							}}
-							options={
-								[
-									{ label: 'String', value: 'string' },
-									{ label: 'Number', value: 'number' },
-									{ label: 'Boolean', value: 'boolean' },
-								] as { label: string; value: DefaultValueOption }[]
-							}
-						/>
 
 						<div className='relative flex-1'>
 							{valueType === 'string' && (
@@ -757,7 +750,7 @@ function OptionsField({ values, onChange }: OptionsFieldProps) {
 			</Fieldset>
 
 			{values.length > 0 && (
-				<div className='flex flex-col gap-1.5 pb-2 pl-4'>
+				<div className='flex flex-col gap-1.5 pl-4'>
 					{values.map((option, index) => {
 						return (
 							<div key={`${option.value}_${index}`} className='flex gap-1'>

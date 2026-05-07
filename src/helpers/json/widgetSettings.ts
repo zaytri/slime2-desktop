@@ -33,6 +33,95 @@ async function widgetSettingsPath(id: string) {
 	return `${folderPath}/core/config/settings`;
 }
 
+// consts
+export const SETTINGS_LABELS = new Map<
+	WidgetSetting.NonCategory['type'],
+	string
+>([
+	['section', 'Section'],
+	['multi-section', 'Multi-Section'],
+
+	['text-input', 'Text Input'],
+	['text-area-input', 'Text Area Input'],
+	['color-input', 'Color Input'],
+	['font-input', 'Font Input'],
+
+	['multi-text-input', 'Multi-Text Input'],
+
+	['number-input', 'Number Input'],
+	['slider-input', 'Slider Input'],
+
+	['toggle-input', 'Toggle Input'],
+
+	['dropdown-input', 'Dropdown Input'],
+	['select-input', 'Select Input'],
+
+	['multi-select-input', 'Multi-Select Input'],
+
+	['image-input', 'Image Input'],
+	['audio-input', 'Audio Input'],
+	['video-input', 'Video Input'],
+
+	['text-display', 'Text Display'],
+	['button', 'Button'],
+]);
+
+type AvailableSettingOptionWithSection = {
+	label: string;
+	value: WidgetSetting.NonCategory['type'];
+};
+
+type AvailableSettingOption = {
+	label: string;
+	value: WidgetSetting.NonGroup['type'];
+};
+
+function groupSettings(
+	label: string,
+	types: WidgetSetting.NonGroup['type'][],
+): {
+	label: string;
+	options: AvailableSettingOption[];
+} {
+	const options: AvailableSettingOption[] = [];
+	types.forEach(type => {
+		const label = SETTINGS_LABELS.get(type);
+		if (label) {
+			options.push({ label, value: type });
+		}
+	});
+	return { label, options };
+}
+
+export const AVAILABLE_SETTINGS_GROUPED: {
+	label: string;
+	options: AvailableSettingOption[];
+}[] = [
+	groupSettings('String', ['text-input', 'text-area-input']),
+	groupSettings('Special String', ['color-input', 'font-input']),
+	groupSettings('Multiple Strings', ['multi-text-input']),
+	groupSettings('Number', ['number-input', 'slider-input']),
+	groupSettings('Boolean', ['toggle-input']),
+	groupSettings('Options', ['dropdown-input', 'select-input']),
+	groupSettings('Multiple Options', ['multi-select-input']),
+	groupSettings('Media', ['image-input', 'audio-input', 'video-input']),
+	groupSettings('Other', ['text-display', 'button']),
+];
+
+export const AVAILABLE_SETTINGS_GROUPED_WITH_SECTION: {
+	label: string;
+	options: AvailableSettingOptionWithSection[];
+}[] = [
+	{
+		label: 'Group',
+		options: [
+			{ label: SETTINGS_LABELS.get('section')!, value: 'section' },
+			{ label: SETTINGS_LABELS.get('multi-section')!, value: 'multi-section' },
+		],
+	},
+	...AVAILABLE_SETTINGS_GROUPED,
+];
+
 // zod and types
 
 const Placeholder = z.optional(I18nString);

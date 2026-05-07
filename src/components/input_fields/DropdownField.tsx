@@ -56,7 +56,7 @@ export default function DropdownField<V>({
 					}}
 				>
 					<div className='group/dropdown z-5 flex flex-1 items-center justify-between rounded-1 bg-zinc-700 outline outline-zinc-800 has-over:bg-green-800 has-over:outline-3 has-over:outline-offset-0! has-over:outline-lime-600'>
-						<SelectLabel className='cursor-pointer px-2 py-0.5 text-3.5 font-bold whitespace-nowrap text-white'>
+						<SelectLabel className='cursor-pointer px-2 py-0.75 text-3.5 font-bold whitespace-nowrap text-white'>
 							{label}
 						</SelectLabel>
 						<Select className='flex flex-1 items-center gap-2 self-stretch bg-white px-2 outline-none'>

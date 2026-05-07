@@ -35,7 +35,7 @@ export default function SelectField<V>({
 		return (
 			<Fieldset className='flex items-center overflow-hidden rounded-1 bg-zinc-700 outline outline-zinc-800 has-data-focus:bg-green-800 has-data-focus:outline-3 has-data-focus:outline-lime-600'>
 				{label && (
-					<Legend className='px-2 text-3.5 font-bold whitespace-nowrap text-white'>
+					<Legend className='self-start px-2 pt-1.25 pb-1 text-3.5 font-bold whitespace-nowrap text-white'>
 						{label}
 					</Legend>
 				)}

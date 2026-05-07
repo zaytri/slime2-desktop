@@ -1,5 +1,6 @@
 import InputDescription from '@/components/input_fields/InputDescription';
 import { Field, Input, Label } from '@headlessui/react';
+import clsx from 'clsx';
 
 type TextFieldProps = {
 	label?: string;
@@ -10,6 +11,7 @@ type TextFieldProps = {
 	autoFocus?: boolean;
 	onEnterKey?: VoidFunction;
 	compact?: boolean;
+	inputClassName?: string;
 };
 
 export default function TextField({
@@ -21,6 +23,7 @@ export default function TextField({
 	autoFocus = false,
 	onEnterKey,
 	compact = false,
+	inputClassName,
 }: TextFieldProps) {
 	function onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
 		// only run this on this focused element
@@ -47,11 +50,15 @@ export default function TextField({
 					}}
 					size={1}
 					placeholder={placeholder}
-					className='min-w-0 flex-1 bg-white py-0.5 pr-1 pl-1.5 outline-none placeholder:text-zinc-400'
+					className={clsx(
+						'min-w-0 flex-1 bg-white py-0.5 pr-1 pl-1.5 outline-none placeholder:text-zinc-400',
+						inputClassName,
+					)}
 					autoCorrect='off'
 					autoCapitalize='off'
 					autoComplete='off'
 					aria-autocomplete='none'
+					spellCheck={false}
 					onKeyDown={onKeyDown}
 				/>
 			</Field>
@@ -69,7 +76,7 @@ export default function TextField({
 						onChange(event.target.value);
 					}}
 					placeholder={placeholder}
-					className='input-class'
+					className={clsx('input-class', inputClassName)}
 					autoComplete='off'
 					aria-autocomplete='none'
 					autoFocus={autoFocus}
