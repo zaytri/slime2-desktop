@@ -1,6 +1,6 @@
 import SettingTypeTag from '@/components/tag/SettingTypeTag';
 import { useDialog } from '@/contexts/dialog/useDialog';
-import { i18nStringTransform, i18nUndefined } from '@/helpers/i18n';
+import { i18nStringTransform } from '@/helpers/i18n';
 import SetWidgetSettingDialog from '@@/dialog/SetWidgetSettingDialog';
 import {
 	AVAILABLE_SETTINGS_GROUPED,
@@ -10,9 +10,7 @@ import {
 	type WidgetSettings,
 } from '@@/json/widgetSettings';
 import ArrowDownSvg from '@@/svg/ArrowDownSvg';
-import ArrowDownTraySvg from '@@/svg/ArrowDownTraySvg';
 import ArrowUpSvg from '@@/svg/ArrowUpSvg';
-import ArrowUpTraySvg from '@@/svg/ArrowUpTraySvg';
 import DoubleSquareSvg from '@@/svg/DoubleSquareSvg';
 import GearSvg from '@@/svg/GearSvg';
 import PencilSvg from '@@/svg/PencilSvg';
@@ -106,7 +104,7 @@ export default function WidgetSettingsEditor({
 			</div>
 
 			<div className='flex flex-1 flex-col overflow-hidden light-container'>
-				<div className='flex flex-1 flex-col gap-2 overflow-y-auto p-3'>
+				<div className='flex flex-1 flex-col gap-2 overflow-y-auto p-3 pr-1'>
 					{categories.map(([categoryId, category], categoryIndex) => {
 						const categoryLabel = i18nStringTransform(category.label);
 						const categorySettings = Object.entries(category.settings);
@@ -179,6 +177,19 @@ export default function WidgetSettingsEditor({
 												})}
 												onAdd={() => {}}
 												addOptions={AVAILABLE_SETTINGS_GROUPED}
+												onConvert={() => {}}
+												convertOptions={(
+													['section', 'multi-section'] as (
+														| WidgetSetting.Section['type']
+														| WidgetSetting.MultiSection['type']
+													)[]
+												).map(type => {
+													return {
+														label: SETTINGS_LABELS.get(type)!,
+														value: type,
+														disabled: setting.type === type,
+													};
+												})}
 												onPromote={() => {}}
 												onDelete={() => {}}
 											>
@@ -318,7 +329,7 @@ function CategoryEditor({
 	children,
 }: Props.WithChildren<CategoryEditorProps>) {
 	return (
-		<div className='flex flex-col gap-2'>
+		<div className='flex flex-col'>
 			<SettingHeader id={id} type='category' label={i18nStringTransform(label)}>
 				<SettingMenu
 					onEdit={onEdit}
@@ -329,12 +340,12 @@ function CategoryEditor({
 					onDemote={onDemote}
 					demoteOptions={demoteOptions}
 					onDelete={onDelete}
+					className='text-yellow-800 over:border-yellow-900! over:bg-yellow-800!'
 				/>
 			</SettingHeader>
 
-			<div className='flex gap-2'>
-				<div className='w-4 rounded-bl-full bg-yellow-800'></div>
-				<div className='flex flex-1 flex-col gap-2'>{children}</div>
+			<div className='-mt-1 flex flex-col gap-2 rounded-bl-2 border-l-8 border-yellow-900 pt-3 pb-2 pl-2'>
+				{children}
 			</div>
 		</div>
 	);
@@ -360,6 +371,14 @@ type SectionEditorProps = {
 		label: string;
 		options: { label: string; value: WidgetSetting.NonGroup['type'] }[];
 	}[];
+	onConvert: (
+		value: WidgetSetting.Section['type'] | WidgetSetting.MultiSection['type'],
+	) => void;
+	convertOptions: {
+		label: string;
+		value: WidgetSetting.Section['type'] | WidgetSetting.MultiSection['type'];
+		disabled?: boolean;
+	}[];
 	onPromote: VoidFunction;
 	onDelete: VoidFunction;
 };
@@ -374,12 +393,14 @@ function SectionEditor({
 	moveToOptions,
 	onAdd,
 	addOptions,
+	onConvert,
+	convertOptions,
 	onPromote,
 	onDelete,
 	children,
 }: Props.WithChildren<SectionEditorProps>) {
 	return (
-		<div className='flex flex-col gap-2'>
+		<div className='flex flex-col'>
 			<SettingHeader
 				id={id}
 				type={setting.type}
@@ -393,20 +414,27 @@ function SectionEditor({
 					moveToOptions={moveToOptions}
 					onAdd={onAdd}
 					addOptions={addOptions}
+					onConvert={onConvert}
+					convertOptions={convertOptions}
 					onPromote={onPromote}
 					onDelete={onDelete}
+					className={clsx(
+						setting.type === 'section' &&
+							'text-cyan-800 over:border-cyan-900! over:bg-cyan-800!',
+						setting.type === 'multi-section' &&
+							'text-blue-900 over:border-blue-950! over:bg-blue-900!',
+					)}
 				/>
 			</SettingHeader>
 
-			<div className='flex gap-2'>
-				<div
-					className={clsx(
-						'w-4 rounded-bl-full',
-						setting.type === 'section' && 'bg-cyan-800',
-						setting.type === 'multi-section' && 'bg-blue-900',
-					)}
-				></div>
-				<div className='flex flex-1 flex-col gap-2'>{children}</div>
+			<div
+				className={clsx(
+					'-mt-1 flex flex-col gap-2 rounded-bl-2 border-l-8 pt-3 pb-2 pl-2',
+					setting.type === 'section' && 'border-cyan-900',
+					setting.type === 'multi-section' && 'border-blue-950',
+				)}
+			>
+				{children}
 			</div>
 		</div>
 	);
@@ -443,12 +471,47 @@ function SettingEditor({
 	onDuplicate,
 	onDelete,
 }: SettingEditorProps) {
+	const values: {
+		label: string;
+		value: unknown;
+		full?: boolean;
+	}[] = [];
+
+	if ('defaultValue' in setting) {
+		values.push({ label: 'Default Value', value: setting.defaultValue });
+	}
+
+	if ('min' in setting) {
+		values.push({ label: 'Min', value: setting.min });
+	}
+
+	if ('max' in setting) {
+		values.push({ label: 'Max', value: setting.max });
+	}
+
+	if ('step' in setting) {
+		values.push({ label: 'Step', value: setting.step });
+	}
+
+	if ('placeholder' in setting) {
+		values.push({ label: 'Placeholder', value: setting.placeholder });
+	}
+
+	if ('description' in setting) {
+		values.push({
+			label: 'Description',
+			value: setting.description,
+			full: true,
+		});
+	}
+
 	return (
 		<div className='flex flex-1 flex-col'>
 			<SettingHeader
 				id={id}
 				type={setting.type}
 				label={i18nStringTransform(setting.label)}
+				hasValues={values.length > 0}
 			>
 				<SettingMenu
 					onEdit={onEdit}
@@ -458,48 +521,23 @@ function SettingEditor({
 					moveToOptions={moveToOptions}
 					onDuplicate={onDuplicate}
 					onDelete={onDelete}
+					className='text-green-800 over:border-green-900! over:bg-green-800!'
 				/>
 			</SettingHeader>
 
-			<div className='flex gap-2'>
-				<div className='h-[calc(100%-8px)] w-4 self-end rounded-bl-full bg-green-800'></div>
-
-				<div className='flex flex-1 flex-col'>
-					<div className='flex flex-wrap gap-2 pt-2 empty:hidden'>
-						{'defaultValue' in setting && (
-							<SettingProperty label='Default Value'>
-								{JSON.stringify(setting.defaultValue)}
+			<div className='mr-9.25 flex'>
+				<div className='m-px -mt-0.5 flex flex-1 flex-wrap gap-2 rounded-b-2 border-2 border-x-8 border-green-900 bg-green-100 px-2 py-2 outline outline-green-900 empty:hidden'>
+					{values.map(({ label, value, full }) => {
+						return (
+							<SettingProperty
+								key={label}
+								label={label}
+								className={clsx(full && 'w-full')}
+							>
+								{JSON.stringify(value)}
 							</SettingProperty>
-						)}
-						{'min' in setting && (
-							<SettingProperty label='Min'>
-								{JSON.stringify(setting.min)}
-							</SettingProperty>
-						)}
-						{'max' in setting && (
-							<SettingProperty label='Max'>
-								{JSON.stringify(setting.max)}
-							</SettingProperty>
-						)}
-						{'step' in setting && (
-							<SettingProperty label='Step'>
-								{JSON.stringify(setting.step)}
-							</SettingProperty>
-						)}
-						{'placeholder' in setting && (
-							<SettingProperty label='Placeholder'>
-								{JSON.stringify(i18nUndefined(setting.placeholder))}
-							</SettingProperty>
-						)}
-					</div>
-
-					<div className='flex flex-col pt-2 empty:hidden'>
-						{'description' in setting && (
-							<SettingProperty label='Description'>
-								{JSON.stringify(i18nUndefined(setting.description))}
-							</SettingProperty>
-						)}
-					</div>
+						);
+					})}
 				</div>
 			</div>
 		</div>
@@ -510,6 +548,7 @@ type SettingHeaderProps = {
 	type: WidgetSetting.NonCategory['type'] | 'category';
 	label: string;
 	id: string;
+	hasValues?: boolean;
 };
 
 function SettingHeader({
@@ -517,37 +556,33 @@ function SettingHeader({
 	id,
 	type,
 	children,
+	hasValues,
 }: Props.WithChildren<SettingHeaderProps>) {
-	const labelClassName = clsx(
-		type === 'category'
-			? 'bg-yellow-800!'
-			: type === 'section'
-				? 'bg-cyan-800!'
-				: type === 'multi-section'
-					? 'bg-blue-900!'
-					: 'bg-green-800!',
-	);
+	const valueClassName = clsx({
+		'bg-yellow-50! text-yellow-900!': type === 'category',
+		'bg-cyan-50! text-cyan-900!': type === 'section',
+		'bg-sky-50! text-blue-900!': type === 'multi-section',
+		'text-green-900!':
+			type !== 'category' && type !== 'section' && type !== 'multi-section',
+	});
 
-	const className = clsx(
-		type === 'category'
-			? 'bg-yellow-50!'
-			: type === 'section'
-				? 'bg-cyan-50!'
-				: type === 'multi-section'
-					? 'bg-sky-50!'
-					: 'bg-green-50!',
-	);
+	const className = clsx('border-2!', {
+		'border-yellow-900! bg-yellow-800!': type === 'category',
+		'border-cyan-900! bg-cyan-800!': type === 'section',
+		'border-blue-950! bg-blue-900!': type === 'multi-section',
+	});
 
 	return (
-		<div className='flex items-start gap-1'>
+		<div className='z-1 flex items-start gap-1'>
 			<SettingProperty
 				label='Label'
-				className={clsx('flex-1', className)}
-				labelClassName={clsx('px-2 py-1! text-3.5!', labelClassName)}
+				className={clsx('flex-1', hasValues && 'rounded-b-0', className)}
+				labelClassName={clsx('py-1! text-3.5!')}
 				valueClassName={clsx(
 					type === 'text-display'
 						? 'font-nunito!'
-						: 'mb-px! px-1 font-fredoka! text-4!',
+						: '-mt-0.5 font-fredoka! text-4!',
+					valueClassName,
 				)}
 			>
 				{label}
@@ -555,9 +590,9 @@ function SettingHeader({
 
 			<SettingProperty
 				label='ID'
-				className={className}
-				labelClassName={clsx('px-2 py-1! text-3.5!', labelClassName)}
-				valueClassName={clsx('mb-0! px-0.5 text-3.25! font-bold!')}
+				className={clsx(hasValues && 'rounded-b-0', className)}
+				labelClassName={clsx('py-1! text-3.5!')}
+				valueClassName={clsx('text-3.25! font-bold!', valueClassName)}
 				quickSelect
 			>
 				{id}
@@ -589,13 +624,13 @@ function SettingProperty({
 	return (
 		<div
 			className={clsx(
-				'flex items-stretch gap-1 overflow-hidden rounded-1 border border-zinc-800 bg-zinc-50 pr-1',
+				'flex items-stretch overflow-hidden rounded-1 border border-green-900 bg-green-800',
 				className,
 			)}
 		>
 			<p
 				className={clsx(
-					'flex bg-zinc-700 px-1 pt-0.5 text-3.25 font-semibold text-white',
+					'flex px-1.5 pt-0.5 text-3.25 font-semibold text-white',
 					labelClassName,
 				)}
 			>
@@ -603,7 +638,7 @@ function SettingProperty({
 			</p>
 			<div
 				className={clsx(
-					'-mb-px flex items-center px-0.5 font-mono text-3.5 font-medium text-zinc-800',
+					'flex flex-1 items-center bg-green-50 px-1.5 font-mono text-3.5 font-medium text-zinc-800',
 					valueClassName,
 				)}
 				onClick={event => {
@@ -626,6 +661,8 @@ type BaseSettingMenuProps = {
 	moveToOptions?: never;
 	onAdd?: never;
 	addOptions?: never;
+	onConvert?: never;
+	convertOptions?: never;
 	onPromote?: never;
 	onDemote?: never;
 	demoteOptions?: never;
@@ -658,6 +695,8 @@ type SettingMenuProps<AddOptionValue> =
 					label: string;
 					options: { label: string; value: AddOptionValue }[];
 				}[];
+				onConvert: SectionEditorProps['onConvert'];
+				convertOptions: SectionEditorProps['convertOptions'];
 				onPromote: VoidFunction;
 			}
 	  >
@@ -679,12 +718,15 @@ function SettingMenu<AddType>({
 	moveToOptions,
 	onAdd,
 	addOptions,
+	onConvert,
+	convertOptions,
 	onPromote,
 	onDemote,
 	demoteOptions,
 	onDuplicate,
 	onDelete,
-}: SettingMenuProps<AddType>) {
+	className,
+}: Props.WithClassName<SettingMenuProps<AddType>>) {
 	const menuItemClassName = clsx(
 		'flex cursor-pointer items-center gap-2 rounded-1 px-2 py-1 text-white outline-offset-0! drop-shadow-[0_1px_black] outline-none select-none aria-disabled:text-zinc-400 data-active-item:bg-white data-active-item:text-zinc-800',
 	);
@@ -703,8 +745,13 @@ function SettingMenu<AddType>({
 
 	return (
 		<MenuProvider>
-			<MenuButton className='flex rounded-1 border border-transparent p-1 text-zinc-700 over:border-zinc-900 over:bg-zinc-800 over:text-white'>
-				<GearSvg className='size-5' />
+			<MenuButton
+				className={clsx(
+					'flex rounded-1 border-2 border-transparent p-1 over:border-zinc-900 over:bg-zinc-800 over:text-white',
+					className,
+				)}
+			>
+				<GearSvg className='size-5.25' />
 			</MenuButton>
 			<Menu modal className={menuClassName}>
 				{/* Edit */}
@@ -732,6 +779,49 @@ function SettingMenu<AddType>({
 					<ArrowDownSvg className='size-4' />
 					<p>Move Down</p>
 				</MenuItem>
+
+				{/* Add New */}
+				{onAdd && addOptions && (
+					<MenuProvider placement='left-start'>
+						<MenuItem render={<MenuButton />} className={menuItemClassName}>
+							<MenuButtonArrow />
+							<p>Add New</p>
+						</MenuItem>
+						<Menu
+							modal
+							fitViewport
+							className={clsx(
+								menuClassName,
+								'max-h-(--popover-available-height) overflow-hidden p-0!',
+							)}
+						>
+							<div className='flex flex-col gap-1 divide-y divide-zinc-600 overflow-y-auto px-2 py-1.5'>
+								{addOptions.map(group => {
+									return (
+										<MenuGroup key={group.label} className='flex flex-col'>
+											<MenuGroupLabel className={menuGroupClassName}>
+												{group.label}
+											</MenuGroupLabel>
+											{group.options.map(option => {
+												return (
+													<MenuItem
+														key={option.label}
+														className={clsx(menuItemClassName, 'px-4! py-0.5!')}
+														onClick={() => {
+															onAdd(option.value);
+														}}
+													>
+														{option.label}
+													</MenuItem>
+												);
+											})}
+										</MenuGroup>
+									);
+								})}
+							</div>
+						</Menu>
+					</MenuProvider>
+				)}
 
 				{/* Move To */}
 				{onMoveTo && moveToOptions && (
@@ -783,55 +873,34 @@ function SettingMenu<AddType>({
 					</MenuProvider>
 				)}
 
-				{/* Add New */}
-				{onAdd && addOptions && (
+				{/* Promote to Category or Convert to Other Section */}
+				{onConvert && convertOptions && onPromote && (
 					<MenuProvider placement='left-start'>
 						<MenuItem render={<MenuButton />} className={menuItemClassName}>
 							<MenuButtonArrow />
-							<p>Add New</p>
+							<p>Convert To</p>
 						</MenuItem>
-						<Menu
-							modal
-							fitViewport
-							className={clsx(
-								menuClassName,
-								'max-h-(--popover-available-height) overflow-hidden p-0!',
-							)}
-						>
-							<div className='flex flex-col gap-1 divide-y divide-zinc-600 overflow-y-auto px-2 py-1.5'>
-								{addOptions.map(group => {
-									return (
-										<MenuGroup key={group.label} className='flex flex-col'>
-											<MenuGroupLabel className={menuGroupClassName}>
-												{group.label}
-											</MenuGroupLabel>
-											{group.options.map(option => {
-												return (
-													<MenuItem
-														key={option.label}
-														className={clsx(menuItemClassName, 'px-4! py-0.5!')}
-														onClick={() => {
-															onAdd(option.value);
-														}}
-													>
-														{option.label}
-													</MenuItem>
-												);
-											})}
-										</MenuGroup>
-									);
-								})}
-							</div>
+
+						<Menu modal className={menuClassName}>
+							<MenuItem onClick={onPromote} className={menuItemClassName}>
+								Category
+							</MenuItem>
+							{convertOptions.map(option => {
+								return (
+									<MenuItem
+										key={option.label}
+										disabled={option.disabled}
+										onClick={() => {
+											onConvert(option.value);
+										}}
+										className={menuItemClassName}
+									>
+										{option.label}
+									</MenuItem>
+								);
+							})}
 						</Menu>
 					</MenuProvider>
-				)}
-
-				{/* Promote to Category */}
-				{onPromote && (
-					<MenuItem className={menuItemClassName} onClick={onPromote}>
-						<ArrowUpTraySvg className='size-4' />
-						<p>Promote to Category</p>
-					</MenuItem>
 				)}
 
 				{/* Demote to Section */}
@@ -843,7 +912,7 @@ function SettingMenu<AddType>({
 							className={menuItemClassName}
 						>
 							<MenuButtonArrow />
-							<p>Demote to</p>
+							<p>Convert to</p>
 						</MenuItem>
 						<Menu modal className={menuClassName}>
 							{demoteSections.map(type => {
@@ -871,14 +940,9 @@ function SettingMenu<AddType>({
 										>
 											<MenuGroup className='flex flex-col overflow-y-auto p-1.5'>
 												<MenuGroupLabel className='p-1 text-3.5 text-zinc-300'>
-													<div className='flex items-center gap-1'>
-														<ArrowDownTraySvg className='mr-1 size-3.5' />
-														Demote to{' '}
-														<strong className='font-bold underline underline-offset-3'>
-															{label}
-														</strong>{' '}
-														in:
-													</div>
+													Convert to{' '}
+													<strong className='font-bold'>{label}</strong> + Move
+													to:
 												</MenuGroupLabel>
 
 												<MenuSeparator className='border-zinc-500 pb-1' />

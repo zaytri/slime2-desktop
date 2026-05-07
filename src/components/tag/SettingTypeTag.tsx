@@ -25,7 +25,7 @@ export default function SettingTypeTag({ type }: SettingTypeTagProps) {
 				)
 			}
 			className={clsx(
-				'border-green-900 bg-green-800 py-1 text-3.5 font-semibold',
+				'border-2 border-green-900 bg-green-800 py-1 text-3.5 font-semibold',
 				type === 'category' && 'border-yellow-900! bg-yellow-800!',
 				type === 'section' && 'border-cyan-900! bg-cyan-800!',
 				type === 'multi-section' && 'border-blue-950! bg-blue-900!',
