@@ -97,14 +97,14 @@ export default function SettingMenuButton<AddType>({
 		<MenuProvider>
 			<MenuButton
 				className={clsx(
-					'flex rounded-1 border-2 border-transparent p-1 over:border-zinc-900 over:bg-zinc-800 over:text-white',
+					'flex rounded-1 border-2 border-transparent p-1 aria-expanded:border-zinc-900 aria-expanded:bg-zinc-800 aria-expanded:text-white over:border-zinc-900 over:bg-zinc-800 over:text-white',
 					className,
 				)}
 			>
 				<GearSvg className='size-5.25' />
 			</MenuButton>
 
-			<Menu modal className='dark-menu'>
+			<Menu unmountOnHide modal className='dark-menu'>
 				{/* Edit */}
 				<MenuItem className='dark-menu-item' onClick={onEdit}>
 					<PencilSvg className='size-4' />
@@ -114,6 +114,7 @@ export default function SettingMenuButton<AddType>({
 				{/* Move Up */}
 				<MenuItem
 					disabled={!onMoveUp}
+					hideOnClick={false}
 					className='dark-menu-item'
 					onClick={onMoveUp}
 				>
@@ -124,6 +125,7 @@ export default function SettingMenuButton<AddType>({
 				{/* Move Down */}
 				<MenuItem
 					disabled={!onMoveDown}
+					hideOnClick={false}
 					className='dark-menu-item'
 					onClick={onMoveDown}
 				>
@@ -195,7 +197,7 @@ function AddMenu<AddOption>({ onAdd, addOptions }: AddMenuProps<AddOption>) {
 				<MenuButtonArrow />
 				<p>Add</p>
 			</MenuItem>
-			<Menu modal fitViewport className='dark-menu p-0!'>
+			<Menu modal unmountOnHide fitViewport className='dark-menu p-0!'>
 				<div className='flex flex-col gap-1 divide-y divide-zinc-600 overflow-y-auto px-2 py-1.5'>
 					{addOptions.map(group => {
 						return (
@@ -250,7 +252,7 @@ function MoveMenu({ onMoveTo, moveToOptions }: MoveMenuProps) {
 				<p>Move To</p>
 			</MenuItem>
 
-			<Menu modal fitViewport className='dark-menu p-0!'>
+			<Menu modal unmountOnHide fitViewport className='dark-menu p-0!'>
 				<MenuGroup className='flex flex-col overflow-y-auto p-1.5'>
 					{moveToOptions.map(option => {
 						const isSection = 'type' in option && option.type !== 'category';
@@ -301,7 +303,7 @@ function ConvertSectionMenu({
 				<p>Convert To</p>
 			</MenuItem>
 
-			<Menu modal className='dark-menu'>
+			<Menu unmountOnHide modal className='dark-menu'>
 				<MenuItem onClick={onPromote} className='dark-menu-item'>
 					<ArrowUpTraySvg className='size-4' />
 					<p>Category</p>
@@ -335,6 +337,7 @@ type DemoteMenuProps = {
 	demoteOptions: {
 		label: string;
 		value: string;
+		disabled?: boolean;
 	}[];
 };
 
@@ -349,7 +352,7 @@ function DemoteMenu({ onDemote, demoteOptions }: DemoteMenuProps) {
 				<MenuButtonArrow />
 				<p>Convert to</p>
 			</MenuItem>
-			<Menu modal className='dark-menu'>
+			<Menu unmountOnHide modal className='dark-menu'>
 				{DEMOTE_SECTIONS.map(type => {
 					const label = SETTINGS_LABELS.get(type);
 					if (!label) return null;
@@ -365,7 +368,7 @@ function DemoteMenu({ onDemote, demoteOptions }: DemoteMenuProps) {
 								<p>{label}</p>
 							</MenuItem>
 
-							<Menu modal fitViewport className='dark-menu p-0!'>
+							<Menu unmountOnHide modal fitViewport className='dark-menu p-0!'>
 								<MenuGroup className='flex flex-col overflow-y-auto p-1.5'>
 									<MenuGroupLabel className='p-1 text-3.5 text-zinc-300'>
 										Convert to <strong className='font-bold'>{label}</strong> +
@@ -378,6 +381,7 @@ function DemoteMenu({ onDemote, demoteOptions }: DemoteMenuProps) {
 										return (
 											<MenuItem
 												key={option.label}
+												disabled={option.disabled}
 												className='dark-menu-item py-0.5!'
 												onClick={() => {
 													onDemote(type, option.value);

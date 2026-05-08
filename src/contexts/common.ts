@@ -6,11 +6,3 @@ export function deepCopyObject<T>(object: NonUndefined<T>): NonUndefined<T> {
 export function contextErrorMessage(functionName: string, contextName: string) {
 	return `${functionName} was used outside of a ${contextName} provider!`;
 }
-
-export type AsyncContext<DataType> = {
-	loading: boolean;
-	error: boolean;
-	data: DataType | undefined;
-};
-
-type NonUndefined<T> = T extends undefined ? never : T;

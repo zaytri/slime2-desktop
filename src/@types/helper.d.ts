@@ -11,3 +11,5 @@ type Override<Base extends object, Type extends object> = Omit<
 	keyof Type
 > &
 	Type;
+
+type NonUndefined<T> = T extends undefined ? never : T;

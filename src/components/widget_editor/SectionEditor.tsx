@@ -10,6 +10,7 @@ type SectionEditorProps = {
 		WidgetSetting.Section | WidgetSetting.MultiSection,
 		'label' | 'condition' | 'searchTags' | 'type'
 	>;
+
 	onEdit: VoidFunction;
 	onMoveUp?: VoidFunction;
 	onMoveDown?: VoidFunction;
@@ -39,6 +40,7 @@ type SectionEditorProps = {
 export default function SectionEditor({
 	id,
 	setting,
+
 	onEdit,
 	onMoveUp,
 	onMoveDown,
@@ -50,6 +52,7 @@ export default function SectionEditor({
 	convertOptions,
 	onPromote,
 	onDelete,
+
 	children,
 }: Props.WithChildren<SectionEditorProps>) {
 	return (

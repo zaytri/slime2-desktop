@@ -6,14 +6,12 @@ import DialogContent from './DialogContent';
 type GenericDeleteDialogProps = {
 	onDelete: VoidFunction;
 	actionText?: string;
-	disabled?: boolean;
 };
 
 export default function GenericDeleteDialog({
 	onDelete,
 	actionText,
 	children,
-	disabled,
 }: Props.WithChildren<GenericDeleteDialogProps>) {
 	const { closeDialog } = useDialog();
 
@@ -23,12 +21,9 @@ export default function GenericDeleteDialog({
 			<div className='flex justify-end gap-4'>
 				<DialogCancelButton />
 				<DialogDangerButton
-					disabled={disabled}
 					onClick={() => {
-						if (!disabled) {
-							onDelete();
-							closeDialog();
-						}
+						onDelete();
+						closeDialog();
 					}}
 				>
 					{actionText || 'Delete'}

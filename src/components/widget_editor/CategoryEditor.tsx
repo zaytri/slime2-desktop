@@ -6,6 +6,7 @@ import SettingMenuButton from './SettingMenuButton';
 export type CategoryEditorProps = {
 	id: string;
 	label: string;
+
 	onEdit: VoidFunction;
 	onMoveUp?: VoidFunction;
 	onMoveDown?: VoidFunction;
@@ -28,6 +29,7 @@ export type CategoryEditorProps = {
 export default function CategoryEditor({
 	id,
 	label,
+
 	onEdit,
 	onMoveUp,
 	onMoveDown,
@@ -36,6 +38,7 @@ export default function CategoryEditor({
 	onDemote,
 	demoteOptions,
 	onDelete,
+
 	children,
 }: Props.WithChildren<CategoryEditorProps>) {
 	return (
