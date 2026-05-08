@@ -100,10 +100,6 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 	const tileRef = useRef<HTMLDivElement | null>(null);
 	const editTile = useEditTile();
 
-	const menuItemClassName = clsx(
-		'flex items-center gap-2 rounded-1 px-2 py-1 outline-offset-0! drop-shadow-[0_1px_black] outline-none over:bg-white over:text-zinc-800',
-	);
-
 	useEffect(() => {
 		if (!tileRef.current || !sourceSlot || sourceSlot.id !== tile.id) return;
 
@@ -330,25 +326,20 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 			<Menu
 				store={menuStore}
 				modal
-				className='z-40 flex min-w-36 flex-col dark-container rounded-2 p-1.5 font-semibold text-white shadow-[0_5px_10px_#0008] backdrop-blur-xs'
+				className='dark-menu'
 				getAnchorRect={() => {
 					return menuAnchorRect;
 				}}
 			>
 				{/* Edit Button */}
 				<MenuItem
-					render={
-						<button
-							type='button'
-							className={menuItemClassName}
-							onClick={() => {
-								// shouldn't happen but just in case...
-								if (tile.type === 'empty') return;
+					className='dark-menu-item'
+					onClick={() => {
+						// shouldn't happen but just in case...
+						if (tile.type === 'empty') return;
 
-								editTile(tile.id, tile.type);
-							}}
-						/>
-					}
+						editTile(tile.id, tile.type);
+					}}
 				>
 					<PencilSvg className='size-4' />
 					<p>Edit</p>
@@ -356,18 +347,13 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 
 				{/* Move Button */}
 				<MenuItem
-					render={
-						<button
-							type='button'
-							className={menuItemClassName}
-							onClick={() => {
-								// shouldn't happen but just in case...
-								if (tile.type === 'empty') return;
+					className='dark-menu-item'
+					onClick={() => {
+						// shouldn't happen but just in case...
+						if (tile.type === 'empty') return;
 
-								setSourceSlot(tile);
-							}}
-						/>
-					}
+						setSourceSlot(tile);
+					}}
 				>
 					<ArrowCrossSvg className='size-4' />
 					<p>Move</p>
@@ -376,34 +362,27 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 				{/* Duplicate Button */}
 				{tile.type === 'widget' && (
 					<MenuItem
-						render={
-							<button
-								type='button'
-								className={menuItemClassName}
-								onClick={async () => {
-									// shouldn't happen but just in case...
-									if (tile.type !== 'widget') return;
+						className='dark-menu-item'
+						onClick={async () => {
+							// shouldn't happen but just in case...
+							if (tile.type !== 'widget') return;
 
-									const { availableIndex, page } = nextAvailableIndex(
-										tile.index,
-									);
+							const { availableIndex, page } = nextAvailableIndex(tile.index);
 
-									const newWidgetId = await copyWidget(tile.id);
-									addTile({
-										id: newWidgetId,
-										index: availableIndex,
-										folderId: tile.folderId,
-									});
+							const newWidgetId = await copyWidget(tile.id);
+							addTile({
+								id: newWidgetId,
+								index: availableIndex,
+								folderId: tile.folderId,
+							});
 
-									copyWidgetAccounts(tile.id, newWidgetId);
+							copyWidgetAccounts(tile.id, newWidgetId);
 
-									// in case next available index is on a different page
-									setPage(page);
+							// in case next available index is on a different page
+							setPage(page);
 
-									setNewTileId(newWidgetId);
-								}}
-							/>
-						}
+							setNewTileId(newWidgetId);
+						}}
 					>
 						<DoubleSquareSvg className='size-4' />
 						<p>Duplicate</p>

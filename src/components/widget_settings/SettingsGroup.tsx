@@ -31,7 +31,7 @@ export default function SettingsGroup({ settings }: SettingsGroupProps) {
 
 						const dependentSetting = settings[dependentId];
 						const dependentDefaultValue =
-							'defaultValue' in dependentSetting
+							dependentSetting && 'defaultValue' in dependentSetting
 								? dependentSetting.defaultValue
 								: undefined;
 

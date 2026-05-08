@@ -216,6 +216,18 @@ input[type='number'] {
 	@apply flex cursor-pointer rounded-1 border border-zinc-400 bg-zinc-200 px-1.5 py-0.5 font-semibold text-zinc-500 -outline-offset-1! outline-lime-600 data-checked:border-black data-checked:bg-zinc-700! data-checked:text-white! data-checked:text-shadow-[0_1px_#0006] data-over:bg-lime-200 data-over:text-lime-800 data-over:outline-3;
 }
 
+@utility dark-menu {
+	@apply z-100 flex max-h-(--popover-available-height) min-w-36 flex-col overflow-hidden dark-container rounded-2 p-1.5 font-semibold shadow-[0_5px_10px_#0008] backdrop-blur-sm;
+}
+
+@utility dark-menu-item {
+	@apply flex cursor-pointer items-center gap-2 rounded-1 px-2 py-1 text-white outline-offset-0! drop-shadow-[0_1px_black] outline-none select-none aria-disabled:text-zinc-400 data-active-item:bg-white data-active-item:text-zinc-800;
+}
+
+@utility dark-menu-group-label {
+	@apply text-3 font-bold text-zinc-400 uppercase select-none text-shadow-[0_1px_black];
+}
+
 @utility mini-menu-item {
 	@apply flex cursor-pointer items-center gap-2 rounded-2 px-2 py-1 text-left outline-stone-400 data-active-item:bg-stone-200 data-active-item:font-medium data-focus:outline-2 data-over:bg-stone-200 data-over:font-medium;
 }
