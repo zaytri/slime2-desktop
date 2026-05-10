@@ -12,11 +12,11 @@
 		"build:devtools": "tauri build --features devtools",
 		"tauri": "tauri",
 		"icon": "npm run tauri icon",
-		"before:dev": "npm run clean:target && vite && npm run widget:build && npm run icon",
+		"before:dev": "npm run clean:target && npm run widget:build && npm run icon && vite",
 		"before:build": "npm run clean:target && npm run widget:build && tsc && vite build && npm run icon",
-		"widget:install": "cd ./src-widget && npm install && cd ..",
-		"widget:dev": "npm run widget:install && npm --prefix ./src-widget/ run dev",
-		"widget:build": "npm run widget:install && npm --prefix ./src-widget/ run build",
+		"widget:install": "cd ./src-overlay && npm install && cd ..",
+		"widget:dev": "npm run widget:install && npm --prefix ./src-overlay/ run dev",
+		"widget:build": "npm run widget:install && npm --prefix ./src-overlay/ run build",
 		"clean:target": "cd ./src-tauri && cargo clean && cd .."
 	},
 	"dependencies": {

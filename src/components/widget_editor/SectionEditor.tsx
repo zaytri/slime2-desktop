@@ -2,57 +2,23 @@ import { i18nStringTransform } from '@/helpers/i18n';
 import type { WidgetSetting } from '@@/json/widgetSettings';
 import clsx from 'clsx';
 import SettingHeader from './SettingHeader';
-import SettingMenuButton from './SettingMenuButton';
+import SettingEditorMenu from './menu/SettingEditorMenu';
 
 type SectionEditorProps = {
 	id: string;
-	setting: Pick<
-		WidgetSetting.Section | WidgetSetting.MultiSection,
+	index: number;
+	categoryId: string;
+	setting: DistributivePick<
+		WidgetSetting.AnySection,
 		'label' | 'condition' | 'searchTags' | 'type'
 	>;
-
-	onEdit: VoidFunction;
-	onMoveUp?: VoidFunction;
-	onMoveDown?: VoidFunction;
-	onMoveTo: (value: string) => void;
-	moveToOptions: {
-		label: string;
-		value: string;
-		disabled?: boolean;
-	}[];
-	onAdd: (value: WidgetSetting.NonGroup['type']) => void;
-	addOptions: {
-		label: string;
-		options: { label: string; value: WidgetSetting.NonGroup['type'] }[];
-	}[];
-	onConvert: (
-		value: WidgetSetting.Section['type'] | WidgetSetting.MultiSection['type'],
-	) => void;
-	convertOptions: {
-		label: string;
-		value: WidgetSetting.Section['type'] | WidgetSetting.MultiSection['type'];
-		disabled?: boolean;
-	}[];
-	onPromote: VoidFunction;
-	onDelete: VoidFunction;
 };
 
 export default function SectionEditor({
 	id,
+	index,
+	categoryId,
 	setting,
-
-	onEdit,
-	onMoveUp,
-	onMoveDown,
-	onMoveTo,
-	moveToOptions,
-	onAdd,
-	addOptions,
-	onConvert,
-	convertOptions,
-	onPromote,
-	onDelete,
-
 	children,
 }: Props.WithChildren<SectionEditorProps>) {
 	return (
@@ -62,24 +28,11 @@ export default function SectionEditor({
 				type={setting.type}
 				label={i18nStringTransform(setting.label)}
 			>
-				<SettingMenuButton
-					onEdit={onEdit}
-					onMoveUp={onMoveUp}
-					onMoveDown={onMoveDown}
-					onMoveTo={onMoveTo}
-					moveToOptions={moveToOptions}
-					onAdd={onAdd}
-					addOptions={addOptions}
-					onConvert={onConvert}
-					convertOptions={convertOptions}
-					onPromote={onPromote}
-					onDelete={onDelete}
-					className={clsx(
-						setting.type === 'section' &&
-							'text-cyan-800 over:border-cyan-900! over:bg-cyan-800!',
-						setting.type === 'multi-section' &&
-							'text-blue-900 over:border-blue-950! over:bg-blue-900!',
-					)}
+				<SettingEditorMenu
+					id={id}
+					index={index}
+					type={setting.type}
+					categoryId={categoryId}
 				/>
 			</SettingHeader>
 

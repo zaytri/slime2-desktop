@@ -3,6 +3,11 @@ import HeaderButton from '@/components/header/HeaderButton';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useWidgetId } from '@/contexts/widget_id/useWidgetId';
 import { useWidgetMeta } from '@/contexts/widget_metas/useWidgetMeta';
+import {
+	widgetSettingsEditorReducer,
+	type WidgetSettingsEditorAction,
+} from '@/contexts/widget_settings_editor/useWidgetSettingsEditorDispatch';
+import WidgetSettingsEditorProvider from '@/contexts/widget_settings_editor/WidgetSettingsEditorProvider';
 import GenericDeleteDialog from '@@/dialog/GenericDeleteDialog';
 import type { WidgetMeta } from '@@/json/widgetMeta';
 import {
@@ -10,7 +15,7 @@ import {
 	type WidgetSettings,
 } from '@@/json/widgetSettings';
 import ArrowDownTraySvg from '@@/svg/ArrowDownTraySvg';
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 import WidgetMetaEditor from './WidgetMetaEditor';
 import WidgetSettingsEditor from './WidgetSettingsEditor';
 
@@ -23,14 +28,17 @@ export default function WidgetEditor({ settings, onBack }: WidgetEditorProps) {
 	const widgetId = useWidgetId();
 	const { widgetMeta, setWidgetMeta } = useWidgetMeta(widgetId);
 	const { openDialog } = useDialog();
-	const [newSettings, setNewSettings] = useState<WidgetSettings>(settings);
-	const [newWidgetMeta, setNewWidgetMeta] = useState<WidgetMeta>(widgetMeta);
+	const [newSettings, dispatchNewSettings] = useReducer(
+		widgetSettingsEditorReducer,
+		settings,
+	);
+	const [newWidgetMeta, setNewWidgetMeta] = useState<WidgetMeta>(widgetMeta!);
 	const [hasChanges, setHasChanges] = useState(false);
 	const [saving, setSaving] = useState(false);
 
-	function onChangeSettings(value: WidgetSettings) {
-		setNewSettings(value);
+	function onChangeSettings(action: WidgetSettingsEditorAction) {
 		setHasChanges(true);
+		dispatchNewSettings(action);
 	}
 
 	function onChangeMeta(value: WidgetMeta) {
@@ -99,10 +107,12 @@ export default function WidgetEditor({ settings, onBack }: WidgetEditorProps) {
 				<div className='-m-1 flex flex-1 gap-4 overflow-hidden border-t border-zinc-600 p-1 pt-2'>
 					<WidgetMetaEditor value={newWidgetMeta} onChange={onChangeMeta} />
 
-					<WidgetSettingsEditor
-						value={newSettings}
-						onChange={onChangeSettings}
-					/>
+					<WidgetSettingsEditorProvider
+						state={newSettings}
+						dispatch={onChangeSettings}
+					>
+						<WidgetSettingsEditor />
+					</WidgetSettingsEditorProvider>
 				</div>
 			</div>
 		</div>

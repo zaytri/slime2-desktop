@@ -9,6 +9,6 @@ export default {
 	jsxSingleQuote: true,
 	trailingComma: 'all',
 	tailwindFunctions: ['clsx'],
-	tailwindStylesheet: './src/styles.css',
+	tailwindStylesheet: './src/index.css',
 	useTabs: true,
 };

@@ -10,7 +10,7 @@ import useWidgetValues from '@/contexts/widget_values/useWidgetValues';
 import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValuesDispatch';
 import useWidgetsPanel from '@/contexts/widgets_panel/useWidgetsPanel';
 import { getTileIconSrc } from '@/helpers/media';
-import { DEV_WIDGET_SERVER_PORT, PROD_PORT } from '@/helpers/serverBaseUrl';
+import { createOverlayUrl } from '@/helpers/serverUrl';
 import useEditTile from '@/hooks/useEditTile';
 import CopyPasteWidgetDataDialog from '@@/dialog/CopyPasteWidgetDataDialog';
 import ExportZipDialog from '@@/dialog/ExportZipDialog';
@@ -172,9 +172,7 @@ function OverlayUrlButton() {
 			onClick={() => {
 				openDialog(
 					'Overlay URL',
-					<OverlayURLDialog
-						link={`http://localhost:${import.meta.env.PROD ? `${PROD_PORT}/widget` : DEV_WIDGET_SERVER_PORT}/?widgetId=${widgetId}`}
-					/>,
+					<OverlayURLDialog link={createOverlayUrl(widgetId)} />,
 				);
 			}}
 		/>

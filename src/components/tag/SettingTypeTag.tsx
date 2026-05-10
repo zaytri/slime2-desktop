@@ -1,4 +1,4 @@
-import { SETTINGS_LABELS, type WidgetSetting } from '@@/json/widgetSettings';
+import { SETTINGS_DATA, type WidgetSetting } from '@@/json/widgetSettings';
 import CubeSvg from '@@/svg/CubeSvg';
 import GridSvg from '@@/svg/GridSvg';
 import clsx from 'clsx';
@@ -9,12 +9,9 @@ type SettingTypeTagProps = {
 };
 
 export default function SettingTypeTag({ type }: SettingTypeTagProps) {
-	const label = type === 'category' ? 'Category' : SETTINGS_LABELS.get(type);
-	if (!label) return;
-
 	return (
 		<Tag
-			label={label}
+			label={type === 'category' ? 'Category' : SETTINGS_DATA[type].label}
 			icon={
 				type === 'category' ||
 				type === 'section' ||

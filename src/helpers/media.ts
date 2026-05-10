@@ -1,27 +1,22 @@
-import serverBaseUrl from './serverBaseUrl';
+import { cacheBust, createPreviewUrl, createTilesUrl } from './serverUrl';
 
 export function getTileIconSrc(id: string, fileName: string) {
-	const timestamp = Date.now();
-	return `${serverBaseUrl.tiles}/tile/${id}/config/${fileName}?timestamp=${timestamp}`;
+	return createTilesUrl(id, cacheBust(`config/${fileName}`));
 }
 
 export function getTempFileSrc(fileName: string) {
-	const timestamp = Date.now();
-	return `${serverBaseUrl.preview}/preview/${fileName}?timestamp=${timestamp}`;
+	return createPreviewUrl(cacheBust(fileName));
 }
 
 export function getWidgetIconSrc(id: string) {
-	const timestamp = Date.now();
-	return `${serverBaseUrl.tiles}/tile/${id}/core/config/icon.png?timestamp=${timestamp}`;
+	return createTilesUrl(id, cacheBust('core/config/icon.png'));
 }
 
 export function getWidgetMediaCoreSrc(id: string, filePath: string) {
-	const timestamp = Date.now();
-	return `${serverBaseUrl.tiles}/tile/${id}/core/${filePath}?timestamp=${timestamp}`;
+	return createTilesUrl(id, cacheBust(`core/${filePath}`));
 }
 
 export function getWidgetMediaCustomSrc(id: string, customFileName: string) {
-	const timestamp = Date.now();
 	const [_local, fileName] = customFileName.split(':');
-	return `${serverBaseUrl.tiles}/tile/${id}/config/assets/${fileName}?timestamp=${timestamp}`;
+	return createTilesUrl(id, cacheBust(`/config/assets/${fileName}`));
 }

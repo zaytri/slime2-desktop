@@ -1,77 +1,63 @@
-import { i18nStringTransform } from '@/helpers/i18n';
+import { i18nStringTransform, type I18nString } from '@/helpers/i18n';
 import type { WidgetSetting } from '@@/json/widgetSettings';
 import clsx from 'clsx';
+import SettingEditorMenu from './menu/SettingEditorMenu';
 import SettingHeader from './SettingHeader';
-import SettingMenuButton from './SettingMenuButton';
 import SettingProperty from './SettingProperty';
 
 type SettingEditorProps = {
 	id: string;
+	index: number;
+	categoryId: string;
+	sectionId?: string;
 	setting: WidgetSetting.NonGroup;
 	showDetails: boolean;
-
-	onEdit: VoidFunction;
-	onMoveUp?: VoidFunction;
-	onMoveDown?: VoidFunction;
-	onMoveTo: (value: string) => void;
-	moveToOptions: {
-		label: string;
-		value: string;
-		type:
-			| WidgetSetting.Section['type']
-			| WidgetSetting.MultiSection['type']
-			| 'category';
-		disabled?: boolean;
-	}[];
-	onDuplicate: VoidFunction;
-	onDelete: VoidFunction;
 };
 
 export default function SettingEditor({
 	id,
+	index,
+	categoryId,
+	sectionId,
 	setting,
 	showDetails,
-
-	onEdit,
-	onMoveUp,
-	onMoveDown,
-	onMoveTo,
-	moveToOptions,
-	onDuplicate,
-	onDelete,
 }: SettingEditorProps) {
-	const values: {
-		label: string;
-		value: unknown;
-		full?: boolean;
-	}[] = [];
+	const values: ValueDisplay[] = [];
 
-	if ('defaultValue' in setting) {
-		values.push({ label: 'Default Value', value: setting.defaultValue });
+	if ('defaultValue' in setting && setting.defaultValue !== undefined) {
+		values.push(displayValue('Default Value', setting.defaultValue));
 	}
 
-	if ('min' in setting) {
-		values.push({ label: 'Min', value: setting.min });
+	if ('src' in setting && setting.src !== undefined) {
+		values.push(displayValue('Src', setting.src));
 	}
 
-	if ('max' in setting) {
-		values.push({ label: 'Max', value: setting.max });
+	if ('alt' in setting && setting.alt !== undefined) {
+		values.push(displayI18n('Alt', setting.alt));
 	}
 
-	if ('step' in setting) {
-		values.push({ label: 'Step', value: setting.step });
+	if ('min' in setting && setting.min !== undefined) {
+		values.push(displayValue('Min', setting.min));
 	}
 
-	if ('placeholder' in setting) {
-		values.push({ label: 'Placeholder', value: setting.placeholder });
+	if ('max' in setting && setting.max !== undefined) {
+		values.push(displayValue('Max', setting.max));
 	}
 
-	if ('description' in setting) {
-		values.push({
-			label: 'Description',
-			value: setting.description,
-			full: true,
-		});
+	if ('step' in setting && setting.step !== undefined) {
+		values.push(displayValue('Step', setting.step));
+	}
+
+	if ('placeholder' in setting && setting.placeholder !== undefined) {
+		values.push(displayI18n('Placeholder', setting.placeholder));
+	}
+
+	if ('options' in setting && setting.options !== undefined) {
+		values.push(displayValue('Options', setting.options));
+	}
+
+	if ('description' in setting && setting.description !== undefined) {
+		values.push(displayI18n('Description', setting.description, true));
 	}
 
 	return (
@@ -82,15 +68,12 @@ export default function SettingEditor({
 				label={i18nStringTransform(setting.label)}
 				hasValues={showDetails && values.length > 0}
 			>
-				<SettingMenuButton
-					onEdit={onEdit}
-					onMoveUp={onMoveUp}
-					onMoveDown={onMoveDown}
-					onMoveTo={onMoveTo}
-					moveToOptions={moveToOptions}
-					onDuplicate={onDuplicate}
-					onDelete={onDelete}
-					className='text-green-800 over:border-green-900! over:bg-green-800!'
+				<SettingEditorMenu
+					id={id}
+					index={index}
+					type={setting.type}
+					categoryId={categoryId}
+					sectionId={sectionId}
 				/>
 			</SettingHeader>
 
@@ -104,7 +87,15 @@ export default function SettingEditor({
 									label={label}
 									className={clsx(full && 'w-full')}
 								>
-									{JSON.stringify(value)}
+									{Array.isArray(value) ? (
+										<div className='flex flex-col'>
+											{value.map((item, index) => {
+												return <p key={index}>{JSON.stringify(item)},</p>;
+											})}
+										</div>
+									) : (
+										JSON.stringify(value)
+									)}
 								</SettingProperty>
 							);
 						})}
@@ -113,4 +104,36 @@ export default function SettingEditor({
 			)}
 		</div>
 	);
+}
+
+type ValueDisplay = {
+	label: string;
+	value: unknown;
+	full?: boolean;
+};
+
+function displayValue(
+	label: string,
+	value: unknown,
+	full: boolean = false,
+): ValueDisplay {
+	return { label, value, full: full || Array.isArray(value) };
+}
+
+function displayI18n(
+	label: string,
+	i18n: I18nString,
+	alwaysFull: boolean = false,
+): ValueDisplay {
+	return {
+		label,
+		...(typeof i18n === 'string'
+			? { value: i18n, full: alwaysFull }
+			: {
+					value: Object.entries(i18n).map(([key, value]) => {
+						return { [key]: value };
+					}),
+					full: true,
+				}),
+	};
 }

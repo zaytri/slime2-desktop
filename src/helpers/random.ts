@@ -22,7 +22,7 @@ export default abstract class Random {
 	}
 
 	static item<T>(array: Array<T>): T {
-		return array[this.index(array)];
+		return array[this.index(array)]!;
 	}
 
 	static hexCode(): string {

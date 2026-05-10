@@ -64,7 +64,7 @@ async fn main() {
 			server::setup(
 				connections,
 				(
-					file::widget_server_path(&app_handle),
+					file::overlay_server_path(&app_handle),
 					file::tiles_path(&app_handle),
 					file::temp_files_path(&app_handle),
 				),

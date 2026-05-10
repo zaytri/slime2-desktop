@@ -34,93 +34,125 @@ async function widgetSettingsPath(id: string) {
 }
 
 // consts
-export const SETTINGS_LABELS = new Map<
-	WidgetSetting.NonCategory['type'],
-	string
->([
-	['section', 'Section'],
-	['multi-section', 'Multi-Section'],
 
-	['text-input', 'Text Input'],
-	['text-area-input', 'Text Area Input'],
-	['color-input', 'Color Input'],
-	['font-input', 'Font Input'],
-
-	['multi-text-input', 'Multi-Text Input'],
-
-	['number-input', 'Number Input'],
-	['slider-input', 'Slider Input'],
-
-	['toggle-input', 'Toggle Input'],
-
-	['dropdown-input', 'Dropdown Input'],
-	['select-input', 'Select Input'],
-
-	['multi-select-input', 'Multi-Select Input'],
-
-	['image-input', 'Image Input'],
-	['audio-input', 'Audio Input'],
-	['video-input', 'Video Input'],
-
-	['text-display', 'Text Display'],
-	['button', 'Button'],
-]);
-
-type AvailableSettingOptionWithSection = {
-	label: string;
-	value: WidgetSetting.NonCategory['type'];
-};
-
-type AvailableSettingOption = {
-	label: string;
-	value: WidgetSetting.NonGroup['type'];
-};
-
-function groupSettings(
-	label: string,
-	types: WidgetSetting.NonGroup['type'][],
-): {
-	label: string;
-	options: AvailableSettingOption[];
-} {
-	const options: AvailableSettingOption[] = [];
-	types.forEach(type => {
-		const label = SETTINGS_LABELS.get(type);
-		if (label) {
-			options.push({ label, value: type });
-		}
-	});
-	return { label, options };
-}
-
-export const AVAILABLE_SETTINGS_GROUPED: {
-	label: string;
-	options: AvailableSettingOption[];
-}[] = [
-	groupSettings('String', ['text-input', 'text-area-input']),
-	groupSettings('Special String', ['color-input', 'font-input']),
-	groupSettings('Multiple Strings', ['multi-text-input']),
-	groupSettings('Number', ['number-input', 'slider-input']),
-	groupSettings('Boolean', ['toggle-input']),
-	groupSettings('Options', ['dropdown-input', 'select-input']),
-	groupSettings('Multiple Options', ['multi-select-input']),
-	groupSettings('Media', ['image-input', 'audio-input', 'video-input']),
-	groupSettings('Other', ['text-display', 'button']),
-];
-
-export const AVAILABLE_SETTINGS_GROUPED_WITH_SECTION: {
-	label: string;
-	options: AvailableSettingOptionWithSection[];
-}[] = [
-	{
-		label: 'Group',
-		options: [
-			{ label: SETTINGS_LABELS.get('section')!, value: 'section' },
-			{ label: SETTINGS_LABELS.get('multi-section')!, value: 'multi-section' },
-		],
+export const SETTINGS_DATA: SettingsData = {
+	section: { label: 'Section', defaultData: { type: 'section', settings: {} } },
+	'multi-section': {
+		label: 'Multi-Section',
+		defaultData: { type: 'multi-section', settings: {} },
 	},
-	...AVAILABLE_SETTINGS_GROUPED,
+	button: { label: 'Button', defaultData: { type: 'button' } },
+	'text-display': {
+		label: 'Text Display',
+		defaultData: { type: 'text-display' },
+	},
+	'image-display': {
+		label: 'Image Display',
+		defaultData: { type: 'image-display', alt: '', src: '' },
+	},
+	'text-input': { label: 'Text Input', defaultData: { type: 'text-input' } },
+	'text-area-input': {
+		label: 'Text Area Input',
+		defaultData: { type: 'text-area-input' },
+	},
+	'color-input': { label: 'Color Input', defaultData: { type: 'color-input' } },
+	'font-input': { label: 'Font Input', defaultData: { type: 'font-input' } },
+	'multi-text-input': {
+		label: 'Multi-Text Input',
+		defaultData: { type: 'multi-text-input' },
+	},
+	'number-input': {
+		label: 'Number Input',
+		defaultData: { type: 'number-input' },
+	},
+	'slider-input': {
+		label: 'Slider Input',
+		defaultData: { type: 'slider-input' },
+	},
+	'toggle-input': {
+		label: 'Toggle Input',
+		defaultData: { type: 'toggle-input', defaultValue: false },
+	},
+	'dropdown-input': {
+		label: 'Dropdown Input',
+		defaultData: { type: 'dropdown-input', options: [] },
+	},
+	'select-input': {
+		label: 'Select Input',
+		defaultData: { type: 'select-input', options: [] },
+	},
+	'multi-select-input': {
+		label: 'Multi-Select Input',
+		defaultData: { type: 'multi-select-input', options: [] },
+	},
+	'image-input': { label: 'Image Input', defaultData: { type: 'image-input' } },
+	'audio-input': { label: 'Audio Input', defaultData: { type: 'audio-input' } },
+	'video-input': { label: 'Video Input', defaultData: { type: 'video-input' } },
+	'multi-image-input': {
+		label: 'Multi-Image Input',
+		defaultData: { type: 'multi-image-input' },
+	},
+	'multi-audio-input': {
+		label: 'Multi-Audio Input',
+		defaultData: { type: 'multi-audio-input' },
+	},
+	'multi-video-input': {
+		label: 'Multi-Video Input',
+		defaultData: { type: 'multi-video-input' },
+	},
+};
+
+export const SECTION_SETTING_GROUPED_OPTIONS: GroupedOptions<
+	WidgetSetting.NonGroup['type']
+>[] = (
+	[
+		['String', ['text-input', 'text-area-input', 'multi-text-input']],
+		['Style', ['color-input', 'font-input']],
+		['Number', ['number-input', 'slider-input']],
+		['Boolean', ['toggle-input']],
+		['Options', ['dropdown-input', 'select-input', 'multi-select-input']],
+		['Media', ['image-input', 'audio-input', 'video-input']],
+		['Other', ['text-display', 'button']],
+	] satisfies [string, WidgetSetting.NonGroup['type'][]][]
+).map(([groupLabel, types]) => {
+	return {
+		label: groupLabel,
+		options: types.map(type => {
+			return { label: SETTINGS_DATA[type].label, value: type };
+		}),
+	};
+});
+
+export const SECTION_SETTING_OPTIONS = SECTION_SETTING_GROUPED_OPTIONS.reduce(
+	(options: Option<WidgetSetting.NonGroup['type']>[], group) => {
+		return [...options, ...group.options];
+	},
+	[],
+);
+
+const SECTIONS: WidgetSetting.AnySection['type'][] = [
+	'section',
+	'multi-section',
 ];
+
+export const SECTION_OPTIONS: Option<WidgetSetting.AnySection['type']>[] =
+	SECTIONS.map(type => {
+		return { label: SETTINGS_DATA[type].label, value: type };
+	});
+
+export const CATEGORY_SETTING_GROUPED_OPTIONS: GroupedOptions<
+	WidgetSetting.NonCategory['type']
+>[] = [
+	{ label: 'Group', options: SECTION_OPTIONS },
+	...SECTION_SETTING_GROUPED_OPTIONS,
+];
+
+export const CATEGORY_SETTING_OPTIONS = CATEGORY_SETTING_GROUPED_OPTIONS.reduce(
+	(options: Option<WidgetSetting.NonCategory['type']>[], group) => {
+		return [...options, ...group.options];
+	},
+	[],
+);
 
 // zod and types
 
@@ -343,6 +375,8 @@ export namespace WidgetSetting {
 	export type BaseSetting = z.infer<typeof BaseSetting>;
 	export type OptionValue = z.infer<typeof OptionValue>;
 	export type Options = z.infer<typeof Options>;
+	export type Condition = BaseSetting['condition'];
+	export type SearchTags = BaseSetting['searchTags'];
 
 	export type Settings = WidgetSettings;
 
@@ -352,6 +386,7 @@ export namespace WidgetSetting {
 
 	export type Section = ExtractSettingType<'section'>;
 	export type MultiSection = ExtractSettingType<'multi-section'>;
+	export type AnySection = Section | MultiSection;
 
 	export type Button = ExtractSettingType<'button'>;
 
@@ -360,6 +395,7 @@ export namespace WidgetSetting {
 		export type Image = ExtractSettingType<'image-display'>;
 	}
 
+	export type AnyInput = WidgetSetting.Input.Any;
 	export namespace Input {
 		export type Text = ExtractSettingType<'text-input'>;
 		export type TextArea = ExtractSettingType<'text-area-input'>;
@@ -378,5 +414,36 @@ export namespace WidgetSetting {
 		export type MultiAudio = ExtractSettingType<'multi-audio-input'>;
 		export type Color = ExtractSettingType<'color-input'>;
 		export type Font = ExtractSettingType<'font-input'>;
+
+		export type Any =
+			| Text
+			| TextArea
+			| MultiText
+			| Number
+			| Slider
+			| Toggle
+			| Dropdown
+			| Select
+			| MultiSelect
+			| Image
+			| MultiImage
+			| Video
+			| MultiVideo
+			| Audio
+			| MultiAudio
+			| Color
+			| Font;
 	}
 }
+
+type SettingsData = {
+	[SettingType in WidgetSetting.NonCategory['type']]: SettingType extends WidgetSetting.NonCategory['type']
+		? {
+				label: string;
+				defaultData: Extract<
+					DistributiveOmit<WidgetSetting.NonCategory, 'label'>,
+					{ type: SettingType }
+				>;
+			}
+		: never;
+};

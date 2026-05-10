@@ -26,8 +26,8 @@ export default defineConfig(async () => ({
 		port: 57142,
 		strictPort: true,
 		watch: {
-			// 3. tell vite to ignore watching `src-tauri`
-			ignored: ['**/src-tauri/**', '**/src-widget/**'],
+			// 3. tell vite to ignore watching `src-tauri and src-overlay`
+			ignored: ['**/src-tauri/**', '**/src-overlay/**'],
 		},
 	},
 }));

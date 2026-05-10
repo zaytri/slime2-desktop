@@ -322,11 +322,11 @@ pub fn generate_widget_config(
 	Ok(())
 }
 
-// get path to widget_server folder (built by src-widget)
-pub fn widget_server_path(app: &AppHandle) -> PathBuf {
+// get path to overlay_server folder (built by src-overlay)
+pub fn overlay_server_path(app: &AppHandle) -> PathBuf {
 	app.path()
-		.resolve("widget_server", BaseDirectory::Resource)
-		.expect("Failed to resolve [resource]/widget_server!")
+		.resolve("overlay_server", BaseDirectory::Resource)
+		.expect("Failed to resolve [resource]/overlay_server!")
 }
 
 // get path to tiles folder

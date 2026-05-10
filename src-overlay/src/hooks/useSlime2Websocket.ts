@@ -2,7 +2,7 @@ import { useLoaderData } from '@tanstack/react-router';
 import { nanoid } from 'nanoid';
 import { useEffect, useRef } from 'react';
 import { z } from 'zod/mini';
-import { WEBSOCKET_URL } from '../helpers/serverUrl';
+import { WEBSOCKET_BASE_URL } from '../helpers/serverUrl';
 import logZodError from '../helpers/zodError';
 
 const WebSocketEvent = z.object({
@@ -30,7 +30,7 @@ export default function useSlime2Websocket() {
 	useEffect(() => {
 		if (registeredRef.current) return;
 
-		const websocket = new WebSocket(WEBSOCKET_URL);
+		const websocket = new WebSocket(WEBSOCKET_BASE_URL);
 
 		// requests sent from widget to slime2
 		const sendRequest = async <Payload, Response>(

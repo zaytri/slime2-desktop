@@ -1,5 +1,5 @@
 import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
-import serverBaseUrl from '@/helpers/serverBaseUrl';
+import { cacheBust, createTilesUrl } from '@/helpers/serverUrl';
 import twitchApi from '@/helpers/services/twitch/twitchApi';
 import logZodError from '@/helpers/zodError';
 import { useEffect, useRef } from 'react';
@@ -23,7 +23,7 @@ export default function useTwitchBot() {
 			}
 		}
 		// timestamp for cache busting
-		const botScriptUrl = `${serverBaseUrl.tiles}/tile/${widgetId}/core/bot.js?timestamp=${Date.now()}`;
+		const botScriptUrl = createTilesUrl(widgetId, cacheBust('core/bot.js'));
 
 		// blob is necessary to deal with CORS
 		// https://gist.github.com/sterlingwes/077b685c22ad6bdc04464db454b5f9f9
@@ -84,7 +84,7 @@ export default function useTwitchBot() {
 			event: CustomEvent<{ widgetId: string }>,
 		) {
 			const { widgetId } = event.detail;
-			if (widgetMetas[widgetId].type.includes('bot')) {
+			if (widgetMetas[widgetId] && widgetMetas[widgetId].type.includes('bot')) {
 				connectBot(widgetId, true);
 			}
 		}

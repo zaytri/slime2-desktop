@@ -20,6 +20,8 @@ const alejoPronounsApi = {
 
 		const { pronoun_id, alt_pronoun_id } = user;
 		const primary = pronounsDataMap[pronoun_id];
+		if (!primary) return null;
+
 		const secondary = alt_pronoun_id ? pronounsDataMap[alt_pronoun_id] : null;
 
 		const pronouns = !secondary
@@ -34,7 +36,7 @@ const alejoPronounsApi = {
 
 export default alejoPronounsApi;
 
-// https://api.pronouns.alejo.io/v1/pronouns currently returns as of 6/28/2025
+// https://api.pronouns.alejo.io/v1/pronouns currently returns as of 5/9/2026
 const pronounsDataMap: Record<
 	string,
 	{

@@ -8,7 +8,7 @@
 	"bundle": {
 		"active": true,
 		"resources": {
-			"../resources/widget_server": "widget_server/",
+			"../resources/overlay_server": "overlay_server/",
 			"../resources/widgets": "widgets/",
 			"../resources/assets": "assets/"
 		},

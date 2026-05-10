@@ -1,6 +1,6 @@
 import { useLoaderData } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
-import { BASE_DATA_URL } from '../helpers/serverUrl';
+import { cacheBust, createDataUrl } from '../helpers/serverUrl';
 import { Meta } from '../helpers/widgetApi';
 
 export default function useMetaLoader() {
@@ -61,8 +61,7 @@ function generateImportURL(fileName: string, widgetId: string) {
 	const url =
 		fileName.startsWith('http://') || fileName.startsWith('https://')
 			? fileName
-			: `${BASE_DATA_URL}/${widgetId}/core/${fileName}`;
+			: createDataUrl(widgetId, `core/${fileName}`);
 
-	// cache busting
-	return `${url}?timestamp=${Date.now()}`;
+	return cacheBust(url);
 }

@@ -18,7 +18,7 @@ export default defineConfig({
 		tailwindcss(),
 	],
 	build: {
-		outDir: '../resources/widget_server',
+		outDir: '../resources/overlay_server',
 	},
 	server: {
 		port: 57141,

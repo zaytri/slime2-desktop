@@ -1,116 +1,73 @@
+import ColorField from '@/components/input_fields/ColorField';
+import DropdownField from '@/components/input_fields/DropdownField';
+import MultiSelectField from '@/components/input_fields/MultiSelectField';
+import MultiTextField from '@/components/input_fields/MultiTextField';
+import NumberField from '@/components/input_fields/NumberField';
+import SelectField from '@/components/input_fields/SelectField';
+import TextAreaField from '@/components/input_fields/TextAreaField';
+import TextField from '@/components/input_fields/TextField';
 import { deepCopyObject } from '@/contexts/common';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { i18nStringTransform } from '@/helpers/i18n';
-import { SETTINGS_LABELS, type WidgetSetting } from '@@/json/widgetSettings';
+import {
+	SECTION_SETTING_OPTIONS,
+	SETTINGS_DATA,
+	type WidgetSetting,
+} from '@@/json/widgetSettings';
 import CheckSvg from '@@/svg/CheckSvg';
 import PlusSvg from '@@/svg/PlusSvg';
 import XSvg from '@@/svg/XSvg';
 import { Checkbox, Field, Fieldset, Label, Legend } from '@headlessui/react';
 import { useState } from 'react';
-import ColorField from '../input_fields/ColorField';
-import DropdownField from '../input_fields/DropdownField';
-import MultiSelectField from '../input_fields/MultiSelectField';
-import MultiTextField from '../input_fields/MultiTextField';
-import NumberField from '../input_fields/NumberField';
-import SelectField from '../input_fields/SelectField';
-import TextAreaField from '../input_fields/TextAreaField';
-import TextField from '../input_fields/TextField';
-import DialogCancelButton from './DialogButton/DialogCancelButton';
-import DialogConfirmButton from './DialogButton/DialogConfirmButton';
-import DialogContent from './DialogContent';
+import DialogCancelButton from '../DialogButton/DialogCancelButton';
+import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
+import DialogContent from '../DialogContent';
+import UniqueIdField from './UniqueIdField';
 
-type SettingData =
-	| DistributiveOmit<
-			WidgetSetting.NonGroup,
-			'label' | 'condition' | 'searchTags'
-	  >
-	| Omit<
-			WidgetSetting.Section,
-			'label' | 'condition' | 'searchTags' | 'settings'
-	  >
-	| Omit<
-			WidgetSetting.MultiSection,
-			'label' | 'condition' | 'searchTags' | 'settings'
-	  >;
+type SettingData = Extract<
+	DistributiveOmit<WidgetSetting.NonCategory, 'label'>,
+	{ type: WidgetSetting.NonGroup['type'] }
+>;
 
-type SetWidgetSettingDialogProps = {
+type EditWidgetSettingDialogProps = {
 	id?: string;
 	label?: string;
-	condition?: WidgetSetting.NonCategory['condition'];
-	searchTags?: WidgetSetting.NonCategory['searchTags'];
-	data?: SettingData;
-	onSaveCategory?: (id: string, label: string) => void;
-	onSaveSetting?: (
-		id: string,
-		label: string,
-		data: {
-			condition: WidgetSetting.NonCategory['condition'];
-			searchTags: WidgetSetting.NonCategory['searchTags'];
-		} & SettingData,
-	) => void;
-	checkIdExists: (id: string) => boolean;
+	data: SettingData;
+	idExists: (id: string) => boolean;
+	onSave: (id: string, label: string, data: SettingData) => void;
 };
 
-export default function SetWidgetSettingDialog({
+export default function EditWidgetSettingDialog({
 	id,
 	label,
-	onSaveCategory,
-	onSaveSetting,
-	checkIdExists,
 	data,
-	condition,
-	searchTags,
-}: SetWidgetSettingDialogProps) {
+	onSave,
+	idExists,
+}: EditWidgetSettingDialogProps) {
 	const { closeDialog } = useDialog();
 	const [newId, setNewId] = useState<string>(id || '');
+	const [idError, setIdError] = useState('');
 	const [newLabel, setNewLabel] = useState<string>(label || '');
-	const [newCondition, setNewCondition] = useState<
-		{
-			id: string;
-			value: WidgetSetting.OptionValue;
-		}[]
-	>(
-		Object.entries(condition || {}).map(([id, value]) => {
-			return { id, value };
-		}),
-	);
-	const [newData, setNewData] = useState<SettingData>(
-		data ?? {
-			type: 'text-input',
-			defaultValue: '',
-		},
-	);
+	const [newData, setNewData] = useState<SettingData>(data);
 
-	const isCategory = !data;
-	const isGroup =
-		isCategory ||
-		newData.type === 'section' ||
-		newData.type === 'multi-section';
-	const isAdd = !id && !label;
 	const trimmedId = newId.trim();
 	const trimmedLabel = newLabel.trim();
 
-	let idCollision = false;
-	// only check if newId isn't empty and id isn't the same as newId
-	if (trimmedId && (id || '') !== trimmedId) {
-		idCollision = checkIdExists(trimmedId);
-	}
+	const emptyOptions =
+		(data.type === 'dropdown-input' ||
+			data.type === 'select-input' ||
+			data.type === 'multi-select-input') &&
+		data.options.length === 0;
 
-	let emptyOptions = false;
-	if (
-		data &&
-		(data.type === 'dropdown-input' || data.type === 'select-input',
-		data.type === 'multi-select-input') &&
-		data.options.length === 0
-	) {
-		emptyOptions = true;
-	}
+	const disableSave = !trimmedId || !trimmedLabel || !!idError || emptyOptions;
 
-	const disableSave =
-		!trimmedId || !trimmedLabel || idCollision || emptyOptions;
+	function onChangeId(id: string) {
+		setNewId(id);
+		setIdError('');
+	}
 
 	return (
-		<DialogContent className='flex max-h-100 w-160 flex-col justify-between overflow-hidden'>
+		<DialogContent className='flex max-h-160 w-160 flex-col justify-between overflow-hidden'>
 			<div className='flex flex-col gap-2 overflow-y-auto p-4'>
 				<div className='grid flex-1 grid-cols-2 items-start gap-x-4 gap-y-2'>
 					{newData.type === 'text-display' ? (
@@ -127,311 +84,188 @@ export default function SetWidgetSettingDialog({
 						<TextField
 							label='Label'
 							compact
-							placeholder={isCategory ? 'My Category' : 'My Setting'}
+							placeholder='My Setting'
 							value={newLabel}
 							onChange={setNewLabel}
 						/>
 					)}
 
-					<div className='flex flex-col gap-1'>
+					<UniqueIdField value={newId} onChange={onChangeId} error={idError} />
+
+					<DropdownField
+						label='Type'
+						compact
+						value={newData.type}
+						onChange={newType => {
+							setNewData(SETTINGS_DATA[newType].defaultData);
+						}}
+						options={SECTION_SETTING_OPTIONS}
+					/>
+
+					{(newData.type === 'text-input' ||
+						newData.type === 'text-area-input' ||
+						newData.type === 'multi-text-input' ||
+						newData.type === 'number-input' ||
+						newData.type === 'dropdown-input' ||
+						newData.type === 'color-input' ||
+						newData.type === 'font-input') && (
 						<TextField
-							label='Unique ID'
+							label='Placeholder'
 							compact
-							placeholder={isCategory ? 'my-category-id' : 'my-setting-id'}
-							autoFocus
-							value={newId}
-							onChange={setNewId}
-							inputClassName='font-mono!'
+							value={
+								typeof newData.placeholder === 'string'
+									? newData.placeholder
+									: ''
+							}
+							onChange={newValue => {
+								setNewData({
+									...newData,
+									placeholder: newValue,
+								});
+							}}
 						/>
+					)}
 
-						{idCollision && (
-							<strong className='text-3.5 text-rose-900'>
-								Error: ID already exists!
-							</strong>
-						)}
-					</div>
+					{(newData.type === 'dropdown-input' ||
+						newData.type === 'select-input' ||
+						newData.type === 'multi-select-input') && (
+						<OptionsField
+							values={newData.options}
+							onChange={newValues => {
+								setNewData({
+									...newData,
+									options: newValues,
+								});
+							}}
+						/>
+					)}
 
-					{!isGroup && (
-						<>
-							<DropdownField
-								label='Type'
-								compact
-								value={newData.type}
-								onChange={newType => {
-									switch (newType) {
-										case 'button':
-										case 'text-display':
-										case 'image-input':
-										case 'video-input':
-										case 'audio-input':
-										case 'color-input':
-										case 'font-input':
+					{newData.type !== 'button' &&
+						newData.type !== 'text-display' &&
+						newData.type !== 'image-display' && (
+							<DefaultValueField
+								data={newData}
+								onChange={newDefaultValue => {
+									if (newDefaultValue === undefined) {
+										setNewData({
+											...newData,
+											defaultValue: undefined,
+										});
+										return;
+									}
+
+									switch (newData.type) {
 										case 'text-input':
 										case 'text-area-input':
-										case 'multi-text-input':
-											setNewData({ type: newType });
+										case 'image-input':
+										case 'audio-input':
+										case 'video-input':
+										case 'font-input':
+										case 'color-input':
+											if (typeof newDefaultValue === 'string') {
+												setNewData({
+													...newData,
+													defaultValue: newDefaultValue,
+												});
+											}
 											break;
-
 										case 'number-input':
-											setNewData({ type: newType, step: 1 });
-											break;
-
 										case 'slider-input':
-											setNewData({
-												type: newType,
-												min: 0,
-												max: 100,
-												step: 1,
-											});
+											if (typeof newDefaultValue === 'number') {
+												setNewData({
+													...newData,
+													defaultValue: newDefaultValue,
+												});
+											}
 											break;
-
 										case 'toggle-input':
-											setNewData({ type: newType, defaultValue: false });
+											if (typeof newDefaultValue === 'boolean') {
+												setNewData({
+													...newData,
+													defaultValue: newDefaultValue,
+												});
+											}
 											break;
-
 										case 'dropdown-input':
 										case 'select-input':
-										case 'multi-select-input':
-											setNewData({ type: newType, options: [] });
+											if (
+												typeof newDefaultValue === 'string' ||
+												typeof newDefaultValue === 'number' ||
+												typeof newDefaultValue === 'boolean'
+											) {
+												setNewData({
+													...newData,
+													defaultValue: newDefaultValue,
+												});
+											}
 											break;
+										case 'multi-text-input':
+											if (
+												Array.isArray(newDefaultValue) &&
+												newDefaultValue.every(value => {
+													return typeof value === 'string';
+												})
+											) {
+												setNewData({
+													...newData,
+													defaultValue: newDefaultValue as string[],
+												});
+											}
+											break;
+										case 'multi-select-input':
+											if (Array.isArray(newDefaultValue)) {
+												setNewData({
+													...newData,
+													defaultValue: newDefaultValue,
+												});
+											}
 									}
 								}}
-								options={[...SETTINGS_LABELS.entries()]
-									.filter(([type]) => {
-										return type !== 'section' && type !== 'multi-section';
-									})
-									.map(([type, label]) => {
-										return { label, value: type };
-									})}
 							/>
+						)}
 
-							{(newData.type === 'text-input' ||
-								newData.type === 'text-area-input' ||
-								newData.type === 'multi-text-input' ||
-								newData.type === 'number-input' ||
-								newData.type === 'dropdown-input' ||
-								newData.type === 'color-input' ||
-								newData.type === 'font-input') && (
-								<TextField
-									label='Placeholder'
-									compact
-									value={
-										typeof newData.placeholder === 'string'
-											? newData.placeholder
-											: ''
-									}
-									onChange={newValue => {
-										setNewData({
-											...newData,
-											placeholder: newValue,
-										});
-									}}
-								/>
-							)}
-
-							{(newData.type === 'dropdown-input' ||
-								newData.type === 'select-input' ||
-								newData.type === 'multi-select-input') && (
-								<OptionsField
-									values={newData.options}
-									onChange={newValues => {
-										setNewData({
-											...newData,
-											options: newValues,
-										});
-									}}
-								/>
-							)}
-
-							{newData.type === 'text-input' ||
-							newData.type === 'text-area-input' ||
-							newData.type === 'image-input' ||
-							newData.type === 'audio-input' ||
-							newData.type === 'video-input' ||
-							newData.type === 'font-input' ? (
-								<TextField
-									label='Default Value'
-									compact
-									placeholder='String Value'
-									value={newData.defaultValue || ''}
-									onChange={newValue => {
-										setNewData({
-											...newData,
-											defaultValue: newValue,
-										});
-									}}
-								/>
-							) : newData.type === 'color-input' ? (
-								<ColorField
-									label='Default Value'
-									compact
-									placeholder='Color Value'
-									value={newData.defaultValue || ''}
-									onChange={newValue => {
-										setNewData({
-											...newData,
-											defaultValue: newValue,
-										});
-									}}
-								/>
-							) : newData.type === 'number-input' ||
-							  newData.type === 'slider-input' ? (
+					{(newData.type === 'number-input' ||
+						newData.type === 'slider-input') && (
+						<>
+							<div className='flex gap-2'>
 								<NumberField
-									label='Default Value'
+									label='Min'
 									compact
-									placeholder='Number Value'
-									value={
-										newData.defaultValue === undefined
-											? null
-											: newData.defaultValue
-									}
+									value={newData.min === undefined ? null : newData.min}
 									onChange={newValue => {
 										setNewData({
 											...newData,
-											defaultValue: newValue === null ? undefined : newValue,
+											min: newValue === null ? undefined : newValue,
 										});
 									}}
 								/>
-							) : newData.type === 'toggle-input' ? (
-								<SelectField
-									label='Default Value'
+
+								<NumberField
+									label='Max'
 									compact
-									value={newData.defaultValue || false}
+									value={newData.max === undefined ? null : newData.max}
 									onChange={newValue => {
 										setNewData({
 											...newData,
-											defaultValue: newValue,
+											max: newValue === null ? undefined : newValue,
 										});
 									}}
-									options={[
-										{ label: 'True', value: true },
-										{ label: 'False', value: false },
-									]}
 								/>
-							) : newData.type === 'dropdown-input' ? (
-								<div className='col-span-2'>
-									<DropdownField
-										label='Default Value'
-										compact
-										value={newData.defaultValue || newData.options[0]?.value}
-										onChange={newOption => {
-											setNewData({
-												...newData,
-												defaultValue: newOption,
-											});
-										}}
-										options={newData.options.map(option => {
-											return {
-												label: i18nStringTransform(option.label),
-												value: option.value,
-											};
-										})}
-									/>
-								</div>
-							) : newData.type === 'select-input' ? (
-								<div className='col-span-2'>
-									<SelectField
-										label='Default Value'
-										compact
-										value={newData.defaultValue || newData.options[0]?.value}
-										onChange={newOption => {
-											setNewData({
-												...newData,
-												defaultValue: newOption,
-											});
-										}}
-										options={newData.options.map(option => {
-											return {
-												label: i18nStringTransform(option.label),
-												value: option.value,
-											};
-										})}
-									/>
-								</div>
-							) : newData.type === 'multi-text-input' ? (
-								<div className='col-span-2'>
-									<MultiTextField
-										label='Default Values'
-										compact
-										placeholder='String Value'
-										values={newData.defaultValue || []}
-										onChange={newValues => {
-											setNewData({
-												...newData,
-												defaultValue:
-													newValues.length === 0 ? undefined : newValues,
-											});
-										}}
-									/>
-								</div>
-							) : newData.type === 'multi-select-input' ? (
-								<div className='col-span-2'>
-									<MultiSelectField
-										label='Default Values'
-										compact
-										values={newData.defaultValue || []}
-										options={newData.options.map(option => {
-											return {
-												label: i18nStringTransform(option.label),
-												value: option.value,
-											};
-										})}
-										onChange={newValues => {
-											setNewData({
-												...newData,
-												defaultValue:
-													newValues.length === 0 ? undefined : newValues,
-											});
-										}}
-									/>
-								</div>
-							) : null}
-
-							{(newData.type === 'number-input' ||
-								newData.type === 'slider-input') && (
-								<>
-									<div className='flex gap-2'>
-										<NumberField
-											label='Min'
-											compact
-											value={newData.min === undefined ? null : newData.min}
-											onChange={newValue => {
-												setNewData({
-													...newData,
-													min: newValue === null ? undefined : newValue,
-												});
-											}}
-										/>
-
-										<NumberField
-											label='Max'
-											compact
-											value={newData.max === undefined ? null : newData.max}
-											onChange={newValue => {
-												setNewData({
-													...newData,
-													max: newValue === null ? undefined : newValue,
-												});
-											}}
-										/>
-									</div>
-									<StepField
-										value={newData.step}
-										onChange={newValue => {
-											setNewData({
-												...newData,
-												step: newValue === null ? undefined : newValue,
-											});
-										}}
-									/>
-								</>
-							)}
+							</div>
+							<StepField
+								value={newData.step}
+								onChange={newValue => {
+									setNewData({
+										...newData,
+										step: newValue === null ? undefined : newValue,
+									});
+								}}
+							/>
 						</>
 					)}
 				</div>
 
-				{!isGroup &&
-					newData.type !== 'button' &&
+				{newData.type !== 'button' &&
 					newData.type !== 'text-display' &&
 					newData.type !== 'image-display' && (
 						<div className='shrink-0'>
@@ -461,36 +295,77 @@ export default function SetWidgetSettingDialog({
 					onClick={() => {
 						if (disableSave) return;
 
-						if (isCategory && onSaveCategory) {
-							onSaveCategory(trimmedId, trimmedLabel);
-						} else if (onSaveSetting) {
-							onSaveSetting(trimmedId, trimmedLabel, {
-								...newData,
-								condition:
-									newCondition.length === 0
-										? undefined
-										: newCondition.reduce(
-												(previousValue, currentValue) => {
-													const newValue: WidgetSetting.NonCategory['condition'] =
-														{ ...previousValue };
-
-													const trimmedId = currentValue.id;
-													if (trimmedId) {
-														newValue[trimmedId] = currentValue.value;
-													}
-
-													return newValue;
-												},
-												{} as WidgetSetting.NonCategory['condition'],
-											),
-								searchTags: searchTags,
-							});
+						// only check if id has been changed
+						if (id !== trimmedId && idExists(trimmedId)) {
+							setIdError('ID already exists!');
+							return;
 						}
 
+						const copiedData = deepCopyObject(newData);
+
+						if ('defaultValue' in copiedData) {
+							if (typeof copiedData.defaultValue === 'string') {
+								// trim defaultValue string, remove if empty
+								copiedData.defaultValue =
+									copiedData.defaultValue.trim() || undefined;
+							} else if (
+								Array.isArray(copiedData.defaultValue) &&
+								copiedData.defaultValue.length === 0
+							) {
+								// remove empty defaultValue array
+								copiedData.defaultValue = undefined;
+							}
+						}
+
+						// trim placeholder, remove if empty
+						if (
+							'placeholder' in copiedData &&
+							copiedData.placeholder !== undefined
+						) {
+							if (typeof copiedData.placeholder === 'string') {
+								copiedData.placeholder =
+									copiedData.placeholder.trim() || undefined;
+							} else {
+								for (const [i18key, placeholder] of Object.entries(
+									copiedData.placeholder,
+								)) {
+									const trimmedPlaceholder = placeholder.trim();
+									if (!trimmedPlaceholder) {
+										delete copiedData.placeholder[i18key];
+									} else {
+										copiedData.placeholder[i18key] = trimmedPlaceholder;
+									}
+								}
+							}
+						}
+
+						// trim description, remove if empty
+						if (
+							'description' in copiedData &&
+							copiedData.description !== undefined
+						) {
+							if (typeof copiedData.description === 'string') {
+								copiedData.description =
+									copiedData.description.trim() || undefined;
+							} else {
+								for (const [i18key, description] of Object.entries(
+									copiedData.description,
+								)) {
+									const trimmedDescription = description.trim();
+									if (!trimmedDescription) {
+										delete copiedData.description[i18key];
+									} else {
+										copiedData.description[i18key] = trimmedDescription;
+									}
+								}
+							}
+						}
+
+						onSave(trimmedId, trimmedLabel, copiedData);
 						closeDialog();
 					}}
 				>
-					{isAdd ? 'Add' : 'Update'}
+					{!id ? 'Add' : 'Update'}
 				</DialogConfirmButton>
 			</div>
 		</DialogContent>
@@ -785,4 +660,153 @@ function OptionsField({ values, onChange }: OptionsFieldProps) {
 			)}
 		</div>
 	);
+}
+
+type DefaultValueFieldProps = {
+	data: DistributivePick<WidgetSetting.AnyInput, 'type' | 'defaultValue'>;
+	options?: (
+		| WidgetSetting.Input.Dropdown
+		| WidgetSetting.Input.Select
+		| WidgetSetting.Input.MultiSelect
+	)['options'];
+	onChange: (value: WidgetSetting.AnyInput['defaultValue']) => void;
+};
+
+function DefaultValueField({
+	data,
+	options = [],
+	onChange,
+}: DefaultValueFieldProps) {
+	const label = 'Default Value';
+
+	switch (data.type) {
+		case 'text-input':
+		case 'text-area-input':
+		case 'image-input':
+		case 'audio-input':
+		case 'video-input':
+		case 'font-input':
+			return (
+				<TextField
+					label={label}
+					compact
+					placeholder='String Value'
+					value={data.defaultValue || ''}
+					onChange={onChange}
+				/>
+			);
+
+		case 'color-input':
+			return (
+				<ColorField
+					label={label}
+					compact
+					placeholder='Color Value'
+					value={data.defaultValue || ''}
+					onChange={onChange}
+				/>
+			);
+
+		case 'number-input':
+		case 'slider-input':
+			return (
+				<NumberField
+					label={label}
+					compact
+					placeholder='Number Value'
+					value={data.defaultValue === undefined ? null : data.defaultValue}
+					onChange={newValue => {
+						onChange(newValue === null ? undefined : newValue);
+					}}
+				/>
+			);
+
+		case 'toggle-input':
+			return (
+				<SelectField
+					label={label}
+					compact
+					value={data.defaultValue || false}
+					onChange={onChange}
+					options={[
+						{ label: 'True', value: true },
+						{ label: 'False', value: false },
+					]}
+				/>
+			);
+
+		case 'dropdown-input':
+			return (
+				<div className='col-span-2'>
+					<DropdownField
+						label={label}
+						compact
+						value={data.defaultValue || options[0]?.value}
+						onChange={onChange}
+						options={options.map(option => {
+							return {
+								label: i18nStringTransform(option.label),
+								value: option.value,
+							};
+						})}
+					/>
+				</div>
+			);
+
+		case 'select-input':
+			return (
+				<div className='col-span-2'>
+					<SelectField
+						label={label}
+						compact
+						value={data.defaultValue || options[0]?.value}
+						onChange={onChange}
+						options={options.map(option => {
+							return {
+								label: i18nStringTransform(option.label),
+								value: option.value,
+							};
+						})}
+					/>
+				</div>
+			);
+
+		case 'multi-text-input':
+			return (
+				<div className='col-span-2'>
+					<MultiTextField
+						label={label}
+						compact
+						placeholder='String Value'
+						values={data.defaultValue || []}
+						onChange={newValues => {
+							onChange(newValues.length === 0 ? undefined : newValues);
+						}}
+					/>
+				</div>
+			);
+
+		case 'multi-select-input':
+			return (
+				<div className='col-span-2'>
+					<MultiSelectField
+						label={label}
+						compact
+						values={data.defaultValue || []}
+						options={options.map(option => {
+							return {
+								label: i18nStringTransform(option.label),
+								value: option.value,
+							};
+						})}
+						onChange={newValues => {
+							onChange(newValues.length === 0 ? undefined : newValues);
+						}}
+					/>
+				</div>
+			);
+
+		default:
+			return null;
+	}
 }

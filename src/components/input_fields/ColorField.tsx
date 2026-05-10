@@ -38,6 +38,7 @@ export default function ColorField({
 	const popoverStore = usePopoverStore({ store: context });
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [hsvaValue, setHsvaValue] = useState<HsvaColor>(stringToHsva(value));
+	const hasValidColor = CSS.supports('color', value);
 
 	function onHsvaChange(hsvaColor: HsvaColor) {
 		setHsvaValue(hsvaColor);
@@ -102,7 +103,11 @@ export default function ColorField({
 						</div>
 					</div>
 
-					<ColorPopover hsva={hsvaValue} onHsvaChange={onHsvaChange} />
+					<ColorPopover
+						hsva={hsvaValue}
+						onHsvaChange={onHsvaChange}
+						hasValidColor={hasValidColor}
+					/>
 				</PopoverProvider>
 			</Field>
 		);
@@ -152,7 +157,11 @@ export default function ColorField({
 					</div>
 				</div>
 
-				<ColorPopover hsva={hsvaValue} onHsvaChange={onHsvaChange} />
+				<ColorPopover
+					hsva={hsvaValue}
+					onHsvaChange={onHsvaChange}
+					hasValidColor={hasValidColor}
+				/>
 			</PopoverProvider>
 
 			<InputDescription>{description}</InputDescription>
@@ -163,9 +172,14 @@ export default function ColorField({
 type ColorPopoverProps = {
 	hsva: HsvaColor;
 	onHsvaChange: (hsva: HsvaColor) => void;
+	hasValidColor: boolean;
 };
 
-function ColorPopover({ hsva, onHsvaChange }: ColorPopoverProps) {
+function ColorPopover({
+	hsva,
+	onHsvaChange,
+	hasValidColor, // hide alpha values on invalid color
+}: ColorPopoverProps) {
 	return (
 		<Popover
 			autoFocusOnShow={false}
@@ -190,15 +204,17 @@ function ColorPopover({ hsva, onHsvaChange }: ColorPopoverProps) {
 					}}
 				/>
 
-				<AlphaSlider
-					hsva={hsva}
-					onChange={newAlpha => {
-						const newHsva = { ...hsva, ...newAlpha };
-						onHsvaChange(newHsva);
-					}}
-				/>
+				{hasValidColor && (
+					<AlphaSlider
+						hsva={hsva}
+						onChange={newAlpha => {
+							const newHsva = { ...hsva, ...newAlpha };
+							onHsvaChange(newHsva);
+						}}
+					/>
+				)}
 
-				<div className='flex flex-col justify-between'>
+				<div className='flex flex-col gap-1.75'>
 					<RgbaInput
 						label='Red'
 						value={hsvaToRgba(hsva).r}
@@ -241,16 +257,18 @@ function ColorPopover({ hsva, onHsvaChange }: ColorPopoverProps) {
 						}}
 					/>
 
-					<RgbaInput
-						label='Alpha'
-						value={Math.round(hsva.a * 255)}
-						onChange={newAlpha => {
-							onHsvaChange({
-								...hsva,
-								a: Math.min(Math.max(newAlpha, 0), 255) / 255,
-							});
-						}}
-					/>
+					{hasValidColor && (
+						<RgbaInput
+							label='Alpha'
+							value={Math.round(hsva.a * 255)}
+							onChange={newAlpha => {
+								onHsvaChange({
+									...hsva,
+									a: Math.min(Math.max(newAlpha, 0), 255) / 255,
+								});
+							}}
+						/>
+					)}
 				</div>
 			</div>
 		</Popover>

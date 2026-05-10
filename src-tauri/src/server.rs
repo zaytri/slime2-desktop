@@ -4,7 +4,7 @@ pub mod websocket;
 
 pub fn setup(
 	connections: websocket::WebsocketConnections,
-	(widget_server_path, tiles_path, temp_files_path): (
+	(overlay_server_path, tiles_path, temp_files_path): (
 		PathBuf,
 		PathBuf,
 		PathBuf,
@@ -13,10 +13,10 @@ pub fn setup(
 	// home route that just returns the word "squish" for fun
 	let home_route = warp::path::end().map(|| "squish");
 
-	let widget_server_route =
-		warp::path("widget").and(warp::fs::dir(widget_server_path));
+	let overlay_server_route =
+		warp::path("overlay").and(warp::fs::dir(overlay_server_path));
 
-	// allows widget server to access tile files
+	// allows overlay server to access tile files
 	let tiles_route = warp::path("tile").and(warp::fs::dir(tiles_path));
 
 	// used to preview media files in the temp folder for file input
@@ -36,8 +36,8 @@ pub fn setup(
 		);
 
 	if cfg!(dev) {
-		// no need to run widget server in dev here
-		// that's run from src-widget directly on port 57141
+		// no need to run overlay server in dev here
+		// that's run from src-overlay directly on port 57141
 		let routes = home_route
 			.or(tiles_route)
 			.or(websocket_route)
@@ -52,7 +52,7 @@ pub fn setup(
 		);
 	} else {
 		let routes = home_route
-			.or(widget_server_route)
+			.or(overlay_server_route)
 			.or(tiles_route)
 			.or(preview_route)
 			// allow any origin just for the websocket route

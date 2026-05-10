@@ -21,6 +21,9 @@ globalThis.slime2 = {
 	async getPronouns() {
 		return null;
 	},
+	async getTwitchFollowDate() {
+		return null;
+	},
 };
 
 // Render the app
