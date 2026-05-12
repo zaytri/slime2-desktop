@@ -76,7 +76,7 @@ export default function NumberField({
 
 	if (compact) {
 		return (
-			<Field className='flex items-center overflow-hidden rounded-1 bg-zinc-700 outline outline-zinc-800 has-data-focus:bg-green-800 has-data-focus:outline-3 has-data-focus:outline-lime-600'>
+			<Field className='flex items-center overflow-hidden rounded-1 bg-zinc-700 outline -outline-offset-1 outline-zinc-800 has-data-focus:bg-green-800 has-data-focus:outline-3 has-data-focus:outline-lime-600'>
 				{label && (
 					<Label className='px-2 text-3.5 font-bold whitespace-nowrap text-white'>
 						{label}

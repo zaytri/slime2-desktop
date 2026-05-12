@@ -14,7 +14,7 @@ import clsx from 'clsx';
 import { useRef } from 'react';
 
 type DropdownFieldProps<V> = {
-	label: string;
+	label?: string;
 	value: V;
 	onChange: (value: NonUndefined<V>) => void;
 	options: Option<NonUndefined<V>>[] | GroupedOptions<NonUndefined<V>>[];
@@ -57,15 +57,17 @@ export default function DropdownField<V>({
 		return (
 			<div className='flex'>
 				<SelectProvider value={selectedItemLabel}>
-					<div className='group/dropdown z-5 flex flex-1 items-center justify-between rounded-1 bg-zinc-700 outline outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-offset-0! over:outline-lime-600'>
-						<SelectLabel
-							className='cursor-pointer! px-2 py-0.75 text-3.5 font-bold whitespace-nowrap text-white'
-							onClick={() => {
-								selectRef.current?.click();
-							}}
-						>
-							{label}
-						</SelectLabel>
+					<div className='group/dropdown z-5 flex flex-1 items-center justify-between rounded-1 bg-zinc-700 outline -outline-offset-1 outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-offset-0! over:outline-lime-600'>
+						{label && (
+							<SelectLabel
+								className='cursor-pointer! px-2 py-0.75 text-3.5 font-bold whitespace-nowrap text-white'
+								onClick={() => {
+									selectRef.current?.click();
+								}}
+							>
+								{label}
+							</SelectLabel>
+						)}
 						<Select
 							ref={selectRef}
 							className='flex flex-1 items-center gap-2 self-stretch bg-white px-2 outline-none'
@@ -141,7 +143,7 @@ function DropdownFieldPopover<V>({
 			modal
 			sameWidth
 			fitViewport
-			className='dark-menu p-0!'
+			className='dark-menu min-w-0! p-0!'
 			gutter={6}
 			hideOnEscape={event => {
 				// prevents closing dialog if inside a dialog

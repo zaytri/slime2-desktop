@@ -63,7 +63,7 @@ export default function ColorField({
 				>
 					<div
 						className={clsx(
-							'group/color flex items-center overflow-hidden rounded-1 bg-zinc-700 outline outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-lime-600',
+							'group/color flex items-center overflow-hidden rounded-1 bg-zinc-700 outline -outline-offset-1 outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-lime-600',
 							popoverOpen && 'bg-green-800 outline-3 outline-lime-600',
 						)}
 						onClick={() => {
