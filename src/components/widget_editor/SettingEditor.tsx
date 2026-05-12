@@ -56,6 +56,14 @@ export default function SettingEditor({
 		values.push(displayValue('Options', setting.options));
 	}
 
+	if (
+		'condition' in setting &&
+		setting.condition !== undefined &&
+		Object.values(setting.condition).length > 0
+	) {
+		values.push(displayObject('Condition', setting.condition));
+	}
+
 	if ('description' in setting && setting.description !== undefined) {
 		values.push(displayI18n('Description', setting.description, true));
 	}
@@ -125,15 +133,20 @@ function displayI18n(
 	i18n: I18nString,
 	alwaysFull: boolean = false,
 ): ValueDisplay {
+	return typeof i18n === 'string'
+		? displayValue(label, i18n, alwaysFull)
+		: displayObject(label, i18n);
+}
+
+function displayObject(
+	label: string,
+	object: Record<string, unknown>,
+): ValueDisplay {
 	return {
 		label,
-		...(typeof i18n === 'string'
-			? { value: i18n, full: alwaysFull }
-			: {
-					value: Object.entries(i18n).map(([key, value]) => {
-						return { [key]: value };
-					}),
-					full: true,
-				}),
+		value: Object.entries(object).map(([key, value]) => {
+			return { [key]: value };
+		}),
+		full: true,
 	};
 }

@@ -37,8 +37,6 @@ export default function EditWidgetSectionDialog({
 	const [newId, setNewId] = useState<string>(id || '');
 	const [idError, setIdError] = useState('');
 	const [newLabel, setNewLabel] = useState<string>(label || '');
-	const [newCondition, setNewCondition] = useState(condition || {});
-	const [newSearchTags, setNewSearchTags] = useState(searchTags || []);
 	const [newType, setNewType] = useState(type);
 
 	const trimmedId = newId.trim();
@@ -87,13 +85,7 @@ export default function EditWidgetSectionDialog({
 							return;
 						}
 
-						onSave(
-							trimmedId,
-							trimmedLabel,
-							newType,
-							Object.keys(newCondition).length > 0 ? newCondition : undefined,
-							newSearchTags.length > 0 ? newSearchTags : undefined,
-						);
+						onSave(trimmedId, trimmedLabel, newType, condition, searchTags);
 						closeDialog();
 					}}
 				>

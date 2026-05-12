@@ -77,6 +77,7 @@
 			},
 			"outline-section": {
 				"label": "Outline",
+				"type": "section",
 				"settings": {
 					"use-outline": {
 						"label": "Use Outline?",

@@ -25,7 +25,8 @@ export default function EditSettingMenuItem({
 	sectionId,
 }: EditSettingMenuItemProps) {
 	const { openDialog } = useDialog();
-	const { getCategory, getSetting, idExists } = useWidgetSettingsEditor();
+	const { getCategory, getSetting, idExists, getConditionIds } =
+		useWidgetSettingsEditor();
 	const { editCategory, editSection, editSetting } =
 		useWidgetSettingsEditorDispatch();
 
@@ -99,6 +100,11 @@ export default function EditSettingMenuItem({
 						id={id}
 						label={i18nStringTransform(setting.label)}
 						data={data}
+						conditionIds={getConditionIds(categoryId, sectionId).filter(
+							conditionId => {
+								return conditionId !== id;
+							},
+						)}
 						idExists={idExists}
 						onSave={(newId, newLabel, newData) => {
 							editSetting(

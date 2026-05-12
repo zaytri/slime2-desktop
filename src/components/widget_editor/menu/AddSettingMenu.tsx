@@ -29,7 +29,7 @@ export default function AddSettingMenu({
 	sectionId,
 }: AddSettingMenuProps) {
 	const { openDialog } = useDialog();
-	const { idExists } = useWidgetSettingsEditor();
+	const { idExists, getConditionIds } = useWidgetSettingsEditor();
 	const { addSetting } = useWidgetSettingsEditorDispatch();
 	const options = sectionId
 		? SECTION_SETTING_GROUPED_OPTIONS
@@ -65,6 +65,7 @@ export default function AddSettingMenu({
 				'New Setting',
 				<EditWidgetSettingDialog
 					idExists={idExists}
+					conditionIds={getConditionIds(categoryId, sectionId)}
 					data={SETTINGS_DATA[type].defaultData}
 					onSave={(newId, newLabel, newData) => {
 						addSetting(

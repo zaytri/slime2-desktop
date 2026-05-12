@@ -83,10 +83,22 @@ export default function useWidgetSettingsEditor() {
 		return everyId.has(id);
 	};
 
+	const getConditionIds = (categoryId: string, sectionId?: string) => {
+		const group = sectionId
+			? getSetting(sectionId, categoryId)
+			: getCategory(categoryId);
+		if (group && 'settings' in group) {
+			return Object.keys(group.settings);
+		} else {
+			return [];
+		}
+	};
+
 	return {
 		settings: context,
 		getCategory,
 		getSetting,
+		getConditionIds,
 		idExists,
 		categoryOptions,
 		groupOptions,

@@ -75,7 +75,9 @@ export default function DropdownField<V>({
 							<p
 								className={clsx(
 									'flex-1 text-left',
-									selectedItemLabel ? 'text-black' : 'text-zinc-400',
+									selectedItemLabel !== placeholder
+										? 'text-black'
+										: 'text-zinc-400',
 								)}
 							>
 								{selectedItemLabel}
@@ -110,7 +112,9 @@ export default function DropdownField<V>({
 						<p
 							className={clsx(
 								'flex-1 text-left',
-								selectedItemLabel ? 'text-black' : 'text-zinc-400',
+								selectedItemLabel !== placeholder
+									? 'text-black'
+									: 'text-zinc-400',
 							)}
 						>
 							{selectedItemLabel}

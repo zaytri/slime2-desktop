@@ -163,7 +163,6 @@ const MediaDefaultValue = z.optional(z.string());
 const MultiMediaDefaultValue = z.optional(z.array(z.string()));
 
 const OptionValue = z.union([z.string(), z.number(), z.boolean()]);
-export type OptionValue = z.infer<typeof OptionValue>;
 
 const Options = z.array(
 	z.object({

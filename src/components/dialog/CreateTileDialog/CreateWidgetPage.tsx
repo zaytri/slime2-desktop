@@ -7,7 +7,7 @@ import {
 	type DefaultWidgetId,
 } from '@/helpers/defaultWidgets';
 import ArrowDownTraySvg from '@@/svg/ArrowDownTraySvg';
-import { CreateTileContext, type CreateTilePages } from '.';
+import type { CreateTileContext, CreateTilePages } from '.';
 import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
 
 const { overlayWidgets, botWidgets } = groupDefaultWidgets();

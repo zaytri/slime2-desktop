@@ -1,7 +1,7 @@
 import { usePage } from '@/contexts/pages/usePage';
 import CubeSvg from '@@/svg/CubeSvg';
 import GridSvg from '@@/svg/GridSvg';
-import { CreateTilePages } from '.';
+import type { CreateTilePages } from '.';
 import DialogCancelButton from '../DialogButton/DialogCancelButton';
 import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
 
@@ -12,6 +12,7 @@ export default function CreateStartPage() {
 		<div className='flex flex-1 flex-col justify-between gap-6 pt-2'>
 			<div className='flex flex-col gap-4'>
 				<DialogConfirmButton
+					className='text-5'
 					icon={<CubeSvg className='size-5.5' />}
 					onClick={() => {
 						setPage('widgets');
@@ -21,6 +22,7 @@ export default function CreateStartPage() {
 				</DialogConfirmButton>
 
 				<DialogConfirmButton
+					className='text-5'
 					icon={<GridSvg className='size-5.5' />}
 					onClick={() => {
 						setPage('folder');
