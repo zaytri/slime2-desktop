@@ -1,21 +1,14 @@
+import DropdownField from '@/components/input_fields/DropdownField';
 import MultiSelectField from '@/components/input_fields/MultiSelectField';
 import TextField from '@/components/input_fields/TextField';
 import { deepCopyObject } from '@/contexts/common';
 import { useDialog } from '@/contexts/dialog/useDialog';
+import { capitalizeWord } from '@/helpers/string';
 import GenericDeleteDialog from '@@/dialog/GenericDeleteDialog';
 import type { WidgetMeta } from '@@/json/widgetMeta';
 import PlusSvg from '@@/svg/PlusSvg';
-import TriangleDownSvg from '@@/svg/TriangleDownSvg';
 import XSvg from '@@/svg/XSvg';
-import {
-	Fieldset,
-	Input,
-	Legend,
-	Listbox,
-	ListboxButton,
-	ListboxOption,
-	ListboxOptions,
-} from '@headlessui/react';
+import { Fieldset, Input, Legend } from '@headlessui/react';
 import { useState } from 'react';
 
 type WidgetMetaEditorProps = {
@@ -128,7 +121,7 @@ export default function WidgetMetaEditor({
 
 							<button
 								type='button'
-								className='flex items-center gap-1 rounded-1 bg-zinc-700 px-2 py-0.5 text-white outline outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-offset-0! over:outline-lime-600'
+								className='flex items-center gap-1 rounded-1 bg-zinc-700 px-2 py-0.5 text-white outline -outline-offset-1 outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-offset-0! over:outline-lime-600'
 								onClick={() => {
 									onChange({
 										...meta,
@@ -277,7 +270,7 @@ function ImportsField({
 
 					<button
 						type='button'
-						className='flex items-center gap-1 rounded-1 bg-zinc-700 px-2 text-white outline outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-offset-0! over:outline-lime-600'
+						className='flex items-center gap-1 rounded-1 bg-zinc-700 px-2 text-white outline -outline-offset-1 outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-offset-0! over:outline-lime-600'
 						onClick={addValue}
 					>
 						<PlusSvg className='size-2.5' />
@@ -371,65 +364,30 @@ function AccountField({
 }: AccountFieldProps) {
 	return (
 		<div className='flex gap-1'>
-			<Fieldset className='flex w-full items-center rounded-1 bg-zinc-700 outline outline-zinc-800'>
-				<Legend className='px-2 text-3.5 font-bold whitespace-nowrap text-white'>
+			<Fieldset className='flex w-full items-center gap-2'>
+				<Legend className='flex items-center justify-center self-stretch rounded-1 bg-zinc-700 px-2 text-3.5 font-bold whitespace-nowrap text-white outline -outline-offset-1 outline-zinc-800'>
 					{index}
 				</Legend>
 
-				<div className='flex flex-1 bg-white'>
-					<Listbox value={service} onChange={onChangeService}>
-						<ListboxButton className='group/dropdown z-5 flex flex-1 cursor-pointer items-center justify-between gap-1 rounded-0.5 px-2 py-0.5 text-3.5 font-semibold over:bg-lime-200 over:outline-3 over:outline-offset-0! over:outline-lime-600'>
-							<p className='capitalize'>{service}</p>
-							<div className='flex size-4 items-center justify-center rounded-0.5 group-data-over/dropdown:bg-lime-600 group-data-over/dropdown:text-white'>
-								<TriangleDownSvg className='size-2.5 pt-0.5' />
-							</div>
-						</ListboxButton>
-
-						<ListboxOptions
-							anchor={{ to: 'bottom', gap: 0, padding: 48 }}
-							className='z-10 flex w-(--button-width) flex-col rounded-1 bg-white shadow-[0_2px_10px_#0006] outline-3 -outline-offset-2 outline-lime-600'
-						>
-							{ACCOUNT_SERVICES.map(option => {
-								return (
-									<ListboxOption
-										key={option}
-										value={option}
-										className='px-2 py-1 text-3.5 font-semibold capitalize data-focus:bg-lime-200 data-focus:outline data-focus:outline-lime-600'
-									>
-										{option}
-									</ListboxOption>
-								);
-							})}
-						</ListboxOptions>
-					</Listbox>
-
-					<div className='w-px bg-zinc-800'></div>
-
-					<Listbox value={type} onChange={onChangeType}>
-						<ListboxButton className='group/dropdown z-5 flex flex-1 cursor-pointer items-center justify-between gap-1 rounded-0.5 px-2 py-0.5 text-3.5 font-semibold over:bg-lime-200 over:outline-3 over:outline-offset-0! over:outline-lime-600'>
-							<p className='capitalize'>{type}</p>
-							<div className='flex size-4 items-center justify-center rounded-0.5 group-data-over/dropdown:bg-lime-600 group-data-over/dropdown:text-white'>
-								<TriangleDownSvg className='size-2.5 pt-0.5' />
-							</div>
-						</ListboxButton>
-
-						<ListboxOptions
-							anchor={{ to: 'bottom', gap: 0, padding: 48 }}
-							className='z-10 flex w-(--button-width) flex-col rounded-1 bg-white shadow-[0_2px_10px_#0006] outline-3 -outline-offset-2 outline-lime-600'
-						>
-							{ACCOUNT_TYPES.map(option => {
-								return (
-									<ListboxOption
-										key={option}
-										value={option}
-										className='px-2 py-1 text-3.5 font-semibold capitalize data-focus:bg-lime-200 data-focus:outline data-focus:outline-lime-600'
-									>
-										{option}
-									</ListboxOption>
-								);
-							})}
-						</ListboxOptions>
-					</Listbox>
+				<div className='flex-1 text-3.5 font-semibold'>
+					<DropdownField
+						compact
+						value={service}
+						onChange={onChangeService}
+						options={ACCOUNT_SERVICES.map(value => {
+							return { label: capitalizeWord(value), value };
+						})}
+					/>
+				</div>
+				<div className='flex-1 text-3.5 font-semibold'>
+					<DropdownField
+						compact
+						value={type}
+						onChange={onChangeType}
+						options={ACCOUNT_TYPES.map(value => {
+							return { label: capitalizeWord(value), value };
+						})}
+					/>
 				</div>
 			</Fieldset>
 

@@ -7,14 +7,14 @@ import { groupAccounts, type Account } from '@@/json/accounts';
 import ExclamationTriangleSvg from '@@/svg/ExclamationTriangleSvg';
 import TriangleDownSvg from '@@/svg/TriangleDownSvg';
 import {
-	Button,
-	Field,
-	Label,
-	Listbox,
-	ListboxButton,
-	ListboxOption,
-	ListboxOptions,
-} from '@headlessui/react';
+	Select,
+	SelectGroup,
+	SelectGroupLabel,
+	SelectItem,
+	SelectLabel,
+	SelectPopover,
+	SelectProvider,
+} from '@ariakit/react';
 import clsx from 'clsx';
 import AccountServiceTag from '../tag/AccountServiceTag';
 import { AccountDefaultTag, AccountReauthTag } from '../tag/AccountStatusTag';
@@ -34,16 +34,19 @@ export default function WidgetAccounts({ widgetId }: WidgetAccountsProps) {
 		Object.values(accounts),
 	);
 
+	if (!widgetMeta) return null;
+
 	return (
 		<div className='grid grid-cols-3 gap-2 rounded-2 border border-white bg-zinc-100 bg-linear-to-b from-zinc-50 to-zinc-100 p-2 outline-2 outline-zinc-300'>
 			{widgetMeta.accounts.map((slot, slotIndex) => {
 				const { type, service } = slot;
 				let slottedAccount: Account | undefined = undefined;
-				const filteredAccounts: Account[] = [];
+				const otherSlotAccounts: Account[] = [];
+				let defaultSlotAccount: Account | null = null;
 
 				for (const otherAccount of otherAccounts) {
 					if (otherAccount.service === service && otherAccount.type === type) {
-						filteredAccounts.push(otherAccount);
+						otherSlotAccounts.push(otherAccount);
 
 						// manually slotted account found
 						if (otherAccount.widgets[widgetId] === slotIndex) {
@@ -57,7 +60,7 @@ export default function WidgetAccounts({ widgetId }: WidgetAccountsProps) {
 						defaultAccount.service === service &&
 						defaultAccount.type === type
 					) {
-						filteredAccounts.unshift(defaultAccount);
+						defaultSlotAccount = defaultAccount;
 
 						// use default account if slot is still empty
 						if (!slottedAccount) {
@@ -67,30 +70,40 @@ export default function WidgetAccounts({ widgetId }: WidgetAccountsProps) {
 					}
 				}
 
-				const AccountButton =
-					filteredAccounts.length === 0 ? Button : ListboxButton;
+				const slotAccounts = [
+					{
+						label: 'Default Account',
+						options: defaultSlotAccount ? [defaultSlotAccount] : [],
+					},
+					{ label: 'Other Accounts', options: otherSlotAccounts },
+				];
+
+				const buttonClassName = clsx(
+					'group/dropdown input-wrapper flex gap-2 p-2 input-wrapper-over',
+				);
 
 				return (
-					<Field
+					<SelectProvider
 						key={
 							slottedAccount?.id
 								? `${slottedAccount.id}_slot_${slotIndex}`
 								: `empty_${service}_${type}_slot_${slotIndex}`
 						}
+						value={slottedAccount?.default ? 'default' : slottedAccount?.id}
+						setValue={(accountId: string) => {
+							slotAccount(accountId, widgetId, slotIndex);
+						}}
 					>
-						<Label className='sr-only capitalize'>
+						<SelectLabel className='sr-only capitalize'>
 							{service} {type} Account Slot
-						</Label>
-						<Listbox
-							value={slottedAccount?.default ? 'default' : slottedAccount?.id}
-							onChange={(accountId: string) => {
-								slotAccount(accountId, widgetId, slotIndex);
-							}}
-						>
-							<AccountButton
-								className='group/dropdown input-wrapper flex gap-2 p-2 input-wrapper-over'
+						</SelectLabel>
+
+						{!defaultSlotAccount && otherSlotAccounts.length === 0 ? (
+							<button
+								type='button'
+								className={buttonClassName}
 								onClick={() => {
-									if (filteredAccounts.length === 0) {
+									if (!defaultSlotAccount && otherSlotAccounts.length === 0) {
 										openDialog(
 											'No Accounts Found',
 											<AuthenticationDialog slot={{ service, type }} />,
@@ -103,39 +116,66 @@ export default function WidgetAccounts({ widgetId }: WidgetAccountsProps) {
 									service={service}
 									type={type}
 								/>
-							</AccountButton>
-							<ListboxOptions
-								anchor='bottom'
-								className='z-10 flex w-(--button-width) flex-col rounded-2 bg-white shadow-[0_2px_10px_#0006] outline-4 -outline-offset-2 outline-lime-600'
-							>
-								{filteredAccounts.map(account => {
+							</button>
+						) : (
+							<Select className={buttonClassName}>
+								<MiniAccountPreview
+									account={slottedAccount}
+									service={service}
+									type={type}
+								/>
+							</Select>
+						)}
+
+						<SelectPopover
+							modal
+							sameWidth
+							fitViewport
+							gutter={6}
+							hideOnEscape={event => {
+								// prevents closing dialog if inside a dialog
+								event.stopPropagation();
+								return true;
+							}}
+							className='dark-menu p-0!'
+						>
+							<p className='border-b border-zinc-700 bg-zinc-800 px-2 py-1.5 font-medium text-zinc-100 text-shadow-[0_1px_black]'>
+								My{' '}
+								<strong className='capitalize'>
+									{service} {type}
+								</strong>{' '}
+								Accounts
+							</p>
+							<div className='flex flex-col overflow-y-auto p-1.5'>
+								{slotAccounts.map(group => {
+									if (group.options.length === 0) return null;
+
 									return (
-										<ListboxOption
-											key={account.default ? 'default' : account.id}
-											value={account.default ? 'default' : account.id}
-											disabled={account.reauthorize}
-											className={clsx(
-												'group/option flex flex-col px-3 py-1.5 data-focus:bg-lime-200 data-focus:outline data-focus:outline-lime-600',
-												account.default && 'border-b border-lime-600',
-											)}
+										<SelectGroup
+											key={group.label}
+											className='flex flex-col not-first:mt-1 not-first:border-t not-first:border-zinc-500 not-first:pt-1'
 										>
-											{account.default && (
-												<p className='text-3.25 font-bold capitalize'>
-													Default {service} {type} Account
-												</p>
-											)}
-											<div className={clsx('flex items-center gap-2')}>
-												<img src={account.image} className='size-6 rounded-1' />
-												<p className='font-medium group-data-disabled/option:text-zinc-500 group-data-disabled/option:line-through'>
-													{account.displayName}
-												</p>
-											</div>
-										</ListboxOption>
+											<SelectGroupLabel className='dark-menu-group-label text-zinc-300'>
+												{group.label}
+											</SelectGroupLabel>
+											{group.options.map(account => {
+												const value = account.default ? 'default' : account.id;
+												return (
+													<AccountItem
+														key={value}
+														value={value}
+														imageSrc={account.image}
+														name={account.displayName}
+														disabled={account.reauthorize}
+													/>
+												);
+											})}
+										</SelectGroup>
 									);
 								})}
-							</ListboxOptions>
-						</Listbox>
-					</Field>
+							</div>
+						</SelectPopover>
+					</SelectProvider>
 				);
 			})}
 		</div>
@@ -207,5 +247,23 @@ function MiniAccountPreview({
 				</p>
 			)}
 		</div>
+	);
+}
+
+type AccountItemProps = {
+	value: string;
+	disabled: boolean;
+	imageSrc: string;
+	name: string;
+};
+
+function AccountItem({ value, imageSrc, name, disabled }: AccountItemProps) {
+	return (
+		<SelectItem value={value} disabled={disabled} className='dark-menu-item'>
+			<div className='flex items-center gap-2'>
+				<img src={imageSrc} className='size-6 rounded-1' />
+				<p className={clsx(disabled && 'line-through')}>{name}</p>
+			</div>
+		</SelectItem>
 	);
 }
