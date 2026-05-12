@@ -1,5 +1,9 @@
 import { hsvaToString } from '@/helpers/colorConversion';
-import { HsvaColor, Saturation, SaturationProps } from '@uiw/react-color';
+import {
+	type HsvaColor,
+	Saturation,
+	type SaturationProps,
+} from '@uiw/react-color';
 import ColorGridPointer from './ColorGridPointer';
 
 type SaturationGridProps = {
@@ -12,12 +16,12 @@ export default function SaturationGrid({
 	hsva,
 }: SaturationGridProps) {
 	return (
-		<div className='size-48 rounded-1 border border-white outline outline-zinc-400 has-focus-visible:outline-3 has-focus-visible:outline-black over:outline-3 over:outline-black'>
+		<div className='relative size-48 rounded-1 outline-2 outline-white has-focus-visible:outline-4 over:outline-4'>
 			<Saturation
 				hsva={hsva}
 				onChange={onChange}
-				radius='4px'
-				className='group size-full! over:outline-black'
+				radius={3}
+				className='group size-full!'
 				pointer={({ left, top }) => {
 					return (
 						<ColorGridPointer
@@ -28,6 +32,7 @@ export default function SaturationGrid({
 					);
 				}}
 			/>
+			<div className='pointer-events-none absolute inset-0 rounded-1 outline -outline-offset-1 outline-black/25'></div>
 		</div>
 	);
 }

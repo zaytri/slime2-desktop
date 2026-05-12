@@ -10,7 +10,7 @@ import { deepCopyObject } from '@/contexts/common';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { i18nStringTransform } from '@/helpers/i18n';
 import {
-	SECTION_SETTING_OPTIONS,
+	SECTION_SETTING_GROUPED_OPTIONS,
 	SETTINGS_DATA,
 	type WidgetSetting,
 } from '@@/json/widgetSettings';
@@ -99,7 +99,7 @@ export default function EditWidgetSettingDialog({
 						onChange={newType => {
 							setNewData(SETTINGS_DATA[newType].defaultData);
 						}}
-						options={SECTION_SETTING_OPTIONS}
+						options={SECTION_SETTING_GROUPED_OPTIONS}
 					/>
 
 					{(newData.type === 'text-input' ||
@@ -145,6 +145,7 @@ export default function EditWidgetSettingDialog({
 						newData.type !== 'image-display' && (
 							<DefaultValueField
 								data={newData}
+								options={'options' in newData ? newData.options : undefined}
 								onChange={newDefaultValue => {
 									if (newDefaultValue === undefined) {
 										setNewData({

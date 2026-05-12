@@ -11,7 +11,7 @@ export default function ColorGridPointer({
 }: ColorGridPointerProps) {
 	return (
 		<div
-			className='absolute size-6 overflow-hidden rounded-full shadow-[0_0_0_2px_white,0_0_0_3px_var(--color-zinc-500)] group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-black over:outline-2 over:outline-offset-2 over:outline-black'
+			className='group-focus-visible:outline-ring-2 absolute z-10 size-6 overflow-hidden rounded-full shadow ring-2 shadow-black ring-black/25 outline-2 -outline-offset-1 outline-white group-focus-visible:ring-5 group-focus-visible:outline-3 over:ring-5 over:outline-3'
 			style={{ top: `calc(${top} - 12px)`, left: `calc(${left} - 12px)` }}
 		>
 			<div className='size-full' style={{ backgroundColor: color }}></div>

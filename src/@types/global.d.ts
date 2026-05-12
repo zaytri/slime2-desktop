@@ -2,12 +2,12 @@ type SvgComponent = React.ComponentType<Props.WithClassName>;
 
 type Option<Value> = {
 	label: string;
-	value: Value;
+	value: NonUndefined<Value>;
 	disabled?: boolean;
 };
 
 type GroupedOptions<Value> = {
 	label: string;
-	options: Option<Value>[];
+	options: Option<NonUndefined<Value>>[];
 	disabled?: boolean;
 };

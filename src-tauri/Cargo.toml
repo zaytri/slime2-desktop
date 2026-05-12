@@ -18,7 +18,7 @@ tauri = { version = "2", features = [] }
 
 # added for slime2
 chrono = "0.4"
-font-kit = "0.14"
+font-kit = { version = "0.14" }
 futures = "0.3"
 junk_file = "0.1"
 keyring = { version = "3", features = ["apple-native", "windows-native", "linux-native"] }

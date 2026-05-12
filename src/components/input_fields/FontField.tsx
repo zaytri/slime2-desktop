@@ -1,15 +1,16 @@
 import InputDescription from '@/components/input_fields/InputDescription';
-import TriangleDownSvg from '@/components/svg/TriangleDownSvg';
+import useAriaId from '@/hooks/useAriaId';
 import { useSystemFontsQuery } from '@/hooks/useSystemFontsQuery';
 import {
-	Field,
-	Label,
-	Listbox,
-	ListboxButton,
-	ListboxOption,
-	ListboxOptions,
-} from '@headlessui/react';
+	Select,
+	SelectArrow,
+	SelectItem,
+	SelectLabel,
+	SelectPopover,
+	SelectProvider,
+} from '@ariakit/react';
 import clsx from 'clsx';
+import { Suspense, useRef } from 'react';
 
 type FontFieldProps = {
 	value: string;
@@ -26,64 +27,107 @@ export default function FontField({
 	description,
 	placeholder,
 }: FontFieldProps) {
-	const { data, isLoading } = useSystemFontsQuery();
+	const { descriptionId } = useAriaId();
+	const selectRef = useRef<HTMLButtonElement>(null);
 
 	return (
-		<Field className='relative'>
-			<Listbox value={value} onChange={onChange}>
-				<ListboxButton className='group/dropdown input-wrapper flex cursor-pointer items-center input-wrapper-over input-wrapper-has-hover'>
-					<div className='flex flex-1 flex-col'>
-						<Label className='cursor-pointer input-label'>{label}</Label>
-
+		<div className='flex flex-col'>
+			<SelectProvider value={value}>
+				<div className='group/dropdown input-wrapper flex cursor-pointer flex-col p-0! input-wrapper-over input-wrapper-has-hover'>
+					<SelectLabel
+						className='cursor-pointer! px-2 pt-1 input-label'
+						onClick={() => {
+							selectRef.current?.click();
+						}}
+					>
+						{label}
+					</SelectLabel>
+					<Select
+						ref={selectRef}
+						aria-describedby={description ? descriptionId : undefined}
+						className='flex flex-1 items-center gap-2 px-2 pb-1 outline-none'
+					>
 						<p
-							className={clsx(value ? 'text-black' : 'text-zinc-400')}
+							className={clsx(
+								'flex-1 text-left',
+								value ? 'text-black' : 'text-zinc-400',
+							)}
 							style={{
 								fontFamily: value ? `"${value}", sans-serif` : undefined,
 							}}
 						>
 							{value || placeholder || 'Select font...'}
 						</p>
-					</div>
+						<SelectArrow className='transition-transform group-aria-expanded/dropdown:-rotate-180' />
+					</Select>
+				</div>
 
-					<div className='flex size-5 items-center justify-center rounded-1 group-data-over/dropdown:bg-lime-600 group-data-over/dropdown:text-white group-data-over/dropdown:outline-2'>
-						<TriangleDownSvg className='size-3 pt-0.5' />
-					</div>
-				</ListboxButton>
+				<FontPopover onChange={onChange} />
+			</SelectProvider>
 
-				<ListboxOptions
-					anchor={{ to: 'bottom', gap: 0, padding: 48 }}
-					className='z-10 flex w-(--button-width) flex-col rounded-2 bg-white shadow-[0_2px_10px_#0006] outline-4 -outline-offset-2 outline-lime-600'
-				>
-					{isLoading ? (
-						<p className='px-3 py-1'>Loading local fonts...</p>
-					) : (
-						data.map(font => {
-							return (
-								<ListboxOption
-									key={font}
-									value={font}
-									className='flex gap-8 px-3 py-1 data-focus:bg-lime-200 data-focus:outline data-focus:outline-lime-600'
-									style={{ fontFamily: `${font}, sans-serif` }}
-								>
-									<p className='flex-1 text-nowrap'>{font}</p>
-									<p className='flex-1 truncate'>
-										0123456789 Lorem ipsum dolor sit amet, consectetur
-										adipiscing elit, sed do eiusmod tempor incididunt ut labore
-										et dolore magna aliqua. Ut enim ad minim veniam, quis
-										nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat. Duis aute irure dolor in reprehenderit in
-										voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-										Excepteur sint occaecat cupidatat non proident, sunt in
-										culpa qui officia deserunt mollit anim id est laborum
-									</p>
-								</ListboxOption>
-							);
-						})
-					)}
-				</ListboxOptions>
-			</Listbox>
+			{description && (
+				<InputDescription id={descriptionId}>{description}</InputDescription>
+			)}
+		</div>
+	);
+}
 
-			<InputDescription>{description}</InputDescription>
-		</Field>
+type FontPopoverProps = {
+	onChange: (value: string) => void;
+};
+
+function FontPopover({ onChange }: FontPopoverProps) {
+	return (
+		<SelectPopover
+			modal
+			sameWidth
+			fitViewport
+			className='dark-menu p-0!'
+			gutter={6}
+			hideOnEscape={event => {
+				// prevents closing dialog if inside a dialog
+				event.stopPropagation();
+				return true;
+			}}
+		>
+			<div className='flex flex-col overflow-y-auto p-1.5'>
+				<p className='dark-menu-item hidden only:block'>
+					Loading local fonts...
+				</p>
+				<FontRender onChange={onChange} />
+			</div>
+		</SelectPopover>
+	);
+}
+
+type FontRenderProps = {
+	onChange: (value: string) => void;
+};
+
+function FontRender({ onChange }: FontRenderProps) {
+	const { data } = useSystemFontsQuery();
+
+	return (
+		<Suspense fallback={null}>
+			{(data || []).map(font => {
+				return (
+					<SelectItem
+						key={font}
+						value={font}
+						className='dark-menu-item flex gap-8! px-3! py-1! font-[weight:initial]!'
+						style={{ fontFamily: `${font}, sans-serif` }}
+						onClick={() => {
+							onChange(font);
+						}}
+					>
+						<p className='flex-1 text-nowrap'>{font}</p>
+						<p className='flex-1 truncate'>
+							0123456789 Lorem ipsum dolor sit amet, consectetur adipiscing
+							elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+						</p>
+					</SelectItem>
+				);
+			})}
+		</Suspense>
 	);
 }

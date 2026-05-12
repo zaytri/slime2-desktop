@@ -13,7 +13,7 @@
 		"tauri": "tauri",
 		"icon": "npm run tauri icon",
 		"before:dev": "npm run clean:target && npm run widget:build && npm run icon && vite",
-		"before:build": "npm run clean:target && npm run widget:build && tsc && vite build && npm run icon",
+		"before:build": "npm run clean:target && npm run widget:build && npm run icon && tsc && vite build",
 		"widget:install": "cd ./src-overlay && npm install && cd ..",
 		"widget:dev": "npm run widget:install && npm --prefix ./src-overlay/ run dev",
 		"widget:build": "npm run widget:install && npm --prefix ./src-overlay/ run build",

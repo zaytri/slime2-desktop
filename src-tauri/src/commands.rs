@@ -9,6 +9,7 @@ use crate::{
 use chrono::Local;
 use font_kit::source::SystemSource;
 use nanoid::nanoid;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::{
 	fs::{self, File},
@@ -520,11 +521,48 @@ pub async fn extract_widget_details(zip_path: &str) -> Result<String, String> {
 	Ok(meta_contents)
 }
 
-// thanks to https://github.com/tauri-apps/tauri/discussions/9616
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct FontData {
+	pub postscript_name: String,
+	pub full_name: String,
+	pub family_name: String,
+	pub is_monospace: bool,
+	pub properties: FontProperties,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct FontProperties {
+	pub style: String,
+	pub weight: f32,
+	pub stretch: f32,
+}
+
 #[tauri::command]
-pub async fn load_system_fonts() -> Vec<String> {
+pub async fn load_system_fonts() -> Vec<FontData> {
 	let source = SystemSource::new();
-	if let Ok(fonts) = source.all_families() {
+	if let Ok(font_handles) = source.all_fonts() {
+		let mut fonts: Vec<FontData> = Vec::new();
+
+		for font_handle in font_handles {
+			if let Ok(font) = font_handle.load() {
+				let properties = font.properties();
+
+				if let Some(postscript_name) = font.postscript_name() {
+					fonts.push(FontData {
+						postscript_name,
+						full_name: font.full_name(),
+						family_name: font.family_name(),
+						is_monospace: font.is_monospace(),
+						properties: FontProperties {
+							style: properties.style.to_string(),
+							weight: properties.weight.0,
+							stretch: properties.stretch.0,
+						},
+					});
+				}
+			}
+		}
+
 		fonts
 	} else {
 		vec![]

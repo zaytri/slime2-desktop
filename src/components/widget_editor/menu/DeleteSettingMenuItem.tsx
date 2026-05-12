@@ -80,7 +80,7 @@ export default function DeleteSettingMenuItem({
 
 	return (
 		<MenuItem
-			className='dark-menu-item text-rose-300! data-active-item:bg-rose-300! data-active-item:text-rose-950!'
+			className='dark-menu-item-danger dark-menu-item'
 			onClick={onDelete}
 		>
 			<TrashSvg className='size-4' />

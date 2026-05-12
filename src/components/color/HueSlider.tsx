@@ -1,5 +1,5 @@
 import { hsvaToString } from '@/helpers/colorConversion';
-import { Hue, HueProps } from '@uiw/react-color';
+import { Hue, type HueProps } from '@uiw/react-color';
 import ColorSliderPointer from './ColorSliderPointer';
 
 type HueSliderProps = {
@@ -9,12 +9,12 @@ type HueSliderProps = {
 
 export default function HueSlider({ hue, onChange }: HueSliderProps) {
 	return (
-		<div className='h-48 rounded-1 border border-white outline outline-zinc-400 has-focus-visible:outline-3 has-focus-visible:outline-black over:outline-3 over:outline-black'>
+		<div className='relative h-48 cursor-ns-resize rounded-1 outline-2 outline-white has-focus-visible:outline-4 over:outline-4'>
 			<Hue
 				hue={hue}
 				onChange={onChange}
 				direction='vertical'
-				radius='4px'
+				radius={3}
 				reverse
 				className='h-full! w-4'
 				innerProps={{
@@ -30,6 +30,7 @@ export default function HueSlider({ hue, onChange }: HueSliderProps) {
 					);
 				}}
 			/>
+			<div className='pointer-events-none absolute inset-0 rounded-1 outline -outline-offset-1 outline-black/25'></div>
 		</div>
 	);
 }

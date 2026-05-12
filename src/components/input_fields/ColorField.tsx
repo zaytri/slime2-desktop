@@ -12,7 +12,7 @@ import {
 	usePopoverStore,
 } from '@ariakit/react';
 import { Field, Input, Label } from '@headlessui/react';
-import { HsvaColor, hsvaToRgba, rgbaToHsva } from '@uiw/react-color';
+import { type HsvaColor, hsvaToRgba, rgbaToHsva } from '@uiw/react-color';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import ColorPreview from '../color/ColorPreview';
@@ -183,93 +183,91 @@ function ColorPopover({
 	return (
 		<Popover
 			autoFocusOnShow={false}
-			className='z-50'
 			gutter={8}
-			wrapperProps={{ style: { left: 0 } }}
+			fitViewport
+			className='dark-menu flex flex-row! gap-6 p-5!'
 		>
-			<div className='flex gap-4 rounded-2 bg-white p-4 shadow-[0_2px_10px_#0006] outline-4 outline-lime-600'>
-				<SaturationGrid
+			<SaturationGrid
+				hsva={hsva}
+				onChange={newColor => {
+					const newHsva = { ...hsva, ...newColor, a: hsva.a };
+					onHsvaChange(newHsva);
+				}}
+			/>
+
+			<HueSlider
+				hue={hsva.h}
+				onChange={newHue => {
+					const newHsva = { ...hsva, ...newHue };
+					onHsvaChange(newHsva);
+				}}
+			/>
+
+			{hasValidColor && (
+				<AlphaSlider
 					hsva={hsva}
-					onChange={newColor => {
-						const newHsva = { ...hsva, ...newColor, a: hsva.a };
+					onChange={newAlpha => {
+						const newHsva = { ...hsva, ...newAlpha };
 						onHsvaChange(newHsva);
 					}}
 				/>
+			)}
 
-				<HueSlider
-					hue={hsva.h}
-					onChange={newHue => {
-						const newHsva = { ...hsva, ...newHue };
-						onHsvaChange(newHsva);
+			<div className='flex flex-col gap-1.75'>
+				<RgbaInput
+					label='Red'
+					value={hsvaToRgba(hsva).r}
+					onChange={newRed => {
+						const rgbaValue = hsvaToRgba(hsva);
+						onHsvaChange(
+							rgbaToHsva({
+								...rgbaValue,
+								r: Math.min(Math.max(newRed, 0), 255),
+							}),
+						);
+					}}
+				/>
+
+				<RgbaInput
+					label='Green'
+					value={hsvaToRgba(hsva).g}
+					onChange={newGreen => {
+						const rgbaValue = hsvaToRgba(hsva);
+						onHsvaChange(
+							rgbaToHsva({
+								...rgbaValue,
+								g: Math.min(Math.max(newGreen, 0), 255),
+							}),
+						);
+					}}
+				/>
+
+				<RgbaInput
+					label='Blue'
+					value={hsvaToRgba(hsva).b}
+					onChange={newBlue => {
+						const rgbaValue = hsvaToRgba(hsva);
+						onHsvaChange(
+							rgbaToHsva({
+								...rgbaValue,
+								b: Math.min(Math.max(newBlue, 0), 255),
+							}),
+						);
 					}}
 				/>
 
 				{hasValidColor && (
-					<AlphaSlider
-						hsva={hsva}
+					<RgbaInput
+						label='Alpha'
+						value={Math.round(hsva.a * 255)}
 						onChange={newAlpha => {
-							const newHsva = { ...hsva, ...newAlpha };
-							onHsvaChange(newHsva);
+							onHsvaChange({
+								...hsva,
+								a: Math.min(Math.max(newAlpha, 0), 255) / 255,
+							});
 						}}
 					/>
 				)}
-
-				<div className='flex flex-col gap-1.75'>
-					<RgbaInput
-						label='Red'
-						value={hsvaToRgba(hsva).r}
-						onChange={newRed => {
-							const rgbaValue = hsvaToRgba(hsva);
-							onHsvaChange(
-								rgbaToHsva({
-									...rgbaValue,
-									r: Math.min(Math.max(newRed, 0), 255),
-								}),
-							);
-						}}
-					/>
-
-					<RgbaInput
-						label='Green'
-						value={hsvaToRgba(hsva).g}
-						onChange={newGreen => {
-							const rgbaValue = hsvaToRgba(hsva);
-							onHsvaChange(
-								rgbaToHsva({
-									...rgbaValue,
-									g: Math.min(Math.max(newGreen, 0), 255),
-								}),
-							);
-						}}
-					/>
-
-					<RgbaInput
-						label='Blue'
-						value={hsvaToRgba(hsva).b}
-						onChange={newBlue => {
-							const rgbaValue = hsvaToRgba(hsva);
-							onHsvaChange(
-								rgbaToHsva({
-									...rgbaValue,
-									b: Math.min(Math.max(newBlue, 0), 255),
-								}),
-							);
-						}}
-					/>
-
-					{hasValidColor && (
-						<RgbaInput
-							label='Alpha'
-							value={Math.round(hsva.a * 255)}
-							onChange={newAlpha => {
-								onHsvaChange({
-									...hsva,
-									a: Math.min(Math.max(newAlpha, 0), 255) / 255,
-								});
-							}}
-						/>
-					)}
-				</div>
 			</div>
 		</Popover>
 	);

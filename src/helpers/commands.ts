@@ -99,6 +99,18 @@ export async function deleteSecretKey(key: string): Promise<void> {
 	return invoke('delete_secret_key', { key });
 }
 
-export async function loadSystemFonts(): Promise<string[]> {
+type FontData = {
+	postscript_name: string;
+	full_name: string;
+	family_name: string;
+	is_monospace: boolean;
+	properties: {
+		style: string; // 'Normal' | 'Italic' | 'Oblique'
+		weight: number; // between 100 - 900
+		stretch: number; // between 0.5 - 2.0
+	};
+};
+
+export async function loadSystemFonts(): Promise<FontData[]> {
 	return invoke('load_system_fonts');
 }

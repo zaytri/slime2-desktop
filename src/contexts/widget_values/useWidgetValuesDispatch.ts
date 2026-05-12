@@ -1,4 +1,4 @@
-import { WidgetValue, type WidgetValues } from '@/helpers/json/widgetValues';
+import type { WidgetValue, WidgetValues } from '@/helpers/json/widgetValues';
 import { createContext, useContext } from 'react';
 import { contextErrorMessage, deepCopyObject } from '../common';
 

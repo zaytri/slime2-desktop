@@ -14,6 +14,7 @@ import { createOverlayUrl } from '@/helpers/serverUrl';
 import useEditTile from '@/hooks/useEditTile';
 import CopyPasteWidgetDataDialog from '@@/dialog/CopyPasteWidgetDataDialog';
 import ExportZipDialog from '@@/dialog/ExportZipDialog';
+import GenericDeleteDialog from '@@/dialog/GenericDeleteDialog';
 import OverlayURLDialog from '@@/dialog/OverlayURLDialog';
 import ArrowLeftRightSvg from '@@/svg/ArrowLeftRightSvg';
 import ArrowUpTraySvg from '@@/svg/ArrowUpTraySvg';
@@ -21,6 +22,7 @@ import ChainLinkSvg from '@@/svg/ChainLinkSvg';
 import EyeSvg from '@@/svg/EyeSvg';
 import GearSvg from '@@/svg/GearSvg';
 import PencilSvg from '@@/svg/PencilSvg';
+import TrashSvg from '@@/svg/TrashSvg';
 import {
 	Menu,
 	MenuButton,
@@ -57,6 +59,7 @@ function DevToolsButton() {
 	const { openDialog } = useDialog();
 	const { settings } = useSettings();
 	const { setDevEditorMode } = useDevEditorMode();
+	const { replace } = useWidgetValuesDispatch();
 
 	if (!settings.devMode) return;
 
@@ -87,8 +90,18 @@ function DevToolsButton() {
 						}
 					}}
 				>
-					<EyeSvg className='w-4.5' />
-					<p className='-mb-0.5'>Open Folder</p>
+					<EyeSvg className='size-4.5' />
+					<p>Open Folder</p>
+				</MenuItem>
+
+				<MenuItem
+					className='dark-menu-item'
+					onClick={() => {
+						setDevEditorMode(true);
+					}}
+				>
+					<PencilSvg className='size-4.5' />
+					<p>Widget Editor</p>
 				</MenuItem>
 
 				<MenuItem
@@ -100,18 +113,29 @@ function DevToolsButton() {
 						);
 					}}
 				>
-					<ArrowUpTraySvg className='w-4.5' />
-					<p className='-mb-0.5'>Export ZIP</p>
+					<ArrowUpTraySvg className='size-4.5' />
+					<p>Export ZIP</p>
 				</MenuItem>
 
 				<MenuItem
-					className='dark-menu-item'
+					className='dark-menu-item dark-menu-item-danger'
 					onClick={() => {
-						setDevEditorMode(true);
+						openDialog(
+							'Clear Values',
+							<GenericDeleteDialog
+								onDelete={() => {
+									replace({});
+								}}
+								actionText='Reset to Default'
+							>
+								Are you sure you want to <strong>irreversibly</strong> reset all
+								of this widget's values to their default values?
+							</GenericDeleteDialog>,
+						);
 					}}
 				>
-					<PencilSvg className='w-4.5' />
-					<p className='-mb-0.5'>Widget Editor</p>
+					<TrashSvg className='size-4.5' />
+					<p>Clear Values</p>
 				</MenuItem>
 			</Menu>
 		</MenuProvider>

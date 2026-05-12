@@ -1,4 +1,3 @@
-import FontLoader from '@/components/FontLoader';
 import MoveModeBanner from '@/components/MoveModeBanner';
 import GearSvg from '@/components/svg/GearSvg';
 import GridSvg from '@/components/svg/GridSvg';
@@ -12,6 +11,7 @@ import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import useTileSwap from '@/contexts/tile_swap/useTileSwap';
 import WidgetsPanelProvider from '@/contexts/widgets_panel/WidgetsPanelProvider';
 import { TileColor } from '@/helpers/tileColors';
+import { useSystemFontsQuery } from '@/hooks/useSystemFontsQuery';
 import useTwitchBot from '@/hooks/useTwitchBot';
 import useTwitchWebsocket from '@/hooks/useTwitchWebsocket';
 import useWidgetCoreChange from '@/hooks/useWidgetCoreChange';
@@ -21,7 +21,7 @@ import PaperAirplaneSvg from '@@/svg/PaperAirplaneSvg';
 import type { TabPanelProps, TabProps } from '@ariakit/react';
 import { Tab, TabList, TabProvider } from '@ariakit/react';
 import clsx from 'clsx';
-import { ComponentRef, forwardRef, useState } from 'react';
+import { type ComponentRef, forwardRef, useState } from 'react';
 import AccountsPanel from './accounts/AccountsPanel';
 import SettingsPanel from './settings/SettingsPanel';
 import SimulatorPanel from './simulator/SimulatorPanel';
@@ -33,6 +33,7 @@ function MainTabs() {
 	useWidgetCoreChange();
 	useTwitchWebsocket();
 	useTwitchBot();
+	useSystemFontsQuery();
 
 	const [selectedId, setSelectedId] = useState<string | null | undefined>('1');
 	const { folderId } = useFolderId();
@@ -42,139 +43,135 @@ function MainTabs() {
 	const movingTileMode = !!sourceSlot;
 
 	return (
-		<>
-			<TabProvider setSelectedId={setSelectedId}>
-				<FontLoader />
+		<TabProvider setSelectedId={setSelectedId}>
+			<div
+				className={clsx(
+					'relative flex flex-1 flex-col items-stretch bg-zinc-800',
+					settings.disableAnimations && 'disable-animations',
+				)}
+			>
+				{false && (
+					<button
+						type='button'
+						className='absolute top-0 right-0 flex overflow-hidden rounded-bl-4 border-b border-l border-white/50 bg-linear-to-b from-green-400 to-teal-400 pr-1 pl-3 text-teal-950 outline-white over:outline-2'
+					>
+						<div className='absolute inset-0 bottom-[50%] bg-linear-to-b from-white/30 to-white/20'></div>
+						<div className='relative flex items-center gap-2 drop-shadow-[0_0_5px_#FFFB]'>
+							<p className='-mb-0.5 text-5'>Update Available!</p>
+						</div>
+					</button>
+				)}
+
+				<div className='relative flex pt-6'>
+					<TabList
+						render={<nav />}
+						className='flex h-14 flex-1 items-end gap-3 px-7'
+					>
+						<StyledTab
+							disabled={movingTileMode}
+							id='1'
+							icon={GridSvg}
+							className='bg-linear-to-b from-lime-400 to-green-500 text-green-950'
+						>
+							Widgets
+						</StyledTab>
+						<StyledTab
+							disabled={movingTileMode}
+							id='2'
+							icon={UserSvg}
+							className='bg-linear-to-b from-rose-300 to-pink-300 text-pink-950'
+						>
+							Accounts
+							<AccountsNotification />
+						</StyledTab>
+						<StyledTab
+							disabled={movingTileMode}
+							id='3'
+							icon={GearSvg}
+							className='bg-linear-to-b from-cyan-300 to-sky-400 text-sky-950'
+						>
+							Settings
+						</StyledTab>
+						<StyledTab
+							disabled={movingTileMode}
+							id='4'
+							icon={PaperAirplaneSvg}
+							className='bg-linear-to-b from-yellow-400 to-amber-400 text-amber-950'
+						>
+							Simulator
+						</StyledTab>
+					</TabList>
+
+					{/* Moving Tile Mode Banner */}
+					{sourceSlot && (
+						<MoveModeBanner
+							slotId={sourceSlot.id}
+							onEscape={() => {
+								setSourceSlot(null);
+							}}
+						/>
+					)}
+				</div>
 				<div
 					className={clsx(
-						'relative flex flex-1 flex-col items-stretch bg-zinc-800',
-						settings.disableAnimations && 'disable-animations',
+						'flex flex-1 overflow-hidden rounded-t-4 bg-linear-to-b p-3 transition-colors',
+						selectedId === '1' && 'from-green-500 to-lime-500',
+						selectedId === '2' && 'from-pink-300 to-rose-300',
+						selectedId === '3' && 'from-sky-400 to-cyan-300',
+						selectedId === '4' && 'from-amber-400 to-yellow-300',
+						selectedId === '5' && 'from-purple-400 to-violet-400',
 					)}
 				>
-					{false && (
-						<button
-							type='button'
-							className='absolute top-0 right-0 flex overflow-hidden rounded-bl-4 border-b border-l border-white/50 bg-linear-to-b from-green-400 to-teal-400 pr-1 pl-3 text-teal-950 outline-white over:outline-2'
-						>
-							<div className='absolute inset-0 bottom-[50%] bg-linear-to-b from-white/30 to-white/20'></div>
-							<div className='relative flex items-center gap-2 drop-shadow-[0_0_5px_#FFFB]'>
-								<p className='-mb-0.5 text-5'>Update Available!</p>
-							</div>
-						</button>
-					)}
-
-					<div className='relative flex pt-6'>
-						<TabList
-							render={<nav />}
-							className='flex h-14 flex-1 items-end gap-3 px-7'
-						>
-							<StyledTab
-								disabled={movingTileMode}
-								id='1'
-								icon={GridSvg}
-								className='bg-linear-to-b from-lime-400 to-green-500 text-green-950'
-							>
-								Widgets
-							</StyledTab>
-							<StyledTab
-								disabled={movingTileMode}
-								id='2'
-								icon={UserSvg}
-								className='bg-linear-to-b from-rose-300 to-pink-300 text-pink-950'
-							>
-								Accounts
-								<AccountsNotification />
-							</StyledTab>
-							<StyledTab
-								disabled={movingTileMode}
-								id='3'
-								icon={GearSvg}
-								className='bg-linear-to-b from-cyan-300 to-sky-400 text-sky-950'
-							>
-								Settings
-							</StyledTab>
-							<StyledTab
-								disabled={movingTileMode}
-								id='4'
-								icon={PaperAirplaneSvg}
-								className='bg-linear-to-b from-yellow-400 to-amber-400 text-amber-950'
-							>
-								Simulator
-							</StyledTab>
-						</TabList>
-
-						{/* Moving Tile Mode Banner */}
-						{sourceSlot && (
-							<MoveModeBanner
-								slotId={sourceSlot.id}
-								onEscape={() => {
-									setSourceSlot(null);
-								}}
-							/>
-						)}
-					</div>
 					<div
 						className={clsx(
-							'flex flex-1 overflow-hidden rounded-t-4 bg-linear-to-b p-3 transition-colors',
-							selectedId === '1' && 'from-green-500 to-lime-500',
-							selectedId === '2' && 'from-pink-300 to-rose-300',
-							selectedId === '3' && 'from-sky-400 to-cyan-300',
-							selectedId === '4' && 'from-amber-400 to-yellow-300',
-							selectedId === '5' && 'from-purple-400 to-violet-400',
+							'relative flex flex-1 overflow-hidden rounded-2 bg-linear-to-br ring-2 inset-shadow-[0_5px_5px_#0003] ring-zinc-800/50 outline outline-offset-2 outline-white/35',
+							selectedId === '1' && {
+								['bg-rose-300 from-pink-900/50 to-rose-700/50']:
+									tileMeta.color === TileColor.Pink,
+								['bg-red-300 from-red-900/50 to-red-700/50']:
+									tileMeta.color === TileColor.Red,
+								['bg-orange-300 from-orange-900/50 to-amber-700/50']:
+									tileMeta.color === TileColor.Orange,
+								['bg-yellow-300 from-amber-900/50 to-yellow-700/50']:
+									tileMeta.color === TileColor.Yellow,
+								['from-green-700 to-lime-600']:
+									tileMeta.color === TileColor.Green,
+								['from-emerald-700 to-teal-600']:
+									tileMeta.color === TileColor.Teal,
+								['from-sky-700 to-cyan-600']: tileMeta.color === TileColor.Blue,
+								['bg-violet-400 from-purple-950/50 to-violet-700/40']:
+									tileMeta.color === TileColor.Purple,
+							},
+							selectedId === '2' &&
+								'bg-rose-300 from-pink-900/50 to-rose-700/50',
+							selectedId === '3' && 'from-sky-700 to-cyan-600',
+							selectedId === '4' &&
+								'bg-yellow-300 from-amber-900/50 to-yellow-700/50',
+							selectedId === '5' &&
+								'bg-violet-400 from-purple-950/50 to-violet-700/40',
 						)}
 					>
-						<div
-							className={clsx(
-								'relative flex flex-1 overflow-hidden rounded-2 bg-linear-to-br ring-2 inset-shadow-[0_5px_5px_#0003] ring-zinc-800/50 outline outline-offset-2 outline-white/35',
-								selectedId === '1' && {
-									['bg-rose-300 from-pink-900/50 to-rose-700/50']:
-										tileMeta.color === TileColor.Pink,
-									['bg-red-300 from-red-900/50 to-red-700/50']:
-										tileMeta.color === TileColor.Red,
-									['bg-orange-300 from-orange-900/50 to-amber-700/50']:
-										tileMeta.color === TileColor.Orange,
-									['bg-yellow-300 from-amber-900/50 to-yellow-700/50']:
-										tileMeta.color === TileColor.Yellow,
-									['from-green-700 to-lime-600']:
-										tileMeta.color === TileColor.Green,
-									['from-emerald-700 to-teal-600']:
-										tileMeta.color === TileColor.Teal,
-									['from-sky-700 to-cyan-600']:
-										tileMeta.color === TileColor.Blue,
-									['bg-violet-400 from-purple-950/50 to-violet-700/40']:
-										tileMeta.color === TileColor.Purple,
-								},
-								selectedId === '2' &&
-									'bg-rose-300 from-pink-900/50 to-rose-700/50',
-								selectedId === '3' && 'from-sky-700 to-cyan-600',
-								selectedId === '4' &&
-									'bg-yellow-300 from-amber-900/50 to-yellow-700/50',
-								selectedId === '5' &&
-									'bg-violet-400 from-purple-950/50 to-violet-700/40',
-							)}
-						>
-							<div className='absolute inset-0 bg-black text-white opacity-10 mix-blend-overlay'>
-								<WaveSvg className='-translate-y-25' />
-							</div>
-							<StyledPanel tabId='1'>
-								<WidgetsPanelProvider>
-									<WidgetsPanel />
-								</WidgetsPanelProvider>
-							</StyledPanel>
-							<StyledPanel tabId='2'>
-								<AccountsPanel />
-							</StyledPanel>
-							<StyledPanel tabId='3'>
-								<SettingsPanel />
-							</StyledPanel>
-							<StyledPanel tabId='4'>
-								<SimulatorPanel />
-							</StyledPanel>
+						<div className='absolute inset-0 bg-black text-white opacity-10 mix-blend-overlay'>
+							<WaveSvg className='-translate-y-25' />
 						</div>
+						<StyledPanel tabId='1'>
+							<WidgetsPanelProvider>
+								<WidgetsPanel />
+							</WidgetsPanelProvider>
+						</StyledPanel>
+						<StyledPanel tabId='2'>
+							<AccountsPanel />
+						</StyledPanel>
+						<StyledPanel tabId='3'>
+							<SettingsPanel />
+						</StyledPanel>
+						<StyledPanel tabId='4'>
+							<SimulatorPanel />
+						</StyledPanel>
 					</div>
 				</div>
-			</TabProvider>
-		</>
+			</div>
+		</TabProvider>
 	);
 }
 

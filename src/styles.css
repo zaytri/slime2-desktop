@@ -224,6 +224,10 @@ input[type='number'] {
 	@apply flex cursor-pointer items-center gap-2 rounded-1 px-2 py-1 text-white outline-offset-0! drop-shadow-[0_1px_black] outline-none select-none aria-disabled:text-zinc-400 data-active-item:bg-white data-active-item:text-zinc-800;
 }
 
+@utility dark-menu-item-danger {
+	@apply text-rose-300! data-active-item:bg-rose-300! data-active-item:text-rose-950!;
+}
+
 @utility dark-menu-group-label {
 	@apply text-3 font-bold text-zinc-400 uppercase select-none text-shadow-[0_1px_black];
 }

@@ -1,176 +1,193 @@
 import InputDescription from '@/components/input_fields/InputDescription';
-import TriangleDownSvg from '@/components/svg/TriangleDownSvg';
+import useAriaId from '@/hooks/useAriaId';
 import {
 	Select,
+	SelectArrow,
+	SelectGroup,
+	SelectGroupLabel,
 	SelectItem,
 	SelectLabel,
 	SelectPopover,
 	SelectProvider,
 } from '@ariakit/react';
-import {
-	Field,
-	Label,
-	Listbox,
-	ListboxButton,
-	ListboxOption,
-	ListboxOptions,
-} from '@headlessui/react';
 import clsx from 'clsx';
+import { useRef } from 'react';
 
 type DropdownFieldProps<V> = {
-	value: V;
-	onChange: (value: V) => void;
 	label: string;
-	description?: string;
+	value: V;
+	onChange: (value: NonUndefined<V>) => void;
+	options: Option<NonUndefined<V>>[] | GroupedOptions<NonUndefined<V>>[];
 	placeholder?: string;
-	options: {
-		label: string;
-		value: V;
-	}[];
+	description?: string;
 	compact?: boolean;
 };
 
 export default function DropdownField<V>({
+	label,
 	value,
 	onChange,
-	label,
-	description,
-	placeholder,
 	options,
+	placeholder,
+	description,
 	compact = false,
 }: DropdownFieldProps<V>) {
-	const optionMap = new Map(options.map(({ label, value }) => [value, label]));
+	const { descriptionId } = useAriaId();
+	const selectRef = useRef<HTMLButtonElement>(null);
+
+	function getValueLabel() {
+		for (const option of options) {
+			if ('options' in option) {
+				// option group
+				for (const subOption of option.options) {
+					if (subOption.value === value) return subOption.label;
+				}
+			} else {
+				if (option.value === value) return option.label;
+			}
+		}
+
+		return undefined;
+	}
+
+	const selectedItemLabel =
+		value === undefined ? placeholder : getValueLabel() || placeholder;
 
 	if (compact) {
 		return (
 			<div className='flex'>
-				<SelectProvider
-					defaultValue={optionMap.get(value)}
-					setValue={label => {
-						const option = options.find(option => {
-							return option.label === label;
-						});
-						if (option) {
-							onChange(option.value);
-						}
-					}}
-				>
-					<div className='group/dropdown z-5 flex flex-1 items-center justify-between rounded-1 bg-zinc-700 outline outline-zinc-800 has-over:bg-green-800 has-over:outline-3 has-over:outline-offset-0! has-over:outline-lime-600'>
-						<SelectLabel className='cursor-pointer px-2 py-0.75 text-3.5 font-bold whitespace-nowrap text-white'>
+				<SelectProvider value={selectedItemLabel}>
+					<div className='group/dropdown z-5 flex flex-1 items-center justify-between rounded-1 bg-zinc-700 outline outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-offset-0! over:outline-lime-600'>
+						<SelectLabel
+							className='cursor-pointer! px-2 py-0.75 text-3.5 font-bold whitespace-nowrap text-white'
+							onClick={() => {
+								selectRef.current?.click();
+							}}
+						>
 							{label}
 						</SelectLabel>
-						<Select className='flex flex-1 items-center gap-2 self-stretch bg-white px-2 outline-none'>
+						<Select
+							ref={selectRef}
+							className='flex flex-1 items-center gap-2 self-stretch bg-white px-2 outline-none'
+						>
 							<p
 								className={clsx(
 									'flex-1 text-left',
-									value ? 'text-black' : 'text-zinc-400',
+									selectedItemLabel ? 'text-black' : 'text-zinc-400',
 								)}
 							>
-								{value === undefined ? placeholder : optionMap.get(value)}
+								{selectedItemLabel}
 							</p>
 
-							<div className='flex size-4 items-center justify-center rounded-0.5 group-over/dropdown:bg-lime-600 group-over/dropdown:text-white'>
-								<TriangleDownSvg className='size-2.5' />
-							</div>
+							<SelectArrow className='transition-transform group-aria-expanded/dropdown:-rotate-180' />
 						</Select>
 					</div>
-					<SelectPopover
-						sameWidth
-						fitViewport
-						flip='bottom-end'
-						className='z-10 flex max-h-(--popover-available-height) flex-col overflow-hidden rounded-1 bg-white shadow-[0_2px_10px_#0006] outline-3 -outline-offset-2 outline-lime-600'
-					>
-						<div className='flex flex-col overflow-y-auto'>
-							{options.map(option => {
-								return (
-									<SelectItem
-										key={option.label}
-										value={option.label}
-										className='px-2 py-1 text-3.5 font-semibold data-active-item:bg-lime-200 data-active-item:outline data-active-item:outline-lime-600'
-									/>
-								);
-							})}
-						</div>
-					</SelectPopover>
+					<DropdownFieldPopover options={options} onChange={onChange} />
 				</SelectProvider>
-
-				{/* <Listbox value={value} onChange={onChange}>
-					<ListboxButton className='group/dropdown z-5 flex flex-1 cursor-pointer items-center justify-between rounded-1 bg-zinc-700 outline outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-offset-0! over:outline-lime-600'>
-						<Label className='cursor-pointer px-2 py-0.5 text-3.5 font-bold whitespace-nowrap text-white'>
-							{label}
-						</Label>
-						<div className='flex flex-1 items-center gap-2 self-stretch bg-white px-2'>
-							<p
-								className={clsx(
-									'flex-1 text-left',
-									value ? 'text-black' : 'text-zinc-400',
-								)}
-							>
-								{value === undefined ? placeholder : optionMap.get(value)}
-							</p>
-
-							<div className='flex size-4 items-center justify-center rounded-0.5 group-data-over/dropdown:bg-lime-600 group-data-over/dropdown:text-white'>
-								<TriangleDownSvg className='size-2.5' />
-							</div>
-						</div>
-					</ListboxButton>
-
-					<ListboxOptions
-						anchor={{ to: 'bottom', gap: 0, padding: 48 }}
-						className='z-10 flex w-(--button-width) flex-col rounded-1 bg-white shadow-[0_2px_10px_#0006] outline-3 -outline-offset-2 outline-lime-600'
-					>
-						{options.map(option => {
-							return (
-								<ListboxOption
-									key={option.label}
-									value={option.value}
-									className='px-2 py-1 text-3.5 font-semibold data-focus:bg-lime-200 data-focus:outline data-focus:outline-lime-600'
-								>
-									{option.label}
-								</ListboxOption>
-							);
-						})}
-					</ListboxOptions>
-				</Listbox> */}
 			</div>
 		);
 	}
 
 	return (
-		<Field className='relative'>
-			<Listbox value={value} onChange={onChange}>
-				<ListboxButton className='group/dropdown input-wrapper flex cursor-pointer items-center input-wrapper-over input-wrapper-has-hover'>
-					<div className='flex flex-1 flex-col'>
-						<Label className='cursor-pointer input-label'>{label}</Label>
-						<p className={clsx(value ? 'text-black' : 'text-zinc-400')}>
-							{value === undefined ? placeholder : optionMap.get(value)}
+		<div className='flex flex-col'>
+			<SelectProvider>
+				<div className='group/dropdown input-wrapper flex cursor-pointer flex-col p-0! input-wrapper-over input-wrapper-has-hover'>
+					<SelectLabel
+						className='cursor-pointer! px-2 pt-1 input-label'
+						onClick={() => {
+							selectRef.current?.click();
+						}}
+					>
+						{label}
+					</SelectLabel>
+					<Select
+						aria-describedby={description ? descriptionId : undefined}
+						ref={selectRef}
+						className='flex flex-1 items-center gap-2 px-2 pb-1 outline-none'
+					>
+						<p
+							className={clsx(
+								'flex-1 text-left',
+								selectedItemLabel ? 'text-black' : 'text-zinc-400',
+							)}
+						>
+							{selectedItemLabel}
 						</p>
-					</div>
 
-					<div className='flex size-5 items-center justify-center rounded-1 group-data-over/dropdown:bg-lime-600 group-data-over/dropdown:text-white group-data-over/dropdown:outline-2'>
-						<TriangleDownSvg className='size-3 pt-0.5' />
-					</div>
-				</ListboxButton>
+						<SelectArrow className='transition-transform group-aria-expanded/dropdown:-rotate-180' />
+					</Select>
+				</div>
+				<DropdownFieldPopover options={options} onChange={onChange} />
+			</SelectProvider>
 
-				<ListboxOptions
-					anchor={{ to: 'bottom', gap: 0, padding: 48 }}
-					className='z-10 flex w-(--button-width) flex-col rounded-2 bg-white shadow-[0_2px_10px_#0006] outline-4 -outline-offset-2 outline-lime-600'
-				>
-					{options.map(option => {
+			{description && (
+				<InputDescription id={descriptionId}>{description}</InputDescription>
+			)}
+		</div>
+	);
+}
+
+type DropdownFieldPopoverProps<V> = {
+	onChange: (value: NonUndefined<V>) => void;
+	options: Option<NonUndefined<V>>[] | GroupedOptions<NonUndefined<V>>[];
+};
+
+function DropdownFieldPopover<V>({
+	onChange,
+	options,
+}: DropdownFieldPopoverProps<V>) {
+	return (
+		<SelectPopover
+			modal
+			sameWidth
+			fitViewport
+			className='dark-menu p-0!'
+			gutter={6}
+			hideOnEscape={event => {
+				// prevents closing dialog if inside a dialog
+				event.stopPropagation();
+				return true;
+			}}
+		>
+			<div className='flex flex-col overflow-y-auto p-1.5'>
+				{options.map(option => {
+					if ('options' in option) {
 						return (
-							<ListboxOption
-								key={option.label}
-								value={option.value}
-								className='px-3 py-1.5 data-focus:bg-lime-200 data-focus:outline data-focus:outline-lime-600'
-							>
-								{option.label}
-							</ListboxOption>
+							<SelectGroup key={option.label} className='flex flex-col'>
+								<SelectGroupLabel className='dark-menu-group-label'>
+									{option.label}
+								</SelectGroupLabel>
+								{option.options.map(option => {
+									return (
+										<SelectItem
+											key={option.label}
+											value={option.label}
+											className='dark-menu-item px-4! py-0.5!'
+											onClick={() => {
+												onChange(option.value);
+											}}
+										>
+											{option.label}
+										</SelectItem>
+									);
+								})}
+							</SelectGroup>
 						);
-					})}
-				</ListboxOptions>
-			</Listbox>
-
-			<InputDescription>{description}</InputDescription>
-		</Field>
+					}
+					return (
+						<SelectItem
+							key={option.label}
+							value={option.label}
+							className='dark-menu-item'
+							onClick={() => {
+								onChange(option.value);
+							}}
+						>
+							{option.label}
+						</SelectItem>
+					);
+				})}
+			</div>
+		</SelectPopover>
 	);
 }
