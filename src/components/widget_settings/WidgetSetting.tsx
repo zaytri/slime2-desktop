@@ -151,6 +151,8 @@ export default function WidgetSetting({
 					placeholder={placeholder}
 					description={description}
 					step={setting.step}
+					min={setting.min}
+					max={setting.max}
 				/>
 			);
 		}
@@ -185,7 +187,7 @@ export default function WidgetSetting({
 					value={z
 						.catch(
 							z.union([z.string(), z.number(), z.boolean()]),
-							setting.defaultValue ?? options[0].value,
+							setting.defaultValue ?? options[0]?.value ?? '',
 						)
 						.parse(widgetValue)}
 					onChange={setWidgetValue}
@@ -202,7 +204,7 @@ export default function WidgetSetting({
 					value={z
 						.catch(
 							z.union([z.string(), z.number(), z.boolean()]),
-							setting.defaultValue ?? options[0].value,
+							setting.defaultValue ?? options[0]?.value ?? '',
 						)
 						.parse(widgetValue)}
 					onChange={setWidgetValue}
