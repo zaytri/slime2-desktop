@@ -67,7 +67,7 @@ export const SETTINGS_DATA: SettingsData = {
 	},
 	'slider-input': {
 		label: 'Slider Input',
-		defaultData: { type: 'slider-input' },
+		defaultData: { type: 'slider-input', min: 0, max: 100, step: 1 },
 	},
 	'toggle-input': {
 		label: 'Toggle Input',
