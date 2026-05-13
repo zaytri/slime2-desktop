@@ -31,3 +31,59 @@
 <template id="cheermote-fragment-template"
 	><img class="cheermote emote" /><span class="cheer-amount"></span
 ></template>
+
+<!-- svg used for outline -->
+<svg class="absolute inset-0 size-0 opacity-0">
+	<defs>
+		<filter id="outline" height="200%" width="200%" x="-50%" y="-50%">
+			<!-- outline thickness -->
+			<feMorphology
+				id="outline-thickness"
+				in="SourceAlpha"
+				result="outline-thickness"
+				operator="dilate"
+				radius="2"
+			/>
+
+			<!-- outline color -->
+			<feFlood
+				id="outline-color"
+				flood-color="black"
+				flood-opacity="1"
+				result="outline-color"
+			/>
+
+			<!-- apply color -->
+			<feComposite
+				in="outline-color"
+				in2="outline-thickness"
+				operator="in"
+				result="outline-layer"
+			/>
+
+			<!-- outline blur -->
+			<feGaussianBlur
+				id="outline-blur"
+				in="outline-layer"
+				stdDeviation="0"
+				result="outline-blur"
+			/>
+
+			<!-- outline offset -->
+			<feOffset
+				id="outline-offset"
+				in="outline-blur"
+				dx="0"
+				dy="0"
+				result="outline-result"
+			/>
+
+			<feMerge>
+				<!-- draw outline -->
+				<feMergeNode in="outline-result" />
+				<!-- draw source -->
+				<feMergeNode in="SourceGraphic" />
+			</feMerge>
+		</filter>
+	</defs>
+</svg>

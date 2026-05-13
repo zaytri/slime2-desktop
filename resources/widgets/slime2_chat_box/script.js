@@ -14,6 +14,7 @@ const Widget = {
 	messagesDeleted: new Map(),
 	usersCleared: new Map(),
 	lastChatClear: EPOCH,
+	accountId: null,
 };
 
 // Listeners
@@ -24,6 +25,7 @@ addEventListener('slime2:widget-accounts', widgetAccountsListener);
 addEventListener('slime2:twitch-event', twitchEventListener);
 
 function widgetValuesListener(event) {
+	console.log('slime2:widget-values', event.detail);
 	Widget.values = event.detail;
 
 	const widgetElement = document.getElementById('widget');
@@ -46,8 +48,7 @@ function widgetValuesListener(event) {
 	setStyle('--custom-font-size', `${Widget.values['font-size']}px`);
 	setStyle('--custom-font-weight', Widget.values['font-weight']);
 	setStyle('--custom-font-color', Widget.values['message-color']);
-	setStyle('--custom-username-color', Widget.values['custom-username-color']);
-	setStyle('--custom-bg-color', Widget.values['background-color']);
+	setStyle('--custom-max-width', `${Widget.values['max-width']}px`);
 
 	removeClass(
 		'username-color-twitch',
@@ -56,12 +57,86 @@ function widgetValuesListener(event) {
 		'username-color-twitch-dark',
 	);
 	addClass(`username-color-${Widget.values['username-color']}`);
+	setStyle('--custom-username-color', Widget.values['custom-username-color']);
+
+	if (Widget.values['max-lines']) {
+		addClass('line-clamp');
+		setStyle('--custom-line-clamp', Widget.values['max-lines']);
+	} else {
+		removeClass('line-clamp');
+	}
+
+	if (Widget.values['direction-axis'] === 'horizontal') {
+		if (Widget.values['direction-horizontal-flow'] === 'to-right') {
+			setStyle('--custom-direction', 'row-reverse');
+			setStyle('--custom-justify', 'start');
+		} else {
+			setStyle('--custom-direction', 'row');
+			setStyle('--custom-justify', 'end');
+		}
+
+		if (Widget.values['direction-horizontal-alignment'] === 'bottom') {
+			setStyle('--custom-align', 'flex-end');
+		} else {
+			setStyle('--custom-align', 'flex-start');
+		}
+	} else {
+		if (Widget.values['direction-vertical-flow'] === 'to-bottom') {
+			setStyle('--custom-direction', 'column-reverse');
+			setStyle('--custom-justify', 'start');
+		} else {
+			setStyle('--custom-direction', 'column');
+			setStyle('--custom-justify', 'end');
+		}
+
+		if (Widget.values['direction-vertical-alignment'] === 'right') {
+			setStyle('--custom-align', 'flex-end');
+		} else {
+			setStyle('--custom-align', 'flex-start');
+		}
+	}
+
+	function setOutlineAttribute(id, name, value) {
+		document.getElementById(id).setAttribute(name, value);
+	}
+
+	Widget.values['use-outline'] ? addClass('outline') : removeClass('outline');
+	setOutlineAttribute(
+		'outline-thickness',
+		'radius',
+
+		Widget.values['outline-thickness'],
+	);
+	setOutlineAttribute(
+		'outline-color',
+		'flood-color',
+		Widget.values['outline-color'],
+	);
+	setOutlineAttribute(
+		'outline-blur',
+		'stdDeviation',
+		Widget.values['outline-blur'],
+	);
+	setOutlineAttribute(
+		'outline-offset',
+		'dx',
+		Widget.values['outline-offset-x'],
+	);
+	setOutlineAttribute(
+		'outline-offset',
+		'dy',
+		Widget.values['outline-offset-y'],
+	);
 }
 
 function widgetAccountsListener(event) {
 	console.log('slime2:widget-accounts', event.detail);
 
 	const accountData = event.detail.accounts[0];
+
+	Widget.accountId = accountData.id;
+	Widget.bttv = accountData.betterTTV;
+	Widget.ffz = accountData.frankerFaceZ;
 
 	// converting arrays to map for fast access
 
@@ -97,9 +172,6 @@ function widgetAccountsListener(event) {
 			tiers: cheermoteTiers,
 		});
 	});
-
-	Widget.bttv = accountData.betterTTV;
-	Widget.ffz = accountData.frankerFaceZ;
 }
 
 function twitchEventListener(event) {
@@ -118,6 +190,11 @@ function twitchEventListener(event) {
 			return handleChatClear(timestamp);
 		case 'channel.chat.clear_user_messages':
 			return handleChatClearUserMessages(data, timestamp);
+		case 'channel.chat.notification':
+			if (data.notice_type === 'announcement') {
+				return handleChatMessage(data, timestamp);
+			}
+			break;
 	}
 }
 
@@ -134,11 +211,11 @@ async function handleChatMessage(data, timestamp) {
 		color,
 		badges,
 	} = data;
-	const pronouns = await slime2.getPronouns(
-		'twitch',
-		chatter_user_id,
-		chatter_user_login,
-	);
+
+	const [pronouns, followDate] = await Promise.all([
+		slime2.getPronouns('twitch', chatter_user_id, chatter_user_login),
+		slime2.getTwitchFollowDate(Widget.accountId, chatter_user_id),
+	]);
 
 	const messageTemplateClone = cloneTemplate('message-template');
 	const messageElement = messageTemplateClone.querySelector('.message');
