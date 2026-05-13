@@ -12,6 +12,7 @@ type TextFieldProps = {
 	onEnterKey?: VoidFunction;
 	compact?: boolean;
 	inputClassName?: string;
+	ref?: React.Ref<HTMLInputElement>;
 };
 
 export default function TextField({
@@ -24,6 +25,7 @@ export default function TextField({
 	onEnterKey,
 	compact = false,
 	inputClassName,
+	ref,
 }: TextFieldProps) {
 	function onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
 		// only run this on this focused element
@@ -44,6 +46,7 @@ export default function TextField({
 				)}
 
 				<Input
+					ref={ref}
 					value={value}
 					onChange={event => {
 						onChange(event.target.value);
@@ -71,6 +74,7 @@ export default function TextField({
 				{label && <Label className='input-label'>{label}</Label>}
 
 				<Input
+					ref={ref}
 					value={value}
 					onChange={event => {
 						onChange(event.target.value);
