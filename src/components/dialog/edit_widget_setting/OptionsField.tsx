@@ -3,12 +3,15 @@ import NumberField from '@/components/input_fields/NumberField';
 import SelectField from '@/components/input_fields/SelectField';
 import TextField from '@/components/input_fields/TextField';
 import { deepCopyObject } from '@/contexts/common';
+import { swapItems } from '@/helpers/array';
 import { i18nStringTransform } from '@/helpers/i18n';
 import type { WidgetSetting } from '@@/json/widgetSettings';
+import ArrowDownSvg from '@@/svg/ArrowDownSvg';
+import ArrowUpSvg from '@@/svg/ArrowUpSvg';
 import PlusSvg from '@@/svg/PlusSvg';
 import XSvg from '@@/svg/XSvg';
 import { Fieldset, Legend } from '@headlessui/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 type DefaultValueOption = 'string' | 'number' | 'boolean';
 
@@ -28,6 +31,7 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 			: 'string',
 	);
 
+	const labelFieldRef = useRef<HTMLInputElement>(null);
 	const [labelError, setLabelError] = useState('');
 	const [valueError, setValueError] = useState('');
 	const [label, setLabel] = useState('');
@@ -46,6 +50,11 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 		const newValues = [...(values || [])];
 		newValues.splice(index, 1);
 		onChange(newValues);
+	}
+
+	function swapOptionIndex(oldIndex: number, newIndex: number) {
+		const newValues = [...(values || [])];
+		onChange(swapItems(newValues, oldIndex, newIndex));
 	}
 
 	function addOption() {
@@ -93,6 +102,7 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 
 		setLabel('');
 		resetInputValue();
+		labelFieldRef.current?.focus();
 	}
 
 	return (
@@ -138,6 +148,7 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 						<TextField
 							label='Unique Label'
 							compact
+							ref={labelFieldRef}
 							placeholder='Option 1'
 							value={label}
 							onChange={value => {
@@ -223,10 +234,37 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 			</Fieldset>
 
 			{values.length > 0 && (
-				<div className='flex flex-col gap-1.5 pl-4'>
+				<div className='flex flex-col gap-1.5'>
 					{values.map((option, index) => {
+						const canSwapUp = index > 0;
+						const canSwapDown = index < values.length - 1;
+
 						return (
 							<div key={`${option.value}_${index}`} className='flex gap-1'>
+								<button
+									disabled={!canSwapUp}
+									type='button'
+									className='rounded-1 px-1.5 text-zinc-800 disabled:text-zinc-400 over:bg-lime-600 over:text-white over:outline over:outline-offset-0! over:outline-lime-700'
+									onClick={() => {
+										if (canSwapUp) swapOptionIndex(index, index - 1);
+									}}
+								>
+									<span className='sr-only'>Move Up</span>
+									<ArrowUpSvg className='size-3.5' />
+								</button>
+
+								<button
+									disabled={!canSwapDown}
+									type='button'
+									className='rounded-1 px-1.5 text-zinc-800 disabled:text-zinc-400 over:bg-lime-600 over:text-white over:outline over:outline-offset-0! over:outline-lime-700'
+									onClick={() => {
+										if (canSwapDown) swapOptionIndex(index, index + 1);
+									}}
+								>
+									<span className='sr-only'>Move Down</span>
+									<ArrowDownSvg className='size-3.5' />
+								</button>
+
 								<div className='flex flex-1 rounded-1 bg-zinc-700 text-3.5 outline outline-offset-0! outline-zinc-800'>
 									<div className='flex flex-1 items-center'>
 										<p className='px-2 py-0.5 font-bold text-white'>Label</p>
@@ -249,6 +287,7 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 										removeOptionAtIndex(index);
 									}}
 								>
+									<span className='sr-only'>Delete</span>
 									<XSvg className='size-4' />
 								</button>
 							</div>
