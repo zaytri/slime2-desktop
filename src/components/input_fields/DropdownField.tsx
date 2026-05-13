@@ -21,6 +21,7 @@ type DropdownFieldProps<V> = {
 	placeholder?: string;
 	description?: string;
 	compact?: boolean;
+	ref?: React.RefObject<HTMLButtonElement | null>;
 };
 
 export default function DropdownField<V>({
@@ -31,9 +32,11 @@ export default function DropdownField<V>({
 	placeholder,
 	description,
 	compact = false,
+	ref: passedSelectRef,
 }: DropdownFieldProps<V>) {
 	const { descriptionId } = useAriaId();
-	const selectRef = useRef<HTMLButtonElement>(null);
+	const internalSelectRef = useRef<HTMLButtonElement>(null);
+	const selectRef = passedSelectRef ?? internalSelectRef;
 
 	function getValueLabel() {
 		for (const option of options) {
@@ -57,7 +60,7 @@ export default function DropdownField<V>({
 		return (
 			<div className='flex'>
 				<SelectProvider value={selectedItemLabel}>
-					<div className='group/dropdown z-5 flex flex-1 items-center justify-between rounded-1 bg-zinc-700 outline -outline-offset-1 outline-zinc-800 over:bg-green-800 over:outline-3 over:outline-offset-0! over:outline-lime-600'>
+					<div className='group/dropdown z-5 flex flex-1 items-center justify-between rounded-1 bg-zinc-700 outline -outline-offset-1 outline-zinc-800 has-focus-visible:bg-green-800 has-focus-visible:outline-3 has-focus-visible:outline-offset-0! has-focus-visible:outline-lime-600 over:bg-green-800 over:outline-3 over:outline-offset-0! over:outline-lime-600'>
 						{label && (
 							<SelectLabel
 								className='cursor-pointer! px-2 py-0.75 text-3.5 font-bold whitespace-nowrap text-white'
