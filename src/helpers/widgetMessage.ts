@@ -1,7 +1,7 @@
 import { deepCopyObject } from '@/contexts/common';
 import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidgetValueKey';
 import { sendWebsocketMessage } from './commands';
-import { WidgetSetting, WidgetSettings } from './json/widgetSettings';
+import type { WidgetSetting, WidgetSettings } from './json/widgetSettings';
 import type { WidgetValues } from './json/widgetValues';
 
 export async function sendWidgetValues(
