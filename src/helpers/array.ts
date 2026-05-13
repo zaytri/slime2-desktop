@@ -1,5 +1,6 @@
 import { deepCopyObject } from '@/contexts/common';
 
+/** Returns a copy of the array with the items at the specified indices swapped. */
 export function swapItems<T>(
 	array: NonUndefined<T>[],
 	oldIndex: number,

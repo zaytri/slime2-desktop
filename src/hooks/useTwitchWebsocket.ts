@@ -2,7 +2,7 @@ import useAccounts from '@/contexts/accounts/useAccounts';
 import { useAccountsDispatch } from '@/contexts/accounts/useAccountsDispatch';
 import { useEventsLogDispatch } from '@/contexts/events_log/useEventsLogDispatch';
 import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
-import { Account, deleteTokens } from '@/helpers/json/accounts';
+import { type Account, deleteTokens } from '@/helpers/json/accounts';
 import twitchApi, {
 	createEventSubParamsList,
 } from '@/helpers/services/twitch/twitchApi';

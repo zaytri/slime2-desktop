@@ -1,7 +1,7 @@
 import useAccounts from '@/contexts/accounts/useAccounts';
 import useEventsLog from '@/contexts/events_log/useEventsLog';
 import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
-import { Account } from '@/helpers/json/accounts';
+import type { Account } from '@/helpers/json/accounts';
 import { loadWidgetSettings } from '@/helpers/json/widgetSettings';
 import { loadWidgetValues } from '@/helpers/json/widgetValues';
 import bttvApi from '@/helpers/services/emotes/betterTTV';

@@ -1,4 +1,4 @@
-import { HsvaColor } from '@uiw/react-color';
+import type { HsvaColor } from '@uiw/react-color';
 import Color from 'colorjs.io';
 
 export function hsvaToString(hsva: HsvaColor): string {
@@ -12,12 +12,14 @@ export function stringToHsva(value?: string): HsvaColor {
 	);
 
 	// fallback to values for full opacity white
-	return {
+	const hsva: HsvaColor = {
 		h: fallbackNumber(color.hsv.h, 0),
 		s: fallbackNumber(color.hsv.s, 0),
 		v: fallbackNumber(color.hsv.v, 100),
 		a: fallbackNumber(color.alpha, 1),
 	};
+
+	return hsva;
 }
 
 function fallbackNumber(number: unknown, fallback: number) {
