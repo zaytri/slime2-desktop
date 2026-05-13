@@ -64,7 +64,7 @@ export default function EditWidgetSettingDialog({
 	}
 
 	return (
-		<DialogContent className='flex max-h-160 w-160 flex-col justify-between overflow-hidden'>
+		<DialogContent className='flex w-160 flex-col justify-between overflow-hidden'>
 			<div className='flex flex-col gap-2 overflow-y-auto p-4'>
 				<div className='grid flex-1 grid-cols-2 items-start gap-x-4 gap-y-2'>
 					{newData.type === 'text-display' ? (
