@@ -14,7 +14,7 @@ import {
 import { Field, Input, Label } from '@headlessui/react';
 import { type HsvaColor, hsvaToRgba, rgbaToHsva } from '@uiw/react-color';
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ColorPreview from '../color/ColorPreview';
 
 type ColorFieldProps = {
@@ -39,6 +39,10 @@ export default function ColorField({
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [hsvaValue, setHsvaValue] = useState<HsvaColor>(stringToHsva(value));
 	const hasValidColor = CSS.supports('color', value);
+
+	useEffect(() => {
+		setHsvaValue(stringToHsva(value));
+	}, [value]);
 
 	function onHsvaChange(hsvaColor: HsvaColor) {
 		setHsvaValue(hsvaColor);
@@ -122,20 +126,19 @@ export default function ColorField({
 			>
 				<div
 					className={clsx(
-						'group/color input-wrapper flex items-center gap-3 input-wrapper-over',
+						'group/color input-wrapper flex flex-col gap-1 input-wrapper-over',
 						popoverOpen && 'outline-4 -outline-offset-2! outline-lime-600',
 					)}
 					onClick={() => {
 						inputRef.current?.focus();
 					}}
 				>
-					{/* color preview box */}
-					<PopoverAnchor className='cursor-pointer'>
-						<ColorPreview color={value} className='my-1 size-8.5' />
-					</PopoverAnchor>
-
-					<div className='flex flex-1 flex-col'>
-						<Label className='cursor-pointer input-label'>{label}</Label>
+					<Label className='cursor-pointer input-label'>{label}</Label>
+					<div className='flex flex-1 gap-2'>
+						{/* color preview box */}
+						<PopoverAnchor className='cursor-pointer'>
+							<ColorPreview color={value} className='size-5.5' />
+						</PopoverAnchor>
 
 						<Input
 							value={value}
