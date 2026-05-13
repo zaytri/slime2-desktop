@@ -18,13 +18,14 @@ export default function SwapSettingIndexMenuItems({
 	const { settings, getCategory, getSetting } = useWidgetSettingsEditor();
 	const { swapIndex } = useWidgetSettingsEditorDispatch();
 
-	const groupLength = Object.keys(
-		(categoryId
-			? sectionId
-				? getSetting(sectionId, categoryId)
-				: getCategory(categoryId)
-			: settings) || {},
-	).length;
+	const group = categoryId
+		? sectionId
+			? getSetting(sectionId, categoryId)
+			: getCategory(categoryId)
+		: settings;
+
+	const groupLength =
+		group && 'settings' in group ? Object.keys(group.settings).length : 0;
 
 	// second and third checks are edge case checks
 	const canSwapUp = index > 0 && groupLength > 0 && index < groupLength;
