@@ -324,6 +324,7 @@ function ImportsField({
 									}
 								}}
 							>
+								<span className='sr-only'>Delete</span>
 								<XSvg className='size-4' />
 							</button>
 						</div>
@@ -396,6 +397,7 @@ function AccountField({
 				className='rounded-1 px-1.5 text-zinc-800 over:bg-rose-800 over:text-white over:outline over:outline-offset-0! over:outline-rose-900'
 				onClick={onDelete}
 			>
+				<span className='sr-only'>Delete</span>
 				<XSvg className='size-4' />
 			</button>
 		</div>

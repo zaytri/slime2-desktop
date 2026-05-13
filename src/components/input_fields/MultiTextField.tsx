@@ -103,6 +103,7 @@ export default function MultiTextField({
 									}
 								}}
 							>
+								<span className='sr-only'>Delete</span>
 								<p>{value}</p>
 								<XSvg className='size-2 text-zinc-400 group-over:text-rose-700' />
 							</button>

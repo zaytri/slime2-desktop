@@ -4,7 +4,7 @@ import InputDescription from '@/components/input_fields/InputDescription';
 import MediaIcon from '@/components/MediaIcon';
 import MediaInputPreview from '@/components/MediaInputPreview';
 import { useDialog } from '@/contexts/dialog/useDialog';
-import { MediaType } from '@/helpers/openFile';
+import type { MediaType } from '@/helpers/openFile';
 import XSvg from '@@/svg/XSvg';
 import { Button, Field, Input, Label } from '@headlessui/react';
 import clsx from 'clsx';
@@ -77,6 +77,7 @@ export default function MediaField({
 									);
 								}}
 							>
+								<span className='sr-only'>Delete {capitalType}</span>
 								<XSvg className='h-3.5 drop-shadow-[0_1px_#0008]' />
 							</Button>
 
@@ -86,8 +87,6 @@ export default function MediaField({
 									type === 'audio' ? 'rounded-full' : 'rounded-1',
 								)}
 							></div>
-
-							<span className='sr-only'>Delete {capitalType}</span>
 						</div>
 					)}
 
