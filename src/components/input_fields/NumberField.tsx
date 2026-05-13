@@ -1,6 +1,6 @@
 import InputDescription from '@/components/input_fields/InputDescription';
 import { Field, Input, Label } from '@headlessui/react';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 type NumberFieldProps = {
 	label?: string;
@@ -14,6 +14,7 @@ type NumberFieldProps = {
 	compact?: boolean;
 	disabled?: boolean;
 	onEnterKey?: VoidFunction;
+	allowValueScroll?: boolean;
 };
 
 export default function NumberField({
@@ -28,6 +29,7 @@ export default function NumberField({
 	compact = false,
 	disabled = false,
 	onEnterKey,
+	allowValueScroll = false,
 }: NumberFieldProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
@@ -38,40 +40,34 @@ export default function NumberField({
 		if (onEnterKey && event.key === 'Enter') {
 			onEnterKey();
 		}
+
+		if (!allowValueScroll) {
+			// add back functionality to allow arrow keys to change number
+			const stepValue = typeof step === 'number' && step > 0 ? step : 1;
+			const startValue = value ?? 0;
+
+			if (event.key === 'ArrowUp') {
+				const newValue = startValue + stepValue;
+				onChange(typeof max === 'number' ? Math.min(max, newValue) : newValue);
+			} else if (event.key === 'ArrowDown') {
+				const newValue = startValue - stepValue;
+				onChange(typeof min === 'number' ? Math.max(min, newValue) : newValue);
+			}
+		}
 	}
 
-	// prevents using mouse wheel to increment/decrement number
-	// since mouse wheel also scrolls the entire container
-	useEffect(() => {
-		const inputElement = inputRef.current;
-		if (!inputElement) return;
-
-		function onWheel(event: WheelEvent) {
-			event.preventDefault();
+	function onChangeNumber(
+		event: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
+	) {
+		if (!allowValueScroll && !('inputType' in event.nativeEvent)) {
+			// prevents mouse wheel and arrow keys to change number
+			// works since text input uses InputEvent and those just use Event,
+			// and inputType only exists on InputEvent
+			return;
 		}
 
-		// passive: false is what makes this work
-		inputElement.addEventListener('wheel', onWheel, { passive: false });
-
-		return () => {
-			inputElement.removeEventListener('wheel', onWheel);
-		};
-	}, [inputRef.current]);
-
-	function onChangeNumber(numberString: string) {
-		let newNumber = numberString
-			? Number.isInteger(step)
-				? Number.parseInt(numberString)
-				: Number.parseFloat(numberString)
-			: NaN;
-
-		if (Number.isNaN(newNumber)) {
-			onChange(null);
-		} else {
-			if (max !== undefined) newNumber = Math.min(newNumber, max);
-			if (min !== undefined) newNumber = Math.max(newNumber, min);
-			onChange(newNumber);
-		}
+		const newNumber = event.target.valueAsNumber;
+		onChange(Number.isNaN(newNumber) ? null : newNumber);
 	}
 
 	if (compact) {
@@ -88,9 +84,7 @@ export default function NumberField({
 					disabled={disabled}
 					value={value === null ? '' : value}
 					type='number'
-					onChange={event => {
-						onChangeNumber(event.target.value);
-					}}
+					onChange={onChangeNumber}
 					size={1}
 					placeholder={placeholder}
 					className='min-w-0 flex-1 bg-white py-0.5 pr-1 pl-1.5 outline-none placeholder:text-zinc-400 disabled:bg-zinc-300'
@@ -124,9 +118,7 @@ export default function NumberField({
 					step={step || 1} // default step to 1
 					placeholder={placeholder}
 					className='input-class'
-					onChange={event => {
-						onChangeNumber(event.target.value);
-					}}
+					onChange={onChangeNumber}
 					onKeyDown={onKeyDown}
 				/>
 			</div>
