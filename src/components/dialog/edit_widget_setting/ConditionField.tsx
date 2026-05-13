@@ -38,22 +38,22 @@ export default function ConditionField({
 		conditions.length > 0
 			? typeof conditions[conditions.length - 1]?.value === 'number'
 				? 'number'
-				: typeof conditions[conditions.length - 1]?.value === 'boolean'
-					? 'boolean'
-					: 'string'
-			: 'string',
+				: typeof conditions[conditions.length - 1]?.value === 'string'
+					? 'string'
+					: 'boolean'
+			: 'boolean',
 	);
 
 	const [id, setId] = useState(filteredIds[0]);
 	const [valueError, setValueError] = useState('');
 	const [text, setText] = useState('');
 	const [number, setNumber] = useState<number | null>(null);
-	const [boolean, setBoolean] = useState(false);
+	const [boolean, setBoolean] = useState(true);
 
 	function resetInputValue() {
 		setText('');
 		setNumber(null);
-		setBoolean(false);
+		setBoolean(true);
 		setValueError('');
 	}
 
@@ -251,6 +251,7 @@ export default function ConditionField({
 										removeConditionAtIndex(index);
 									}}
 								>
+									<span className='sr-only'>Delete</span>
 									<XSvg className='size-4' />
 								</button>
 							</div>
