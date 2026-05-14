@@ -68,7 +68,7 @@ export default function useWidgetRequest() {
 				if (unlisten) unlisten();
 			});
 		};
-	}, []);
+	}, [accounts]);
 }
 
 const FollowDateRequest = z.object({
