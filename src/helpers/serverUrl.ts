@@ -8,7 +8,7 @@ export const DEFAULT_BASE_URL = `http://localhost:${PORT}`;
 export const TILES_BASE_URL = `${DEFAULT_BASE_URL}/tile`;
 export const PREVIEW_BASE_URL = `${DEFAULT_BASE_URL}/preview`;
 export const WEBSOCKET_BASE_URL = `ws://localhost:${PORT}/websocket`;
-export const OVERLAY_SERVER_BASE_URL = `http://localhost:${import.meta.env.PROD ? `${PROD_PORT}/overlay_server` : DEV_OVERLAY_SERVER_PORT}`;
+export const OVERLAY_SERVER_BASE_URL = `http://localhost:${import.meta.env.PROD ? `${PROD_PORT}/overlay` : DEV_OVERLAY_SERVER_PORT}`;
 
 export function createTilesUrl(id: string, path: string) {
 	return `${TILES_BASE_URL}/${id}/${path}`;
