@@ -9,5 +9,10 @@
 		"js": ["script.js", "https://colorjs.io/dist/color.global.min.js"],
 		"css": ["styles.css"]
 	},
-	"accounts": [{ "type": "read", "service": "twitch" }]
+	"accounts": [
+		{
+			"type": "read",
+			"service": "twitch"
+		}
+	]
 }

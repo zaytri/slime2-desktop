@@ -32,55 +32,60 @@
 	><img class="cheermote emote" /><span class="cheer-amount"></span
 ></template>
 
-<!-- svg used for outline -->
-<svg class="absolute inset-0 size-0 opacity-0">
+<!-- svg used for shadow -->
+<svg id="shadow-svg" class="absolute inset-0 size-0 opacity-0">
 	<defs>
-		<filter id="outline" height="200%" width="200%" x="-50%" y="-50%">
-			<!-- outline thickness -->
+		<!-- extra height and width to prevent clipping -->
+		<filter id="shadow-filter" height="200%" width="200%" x="-50%" y="-50%">
+			<!--
+				This is why we use a custom svg filter.
+				In CSS, `filter: drop-shadow();` doesn't have a spread radius.
+			-->
+			<!-- shadow spread -->
 			<feMorphology
-				id="outline-thickness"
-				in="SourceAlpha"
-				result="outline-thickness"
+				id="morph"
 				operator="dilate"
-				radius="2"
+				radius="0"
+				in="SourceAlpha"
+				result="shadow-spread"
 			/>
 
-			<!-- outline color -->
+			<!-- shadow blur -->
+			<feGaussianBlur
+				id="blur"
+				stdDeviation="0"
+				in="shadow-spread"
+				result="shadow-blur"
+			/>
+
+			<!-- shadow offset -->
+			<feOffset
+				id="offset"
+				dx="0"
+				dy="0"
+				in="shadow-blur"
+				result="shadow-offset"
+			/>
+
+			<!-- shadow color -->
 			<feFlood
-				id="outline-color"
+				id="flood"
 				flood-color="black"
 				flood-opacity="1"
-				result="outline-color"
+				result="shadow-color"
 			/>
 
 			<!-- apply color -->
 			<feComposite
-				in="outline-color"
-				in2="outline-thickness"
 				operator="in"
-				result="outline-layer"
-			/>
-
-			<!-- outline blur -->
-			<feGaussianBlur
-				id="outline-blur"
-				in="outline-layer"
-				stdDeviation="0"
-				result="outline-blur"
-			/>
-
-			<!-- outline offset -->
-			<feOffset
-				id="outline-offset"
-				in="outline-blur"
-				dx="0"
-				dy="0"
-				result="outline-result"
+				in="shadow-color"
+				in2="shadow-offset"
+				result="shadow-result"
 			/>
 
 			<feMerge>
-				<!-- draw outline -->
-				<feMergeNode in="outline-result" />
+				<!-- draw shadow -->
+				<feMergeNode in="shadow-result" />
 				<!-- draw source -->
 				<feMergeNode in="SourceGraphic" />
 			</feMerge>

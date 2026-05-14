@@ -1,7 +1,7 @@
 import { useLoaderData } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { cacheBust, createDataUrl } from '../helpers/serverUrl';
-import { Meta } from '../helpers/widgetApi';
+import type { Meta } from '../helpers/widgetApi';
 
 export default function useMetaLoader() {
 	const { meta, widgetId } = useLoaderData({ from: '/$' });

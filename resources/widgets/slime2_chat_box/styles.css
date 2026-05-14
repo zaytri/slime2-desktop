@@ -1,31 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 #widget {
-	--default-font-name: 'Inter';
-	--default-font-size: 14px;
-	--default-font-weight: normal;
-	--default-font-color: black;
-	--default-direction: column;
-	--default-justify: end;
-	--default-align: flex-start;
-	--default-line-clamp: 4;
-	--default-max-width: 500px;
+	/* define using custom variables loaded from JS with fallback values */
+	/* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/var */
 
-	--font-weight: var(--custom-font-weight, var(--default-font-weight));
-	--font-size: var(--custom-font-size, var(--default-font-size));
-	--font-color: var(--custom-font-color, var(--default-font-color));
-	--direction: var(--custom-direction, var(--default-direction));
-	--justify: var(--custom-justify, var(--default-justify));
-	--align: var(--custom-align, var(--default-align));
-	--line-clamp: var(--custom-line-clamp, var(--default-line-clamp));
-	--max-width: var(--custom-max-width, var(--default-max-width));
+	--font-weight: var(--custom-font-weight, normal);
+	--font-size: var(--custom-font-size, 14px);
+	--message-color: var(--custom-message-color, white);
+	--direction: var(--custom-direction, column);
+	--justify: var(--custom-justify, end);
+	--align: var(--custom-align, flex-start);
+	--line-clamp: var(--custom-line-clamp, 4);
+	--max-width: var(--custom-max-width, 500px);
+	--badge-display: var(--custom-badge-display, inline-flex);
+	--pronoun-display: var(--custom-pronoun-display, inline-flex);
+	--pronoun-transform: var(--custom-pronoun-transform, lowercase);
 
 	font-family:
-		var(--custom-font-name), var(--default-font-name), Nunito, Helvetica, Arial,
-		sans-serif;
+		var(--custom-font-name), 'Inter', Nunito, Helvetica, Arial, sans-serif;
+
 	font-weight: var(--font-weight);
 	font-size: var(--font-size);
-	color: var(--font-color);
+	color: var(--message-color);
 
 	padding-left: 8px;
 	padding-right: 8px;
@@ -45,36 +41,26 @@
 	gap: 8px;
 }
 
-#widget.align-top {
-	flex-direction: column-reverse;
-	justify-content: start;
-}
-
-#widget.align-bottom {
-	flex-direction: column;
-	justify-content: end;
-}
-
-#widget.align-left {
-	align-items: flex-start;
-}
-
-#widget.align-right {
-	align-items: flex-end;
-}
-
-.line-clamp .message {
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: var(--line-clamp);
-	line-clamp: var(--line-clamp);
+#shadow-svg {
+	position: absolute;
+	inset: 0;
+	height: 0;
+	width: 0;
+	opacity: 0;
 }
 
 .message {
 	flex-shrink: 0;
 	max-width: var(--max-width);
 	padding: 4px;
+	animation: none;
+
+	/* all necessary for line clamp to work */
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: var(--line-clamp);
+	line-clamp: var(--line-clamp);
 }
 
 .user {
@@ -100,6 +86,10 @@
 	color: var(--twitch-dark-username-color, var(--font-color));
 }
 
+#widget.use-shadow {
+	filter: url(#shadow-filter);
+}
+
 .name {
 	display: inline;
 	position: relative;
@@ -112,7 +102,7 @@
 }
 
 .badges {
-	display: inline-flex;
+	display: var(--badge-display);
 }
 
 .badges:empty {
@@ -128,7 +118,8 @@
 }
 
 .pronouns {
-	display: inline;
+	display: var(--pronoun-display);
+	text-transform: var(--pronoun-transform);
 	font-size: calc(1em - 2px);
 	white-space: pre;
 }
@@ -158,6 +149,97 @@
 	margin-bottom: -0.2em;
 }
 
-.outline {
-	filter: url(#outline);
+/**************
+ * Animations *
+ **************/
+
+.animation-enter-fade .message {
+	animation: fade-in 0.5s forwards;
+}
+
+.animation-enter-fade-left .message {
+	animation:
+		fade-in 0.5s forwards,
+		move-in-left 0.5s forwards;
+}
+
+.animation-enter-fade-right .message {
+	animation:
+		fade-in 0.5s forwards,
+		move-in-right 0.5s forwards;
+}
+
+.animation-exit-fade .message.exit {
+	animation: fade-out 0.5s forwards;
+}
+
+.animation-exit-fade-left .message.exit {
+	animation:
+		fade-out 0.5s forwards,
+		move-out-left 0.5s forwards;
+}
+
+.animation-exit-fade-right .message.exit {
+	animation:
+		fade-out 0.5s forwards,
+		move-out-right 0.5s forwards;
+}
+
+.animation-exit-none .message.exit {
+	display: none;
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fade-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+		display: none;
+	}
+}
+
+@keyframes move-in-right {
+	from {
+		transform: translateX(100%);
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes move-out-right {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}
+
+@keyframes move-in-left {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes move-out-left {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-100%);
+	}
 }

@@ -2,19 +2,25 @@
 // ***************************************************************************
 const slime2 = window.slime2;
 
+// set to true to automatically console log event data
+const USE_DETAILS_LOG = true;
+
 const EPOCH = new Date(0);
 
 const Widget = {
-	values: {},
-	channelBadges: new Map(),
-	globalBadges: new Map(),
-	cheermotes: new Map(),
-	bttv: {},
-	ffz: {},
+	values: new Map(),
 	messagesDeleted: new Map(),
 	usersCleared: new Map(),
 	lastChatClear: EPOCH,
-	accountId: null,
+	lastPlayedSound: EPOCH,
+};
+
+const Account = {
+	id: '',
+	channelBadges: new Map(),
+	globalBadges: new Map(),
+	cheermotes: new Map(),
+	thirdPartyEmotes: new Map(),
 };
 
 // Listeners
@@ -25,13 +31,15 @@ addEventListener('slime2:widget-accounts', widgetAccountsListener);
 addEventListener('slime2:twitch-event', twitchEventListener);
 
 function widgetValuesListener(event) {
-	console.log('slime2:widget-values', event.detail);
-	Widget.values = event.detail;
+	logEventDetails(event.type, event.detail);
+
+	Widget.values = new Map(Object.entries(event.detail));
 
 	const widgetElement = document.getElementById('widget');
 
-	function setStyle(cssProperty, value) {
-		widgetElement.style.setProperty(cssProperty, value);
+	// use in CSS as var(--custom-[cssVarName])
+	function setCustomCSS(cssVarName, value) {
+		widgetElement.style.setProperty(`--custom-${cssVarName}`, value);
 	}
 
 	function addClass(...classes) {
@@ -42,132 +50,171 @@ function widgetValuesListener(event) {
 		widgetElement.classList.remove(...classes);
 	}
 
-	// quotation marks around font name is necessary
-	// to handle font names that contain spaces
-	setStyle('--custom-font-name', `"${Widget.values['font-name']}"`);
-	setStyle('--custom-font-size', `${Widget.values['font-size']}px`);
-	setStyle('--custom-font-weight', Widget.values['font-weight']);
-	setStyle('--custom-font-color', Widget.values['message-color']);
-	setStyle('--custom-max-width', `${Widget.values['max-width']}px`);
+	function toggleClass(className, force) {
+		widgetElement.classList.toggle(className, force);
+	}
+
+	// text settings
+	[
+		// quotation marks around font name is necessary
+		// to handle font names that contain spaces
+		['font-name', `"${Widget.values.get('font-name') ?? 'Inter'}"`],
+		['font-size', `${Widget.values.get('font-size') ?? 14}px`],
+		['font-weight', Widget.values.get('font-weight') ?? 'normal'],
+		['max-width', `${Widget.values.get('max-width') ?? 500}px`],
+		['line-clamp', Widget.values.get('max-lines') ?? 4],
+		['message-color', Widget.values.get('message-color') ?? 'white'],
+		['username-color', Widget.values.get('custom-username-color') ?? 'white'],
+	].forEach(([cssVarName, value]) => {
+		setCustomCSS(cssVarName, value);
+	});
 
 	removeClass(
-		'username-color-twitch',
-		'username-color-custom',
-		'username-color-twitch-light',
-		'username-color-twitch-dark',
+		...['twitch', 'twitch-light', 'twitch-dark', 'custom'].map(color => {
+			return `username-color-${color}`;
+		}),
 	);
-	addClass(`username-color-${Widget.values['username-color']}`);
-	setStyle('--custom-username-color', Widget.values['custom-username-color']);
+	addClass(`username-color-${Widget.values.get('username-color')}`);
 
-	if (Widget.values['max-lines']) {
-		addClass('line-clamp');
-		setStyle('--custom-line-clamp', Widget.values['max-lines']);
+	// shadow settings
+
+	toggleClass('use-shadow', Widget.values.get('use-shadow') ?? false);
+
+	[
+		['morph', 'radius', 'shadow-spread'],
+		['flood', 'flood-color', 'shadow-color'],
+		['blur', 'stdDeviation', 'shadow-blur'],
+		['offset', 'dx', 'shadow-offset-x'],
+		['offset', 'dy', 'shadow-offset-y'],
+	].forEach(([id, attributeName, valueKey]) => {
+		document
+			.getElementById(id)
+			.setAttribute(attributeName, Widget.values.get(valueKey) ?? 0);
+	});
+
+	// direction settings
+
+	if (Widget.values.get('direction-axis') === 'horizontal') {
+		if (Widget.values.get('direction-horizontal-flow') === 'to-right') {
+			setCustomCSS('direction', 'row-reverse');
+			setCustomCSS('justify', 'start');
+		} else {
+			setCustomCSS('direction', 'row');
+			setCustomCSS('justify', 'end');
+		}
+		setCustomCSS(
+			'align',
+			Widget.values.get('direction-horizontal-alignment') === 'bottom'
+				? 'flex-end'
+				: 'flex-start',
+		);
 	} else {
-		removeClass('line-clamp');
+		if (Widget.values.get('direction-vertical-flow') === 'to-bottom') {
+			setCustomCSS('direction', 'column-reverse');
+			setCustomCSS('justify', 'start');
+		} else {
+			setCustomCSS('direction', 'column');
+			setCustomCSS('justify', 'end');
+		}
+
+		setCustomCSS(
+			'align',
+			Widget.values.get('direction-vertical-alignment') === 'right'
+				? 'flex-end'
+				: 'flex-start',
+		);
 	}
 
-	if (Widget.values['direction-axis'] === 'horizontal') {
-		if (Widget.values['direction-horizontal-flow'] === 'to-right') {
-			setStyle('--custom-direction', 'row-reverse');
-			setStyle('--custom-justify', 'start');
-		} else {
-			setStyle('--custom-direction', 'row');
-			setStyle('--custom-justify', 'end');
-		}
+	// badge settings
 
-		if (Widget.values['direction-horizontal-alignment'] === 'bottom') {
-			setStyle('--custom-align', 'flex-end');
-		} else {
-			setStyle('--custom-align', 'flex-start');
-		}
-	} else {
-		if (Widget.values['direction-vertical-flow'] === 'to-bottom') {
-			setStyle('--custom-direction', 'column-reverse');
-			setStyle('--custom-justify', 'start');
-		} else {
-			setStyle('--custom-direction', 'column');
-			setStyle('--custom-justify', 'end');
-		}
-
-		if (Widget.values['direction-vertical-alignment'] === 'right') {
-			setStyle('--custom-align', 'flex-end');
-		} else {
-			setStyle('--custom-align', 'flex-start');
-		}
-	}
-
-	function setOutlineAttribute(id, name, value) {
-		document.getElementById(id).setAttribute(name, value);
-	}
-
-	Widget.values['use-outline'] ? addClass('outline') : removeClass('outline');
-	setOutlineAttribute(
-		'outline-thickness',
-		'radius',
-
-		Widget.values['outline-thickness'],
+	setCustomCSS(
+		'badge-display',
+		Widget.values.get('hide-badges') ? 'none' : 'initial',
 	);
-	setOutlineAttribute(
-		'outline-color',
-		'flood-color',
-		Widget.values['outline-color'],
+
+	// pronoun settings
+
+	setCustomCSS(
+		'pronoun-display',
+		Widget.values.get('pronouns-display') === 'hidden' ? 'none' : 'initial',
 	);
-	setOutlineAttribute(
-		'outline-blur',
-		'stdDeviation',
-		Widget.values['outline-blur'],
+	setCustomCSS(
+		'pronoun-transform',
+		Widget.values.get('pronouns-display') ?? 'lowercase',
 	);
-	setOutlineAttribute(
-		'outline-offset',
-		'dx',
-		Widget.values['outline-offset-x'],
+
+	// animation settings
+
+	const animationClasses = ['fade', 'fade-left', 'fade-right', 'none'];
+
+	removeClass(
+		...animationClasses.map(animation => {
+			return `animation-enter-${animation}`;
+		}),
+		...animationClasses.map(animation => {
+			return `animation-exit-${animation}`;
+		}),
 	);
-	setOutlineAttribute(
-		'outline-offset',
-		'dy',
-		Widget.values['outline-offset-y'],
+
+	addClass(
+		`animation-enter-${Widget.values.get('entrance-animation') ?? 'none'}`,
+		`animation-exit-${Widget.values.get('exit-animation') ?? 'none'}`,
 	);
 }
 
 function widgetAccountsListener(event) {
-	console.log('slime2:widget-accounts', event.detail);
+	logEventDetails(event.type, event.detail);
 
-	const accountData = event.detail.accounts[0];
+	const data = event.detail.accounts[0];
+	Account.id = data.id;
 
-	Widget.accountId = accountData.id;
-	Widget.bttv = accountData.betterTTV;
-	Widget.ffz = accountData.frankerFaceZ;
+	// collect bttv emotes into Account.bttvEmotes
+	data.betterTTV?.emotes?.forEach(emote => {
+		Account.thirdPartyEmotes.set(emote.code, { type: 'bttv', data: emote });
+	});
 
-	// converting arrays to map for fast access
+	// collect ffz emotes into Account.ffzEmotes
+	data.frankerFaceZ?.emotes?.forEach(emote => {
+		Account.thirdPartyEmotes.set(emote.name, { type: 'ffz', data: emote });
+	});
 
-	accountData.globalBadges.forEach(badge => {
+	// collect global badges into Account.globalBadges
+	data.globalBadges.forEach(badge => {
 		const badgeVersions = new Map();
+
 		badge.versions.forEach(version => {
 			badgeVersions.set(version.id, version);
 		});
-		Widget.globalBadges.set(badge.set_id, {
+
+		Account.globalBadges.set(badge.set_id, {
 			...badge,
 			versions: badgeVersions,
 		});
 	});
 
-	accountData.channelBadges.forEach(badge => {
+	// collect channel badges into Account.channelBadges
+	data.channelBadges.forEach(badge => {
 		const badgeVersions = new Map();
+
 		badge.versions.forEach(version => {
 			badgeVersions.set(version.id, version);
 		});
-		Widget.channelBadges.set(badge.set_id, {
+
+		Account.channelBadges.set(badge.set_id, {
 			...badge,
 			versions: badgeVersions,
 		});
 	});
 
-	accountData.cheermotes.forEach(cheermote => {
+	// collect cheermotes into Account.cheermotes
+	data.cheermotes.forEach(cheermote => {
 		const cheermoteTiers = new Map();
+
 		cheermote.tiers.forEach(tier => {
 			cheermoteTiers.set(tier.min_bits, tier);
 		});
-		Widget.cheermotes.set(cheermote.prefix, {
+
+		Account.cheermotes.set(cheermote.prefix, {
 			...cheermote,
 			tiers: cheermoteTiers,
 		});
@@ -175,9 +222,9 @@ function widgetAccountsListener(event) {
 }
 
 function twitchEventListener(event) {
-	console.log('slime2:twitch-event', event.detail.type, event.detail);
+	logEventDetails(`${event.type} - ${event.detail.type}`, event.detail);
 
-	const timestamp = new Date(event.timestamp);
+	const timestamp = new Date(event.detail.timestamp);
 
 	const { type, data } = event.detail;
 
@@ -192,13 +239,14 @@ function twitchEventListener(event) {
 			return handleChatClearUserMessages(data, timestamp);
 		case 'channel.chat.notification':
 			if (data.notice_type === 'announcement') {
+				// treat announcements as regular chat messages
 				return handleChatMessage(data, timestamp);
 			}
 			break;
 	}
 }
 
-// Event Handlers
+// Twitch Event Handlers
 // ***************************************************************************
 
 async function handleChatMessage(data, timestamp) {
@@ -210,18 +258,67 @@ async function handleChatMessage(data, timestamp) {
 		message_id,
 		color,
 		badges,
+		message_type,
 	} = data;
 
-	const [pronouns, followDate] = await Promise.all([
+	// filter out users that match Hide Users
+	for (const hideName of Widget.values.get('hide-users') ?? []) {
+		if (
+			chatter_user_name.toLowerCase() === hideName.toLowerCase() ||
+			chatter_user_login.toLowerCase() === hideName.toLowerCase()
+		) {
+			return;
+		}
+	}
+
+	// filter out messages that start with these prefixes
+	for (const hidePrefix of Widget.values.get('hide-prefixes') ?? []) {
+		if (message.text.startsWith(hidePrefix)) {
+			return;
+		}
+	}
+
+	// filter out messages that contain these words
+	for (const hideWord of Widget.values.get('hide-words') ?? []) {
+		if (message.text.toLowerCase().includes(hideWord.toLowerCase())) {
+			return;
+		}
+	}
+
+	// filter out first time chat messages
+	if (Widget.values.get('hide-first-chat') && message_type === 'user_intro') {
+		return;
+	}
+
+	// get user's pronouns and follow age
+	const [pronouns, followDateString] = await Promise.all([
 		slime2.getPronouns('twitch', chatter_user_id, chatter_user_login),
-		slime2.getTwitchFollowDate(Widget.accountId, chatter_user_id),
+		slime2.getTwitchFollowDate(Account.id, chatter_user_id),
 	]);
+
+	// follow age check
+	if (Widget.values.get('follower-only')) {
+		if (!followDateString) return; // user isn't a follower
+
+		const followDate = new Date(followDateString);
+
+		// follow age given in hours
+		const minFollowTime =
+			(Widget.values.get('follow-age') ?? 0) * 60 * 60 * 100;
+		const userFollowTime = timestamp.getTime() - followDate.getTime();
+		if (userFollowTime < minFollowTime) {
+			return;
+		}
+	}
 
 	const messageTemplateClone = cloneTemplate('message-template');
 	const messageElement = messageTemplateClone.querySelector('.message');
+
+	// apply data attributes for message deletion reference
 	messageElement.setAttribute('data-message-id', message_id);
 	messageElement.setAttribute('data-user-id', chatter_user_id);
 
+	// apply username color
 	if (color) {
 		messageElement.style.setProperty('--twitch-username-color', color);
 		messageElement.style.setProperty(
@@ -234,44 +331,109 @@ async function handleChatMessage(data, timestamp) {
 		);
 	}
 
+	// build user half of message
 	messageTemplateClone
 		.querySelector('.user')
 		.appendChild(
 			buildUser(chatter_user_name, chatter_user_login, pronouns, badges),
 		);
 
+	// build text half of message
 	const contentElement = messageTemplateClone.querySelector('.content');
 	message.fragments.forEach(fragment => {
-		contentElement.append(buildMessageFragment(fragment));
+		const node = buildMessageFragment(fragment);
+		if (Array.isArray(node)) {
+			// when a text fragment is split using third party emotes
+			contentElement.append(...node);
+		} else {
+			contentElement.append(node);
+		}
 	});
 
-	const widgetBody = document.getElementById('widget');
+	setTimeout(
+		() => {
+			const widgetBody = document.getElementById('widget');
 
-	if (
-		// chat cleared
-		timestamp < Widget.lastChatClear ||
-		// message deleted
-		Widget.messagesDeleted.get(message_id) ||
-		// user banned or timed out
-		timestamp < (Widget.usersCleared.get(chatter_user_id) ?? EPOCH)
-	) {
-		// if message was already deleted by the above checks, don't render
-		return;
-	}
+			if (
+				// chat cleared
+				timestamp < Widget.lastChatClear ||
+				// message deleted
+				Widget.messagesDeleted.get(message_id) ||
+				// user banned or timed out
+				timestamp < (Widget.usersCleared.get(chatter_user_id) ?? EPOCH)
+			) {
+				// if message was already deleted by the above checks, don't render
+				return;
+			}
 
-	widgetBody.appendChild(messageTemplateClone);
+			widgetBody.appendChild(messageTemplateClone);
+
+			// sound handling
+			const soundSrc = Widget.values.get('sound');
+			if (soundSrc) {
+				const now = new Date();
+				const cooldown = (Widget.values.get('sound-cooldown') ?? 5) * 1000;
+				const timeSinceLastSound =
+					now.getTime() - Widget.lastPlayedSound.getTime();
+
+				if (timeSinceLastSound > cooldown) {
+					// play sound once it passes the cooldown check
+					const audio = new Audio(soundSrc);
+					audio.volume = (Widget.values.get('sound.volume') ?? 20) / 100;
+					audio.play();
+					Widget.lastPlayedSound = now;
+				}
+			}
+
+			// max message handling
+			let visibleMessages = widgetBody.querySelectorAll('.message:not(.exit)');
+			while (
+				visibleMessages.length > (Widget.values.get('max-messages') ?? 50)
+			) {
+				// hide the oldest visible message
+				const messageElement = visibleMessages[0];
+				hideMessage(messageElement);
+				visibleMessages = widgetBody.querySelectorAll('.message:not(.exit)');
+			}
+
+			// message expiration handling
+			if (Widget.values.get('expire-messages')) {
+				setTimeout(
+					() => {
+						const messageElement = document
+							.getElementById('widget')
+							.querySelector(`[data-message-id='${message_id}']`);
+						if (messageElement) {
+							hideMessage(messageElement);
+						}
+					},
+					// hide after this many seconds
+					(Widget.values.get('hide-time') ?? 300) * 1000,
+				);
+			}
+		},
+		// message delay handling
+		(Widget.values.get('delay') || 0) * 1000,
+	);
 }
 
-async function handleChatMessageDelete(data) {
+function hideMessage(messageElement) {
+	messageElement.classList.add('exit');
+	setTimeout(() => {
+		messageElement.remove();
+	}, 5 * 1000);
+}
+
+function handleChatMessageDelete(data) {
 	const { message_id } = data;
 	Widget.messagesDeleted.set(message_id, true);
-	document
+	const messageElement = document
 		.getElementById('widget')
-		.querySelectorAll(`[data-message-id='${message_id}']`)
-		.forEach(element => element.remove());
+		.querySelector(`[data-message-id='${message_id}']`)
+		?.remove();
 }
 
-async function handleChatClear(timestamp) {
+function handleChatClear(timestamp) {
 	Widget.lastChatClear = timestamp;
 	document
 		.getElementById('widget')
@@ -279,7 +441,7 @@ async function handleChatClear(timestamp) {
 		.forEach(element => element.remove());
 }
 
-async function handleChatClearUserMessages(data, timestamp) {
+function handleChatClearUserMessages(data, timestamp) {
 	const { target_user_id } = data;
 	Widget.usersCleared.set(target_user_id, timestamp);
 	document
@@ -320,8 +482,8 @@ function buildUser(displayName, username, pronouns, badges) {
 function buildBadges(badges) {
 	return badges.map(userBadge => {
 		const badgeVersion =
-			Widget.channelBadges.get(userBadge.set_id)?.versions.get(userBadge.id) ??
-			Widget.globalBadges.get(userBadge.set_id)?.versions.get(userBadge.id);
+			Account.channelBadges.get(userBadge.set_id)?.versions.get(userBadge.id) ??
+			Account.globalBadges.get(userBadge.set_id)?.versions.get(userBadge.id);
 
 		const badgeClone = cloneTemplate('badge-template');
 
@@ -352,6 +514,39 @@ function buildMessageFragment(fragment) {
 function buildTextFragment(textFragment) {
 	const { text } = textFragment;
 
+	const parsedFragments = [];
+
+	const thirdPartyEmoteNames = Array.from(Account.thirdPartyEmotes.keys());
+	text.split(createEmoteRegex(thirdPartyEmoteNames)).forEach(part => {
+		if (part === '') return;
+
+		const thirdPartyEmote = Account.thirdPartyEmotes.get(part) ?? {};
+
+		if (thirdPartyEmote.type === 'bttv') {
+			const { id, animated } = thirdPartyEmote.data;
+			const src = buildBttvEmoteImageUrl(id, animated);
+			parsedFragments.push({ type: 'emote', text: part, src });
+		} else if (thirdPartyEmote.type === 'ffz') {
+			const { urls } = thirdPartyEmote.data;
+			const src = buildFfzEmoteImageUrl(urls);
+			parsedFragments.push({ type: 'emote', text: part, src });
+		} else {
+			parsedFragments.push({ type: 'text', text: part });
+		}
+	});
+
+	return parsedFragments.map(fragment => {
+		if (fragment.type === 'emote') {
+			return buildParsedEmoteFragment(fragment);
+		} else {
+			return buildParsedTextFragment(fragment);
+		}
+	});
+}
+
+function buildParsedTextFragment(parsedTextFragment) {
+	const { text } = parsedTextFragment;
+
 	const textClone = cloneTemplate('text-fragment-template');
 	textClone.querySelector('.text').textContent = text;
 
@@ -368,10 +563,29 @@ function buildMentionFragment(mentionFragment) {
 }
 
 function buildEmoteFragment(emoteFragment) {
-	const { emote } = emoteFragment;
+	const { text, emote } = emoteFragment;
+
+	let src = buildTwitchEmoteImageUrl(emote.id);
+
+	const thirdPartyEmote = Account.thirdPartyEmotes.get(text) ?? {};
+
+	// allow third party emotes to override twitch emotes
+	if (thirdPartyEmote.type === 'bttv') {
+		const { id, animated } = thirdPartyEmote.data;
+		src = buildBttvEmoteImageUrl(id, animated);
+	} else if (thirdPartyEmote.type === 'ffz') {
+		const { urls } = thirdPartyEmote.data;
+		src = buildFfzEmoteImageUrl(urls);
+	}
+
+	return buildParsedEmoteFragment({ type: 'emote', text, src });
+}
+
+function buildParsedEmoteFragment(parsedEmoteFragment) {
+	const { src } = parsedEmoteFragment;
 
 	const emoteClone = cloneTemplate('emote-fragment-template');
-	emoteClone.querySelector('.emote').src = buildTwitchEmoteImageUrl(emote.id);
+	emoteClone.querySelector('.emote').src = src;
 
 	return emoteClone;
 }
@@ -381,7 +595,7 @@ function buildCheermoteFragment(cheermoteFragment) {
 
 	const cheermoteClone = cloneTemplate('cheermote-fragment-template');
 
-	const tier = Widget.cheermotes
+	const tier = Account.cheermotes
 		.get(cheermote.prefix)
 		?.tiers.get(cheermote.tier);
 
@@ -401,10 +615,34 @@ function buildCheermoteFragment(cheermoteFragment) {
 // ***************************************************************************
 
 /** Builds Twitch emote image URL given the emote ID. */
+const BASE_TWITCH_EMOTE_URL = 'https://static-cdn.jtvnw.net/emoticons/v2';
 function buildTwitchEmoteImageUrl(id, options = {}) {
-	const { animation = 'default', background = 'dark', size = '3.0' } = options;
+	// format = 'default' | 'static' | 'animated'
+	// theme_mode = 'dark' | 'light'
+	// size = '1.0' | '2.0' | '3.0'
+	const { format = 'default', theme_mode = 'dark', size = '3.0' } = options;
+	return [BASE_TWITCH_EMOTE_URL, id, format, theme_mode, size].join('/');
+}
 
-	return `https://static-cdn.jtvnw.net/emoticons/v2/${id}/${animation}/${background}/${size}`;
+/** Builds BetterTTV emote image URL given the emote ID and animated value */
+const BASE_BTTV_EMOTE_URL = 'https://cdn.betterttv.net/emote';
+function buildBttvEmoteImageUrl(id, animated, options = {}) {
+	// static = boolean
+	// size = '1x' | '2x' | '3x'
+	const { static = false, size = '3x' } = options;
+	const urlParts = [BASE_BTTV_EMOTE_URL, id];
+
+	// static only works if the emote was animated
+	if (animated && static) urlParts.push('static');
+
+	urlParts.push(size);
+	return urlParts.join('/');
+}
+
+/** Builds FrankerFaceZ emote image URL given the possible URLs */
+function buildFfzEmoteImageUrl(urls) {
+	// urls['1'] is guaranteed, the others are not
+	return urls['4'] || urls['2'] || urls['1'];
 }
 
 /** Given the ID of an HTML template, returns the cloned contents */
@@ -455,4 +693,81 @@ function accessibleTextColor(textColor, backgroundColor) {
 	}
 
 	return new Color(newColor).toString({ format: 'hex' });
+}
+
+/** Formatted console log given type and data, if `USE_DETAILS_LOG = true` */
+function logEventDetails(type, data) {
+	if (!USE_DETAILS_LOG) return;
+
+	console.log(
+		`%c${type}`,
+		[
+			['display', 'block'],
+			['padding', '2px 8px'],
+			['border-radius', '4px'],
+			['background-color', '#d8fa99'],
+			['color', '#0d542b'],
+			['font-weight', 'bold'],
+			['font-size', '14px'],
+			['border', '2px solid #0d542b'],
+		]
+			.map(([property, value]) => `${property}: ${value};`)
+			.join(' '),
+		data,
+	);
+}
+
+/**
+ * When this regex is used in {@link String.prototype.split}, it will result in
+ * an array of strings split up by the emote names, with the emote names
+ * included. If an emote name is at the beginning or end of the string, then the
+ * array will include an empty string at the beginning or end.
+ *
+ * Examples:
+ *
+ *     const regex = createEmoteRegex(['emote', 'emote2']);
+ *     'aaa emote aaa'.split(regex) === ['aaa ', 'emote', ' aaa'];
+ *     'emote emote2'.split(regex) === ['', 'emote', '', 'emote2', ''];
+ *     ',emote!'.split(regex) === [',', 'emote', '!'];
+ *     'emoteemote2'.split(regex) === ['emoteemote2'];
+ */
+function createEmoteRegex(emoteNames) {
+	// regex escape every emote name, and join with the regex OR character
+	const regexPart = emoteNames
+		.map(emoteName => {
+			return escapeRegExp(emoteName);
+		})
+		.join('|');
+
+	/**
+	 * Explaining this regex so that I know how it works in the future...
+	 *
+	 * These are all valid to go directly before or after an emote:
+	 *
+	 * | Regex   | Explanation                        |
+	 * | ------- | ---------------------------------- |
+	 * | `\s`    | any whitespace character           |
+	 * | `^`     | beginning of the string            |
+	 * | `$`     | end of the string                  |
+	 * | `[.,!]` | period, comma, or exclamation mark |
+	 *
+	 * These match a group without including it in the result:
+	 *
+	 * | Regex  | Explanation                                                      |
+	 * | ------ | ---------------------------------------------------------------- |
+	 * | (?<= ) | Positive lookbehind. Matches a group before the main expression. |
+	 * | (?= )  | Positive lookahead. Matches a group after the main expression.   |
+	 */
+	const regex = String.raw`(?<=\s|[.,!]|^)(${regexPart})(?=\s|[.,!]|$)`;
+	return new RegExp(regex, 'g');
+}
+
+/**
+ * Escapes all characters that have special functionality in regex by inserting
+ * a backslash before them
+ *
+ * Characters escaped: . * + ? ^ $ { } ( ) | [ ] \
+ */
+function escapeRegExp(string) {
+	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
