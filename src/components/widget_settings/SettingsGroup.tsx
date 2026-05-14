@@ -9,16 +9,15 @@ import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react';
 import WidgetSetting from './WidgetSetting';
 
 type SettingsGroupProps = {
-	settings:
-		| WidgetSettingType.Category['settings']
-		| WidgetSettingType.Section['settings']
-		| WidgetSettingType.MultiSection['settings'];
+	settings: (
+		| WidgetSettingType.Category
+		| WidgetSettingType.AnySection
+	)['settings'];
 };
 
 export default function SettingsGroup({ settings }: SettingsGroupProps) {
 	const values = useWidgetValues();
 	const parentId = useWidgetSettingParent();
-	const { settings: appSettings } = useSettings();
 
 	return (
 		<>
@@ -64,39 +63,7 @@ export default function SettingsGroup({ settings }: SettingsGroupProps) {
 
 				return (
 					<div className='flex'>
-						{appSettings.devMode && (
-							<TooltipProvider timeout={0} placement='right'>
-								<TooltipAnchor
-									className='z-10 -mb-100 -ml-4 self-start'
-									render={<button type='button' />}
-								>
-									<div className='rounded-1 p-1 text-zinc-600 over:bg-zinc-700 over:text-white over:outline over:outline-zinc-800'>
-										<span className='sr-only'>Dev Peek</span>
-										<EyeSvg className='size-4' />
-									</div>
-								</TooltipAnchor>
-
-								<Tooltip className='dark-menu p-0!'>
-									<p className='dark-menu-item flex justify-center px-2 py-1 font-mono select-all not-only:border-b not-only:border-zinc-500'>
-										{parentId ? getWidgetValueChildKey(parentId, id) : id}
-									</p>
-									{'options' in setting && (
-										<div className='flex flex-col px-2 py-1'>
-											{setting.options.map(option => {
-												return (
-													<div className='dark-menu-item flex gap-1 p-0!'>
-														<p>{i18nStringTransform(option.label)}:</p>
-														<p className='font-mono'>
-															{JSON.stringify(option.value)}
-														</p>
-													</div>
-												);
-											})}
-										</div>
-									)}
-								</Tooltip>
-							</TooltipProvider>
-						)}
+						<DevPeek id={id} setting={setting} />
 						<div className='flex flex-1 flex-col'>
 							<WidgetSetting
 								key={id}
@@ -112,5 +79,92 @@ export default function SettingsGroup({ settings }: SettingsGroupProps) {
 				);
 			})}
 		</>
+	);
+}
+
+type DevPeekProps = {
+	id: string;
+	setting: WidgetSettingType.NonCategory;
+};
+
+function DevPeek({ id, setting }: DevPeekProps) {
+	const { settings: appSettings } = useSettings();
+
+	if (
+		!appSettings.devMode ||
+		setting.type === 'section' ||
+		setting.type === 'multi-section'
+	)
+		return;
+
+	return (
+		<TooltipProvider timeout={0} placement='right'>
+			<TooltipAnchor
+				className='z-10 -mb-100 -ml-4 self-start'
+				render={<button type='button' />}
+			>
+				<div className='rounded-1 p-1 text-zinc-600 over:bg-zinc-700 over:text-white over:outline over:outline-zinc-800'>
+					<span className='sr-only'>Dev Peek</span>
+					<EyeSvg className='size-4' />
+				</div>
+			</TooltipAnchor>
+
+			<Tooltip render={<section />} className='dark-menu min-w-0! p-0!'>
+				<div className='flex flex-col gap-2 overflow-y-auto p-3 pt-2'>
+					<h5 className='flex items-center gap-2 font-bold text-zinc-300 uppercase drop-shadow-[0_1px_black]'>
+						<EyeSvg className='size-4' />
+						Dev Peek
+					</h5>
+
+					<PeekTag label='ID' value={id} />
+					{'defaultValue' in setting && (
+						<PeekTag
+							label='Default Value'
+							value={setting.defaultValue ?? null}
+						/>
+					)}
+
+					{'options' in setting && setting.options.length > 0 && (
+						<div className='flex flex-col gap-2'>
+							<p className='text-3.5 font-bold text-zinc-300 uppercase text-shadow-[0_1px_black]'>
+								Options
+							</p>
+							<ul className='flex flex-col gap-1 pl-5'>
+								{setting.options.map(option => {
+									const label = i18nStringTransform(option.label);
+									return (
+										<li key={label} className='list-disc text-zinc-300'>
+											<PeekTag label={label} value={option.value} />
+										</li>
+									);
+								})}
+							</ul>
+						</div>
+					)}
+				</div>
+			</Tooltip>
+		</TooltipProvider>
+	);
+}
+
+type PeekTagProps = {
+	label: string;
+	value: unknown;
+};
+
+function PeekTag({ label, value }: PeekTagProps) {
+	return (
+		<div className='grid grid-cols-2 items-center overflow-hidden rounded-1 border-2 border-zinc-400 bg-zinc-700 whitespace-nowrap text-white'>
+			<p className='px-2 text-3.5 font-bold'>{label}</p>
+			<div className='flex flex-col border-l border-zinc-400 bg-zinc-800 px-2 font-mono'>
+				{Array.isArray(value) ? (
+					value.map((item, index) => {
+						return <p key={index}>{JSON.stringify(item)}</p>;
+					})
+				) : (
+					<p>{JSON.stringify(value)}</p>
+				)}
+			</div>
+		</div>
 	);
 }
