@@ -1,4 +1,4 @@
-import { WidgetMeta } from '@/helpers/json/widgetMeta';
+import type { WidgetMeta } from '@/helpers/json/widgetMeta';
 import { createContext, useContext } from 'react';
 import { contextErrorMessage } from '../common';
 

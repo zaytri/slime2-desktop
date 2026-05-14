@@ -25,12 +25,12 @@ export default function WidgetSettings({
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
 	const accountsId =
-		widgetMeta.accounts.length > 0
+		widgetMeta && widgetMeta.accounts.length > 0
 			? `[slime2]_widget_${widgetId}_accounts`
 			: undefined;
 	const aboutId = `[slime2]_widget_${widgetId}_about`;
 	const [topScrollId, setTopScrollId] = useState<string>(
-		accountsId || Object.keys(settings)[0],
+		accountsId ?? Object.keys(settings)[0] ?? '',
 	);
 
 	function openMultiSection(id: string) {
@@ -96,10 +96,10 @@ export default function WidgetSettings({
 						}
 
 						const currentScrollTop = scrollContainer.scrollTop;
-						let newTopId = categoryIds[0];
+						let newTopId = categoryIds[0]!;
 
 						for (let i = 1; i < categoryIds.length; i++) {
-							const categoryId = categoryIds[i];
+							const categoryId = categoryIds[i]!;
 							const categoryContainer = document.getElementById(categoryId);
 							if (categoryContainer) {
 								const categoryScrollTop =

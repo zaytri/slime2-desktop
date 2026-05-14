@@ -1,4 +1,4 @@
-import { MediaType } from '@/helpers/openFile';
+import type { MediaType } from '@/helpers/openFile';
 import MusicNoteSvg from './svg/MusicNoteSvg';
 import PhotoSvg from './svg/PhotoSvg';
 import VideoCameraSvg from './svg/VideoCameraSvg';

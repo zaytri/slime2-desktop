@@ -3,7 +3,7 @@ import { tempCopy } from '@/helpers/commands';
 import { getTempFileSrc } from '@/helpers/media';
 import {
 	getMediaFormats,
-	MediaType,
+	type MediaType,
 	openAudio,
 	openImage,
 	openVideo,

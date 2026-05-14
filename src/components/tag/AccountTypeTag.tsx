@@ -1,4 +1,4 @@
-import { Account } from '@/helpers/json/accounts';
+import type { Account } from '@/helpers/json/accounts';
 import ChatBubbleSvg from '@@/svg/ChatBubbleSvg';
 import BookSvg from '../svg/BookSvg';
 import ShieldSvg from '../svg/ShieldSvg';

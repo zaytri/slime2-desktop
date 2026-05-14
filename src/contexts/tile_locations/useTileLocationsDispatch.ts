@@ -1,7 +1,7 @@
 import {
 	saveTileLocations,
-	TileLocation,
-	TileLocations,
+	type TileLocation,
+	type TileLocations,
 } from '@/helpers/json/tileLocations';
 import { createContext, useContext } from 'react';
 import { contextErrorMessage, deepCopyObject } from '../common';
@@ -121,26 +121,29 @@ export function tileLocationsReducer(
 			const { sourceId, destinationId, destinationFolderId, destinationIndex } =
 				action;
 			const sourceTile = newState[sourceId];
-			const destinationTile = destinationId
-				? newState[destinationId]
-				: undefined;
 
-			// if a tile exists in the destination location,
-			// set its location to the source location
-			if (destinationTile) {
-				newState[destinationId] = {
-					id: destinationId,
-					index: sourceTile.index,
-					folderId: sourceTile.folderId,
+			if (sourceTile) {
+				const destinationTile = destinationId
+					? newState[destinationId]
+					: undefined;
+
+				// if a tile exists in the destination location,
+				// set its location to the source location
+				if (destinationTile) {
+					newState[destinationId] = {
+						id: destinationId,
+						index: sourceTile.index,
+						folderId: sourceTile.folderId,
+					};
+				}
+
+				// move to destination location
+				newState[sourceId] = {
+					id: sourceId,
+					index: destinationIndex,
+					folderId: destinationFolderId,
 				};
 			}
-
-			// move to destination location
-			newState[sourceId] = {
-				id: sourceId,
-				index: destinationIndex,
-				folderId: destinationFolderId,
-			};
 			break;
 		}
 

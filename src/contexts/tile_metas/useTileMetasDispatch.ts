@@ -1,7 +1,7 @@
-import { saveTileMeta, TileMeta } from '@/helpers/json/tileMeta';
+import { saveTileMeta, type TileMeta } from '@/helpers/json/tileMeta';
 import { createContext, useContext } from 'react';
 import { contextErrorMessage, deepCopyObject } from '../common';
-import { TileMetas } from './useTileMetas';
+import type { TileMetas } from './useTileMetas';
 
 type TileMetasAction = { type: 'set'; id: string; meta: TileMeta };
 

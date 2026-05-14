@@ -4,7 +4,7 @@ import ClipboardSvg from '@@/svg/ClipboardSvg';
 import DoubleSquareSvg from '@@/svg/DoubleSquareSvg';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { useState } from 'react';
-import { CopyPasteWidgetDataContext, type CopyPasteWidgetDataPages } from '.';
+import type { CopyPasteWidgetDataContext, CopyPasteWidgetDataPages } from '.';
 import DialogCancelButton from '../DialogButton/DialogCancelButton';
 import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
 

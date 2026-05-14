@@ -1,7 +1,7 @@
 import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidgetValueKey';
 import WidgetSettingParentProvider from '@/contexts/widget_setting_parent/WidgetSettingParentProvider';
 import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValuesDispatch';
-import { WidgetSetting } from '@/helpers/json/widgetSettings';
+import type { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { widgetSettingsScrollContainerId } from '@/helpers/scroll';
 import useAutoScrollDisclosureOpen from '@/hooks/useAutoScrollDisclosureOpen';
 import {

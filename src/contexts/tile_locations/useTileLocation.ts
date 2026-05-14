@@ -1,4 +1,4 @@
-import { TileLocation } from '@/helpers/json/tileLocations';
+import type { TileLocation } from '@/helpers/json/tileLocations';
 import useTileLocations from './useTileLocations';
 
 export default function useTileLocation(tileId: string): TileLocation {

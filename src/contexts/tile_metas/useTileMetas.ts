@@ -1,4 +1,4 @@
-import { TileMeta } from '@/helpers/json/tileMeta';
+import type { TileMeta } from '@/helpers/json/tileMeta';
 import { createContext, useContext } from 'react';
 import { contextErrorMessage } from '../common';
 

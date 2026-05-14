@@ -16,7 +16,7 @@ export function i18nStringTransform(i18nString: I18nString): string {
 	}
 
 	// fallback to the first value
-	return Object.values(i18nString)[0];
+	return Object.values(i18nString)[0]!;
 }
 
 export function i18nUndefined(value?: I18nString): string | undefined {

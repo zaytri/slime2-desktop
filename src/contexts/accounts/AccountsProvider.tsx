@@ -1,6 +1,6 @@
 import {
-	Account,
-	Accounts,
+	type Account,
+	type Accounts,
 	deleteTokens,
 	loadAccounts,
 } from '@/helpers/json/accounts';
@@ -45,6 +45,8 @@ export default function AccountsProvider({ children }: Props.WithChildren) {
 							account.serviceId,
 						);
 						const user = response.data.data[0];
+						if (!user) throw new Error('Twitch user not found while updating!');
+
 						if (
 							account.username !== user.login ||
 							account.displayName !== user.display_name ||

@@ -1,4 +1,9 @@
-import { Account, getTokens, setTokens, Tokens } from '@/helpers/json/accounts';
+import {
+	type Account,
+	getTokens,
+	setTokens,
+	type Tokens,
+} from '@/helpers/json/accounts';
 import useAccounts from './useAccounts';
 import { useAccountsDispatch } from './useAccountsDispatch';
 
@@ -12,7 +17,7 @@ export function useAccount(id: string): {
 	getAccountTokens: () => Promise<Tokens | null>;
 } {
 	const accounts = useAccounts();
-	const account = accounts[id];
+	const account = accounts[id]!;
 	const { addAccount: set } = useAccountsDispatch();
 
 	return {

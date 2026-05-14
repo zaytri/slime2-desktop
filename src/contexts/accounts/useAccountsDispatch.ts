@@ -1,6 +1,6 @@
 import {
-	Account,
-	Accounts,
+	type Account,
+	type Accounts,
 	deleteTokens,
 	saveAccounts,
 } from '@/helpers/json/accounts';
@@ -119,13 +119,13 @@ export function accountsReducer(
 			Object.values(newState).forEach(account => {
 				if (account.id === accountId) {
 					// set default account
-					newState[account.id].default = true;
+					newState[account.id]!.default = true;
 				} else if (
 					accountService === account.service &&
 					accountType === account.type
 				) {
 					// remove default from other related accounts
-					newState[account.id].default = false;
+					newState[account.id]!.default = false;
 				}
 			});
 
@@ -145,10 +145,10 @@ export function accountsReducer(
 			Object.values(newState).forEach(account => {
 				if (account.id === accountId) {
 					// add account to slot
-					newState[account.id].widgets[widgetId] = slotIndex;
-				} else if (newState[account.id].widgets[widgetId] === slotIndex) {
+					newState[account.id]!.widgets[widgetId] = slotIndex;
+				} else if (newState[account.id]!.widgets[widgetId] === slotIndex) {
 					// remove other accounts from slot
-					delete newState[account.id].widgets[widgetId];
+					delete newState[account.id]!.widgets[widgetId];
 				}
 			});
 
@@ -159,10 +159,10 @@ export function accountsReducer(
 
 			Object.values(newState).forEach(account => {
 				const sourceSlotIndex: number | undefined =
-					newState[account.id].widgets[sourceWidgetId];
+					newState[account.id]!.widgets[sourceWidgetId];
 
 				if (sourceSlotIndex !== undefined) {
-					newState[account.id].widgets[destinationWidgetId] = sourceSlotIndex;
+					newState[account.id]!.widgets[destinationWidgetId] = sourceSlotIndex;
 				}
 			});
 		}

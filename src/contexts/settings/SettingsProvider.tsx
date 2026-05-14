@@ -1,7 +1,7 @@
 import {
 	DEFAULT_SETTINGS,
 	saveSettings,
-	Settings,
+	type Settings,
 } from '@/helpers/json/settings';
 import { useSettingsQuery } from '@/hooks/useSettingsQuery';
 import { useEffect, useState } from 'react';

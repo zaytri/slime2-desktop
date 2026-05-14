@@ -5,10 +5,10 @@ import useAccounts from '@/contexts/accounts/useAccounts';
 import { useAccountsDispatch } from '@/contexts/accounts/useAccountsDispatch';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { usePageContext } from '@/contexts/pages/usePageContext';
-import { Account } from '@/helpers/json/accounts';
+import type { Account } from '@/helpers/json/accounts';
 import { capitalizeWord } from '@/helpers/string';
 import { useState } from 'react';
-import { AuthenticationContext } from '.';
+import type { AuthenticationContext } from '.';
 import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
 
 export default function AuthSuccessPage() {

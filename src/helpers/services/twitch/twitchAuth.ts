@@ -1,10 +1,10 @@
 import axios from 'axios';
 import {
-	Account,
+	type Account,
 	deleteTokens,
 	getTokens,
 	setTokens,
-	Tokens,
+	type Tokens,
 } from '../../json/accounts';
 import {
 	TWITCH_BOT_SCOPES,

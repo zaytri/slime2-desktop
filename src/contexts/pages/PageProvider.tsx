@@ -1,4 +1,4 @@
-import { PageContext, PageState } from './usePage';
+import { PageContext, type PageState } from './usePage';
 
 export default function PageProvider<P extends string = never>({
 	page,

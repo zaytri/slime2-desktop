@@ -11,6 +11,8 @@ type DisplayAboutProps = {
 
 export default function DisplayAbout({ widgetId }: DisplayAboutProps) {
 	const { widgetMeta } = useWidgetMeta(widgetId);
+	if (!widgetMeta) return;
+
 	const services = getWidgetMetaServices(widgetMeta);
 
 	return (

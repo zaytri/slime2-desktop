@@ -32,8 +32,8 @@ const pronounDbApi = {
 		const pronouns = user.sets?.['en'] ?? null;
 		if (!pronouns || pronouns.length === 0) return null;
 
-		if (pronouns.length === 1 && !!nominativePronounsMap[pronouns[0]]) {
-			return nominativePronounsMap[pronouns[0]];
+		if (pronouns.length === 1 && !!nominativePronounsMap[pronouns[0]!]) {
+			return nominativePronounsMap[pronouns[0]!];
 		}
 
 		return pronouns;

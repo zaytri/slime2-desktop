@@ -1,4 +1,4 @@
-import { Settings } from '@/helpers/json/settings';
+import type { Settings } from '@/helpers/json/settings';
 import { createContext, useContext } from 'react';
 import { contextErrorMessage } from '../common';
 

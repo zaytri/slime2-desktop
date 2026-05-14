@@ -1,7 +1,7 @@
-import { saveWidgetMeta, WidgetMeta } from '@/helpers/json/widgetMeta';
+import { saveWidgetMeta, type WidgetMeta } from '@/helpers/json/widgetMeta';
 import { createContext, useContext } from 'react';
 import { contextErrorMessage, deepCopyObject } from '../common';
-import { WidgetMetas } from './useWidgetMetas';
+import type { WidgetMetas } from './useWidgetMetas';
 
 type WidgetMetasAction =
 	| {

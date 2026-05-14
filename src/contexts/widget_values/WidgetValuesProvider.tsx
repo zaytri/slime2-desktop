@@ -1,4 +1,4 @@
-import { WidgetSettings } from '@/helpers/json/widgetSettings';
+import type { WidgetSettings } from '@/helpers/json/widgetSettings';
 import {
 	loadWidgetValues,
 	saveWidgetValues,

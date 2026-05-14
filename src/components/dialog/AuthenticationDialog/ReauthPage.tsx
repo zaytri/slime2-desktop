@@ -2,7 +2,7 @@ import AccountPreview from '@/components/AccountPreview';
 import { useAccount } from '@/contexts/accounts/useAccount';
 import { usePage } from '@/contexts/pages/usePage';
 import { usePageContext } from '@/contexts/pages/usePageContext';
-import { AuthenticationContext, AuthenticationPages } from '.';
+import type { AuthenticationContext, AuthenticationPages } from '.';
 import DialogCancelButton from '../DialogButton/DialogCancelButton';
 import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
 

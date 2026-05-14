@@ -1,7 +1,7 @@
 import { usePage } from '@/contexts/pages/usePage';
 import { usePageContext } from '@/contexts/pages/usePageContext';
 import TwitchSvg from '@@/svg/TwitchSvg';
-import { AuthenticationContext, AuthenticationPages } from '.';
+import type { AuthenticationContext, AuthenticationPages } from '.';
 
 export default function AuthServicePage() {
 	const { setPage } = usePage<AuthenticationPages>();

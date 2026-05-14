@@ -1,4 +1,4 @@
-import { TileMeta } from '@/helpers/json/tileMeta';
+import type { TileMeta } from '@/helpers/json/tileMeta';
 import { TileColor } from '@/helpers/tileColors';
 import useTileMetas from './useTileMetas';
 import { useTileMetasDispatch } from './useTileMetasDispatch';

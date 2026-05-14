@@ -1,4 +1,4 @@
-import { TileLocation, TileLocations } from '@/helpers/json/tileLocations';
+import type { TileLocation, TileLocations } from '@/helpers/json/tileLocations';
 import useTileLocations from './useTileLocations';
 
 export const TILES_PER_PAGE = 20;

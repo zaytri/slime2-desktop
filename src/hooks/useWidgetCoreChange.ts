@@ -17,6 +17,7 @@ export default function useWidgetCoreChange() {
 					const [tilesDirName, widgetId, innerDirName] = pathComponents;
 					if (
 						tilesDirName === 'tiles' &&
+						widgetId &&
 						widgetId.startsWith('widget') &&
 						innerDirName === 'core'
 					) {

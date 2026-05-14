@@ -1,4 +1,4 @@
-import { PageContextContext, PageContextState } from './usePageContext';
+import { PageContextContext, type PageContextState } from './usePageContext';
 
 export default function PageContextProvider<C = never>({
 	children,

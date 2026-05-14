@@ -2,7 +2,7 @@ import { useDialog } from '@/contexts/dialog/useDialog';
 import PageContextProvider from '@/contexts/pages/PageContextProvider';
 import PageProvider from '@/contexts/pages/PageProvider';
 import { usePage } from '@/contexts/pages/usePage';
-import { Account } from '@/helpers/json/accounts';
+import type { Account } from '@/helpers/json/accounts';
 import { capitalizeWord } from '@/helpers/string';
 import { useEffect, useState } from 'react';
 import DialogContent from '../DialogContent';

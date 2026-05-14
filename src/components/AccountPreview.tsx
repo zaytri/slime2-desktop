@@ -1,4 +1,4 @@
-import { Account } from '@/helpers/json/accounts';
+import type { Account } from '@/helpers/json/accounts';
 import AccountServiceTag from './tag/AccountServiceTag';
 import { AccountDefaultTag } from './tag/AccountStatusTag';
 import AccountTypeTag from './tag/AccountTypeTag';

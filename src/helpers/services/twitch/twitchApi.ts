@@ -1,5 +1,5 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Account } from '../../json/accounts';
+import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
+import type { Account } from '../../json/accounts';
 import twitchAuth from './twitchAuth';
 import { TWITCH_CLIENT_ID } from './twitchConstants';
 

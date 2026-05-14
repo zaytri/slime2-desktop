@@ -4,13 +4,17 @@ import useAccounts from '@/contexts/accounts/useAccounts';
 import { useAccountsDispatch } from '@/contexts/accounts/useAccountsDispatch';
 import { usePage } from '@/contexts/pages/usePage';
 import { usePageContext } from '@/contexts/pages/usePageContext';
-import { Account, generateAccountId, setTokens } from '@/helpers/json/accounts';
+import {
+	type Account,
+	generateAccountId,
+	setTokens,
+} from '@/helpers/json/accounts';
 import twitchApi from '@/helpers/services/twitch/twitchApi';
 import twitchAuth from '@/helpers/services/twitch/twitchAuth';
 import { Description, Field, Input, Label } from '@headlessui/react';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { useEffect, useState } from 'react';
-import { AuthenticationContext, AuthenticationPages } from '.';
+import type { AuthenticationContext, AuthenticationPages } from '.';
 import DialogCancelButton from '../DialogButton/DialogCancelButton';
 
 const SERVICE: Account['service'] = 'twitch';
@@ -67,7 +71,7 @@ export default function TwitchAuthPage() {
 					await setTokens(accountId, access_token, refresh_token);
 
 					const userResponse = await twitchApi.getUser(accountId, user_id);
-					const user = userResponse.data.data[0];
+					const user = userResponse.data.data[0]!;
 					const existingAccount: Account | undefined = accounts[accountId];
 
 					const account: Account = {

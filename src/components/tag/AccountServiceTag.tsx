@@ -1,4 +1,4 @@
-import { Account } from '@/helpers/json/accounts';
+import type { Account } from '@/helpers/json/accounts';
 import YoutubeSvg from '@@/svg/YoutubeSvg';
 import TwitchSvg from '../svg/TwitchSvg';
 import Tag from './Tag';

@@ -1,6 +1,6 @@
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { usePageContext } from '@/contexts/pages/usePageContext';
-import { WidgetValues, WidgetValuesParser } from '@@/json/widgetValues';
+import { type WidgetValues, WidgetValuesParser } from '@@/json/widgetValues';
 import { Description, Field, Label, Textarea } from '@headlessui/react';
 import clsx from 'clsx';
 import { useState } from 'react';

@@ -1,4 +1,4 @@
-import { WidgetMeta } from '@/helpers/json/widgetMeta';
+import type { WidgetMeta } from '@/helpers/json/widgetMeta';
 import useWidgetMetas from './useWidgetMetas';
 import { useWidgetMetasDispatch } from './useWidgetMetasDispatch';
 

@@ -1,6 +1,4 @@
-import AlertBoxIcon from '@/assets/icons/slime2_alert_box.png';
 import ChatBoxIcon from '@/assets/icons/slime2_chat_box.png';
-import CommandBotIcon from '@/assets/icons/slime2_command_bot.png';
 
 export type DefaultWidget = {
 	type: 'bot' | 'overlay';
@@ -25,12 +23,12 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 		icon: ChatBoxIcon,
 		description: 'Display chat messages',
 	},
-	slime2_alert_box: {
-		name: 'Alert Box',
-		type: 'overlay',
-		icon: AlertBoxIcon,
-		description: 'Display custom alerts for events',
-	},
+	// slime2_alert_box: {
+	// 	name: 'Alert Box',
+	// 	type: 'overlay',
+	// 	icon: AlertBoxIcon,
+	// 	description: 'Display custom alerts for events',
+	// },
 	// slime2_event_label: {
 	// 	name: 'Event Label',
 	// 	type: 'overlay',
@@ -49,12 +47,12 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 	// 	icon: EventLabelIcon,
 	// 	description: '',
 	// },
-	slime2_command_bot: {
-		name: 'Command Bot',
-		type: 'bot',
-		icon: CommandBotIcon,
-		description: 'Responds to custom chat commands',
-	},
+	// slime2_command_bot: {
+	// 	name: 'Command Bot',
+	// 	type: 'bot',
+	// 	icon: CommandBotIcon,
+	// 	description: 'Responds to custom chat commands',
+	// },
 	// 'slime2_timer_bot': {
 	// 	name: 'Timer Bot',
 	// 	type: 'bot',
