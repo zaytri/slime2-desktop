@@ -189,12 +189,19 @@ function mergeValue(
 	values: WidgetValues,
 ) {
 	if (
+		setting.type === 'multi-text-input' ||
+		setting.type === 'multi-audio-input' ||
+		setting.type === 'multi-image-input' ||
+		setting.type === 'multi-select-input' ||
+		setting.type === 'multi-video-input'
+	) {
+		values[settingId] = values[settingId] ?? setting.defaultValue ?? [];
+	} else if (
 		setting.type !== 'button' &&
 		setting.type !== 'text-display' &&
-		setting.type !== 'image-display' &&
-		values[settingId] === undefined
+		setting.type !== 'image-display'
 	) {
-		values[settingId] = setting.defaultValue;
+		values[settingId] = values[settingId] ?? setting.defaultValue ?? null;
 	}
 
 	// handle volume subvalue for audio and video
