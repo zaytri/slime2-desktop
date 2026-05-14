@@ -83,4 +83,4 @@ jobs:
           releaseDraft: true
           prerelease: ${{ github.ref_name == 'release/beta' }}
           args: ${{ matrix.args }}
-          assetNamePattern: 'slime2-v[version]_[platform]-[arch][ext]'
+          assetNamePattern: 'slime2-v[version]_${{ matrix.os_name }}[ext]'
