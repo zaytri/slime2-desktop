@@ -40,7 +40,7 @@ export default function WidgetValuesProvider({
 			sendWidgetValues(id, settings, widgetValues);
 			saveWidgetValues(id, widgetValues);
 		}
-	}, [widgetValues, loading]);
+	}, [widgetValues, loading, settings]);
 
 	return (
 		<WidgetValuesContext value={widgetValues}>
