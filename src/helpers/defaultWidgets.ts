@@ -1,7 +1,6 @@
 import AlertBoxIcon from '@/assets/icons/slime2_alert_box.png';
 import ChatBoxIcon from '@/assets/icons/slime2_chat_box.png';
 import CommandBotIcon from '@/assets/icons/slime2_command_bot.png';
-import EventLabelIcon from '@/assets/icons/slime2_event_label.png';
 
 export type DefaultWidget = {
 	type: 'bot' | 'overlay';
@@ -32,24 +31,24 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 		icon: AlertBoxIcon,
 		description: 'Display custom alerts for events',
 	},
-	slime2_event_label: {
-		name: 'Event Label',
-		type: 'overlay',
-		icon: EventLabelIcon,
-		description: 'Text display for the latest events',
-	},
+	// slime2_event_label: {
+	// 	name: 'Event Label',
+	// 	type: 'overlay',
+	// 	icon: EventLabelIcon,
+	// 	description: 'Text display for the latest events',
+	// },
 	// 'slime2_goal_bar': {
 	// 	name: 'Goal Bar',
 	// 	type: 'overlay',
 	// 	icon: ChatOverlayIcon,
 	// 	description: 'Progression bar for a specified goal',
 	// },
-	test: {
-		name: 'test',
-		type: 'overlay',
-		icon: EventLabelIcon,
-		description: '',
-	},
+	// test: {
+	// 	name: 'test',
+	// 	type: 'overlay',
+	// 	icon: EventLabelIcon,
+	// 	description: '',
+	// },
 	slime2_command_bot: {
 		name: 'Command Bot',
 		type: 'bot',

@@ -1,4 +1,5 @@
-import { loadEventsLog } from '@@/json/eventsLog';
+import type { Account } from '@@/json/accounts';
+import { getEventLogId, loadEventsLog } from '@@/json/eventsLog';
 import { useCallback, useEffect, useReducer } from 'react';
 import useAccounts from '../accounts/useAccounts';
 import { EventsLogContext } from './useEventsLog';
@@ -12,9 +13,10 @@ export default function EventsLogProvider({ children }: Props.WithChildren) {
 	const [eventsLogMap, dispatch] = useReducer(eventsLogReducer, {});
 
 	const getEventsLog = useCallback(
-		async (accountId: string) => {
-			const eventsLog = await loadEventsLog(accountId);
-			dispatch({ type: 'set', id: accountId, log: eventsLog });
+		async (account: Account) => {
+			const eventLogId = getEventLogId(account);
+			const eventsLog = await loadEventsLog(eventLogId);
+			dispatch({ type: 'set', id: eventLogId, log: eventsLog });
 		},
 		[dispatch],
 	);
@@ -27,7 +29,7 @@ export default function EventsLogProvider({ children }: Props.WithChildren) {
 			// if they don't already exist in the event logs map
 			Object.values(accounts).forEach(account => {
 				if (account.type === 'read' && !eventsLogMap[account.id]) {
-					loadPromises.push(getEventsLog(account.id));
+					loadPromises.push(getEventsLog(account));
 				}
 			});
 

@@ -1,13 +1,14 @@
 import { z } from 'zod/mini';
 import { loadJson } from '../commands';
 import logZodError from '../zodError';
+import type { Account } from './accounts';
 import { mainConfigPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';
 
 // functions
 
-export async function loadEventsLog(accountId: string): Promise<EventsLog> {
-	const path = await eventsLogPath(accountId);
+export async function loadEventsLog(id: string): Promise<EventsLog> {
+	const path = await eventsLogPath(id);
 	const json = await loadJson(path);
 	try {
 		const eventsLog = EventsLogZ.parse(json);
@@ -21,14 +22,18 @@ export async function loadEventsLog(accountId: string): Promise<EventsLog> {
 }
 
 export async function saveEventsLog(
-	accountId: string,
+	id: string,
 	eventsLog: EventsLog,
 ): Promise<void> {
-	queueSaveJson(eventsLog, await eventsLogPath(accountId));
+	queueSaveJson(eventsLog, await eventsLogPath(id));
 }
 
-async function eventsLogPath(accountId: string) {
-	return mainConfigPath(`events_log/${accountId}`);
+export function getEventLogId(account: Account) {
+	return `${account.service}_${account.username}`;
+}
+
+async function eventsLogPath(id: string) {
+	return mainConfigPath(`events_log/${id}`);
 }
 
 // zod and types

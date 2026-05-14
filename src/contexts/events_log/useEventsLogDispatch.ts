@@ -31,8 +31,8 @@ export function useEventsLogDispatch() {
 		);
 	}
 
-	const logEvent = (accountId: string, event: LoggedEvent) => {
-		dispatch({ type: 'add', id: accountId, event });
+	const logEvent = (id: string, event: LoggedEvent) => {
+		dispatch({ type: 'add', id, event });
 	};
 
 	return { logEvent };

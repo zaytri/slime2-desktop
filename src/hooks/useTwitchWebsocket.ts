@@ -8,6 +8,7 @@ import twitchApi, {
 } from '@/helpers/services/twitch/twitchApi';
 import twitchAuth from '@/helpers/services/twitch/twitchAuth';
 import { sendTwitchEvent } from '@/helpers/widgetMessage';
+import { getEventLogId } from '@@/json/eventsLog';
 import { useEffect, useRef } from 'react';
 
 const TWITCH_WEBSOCKET_URL = 'wss://eventsub.wss.twitch.tv/ws';
@@ -170,12 +171,13 @@ export default function useTwitchWebsocket() {
 								const { subscription_type, message_timestamp: timestamp } =
 									notificationMessage.metadata;
 								const { event } = notificationMessage.payload;
+								const eventLogId = getEventLogId(account);
 
 								// log specific events to json for event labels
 								switch (subscription_type) {
 									case 'channel.follow': {
 										const followEvent = event as Twitch.WebsocketEvent.Follow;
-										logEvent(account.id, {
+										logEvent(eventLogId, {
 											type: 'follow',
 											timestamp,
 											data: {
@@ -192,7 +194,7 @@ export default function useTwitchWebsocket() {
 
 										// don't log individual subs from a gift sub
 										if (!subEvent.is_gift) {
-											logEvent(account.id, {
+											logEvent(eventLogId, {
 												type: 'sub',
 												timestamp,
 												data: {
@@ -210,7 +212,7 @@ export default function useTwitchWebsocket() {
 										const resubEvent =
 											event as Twitch.WebsocketEvent.SubscriptionMessage;
 
-										logEvent(account.id, {
+										logEvent(eventLogId, {
 											type: 'resub',
 											timestamp,
 											data: {
@@ -229,7 +231,7 @@ export default function useTwitchWebsocket() {
 										const subGiftEvent =
 											event as Twitch.WebsocketEvent.SubscriptionGift;
 
-										logEvent(account.id, {
+										logEvent(eventLogId, {
 											type: 'sub_gift',
 											timestamp,
 											data: {
@@ -247,7 +249,7 @@ export default function useTwitchWebsocket() {
 
 									case 'channel.raid': {
 										const raidEvent = event as Twitch.WebsocketEvent.Raid;
-										logEvent(account.id, {
+										logEvent(eventLogId, {
 											type: 'raid',
 											timestamp,
 											data: {
@@ -263,7 +265,7 @@ export default function useTwitchWebsocket() {
 
 									case 'channel.cheer': {
 										const cheerEvent = event as Twitch.WebsocketEvent.Cheer;
-										logEvent(account.id, {
+										logEvent(eventLogId, {
 											type: 'cheer',
 											timestamp,
 											data: {
