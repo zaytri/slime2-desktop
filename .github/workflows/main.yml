@@ -18,18 +18,23 @@ jobs:
           - platform: 'macos-latest' # Intel based Mac
             args: '--target x86_64-apple-darwin'
             os_name: 'macOS'
+
           - platform: 'macos-latest' # Arm based Mac (M1 and above)
             args: '--target aarch64-apple-darwin'
             os_name: 'macOS-ARM'
+
           - platform: 'ubuntu-22.04' # Linux
             args: ''
             os_name: 'Linux'
+
           - platform: 'ubuntu-22.04-arm' # Arm based Linux
             args: ''
             os_name: 'Linux-ARM'
+
           - platform: 'windows-latest' # Windows 10/11
             args: ''
             os_name: 'Windows'
+
           - platform: 'windows-11-arm' # Arm based Windows 11
             args: ''
             os_name: 'Windows-ARM'
@@ -78,4 +83,4 @@ jobs:
           releaseDraft: true
           prerelease: ${{ github.ref_name == 'release/beta' }}
           args: ${{ matrix.args }}
-          assetNamePattern: 'slime2-v[version]_${{ matrix.os_name }}[ext]'
+          assetNamePattern: 'slime2-v[version]_[platform]-[arch][ext]'
