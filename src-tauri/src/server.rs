@@ -9,7 +9,7 @@ pub fn setup(
 		PathBuf,
 		PathBuf,
 	),
-) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
+) -> Result<(), Box<dyn std::error::Error + 'static>> {
 	// home route that just returns the word "squish" for fun
 	let home_route = warp::path::end().map(|| "squish");
 

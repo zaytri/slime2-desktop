@@ -52,12 +52,6 @@ pub struct TileMeta {
 	pub color: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct TileLocations {
-	pub version: Number,
-	pub locations: HashMap<String, TileLocation>,
-}
-
 #[allow(non_snake_case)]
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct TileLocation {

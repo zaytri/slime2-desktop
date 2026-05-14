@@ -3,7 +3,7 @@
 
 use std::sync::OnceLock;
 
-use tauri::{AppHandle, Emitter, Manager};
+use tauri::{AppHandle, Manager};
 
 mod commands;
 mod file;
@@ -16,12 +16,6 @@ fn get_app_handle() -> AppHandle {
 	APP_HANDLE.get().unwrap().clone()
 }
 
-#[derive(Clone, serde::Serialize)]
-struct SingleInstancePayload {
-	args: Vec<String>,
-	cwd: String,
-}
-
 #[tokio::main]
 async fn main() {
 	println!("Welcome to Slime2!");
@@ -29,16 +23,16 @@ async fn main() {
 	let connections = server::websocket::WebsocketConnections::default();
 
 	tauri::Builder::default()
-		.plugin(tauri_plugin_single_instance::init(|_app, _args, _cwd| {}))
-		.plugin(tauri_plugin_fs::init())
-		.plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
-			println!("{}, {argv:?}, {cwd}", app.package_info().name);
-			app.emit(
-				"single-instance",
-				SingleInstancePayload { args: argv, cwd },
-			)
-			.unwrap();
+		.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+			// https://v2.tauri.app/plugin/single-instance/#focusing-on-new-instance
+			// window label is "main", while the title is "Slime2"
+			if let Some(window) = app.get_webview_window("main") {
+				if let Err(error) = window.set_focus() {
+					println!("Failed to focus main window! {}", error);
+				}
+			}
 		}))
+		.plugin(tauri_plugin_fs::init())
 		.plugin(tauri_plugin_shell::init())
 		.plugin(tauri_plugin_dialog::init())
 		.plugin(tauri_plugin_clipboard_manager::init())
