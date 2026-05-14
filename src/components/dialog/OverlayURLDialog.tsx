@@ -1,24 +1,41 @@
+import DoorOpenSvg from '@@/svg/DoorOpenSvg';
 import { Description, Field, Input, Label } from '@headlessui/react';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { useState } from 'react';
+import ExternalLink from '../ExternalLink';
 import DoubleSquareSvg from '../svg/DoubleSquareSvg';
 import DialogCancelButton from './DialogButton/DialogCancelButton';
 import DialogContent from './DialogContent';
 
 type OverlayURLDialogProps = {
 	link: string;
+	devMode?: boolean;
 };
 
-export default function OverlayURLDialog({ link }: OverlayURLDialogProps) {
+export default function OverlayURLDialog({
+	link,
+	devMode = false,
+}: OverlayURLDialogProps) {
 	const [copied, setCopied] = useState(false);
 
 	return (
 		<DialogContent className='flex flex-col justify-between gap-4 p-4'>
 			<Field className='flex flex-col gap-4'>
 				<div className='flex flex-col'>
-					<Label className='pl-2 text-4.5 font-semibold text-shadow-[0_1px_white]'>
-						URL
-					</Label>
+					<div className='flex items-start gap-2'>
+						<Label className='flex-1 pl-2 text-4.5 font-semibold text-shadow-[0_1px_white]'>
+							URL
+						</Label>
+						{devMode && (
+							<ExternalLink
+								href={link}
+								className='-mt-1 flex items-center gap-1 rounded-1 bg-zinc-800 px-2 py-0.5 text-3.5 font-semibold text-white outline-2 -outline-offset-1! outline-zinc-400 over:bg-zinc-700 over:outline-4 over:outline-lime-600'
+							>
+								<DoorOpenSvg className='size-4' />
+								<p>Open URL in Browser</p>
+							</ExternalLink>
+						)}
+					</div>
 					<div className='input-wrapper flex overflow-visible p-0'>
 						<Input
 							value={link}

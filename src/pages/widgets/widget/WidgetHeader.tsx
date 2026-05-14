@@ -185,6 +185,7 @@ function OverlayUrlButton() {
 	const widgetId = useWidgetId();
 	const { widgetMeta } = useWidgetMeta(widgetId);
 	const { openDialog } = useDialog();
+	const { settings } = useSettings();
 
 	if (!widgetMeta || !widgetMeta.type.includes('overlay')) return null;
 
@@ -196,7 +197,10 @@ function OverlayUrlButton() {
 			onClick={() => {
 				openDialog(
 					'Overlay URL',
-					<OverlayURLDialog link={createOverlayUrl(widgetId)} />,
+					<OverlayURLDialog
+						link={createOverlayUrl(widgetId)}
+						devMode={settings.devMode}
+					/>,
 				);
 			}}
 		/>

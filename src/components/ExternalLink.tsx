@@ -14,6 +14,7 @@ export default function ExternalLink({
 	return (
 		<button
 			type='button'
+			role='link'
 			className={className}
 			onClick={event => {
 				if (onClick) {
