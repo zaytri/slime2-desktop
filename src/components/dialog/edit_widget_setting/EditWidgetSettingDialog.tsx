@@ -49,12 +49,7 @@ export default function EditWidgetSettingDialog({
 
 	const trimmedId = newId.trim();
 	const trimmedLabel = newLabel.trim();
-
-	const emptyOptions =
-		(data.type === 'dropdown-input' ||
-			data.type === 'select-input' ||
-			data.type === 'multi-select-input') &&
-		data.options.length === 0;
+	const emptyOptions = 'options' in newData && newData.options.length === 0;
 
 	const disableSave = !trimmedId || !trimmedLabel || !!idError || emptyOptions;
 
@@ -299,7 +294,16 @@ export default function EditWidgetSettingDialog({
 				</div>
 			</div>
 
-			<div className='flex justify-end gap-4 border-t border-zinc-800 p-4'>
+			<div className='flex items-center gap-4 border-t border-zinc-800 p-4'>
+				<div className='flex-1'>
+					{disableSave && (
+						<p className='text-3.5 font-bold text-zinc-500 italic'>
+							{'options' in newData
+								? 'Label, Unique ID, and at least one Option are required.'
+								: 'Label and Unique ID are required.'}
+						</p>
+					)}
+				</div>
 				<DialogCancelButton />
 				<DialogConfirmButton
 					disabled={disableSave}
