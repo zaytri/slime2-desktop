@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - release/test
       - release/beta
       - release/live
 
@@ -47,7 +48,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev xdg-utils patchelf
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -77,10 +78,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: '${{ github.ref_name }}-v__VERSION__' # the action automatically replaces \_\_VERSION\_\_ with the app version.
-          releaseName: 'Slime2 v__VERSION__ ${{ github.ref_name }}'
+          # the action replaces \_\_VERSION\_\_ with the app version.
+          tagName: ${{ github.ref_name }} '-v__VERSION__'
+          releaseName: "Slime2 v__VERSION__${{(github.ref_name == 'release/live' && '') || (github.ref_name == 'release/beta' && '-beta') || format('-test-{0}', github.sha) }}"
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
-          prerelease: ${{ github.ref_name == 'release/beta' }}
+          prerelease: ${{ github.ref_name != 'release/live' }}
           args: ${{ matrix.args }}
-          assetNamePattern: 'slime2-v[version]_${{ matrix.os_name }}[ext]'
+          assetNamePattern: "slime2-v[version]${{ (github.ref_name == 'release/live' && '') || (github.ref_name == 'release/beta' && '-beta') || format('-test-{0}', github.sha) }}_${{ matrix.os_name }}[ext]"
