@@ -1,5 +1,6 @@
 import slime2face from '@/assets/slime2face.png';
 import ToggleField from '@/components/input_fields/ToggleField';
+import LinkifyText from '@/components/LinkifyText';
 import GearSvg from '@/components/svg/GearSvg';
 import { useSettings } from '@/contexts/settings/useSettings';
 import useAppVersionQuery from '@/hooks/useAppVersionQuery';
@@ -45,11 +46,27 @@ export default function SettingsPanel() {
 						description='UI transitions will be instant rather than animated (does not affect overlay widget animations)'
 					/>
 
-					{/* <div className='flex flex-1 items-end justify-end'>
-						<p className='text-3.5 text-zinc-500 italic'>
-							Tip: You can right-click on the widget grid tiles to move them
-						</p>
-					</div> */}
+					<footer className='flex flex-1 items-end'>
+						<LinkifyText
+							className='flex flex-col'
+							linkClassName=' text-green-800 font-medium'
+						>
+							<h4 className='font-bold'>About</h4>
+							<div className='flex flex-col text-3.5'>
+								{[
+									['Developer', 'Zaytri', 'https://zaytri.com/'],
+									['Logo Designer', 'Bri', 'https://sidequestdesigns.com/'],
+									['Icon Artist', 'Anje', 'https://linktr.ee/shenanjegans'],
+								].map(([role, name, link]) => {
+									return (
+										<p>
+											{role}: <strong>{name}</strong> {link}
+										</p>
+									);
+								})}
+							</div>
+						</LinkifyText>
+					</footer>
 				</div>
 			</div>
 		</div>
