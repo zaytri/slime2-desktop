@@ -18,33 +18,22 @@ jobs:
         include:
           - platform: 'macos-latest' # Intel based Mac
             args: '--target x86_64-apple-darwin'
-            os_name: 'macOS'
-
           - platform: 'macos-latest' # Arm based Mac (M1 and above)
             args: '--target aarch64-apple-darwin'
-            os_name: 'macOS-ARM'
-
           - platform: 'ubuntu-22.04' # Linux
             args: ''
-            os_name: 'Linux'
-
           - platform: 'ubuntu-22.04-arm' # Arm based Linux
             args: ''
-            os_name: 'Linux-ARM'
-
           - platform: 'windows-latest' # Windows 10/11
             args: ''
-            os_name: 'Windows'
-
           - platform: 'windows-11-arm' # Arm based Windows 11
             args: ''
-            os_name: 'Windows-ARM'
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Linux Dependencies # skipped for Windows/Mac
+      - name: Install Linux Dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
@@ -57,19 +46,18 @@ jobs:
           cache: 'npm' # Set this to npm, yarn or pnpm.
 
       - name: Install Rust (Stable)
-        uses: dtolnay/rust-toolchain@stable # Set this to dtolnay/rust-toolchain@nightly
+        uses: dtolnay/rust-toolchain@stable
         with:
-          # Those targets are only used on macOS runners so it's in an `if` to slightly speed up Windows and Linux builds.
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          # These targets are only used on macOS runners so it's in an `if` to slightly speed up Windows and Linux builds.
+          targets: ${{ runner.os == 'macOS' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: Rust Cache
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
 
-      - name: NPM Install
-        # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
-        run: npm install # change this to npm or pnpm depending on which one you use.
+      - name: NPM Install Frontend Dependencies
+        run: npm install
 
       - name: Tauri Info
         run: npm run tauri info
@@ -85,4 +73,4 @@ jobs:
           releaseDraft: true
           prerelease: ${{ github.ref_name != 'release/live' }}
           args: ${{ matrix.args }}
-          assetNamePattern: "slime2-v[version]${{ (github.ref_name == 'release/live' && '') || (github.ref_name == 'release/beta' && '-beta') || format('-test-{0}', github.sha) }}_${{ matrix.os_name }}[ext]"
+          assetNamePattern: "slime2-v[version]${{ (github.ref_name == 'release/live' && '') || (github.ref_name == 'release/beta' && '-beta') || '-test' }}_${{ format('{0}-{1}', runner.os, runner.arch) }}[ext]"
