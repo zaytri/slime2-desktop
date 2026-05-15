@@ -1,4 +1,4 @@
-import ChatBoxIcon from '@/assets/icons/slime2_chat_box.png';
+import chatBoxIconImage from '@/assets/icons/slime2_chat_box.png';
 
 export type DefaultWidget = {
 	type: 'bot' | 'overlay';
@@ -20,7 +20,7 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 	slime2_chat_box: {
 		name: 'Chat Box',
 		type: 'overlay',
-		icon: ChatBoxIcon,
+		icon: chatBoxIconImage,
 		description: 'Display chat messages',
 	},
 	// slime2_alert_box: {

@@ -1,13 +1,16 @@
-import slime2face from '@/assets/slime2face.png';
+import HeaderButton from '@/components/header/HeaderButton';
 import ToggleField from '@/components/input_fields/ToggleField';
-import LinkifyText from '@/components/LinkifyText';
 import GearSvg from '@/components/svg/GearSvg';
+import { useDialog } from '@/contexts/dialog/useDialog';
 import { useSettings } from '@/contexts/settings/useSettings';
 import useAppVersionQuery from '@/hooks/useAppVersionQuery';
+import AboutDialog from '@@/dialog/AboutDialog';
+import BookSvg from '@@/svg/BookSvg';
 
 export default function SettingsPanel() {
 	const appVersionQuery = useAppVersionQuery();
 	const { settings, setSettings } = useSettings();
+	const { openDialog } = useDialog();
 
 	return (
 		<div className='flex flex-1 p-4'>
@@ -19,12 +22,17 @@ export default function SettingsPanel() {
 					</h1>
 
 					{appVersionQuery.data && (
-						<p className='self-end text-3.5 font-bold'>
-							Slime2 v{appVersionQuery.data}
-						</p>
+						<p className='self-end font-bold'>Slime2 v{appVersionQuery.data}</p>
 					)}
 
-					<img src={slime2face} className='-my-1 w-10 self-end smooth-image' />
+					<HeaderButton
+						label='About'
+						icon={BookSvg}
+						className='border-yellow-300 bg-yellow-300 from-yellow-300 to-amber-400 text-amber-900 over:outline-yellow-600'
+						onClick={() => {
+							openDialog('About', <AboutDialog />);
+						}}
+					/>
 				</div>
 
 				<div className='flex flex-1 flex-col gap-4 light-container p-4'>
@@ -45,28 +53,6 @@ export default function SettingsPanel() {
 						}}
 						description='UI transitions will be instant rather than animated (does not affect overlay widget animations)'
 					/>
-
-					<footer className='flex flex-1 items-end'>
-						<LinkifyText
-							className='flex flex-col'
-							linkClassName=' text-green-800 font-medium'
-						>
-							<h4 className='font-bold'>About</h4>
-							<div className='flex flex-col text-3.5'>
-								{[
-									['Developer', 'Zaytri', 'https://zaytri.com/'],
-									['Logo Designer', 'Bri', 'https://sidequestdesigns.com/'],
-									['Icon Artist', 'Anje', 'https://linktr.ee/shenanjegans'],
-								].map(([role, name, link]) => {
-									return (
-										<p>
-											{role}: <strong>{name}</strong> {link}
-										</p>
-									);
-								})}
-							</div>
-						</LinkifyText>
-					</footer>
 				</div>
 			</div>
 		</div>
