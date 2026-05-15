@@ -49,7 +49,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           # These targets are only used on macOS runners so it's in an `if` to slightly speed up Windows and Linux builds.
-          targets: ${{ runner.os == 'macOS' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ case(runner.os == 'macOS', 'aarch64-apple-darwin,x86_64-apple-darwin', '') }}
 
       - name: Rust Cache
         uses: swatinem/rust-cache@v2
@@ -65,12 +65,16 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
+
           # the action replaces \_\_VERSION\_\_ with the app version.
-          tagName: ${{ github.ref_name }} '-v__VERSION__'
-          releaseName: "Slime2 v__VERSION__${{(github.ref_name == 'release/live' && '') || (github.ref_name == 'release/beta' && '-beta') || format('-test-{0}', github.sha) }}"
+          SLIME2_APP_VERSION: v__VERSION__-${{ case(github.ref_name == 'release/live', '', github.ref_name == 'release/beta', '-beta', format('-test-{0}', github.sha)) }}
+
+          SLIME2_FILE_SUFFIX: ${{ case(github.ref_name == 'release/live', '' ,github.ref_name == 'release/beta', '-beta', '-test') }}_${{ format('{0}-{1}', runner.os, runner.arch) }}
+        with:
+          tagName: '${{ env.SLIME2_APP_VERSION}}'
+          releaseName: 'Slime2 ${{ env.SLIME2_APP_VERSION }}'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: ${{ github.ref_name != 'release/live' }}
           args: ${{ matrix.args }}
-          assetNamePattern: "slime2-v[version]${{ (github.ref_name == 'release/live' && '') || (github.ref_name == 'release/beta' && '-beta') || '-test' }}_${{ format('{0}-{1}', runner.os, runner.arch) }}[ext]"
+          assetNamePattern: 'slime2-v[version]${{ env.SLIME2_FILE_SUFFIX }}[ext]'
