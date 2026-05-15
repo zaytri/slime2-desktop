@@ -67,7 +67,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
           # the action replaces \_\_VERSION\_\_ with the app version.
-          SLIME2_APP_VERSION: v__VERSION__-${{ case(github.ref_name == 'release/live', '', github.ref_name == 'release/beta', '-beta', format('-test-{0}', github.sha)) }}
+          SLIME2_APP_VERSION: v__VERSION__${{ case(github.ref_name == 'release/live', '', github.ref_name == 'release/beta', '-beta', format('-test-{0}', github.sha)) }}
 
           SLIME2_FILE_SUFFIX: ${{ case(github.ref_name == 'release/live', '' ,github.ref_name == 'release/beta', '-beta', '-test') }}_${{ format('{0}-{1}', runner.os, runner.arch) }}
         with:
