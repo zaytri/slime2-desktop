@@ -18,5 +18,19 @@ export function getWidgetMediaCoreSrc(id: string, filePath: string) {
 
 export function getWidgetMediaCustomSrc(id: string, customFileName: string) {
 	const [_local, fileName] = customFileName.split(':');
-	return createTilesUrl(id, cacheBust(`/config/assets/${fileName}`));
+	return createTilesUrl(id, cacheBust(`config/assets/${fileName}`));
+}
+
+const LOCAL_MEDIA_PREFIX = 'local:';
+
+export function createWidgetMediaLocalValue(fileName: string) {
+	return `${LOCAL_MEDIA_PREFIX}${fileName}`;
+}
+
+export function getWidgetMediaSrc(widgetId: string, src: string) {
+	return src === '' || src.startsWith('https://') || src.startsWith('http://')
+		? src
+		: src.startsWith(LOCAL_MEDIA_PREFIX)
+			? getWidgetMediaCustomSrc(widgetId, src)
+			: getWidgetMediaCoreSrc(widgetId, src);
 }

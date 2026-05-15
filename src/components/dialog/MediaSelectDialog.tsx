@@ -34,7 +34,7 @@ export default function MediaSelectDialog({
 	const [urlMode, setUrlMode] = useState(false);
 	const [url, setUrl] = useState('');
 
-	const imagePath = urlMode ? url.trim() : value;
+	const mediaPath = urlMode ? url.trim() : value;
 	const capitalType = capitalizeWord(type);
 
 	return (
@@ -112,7 +112,7 @@ export default function MediaSelectDialog({
 					)}
 				</div>
 
-				{imagePath && (
+				{mediaPath && (
 					<div
 						className={clsx(
 							'flex items-center justify-center overflow-hidden rounded-1 border border-white bg-alpha-checkerboard outline outline-zinc-400 has-focus-visible:outline-2 has-focus-visible:outline-black',
@@ -123,7 +123,7 @@ export default function MediaSelectDialog({
 					>
 						<MediaInputPreview
 							type={type}
-							src={urlMode ? imagePath : getTempFileSrc(imagePath)}
+							src={urlMode ? mediaPath : getTempFileSrc(mediaPath)}
 							className={clsx(
 								'max-h-80 max-w-80',
 								type !== 'audio' && 'min-h-24',
@@ -138,10 +138,10 @@ export default function MediaSelectDialog({
 				<DialogCancelButton />
 				<DialogConfirmButton
 					onClick={() => {
-						if (imagePath) onSave(imagePath);
+						if (mediaPath) onSave(mediaPath);
 						closeDialog();
 					}}
-					disabled={!imagePath}
+					disabled={!mediaPath}
 				>
 					Save
 				</DialogConfirmButton>

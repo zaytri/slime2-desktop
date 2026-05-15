@@ -8,8 +8,8 @@ import { saveTempWidgetFile } from '@/helpers/commands';
 import { i18nStringTransform } from '@/helpers/i18n';
 import type { WidgetSetting as WidgetSettingType } from '@/helpers/json/widgetSettings';
 import {
-	getWidgetMediaCoreSrc,
-	getWidgetMediaCustomSrc,
+	createWidgetMediaLocalValue,
+	getWidgetMediaSrc,
 } from '@/helpers/media';
 import type { WidgetValue } from '@@/json/widgetValues';
 import { z } from 'zod/mini';
@@ -77,7 +77,7 @@ export default function WidgetSetting({
 		setValue(getWidgetValueChildKey(key, subKey), value);
 	}
 
-	async function onChangeMedia(newValue: string, newVolume?: number) {
+	async function onChangeMedia(newValue: string) {
 		if (
 			newValue === '' ||
 			newValue.startsWith('https://') ||
@@ -86,12 +86,12 @@ export default function WidgetSetting({
 			setWidgetValue(newValue);
 		} else {
 			const fileName = await saveTempWidgetFile(newValue, widgetId);
-			setWidgetValue(`${LOCAL_MEDIA_PREFIX}${fileName}`);
+			setWidgetValue(createWidgetMediaLocalValue(fileName));
 		}
+	}
 
-		if (newVolume !== undefined) {
-			setSubValue('volume', newVolume);
-		}
+	function onChangeVolume(newVolume: number) {
+		setSubValue('volume', newVolume);
 	}
 
 	switch (setting.type) {
@@ -287,6 +287,7 @@ export default function WidgetSetting({
 					onChange={onChangeMedia}
 					description={description}
 					volume={volume}
+					onChangeVolume={onChangeVolume}
 				/>
 			);
 		}
@@ -299,6 +300,7 @@ export default function WidgetSetting({
 					onChange={onChangeMedia}
 					description={description}
 					volume={volume}
+					onChangeVolume={onChangeVolume}
 				/>
 			);
 		}
@@ -328,18 +330,11 @@ export default function WidgetSetting({
 	}
 }
 
-const LOCAL_MEDIA_PREFIX = 'local:';
-
 function getMediaValue(
 	widgetId: string,
 	value: WidgetValue,
 	defaultValue?: string,
 ) {
 	const src = z.catch(z.string(), defaultValue ?? '').parse(value);
-
-	return src === '' || src.startsWith('https://') || src.startsWith('http://')
-		? src
-		: src.startsWith(LOCAL_MEDIA_PREFIX)
-			? getWidgetMediaCustomSrc(widgetId, src)
-			: getWidgetMediaCoreSrc(widgetId, src);
+	return getWidgetMediaSrc(widgetId, src);
 }

@@ -3,6 +3,7 @@ import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidg
 import { sendWebsocketMessage } from './commands';
 import type { WidgetSetting, WidgetSettings } from './json/widgetSettings';
 import type { WidgetValues } from './json/widgetValues';
+import { getWidgetMediaSrc } from './media';
 
 export async function sendWidgetValues(
 	widgetId: string,
@@ -12,7 +13,7 @@ export async function sendWidgetValues(
 	return sendWidgetMessage(
 		widgetId,
 		'widget-values',
-		mergeDefaultValues(settings, values),
+		mergeDefaultValues(widgetId, settings, values),
 		true,
 	);
 }
@@ -136,6 +137,7 @@ export async function sendSharedMessage(channel: string, message: string) {
 }
 
 function mergeDefaultValues(
+	widgetId: string,
 	settings: WidgetSettings,
 	widgetValues: WidgetValues,
 ): WidgetValues {
@@ -158,7 +160,12 @@ function mergeDefaultValues(
 									subsettingId,
 								);
 
-								mergeValue(fullSubsettingId, subsetting, mergedValues);
+								mergeValue(
+									widgetId,
+									fullSubsettingId,
+									subsetting,
+									mergedValues,
+								);
 							},
 						);
 					});
@@ -168,11 +175,11 @@ function mergeDefaultValues(
 			} else if (setting.type === 'section') {
 				Object.entries(setting.settings).forEach(
 					([subsettingId, subsetting]) => {
-						mergeValue(subsettingId, subsetting, mergedValues);
+						mergeValue(widgetId, subsettingId, subsetting, mergedValues);
 					},
 				);
 			} else {
-				mergeValue(settingId, setting, mergedValues);
+				mergeValue(widgetId, settingId, setting, mergedValues);
 			}
 		});
 	});
@@ -181,6 +188,7 @@ function mergeDefaultValues(
 }
 
 function mergeValue(
+	widgetId: string,
 	settingId: string,
 	setting: Exclude<
 		WidgetSetting.NonCategory,
@@ -189,6 +197,26 @@ function mergeValue(
 	values: WidgetValues,
 ) {
 	if (
+		setting.type === 'audio-input' ||
+		setting.type === 'video-input' ||
+		setting.type === 'image-input'
+	) {
+		// handle volume subvalue for audio and video
+		if (setting.type === 'audio-input' || setting.type === 'video-input') {
+			const volumeId = getWidgetValueChildKey(settingId, 'volume');
+			if (values[volumeId] === undefined) {
+				values[volumeId] = 20; // default volume to 20
+			}
+		}
+
+		const newValue = values[settingId] ?? setting.defaultValue ?? null;
+
+		// transform value into URL or null
+		values[settingId] =
+			typeof newValue === 'string' && newValue !== ''
+				? getWidgetMediaSrc(widgetId, newValue)
+				: null;
+	} else if (
 		setting.type === 'multi-text-input' ||
 		setting.type === 'multi-audio-input' ||
 		setting.type === 'multi-image-input' ||
@@ -202,13 +230,5 @@ function mergeValue(
 		setting.type !== 'image-display'
 	) {
 		values[settingId] = values[settingId] ?? setting.defaultValue ?? null;
-	}
-
-	// handle volume subvalue for audio and video
-	if (setting.type === 'audio-input' || setting.type === 'video-input') {
-		const volumeId = getWidgetValueChildKey(settingId, 'volume');
-		if (values[volumeId] === undefined) {
-			values[volumeId] = 20; // default volume to 20
-		}
 	}
 }

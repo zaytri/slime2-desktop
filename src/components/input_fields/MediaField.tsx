@@ -4,20 +4,31 @@ import InputDescription from '@/components/input_fields/InputDescription';
 import MediaIcon from '@/components/MediaIcon';
 import MediaInputPreview from '@/components/MediaInputPreview';
 import { useDialog } from '@/contexts/dialog/useDialog';
-import type { MediaType } from '@/helpers/openFile';
 import XSvg from '@@/svg/XSvg';
 import { Button, Field, Input, Label } from '@headlessui/react';
 import clsx from 'clsx';
 import { useRef } from 'react';
 
-type MediaFieldProps = {
-	type: MediaType;
+type BaseMediaFieldProps = {
+	type: 'image';
 	label: string;
 	value: string;
-	onChange: (value: string, volume?: number) => void;
+	onChange: (value: string) => void;
 	description?: string;
-	volume?: number;
+	volume?: never;
+	onChangeVolume?: never;
 };
+
+type MediaFieldProps =
+	| BaseMediaFieldProps
+	| Override<
+			BaseMediaFieldProps,
+			{
+				type: 'audio' | 'video';
+				volume: number;
+				onChangeVolume: (volume: number) => void;
+			}
+	  >;
 
 export default function MediaField({
 	type,
@@ -26,6 +37,7 @@ export default function MediaField({
 	onChange,
 	description,
 	volume,
+	onChangeVolume,
 }: MediaFieldProps) {
 	const { openDialog } = useDialog();
 	const imageDialogButtonRef = useRef<HTMLButtonElement>(null);
@@ -66,7 +78,10 @@ export default function MediaField({
 										`Delete ${capitalType}`,
 										<GenericDeleteDialog
 											onDelete={() => {
-												onChange('', type === 'image' ? undefined : 25);
+												onChange('');
+												if (onChangeVolume) {
+													onChangeVolume(20);
+												}
 											}}
 										>
 											<p>
@@ -124,15 +139,12 @@ export default function MediaField({
 									max={100}
 									step='any'
 									onChange={event => {
-										const newVolume = event.target.value;
-										const newNumber = newVolume
-											? Number.parseInt(newVolume)
-											: NaN;
+										const newVolume = event.target.valueAsNumber;
 
-										if (Number.isNaN(newNumber)) {
-											onChange(value, 0);
+										if (Number.isNaN(newVolume)) {
+											onChangeVolume(0);
 										} else {
-											onChange(value, Math.max(Math.min(newNumber, 100), 0));
+											onChangeVolume(Math.max(Math.min(newVolume, 100), 0));
 										}
 									}}
 								/>
