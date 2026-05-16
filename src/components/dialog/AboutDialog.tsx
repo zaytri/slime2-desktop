@@ -40,7 +40,7 @@ export default function AboutDialog() {
 								['Source', 'https://github.com/zaytri/slime2-desktop'],
 							].map(([label, link]) => {
 								return (
-									<p className='text-3.5'>
+									<p key={label} className='text-3.5'>
 										{label}: {link}
 									</p>
 								);
@@ -53,7 +53,7 @@ export default function AboutDialog() {
 						<div className='flex flex-col'>
 							{[['Zaytri', 'https://zaytri.com/']].map(([label, link]) => {
 								return (
-									<p className='text-3.5'>
+									<p key={label} className='text-3.5'>
 										{label}: {link}
 									</p>
 								);
@@ -71,7 +71,7 @@ export default function AboutDialog() {
 								['Icon Artist', 'Anje', 'https://linktr.ee/shenanjegans'],
 							].map(([role, name, link]) => {
 								return (
-									<p className='text-3.5'>
+									<p key={name} className='text-3.5'>
 										{name}: {link} - {role}
 									</p>
 								);
