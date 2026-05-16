@@ -12,8 +12,8 @@
 	--align: var(--custom-align, flex-start);
 	--line-clamp: var(--custom-line-clamp, 4);
 	--max-width: var(--custom-max-width, 500px);
-	--badge-display: var(--custom-badge-display, inline-flex);
-	--pronoun-display: var(--custom-pronoun-display, inline-flex);
+	--badge-display: var(--custom-badge-display, inline);
+	--pronoun-display: var(--custom-pronoun-display, inline);
 	--pronoun-transform: var(--custom-pronoun-transform, lowercase);
 
 	font-family:
@@ -64,8 +64,7 @@
 }
 
 .user {
-	display: inline-flex;
-	align-items: flex-end;
+	display: inline;
 	color: var(--font-color);
 	font-weight: bolder;
 }
@@ -97,7 +96,6 @@
 
 .user::after {
 	content: ': ';
-	white-space: pre;
 	display: inline;
 }
 
@@ -110,22 +108,28 @@
 }
 
 .badge {
-	height: calc(1em + 4px);
-	width: calc(1em + 4px);
+	--badge-size: calc(1em + 4px);
+	height: var(--badge-size);
+	width: var(--badge-size);
+	min-height: var(--badge-size);
+	min-width: var(--badge-size);
 	margin-right: 3px;
 	display: inline;
-	flex-shrink: 0;
+	vertical-align: text-top;
 }
 
 .pronouns {
 	display: var(--pronoun-display);
 	text-transform: var(--pronoun-transform);
-	font-size: calc(1em - 2px);
-	white-space: pre;
 }
 
 .pronouns:empty {
 	display: none;
+}
+
+.content {
+	display: inline;
+	text-align: start;
 }
 
 .text,

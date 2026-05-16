@@ -129,14 +129,14 @@ function widgetValuesListener(event) {
 
 	setCustomCSS(
 		'badge-display',
-		Widget.values.get('hide-badges') ? 'none' : 'initial',
+		Widget.values.get('hide-badges') ? 'none' : 'inline',
 	);
 
 	// pronoun settings
 
 	setCustomCSS(
 		'pronoun-display',
-		Widget.values.get('pronouns-display') === 'hidden' ? 'none' : 'initial',
+		Widget.values.get('pronouns-display') === 'hidden' ? 'none' : 'inline',
 	);
 	setCustomCSS(
 		'pronoun-transform',
