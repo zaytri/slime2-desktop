@@ -108,7 +108,7 @@ function SelectedTilePreview({ tile, tileMeta }: SelectedTilePreviewProps) {
 
 			<div
 				className={clsx(
-					'relative flex w-4/5 items-center justify-center rounded-2 bg-linear-to-b ring-2 ring-black/50 outline-2 -outline-offset-2 outline-white/50',
+					'relative flex aspect-4/3 h-48 max-w-4/5 items-center justify-center overflow-hidden rounded-2 bg-linear-to-b ring-2 ring-black/50 outline-2 -outline-offset-2 outline-white/50',
 					tileColorClasses[
 						tile.type === 'folder' ? tileMeta.color : folderTileMeta.color
 					],
@@ -118,9 +118,9 @@ function SelectedTilePreview({ tile, tileMeta }: SelectedTilePreviewProps) {
 				<div className='absolute inset-0 bg-black text-white opacity-20 mix-blend-overlay'>
 					<WaveSvg />
 				</div>
-				<div className='relative flex aspect-4/3 w-full items-center justify-center p-4'>
+				<div className='relative flex size-full items-center justify-center p-4'>
 					<img
-						className='max-h-full max-w-full rounded-1 object-contain smooth-image'
+						className='m-auto max-h-full max-w-full rounded-1 object-contain smooth-image'
 						src={getTileIconSrc(tile.id, tileMeta.icon)}
 					/>
 				</div>
