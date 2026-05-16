@@ -169,7 +169,7 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 	return (
 		<>
 			<div
-				className={clsx('group/tile relative flex size-full outline-none')}
+				className={clsx('group/tile relative flex h-full outline-none')}
 				onPointerEnter={onOver}
 				tabIndex={movingTileMode && sourceSlot.id === tile.id ? 0 : -1}
 				data-index={tile.index % TILES_PER_PAGE}
@@ -261,11 +261,13 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 								'group-focus-within/tile:outline-4 group-hover/tile:outline-4 group-focus-visible/tile:ring-4 group-focus-visible/tile:ring-black',
 						)}
 					>
-						<div className='relative aspect-9/8 h-full w-auto'>
-							<SlimeTile type={tile.type} color={color} />
-							{tile.type !== 'empty' && (
-								<SlimeIcon src={icon} type={tile.type} />
-							)}
+						<div className='relative flex size-full items-center justify-center'>
+							<div className='absolute inset-0 m-auto flex aspect-9/8 max-h-full max-w-full items-end justify-center'>
+								<SlimeTile type={tile.type} color={color} />
+								{tile.type !== 'empty' && (
+									<SlimeIcon src={icon} type={tile.type} />
+								)}
+							</div>
 						</div>
 					</div>
 				</button>

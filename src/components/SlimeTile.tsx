@@ -17,12 +17,12 @@ export default function SlimeTile({
 	return (
 		<div
 			className={clsx(
-				'absolute inset-0 overflow-hidden bg-linear-to-b shadow-[inset_0_0_0_1px_#FFF6,inset_0_-5px_20px_5px_#FFF4] after:rounded-100%',
+				'relative size-full overflow-hidden bg-linear-to-b shadow-[inset_0_0_0_1px_#FFF6,inset_0_-5px_20px_5px_#FFF4] after:rounded-100%',
 				color && tileColorClasses[color],
 				type === 'widget' && 'rounded-slime',
 				type === 'folder' && 'rounded-10%',
 				type === 'empty' &&
-					'top-1/4 rounded-slime bg-none transition-[border-radius,top] group-over:top-1/6',
+					'h-3/4 rounded-slime bg-none transition-[border-radius,height] group-over:h-5/6',
 			)}
 		>
 			{/* wave svg */}
