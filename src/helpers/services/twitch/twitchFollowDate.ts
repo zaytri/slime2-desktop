@@ -1,7 +1,7 @@
 import type { Account } from '@@/json/accounts';
 import twitchApi from './twitchApi';
 
-const EXPIRE_TIME = 60 * 60 * 1000; // 1 hour
+const EXPIRE_TIME = 5 * 60 * 1000; // 5 minutes
 const EPOCH_DATE = new Date(0);
 
 const followCache: Map<
