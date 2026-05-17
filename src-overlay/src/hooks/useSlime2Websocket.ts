@@ -6,8 +6,9 @@ import { WEBSOCKET_BASE_URL } from '../helpers/serverUrl';
 import logZodError from '../helpers/zodError';
 
 const WebSocketEvent = z.object({
+	widgetId: z.string(),
 	type: z.string(),
-	data: z.unknown(),
+	data: z.record(z.string(), z.json()),
 });
 
 const RequestType = z.literal(['get-pronouns', 'get-twitch-follow-date']);
@@ -22,6 +23,8 @@ type ResponseEventData = z.infer<typeof ResponseEventData>;
 
 export default function useSlime2Websocket() {
 	const { widgetId } = useLoaderData({ from: '/$' });
+	globalThis.slime2.widgetId = widgetId;
+
 	const registeredRef = useRef(false);
 	const resolveRejectMapRef = useRef(
 		new Map<string, [(value: any) => void, (reason?: any) => void]>(),
@@ -67,9 +70,9 @@ export default function useSlime2Websocket() {
 		globalThis.slime2.getTwitchFollowDate = (accountId, userId) => {
 			return sendRequest('get-twitch-follow-date', {
 				account_id: accountId,
-				user_id: userId
-			})
-		}
+				user_id: userId,
+			});
+		};
 
 		// send registration message to slime2 upon open connection
 		const openListener = () => {
@@ -89,7 +92,7 @@ export default function useSlime2Websocket() {
 		// listen to websocket messages from slime2 to widget
 		const messageListener = async (messageEvent: MessageEvent<any>) => {
 			try {
-				const { type, data } = WebSocketEvent.parse(
+				const { widgetId, type, data } = WebSocketEvent.parse(
 					JSON.parse(messageEvent.data),
 				);
 
@@ -130,7 +133,7 @@ export default function useSlime2Websocket() {
 				} else {
 					// for any other type, create events for the widget to listen to
 					const customEvent = new CustomEvent(`slime2:${type}`, {
-						detail: data,
+						detail: { ...data, widgetId },
 					});
 					dispatchEvent(customEvent);
 				}

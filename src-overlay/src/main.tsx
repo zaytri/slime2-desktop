@@ -24,6 +24,7 @@ globalThis.slime2 = {
 	async getTwitchFollowDate() {
 		return null;
 	},
+	widgetId: null,
 };
 
 // Render the app

@@ -6,6 +6,7 @@ declare var slime2: {
 	) => Promise<string[] | null>;
 	getTwitchFollowDate: (
 		accountId: string,
-		userId: string
-	) => Promise<string | null>
+		userId: string,
+	) => Promise<string | null>;
+	widgetId: string | null;
 };
