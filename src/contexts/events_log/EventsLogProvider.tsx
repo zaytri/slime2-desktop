@@ -28,7 +28,7 @@ export default function EventsLogProvider({ children }: Props.WithChildren) {
 			// loop thru all read accounts, loading event logs
 			// if they don't already exist in the event logs map
 			Object.values(accounts).forEach(account => {
-				if (account.type === 'read' && !eventsLogMap[account.id]) {
+				if (account.type === 'read' && !eventsLogMap[getEventLogId(account)]) {
 					loadPromises.push(getEventsLog(account));
 				}
 			});

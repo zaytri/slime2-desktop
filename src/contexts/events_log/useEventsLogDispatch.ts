@@ -6,22 +6,6 @@ import {
 import { createContext, useContext } from 'react';
 import { contextErrorMessage, deepCopyObject } from '../common';
 
-type EventsLogAction =
-	| {
-			type: 'set';
-			id: string;
-			log: EventsLog;
-	  }
-	| {
-			type: 'add';
-			id: string;
-			event: LoggedEvent;
-	  };
-
-export const EventsLogDispatchContext = createContext<
-	React.Dispatch<EventsLogAction> | undefined
->(undefined);
-
 export function useEventsLogDispatch() {
 	const dispatch = useContext(EventsLogDispatchContext);
 
@@ -37,6 +21,10 @@ export function useEventsLogDispatch() {
 
 	return { logEvent };
 }
+
+export const EventsLogDispatchContext = createContext<
+	React.Dispatch<EventsLogAction> | undefined
+>(undefined);
 
 export function eventsLogReducer(
 	state: Record<string, EventsLog>,
@@ -76,3 +64,15 @@ export function eventsLogReducer(
 
 	return newState;
 }
+
+type EventsLogAction =
+	| {
+			type: 'set';
+			id: string;
+			log: EventsLog;
+	  }
+	| {
+			type: 'add';
+			id: string;
+			event: LoggedEvent;
+	  };
