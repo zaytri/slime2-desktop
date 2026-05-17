@@ -31,12 +31,10 @@ export default function useWidgetRegistration() {
 
 			await sendWidgetValues(widgetId, settings, values);
 
-			if (!registeredWidgets[widgetId]) {
-				setRegisteredWidgets({
-					...registeredWidgets,
-					[widgetId]: true,
-				});
-			}
+			setRegisteredWidgets({
+				...registeredWidgets,
+				[widgetId]: true,
+			});
 		}
 
 		// registration from bot

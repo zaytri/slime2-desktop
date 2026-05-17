@@ -46,22 +46,10 @@ function MainTabs() {
 		<TabProvider setSelectedId={setSelectedId}>
 			<div
 				className={clsx(
-					'relative flex flex-1 flex-col items-stretch bg-zinc-800',
+					'relative flex w-full flex-1 flex-col items-stretch overflow-hidden bg-zinc-800',
 					settings.disableAnimations && 'disable-animations',
 				)}
 			>
-				{false && (
-					<button
-						type='button'
-						className='absolute top-0 right-0 flex overflow-hidden rounded-bl-4 border-b border-l border-white/50 bg-linear-to-b from-green-400 to-teal-400 pr-1 pl-3 text-teal-950 outline-white over:outline-2'
-					>
-						<div className='absolute inset-0 bottom-[50%] bg-linear-to-b from-white/30 to-white/20'></div>
-						<div className='relative flex items-center gap-2 drop-shadow-[0_0_5px_#FFFB]'>
-							<p className='-mb-0.5 text-5'>Update Available!</p>
-						</div>
-					</button>
-				)}
-
 				<div className='relative flex pt-6'>
 					<TabList
 						render={<nav />}
@@ -214,7 +202,7 @@ const StyledPanel = forwardRef<
 		<TabPanelWithPrevious
 			ref={ref}
 			{...rest}
-			className='animated-tab-panel flex flex-1'
+			className='animated-tab-panel flex w-full flex-1'
 			render={<section />}
 			focusable={false}
 		>

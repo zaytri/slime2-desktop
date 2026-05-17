@@ -1,8 +1,9 @@
-import useDevEditorMode from '@/contexts/dev_editor_mode/useDevEditorMode';
+import useWidgetDevPage from '@/contexts/widget_dev_page/useDevEditorMode';
 import { useWidgetId } from '@/contexts/widget_id/useWidgetId';
 import WidgetValuesProvider from '@/contexts/widget_values/WidgetValuesProvider';
 import { useWidgetSettingsQuery } from '@/hooks/useWidgetSettingsQuery';
 import type { WidgetSettings as WidgetSettingsType } from '@@/json/widgetSettings';
+import WidgetBotLogs from './bot_logs/WidgetBotLogs';
 import WidgetEditor from './editor/WidgetEditor';
 import WidgetHeader from './WidgetHeader';
 import WidgetSettings from './WidgetSettings';
@@ -12,14 +13,22 @@ export default function Widget() {
 	const widgetSettingsQuery = useWidgetSettingsQuery(widgetId);
 	const widgetSettings: WidgetSettingsType = widgetSettingsQuery.data ?? {};
 	const { isLoading, isError } = widgetSettingsQuery;
-	const { setDevEditorMode, devEditorMode } = useDevEditorMode();
+	const { devPage, setDevPage } = useWidgetDevPage();
 
-	if (devEditorMode) {
+	if (devPage === 'editor') {
 		return (
 			<WidgetEditor
 				settings={widgetSettings}
 				onBack={() => {
-					setDevEditorMode(false);
+					setDevPage(null);
+				}}
+			/>
+		);
+	} else if (devPage === 'bot-log') {
+		return (
+			<WidgetBotLogs
+				onBack={() => {
+					setDevPage(null);
 				}}
 			/>
 		);

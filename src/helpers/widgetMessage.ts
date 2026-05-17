@@ -94,7 +94,7 @@ export async function sendWidgetResponse(
 }
 
 export async function sendWidgetCoreChange(widgetId: string) {
-	return sendWidgetMessage(widgetId, 'widget-core-change', null, true);
+	return sendWidgetMessage(widgetId, 'widget-core-change', { widgetId }, true);
 }
 
 export async function sendWidgetButtonClick(
@@ -112,7 +112,7 @@ export async function sendWidgetButtonClick(
 async function sendWidgetMessage(
 	widgetId: string,
 	type: string,
-	data?: unknown,
+	data: Record<string, unknown>,
 	dispatchToBot: boolean = false,
 ) {
 	if (dispatchToBot) {
@@ -125,6 +125,7 @@ async function sendWidgetMessage(
 
 	return sendWebsocketMessage(
 		JSON.stringify({
+			widgetId,
 			type,
 			data,
 		}),

@@ -2,6 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import AccountsProvider from './contexts/accounts/AccountsProvider';
+import BotLogsProvider from './contexts/bot_logs/BotLogsProvider';
 import DialogProvider from './contexts/dialog/DialogProvider';
 import EventsLogProvider from './contexts/events_log/EventsLogProvider';
 import FolderIdProvider from './contexts/folder_id/FolderIdProvider';
@@ -25,9 +26,11 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 								<AccountsProvider>
 									<EventsLogProvider>
 										<TileSwapProvider>
-											<DialogProvider>
-												<MainTabs />
-											</DialogProvider>
+											<BotLogsProvider>
+												<DialogProvider>
+													<MainTabs />
+												</DialogProvider>
+											</BotLogsProvider>
 										</TileSwapProvider>
 									</EventsLogProvider>
 								</AccountsProvider>

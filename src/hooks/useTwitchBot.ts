@@ -1,11 +1,17 @@
+import useAccounts from '@/contexts/accounts/useAccounts';
+import { useBotsLogDispatch } from '@/contexts/bot_logs/useBotLogsDispatch';
 import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
 import { cacheBust, createTilesUrl } from '@/helpers/serverUrl';
+import { getPronouns } from '@/helpers/services/pronouns';
 import twitchApi from '@/helpers/services/twitch/twitchApi';
+import { getTwitchFollowDate } from '@/helpers/services/twitch/twitchFollowDate';
 import logZodError from '@/helpers/zodError';
 import { useEffect, useRef } from 'react';
 import { z } from 'zod/mini';
 
 export default function useTwitchBot() {
+	const accounts = useAccounts();
+	const { addBotLog } = useBotsLogDispatch();
 	const widgetMetas = useWidgetMetas();
 	const twitchBots = useRef(new Map<string, Worker>());
 
@@ -31,7 +37,9 @@ export default function useTwitchBot() {
 
 		const bot = new Worker(URL.createObjectURL(blob));
 
-		bot.onmessage = (event: MessageEvent<{ type: string; data: unknown }>) => {
+		bot.onmessage = async (
+			event: MessageEvent<{ type: string; data: unknown }>,
+		) => {
 			// return if event is formatted incorrectly
 			if (!event.data || !event.data.type || !event.data.data) return;
 
@@ -59,7 +67,71 @@ export default function useTwitchBot() {
 					}
 					break;
 				}
+				case 'log': {
+					try {
+						const { message, level } = LogData.parse(data);
+						addBotLog(widgetId, JSON.stringify(message, null, '\t'), level);
+					} catch (error) {
+						logZodError(error, data);
+					}
+					break;
+				}
+				case 'request': {
+					try {
+						const {
+							type: requestType,
+							request_id,
+							payload,
+						} = RequestData.parse(data);
+						const postMessageType = `slime2:widget-response`;
+
+						switch (requestType) {
+							case 'get-pronouns': {
+								const { platform, user_id, username } = payload;
+								const pronouns = await getPronouns(platform, user_id, username);
+								bot.postMessage({
+									widgetId,
+									type: postMessageType,
+									data: {
+										request_id,
+										type: requestType,
+										response: pronouns,
+									},
+								});
+								break;
+							}
+							case 'get-twitch-follow-date': {
+								const { user_id, account_id } = payload;
+								const account = accounts[account_id];
+								const followDate = account
+									? await getTwitchFollowDate(account, user_id)
+									: null;
+								bot.postMessage({
+									widgetId,
+									type: postMessageType,
+									data: {
+										request_id,
+										type: requestType,
+										response: followDate,
+									},
+								});
+								break;
+							}
+						}
+					} catch (error) {
+						logZodError(error, data);
+					}
+				}
 			}
+		};
+
+		bot.onerror = event => {
+			console.error('Bot Error!', event);
+			addBotLog(
+				widgetId,
+				`[Line: ${event.lineno}, Column: ${event.colno}] ${event.message}`,
+				'error',
+			);
 		};
 
 		// timestamp for cache breaking
@@ -108,7 +180,6 @@ export default function useTwitchBot() {
 			'twitch-event',
 			'widget-values',
 			'widget-accounts',
-			'widget-response',
 			'widget-button-click',
 		];
 
@@ -121,6 +192,7 @@ export default function useTwitchBot() {
 		) {
 			const { widgetId, data } = event.detail;
 			twitchBots.current.get(widgetId)?.postMessage({
+				widgetId,
 				type: `slime2:${event.type}`,
 				data,
 			});
@@ -158,3 +230,31 @@ const SendChatMessageData = z.object({
 	message: z.string(),
 	reply_parent_message_id: z.optional(z.string()),
 });
+
+const LogData = z.object({
+	message: z.unknown(),
+	level: z.catch(z.literal(['info', 'log', 'error', 'debug', 'warn']), 'log'),
+});
+
+const RequestData = z.intersection(
+	z.discriminatedUnion('type', [
+		z.object({
+			type: z.literal('get-pronouns'),
+			payload: z.object({
+				platform: z.literal('twitch'),
+				user_id: z.string(),
+				username: z.string(),
+			}),
+		}),
+		z.object({
+			type: z.literal('get-twitch-follow-date'),
+			payload: z.object({
+				account_id: z.string(),
+				user_id: z.string(),
+			}),
+		}),
+	]),
+	z.object({
+		request_id: z.string(),
+	}),
+);

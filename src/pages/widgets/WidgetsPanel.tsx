@@ -1,5 +1,5 @@
-import DevEditorModeProvider from '@/contexts/dev_editor_mode/DevEditorModeProvider';
 import SelectedTileProvider from '@/contexts/selected_tile/SelectedTileProvider';
+import DevEditorModeProvider from '@/contexts/widget_dev_page/DevEditorModeProvider';
 import WidgetIdProvider from '@/contexts/widget_id/WidgetIdProvider';
 import useWidgetsPanel from '@/contexts/widgets_panel/useWidgetsPanel';
 import Folder from './folder/Folder';

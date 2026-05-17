@@ -1,9 +1,9 @@
 import HeaderButton from '@/components/header/HeaderButton';
 import TileHeader from '@/components/header/TileHeader';
-import useDevEditorMode from '@/contexts/dev_editor_mode/useDevEditorMode';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useSettings } from '@/contexts/settings/useSettings';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
+import useWidgetDevPage from '@/contexts/widget_dev_page/useDevEditorMode';
 import { useWidgetId } from '@/contexts/widget_id/useWidgetId';
 import { useWidgetMeta } from '@/contexts/widget_metas/useWidgetMeta';
 import useWidgetValues from '@/contexts/widget_values/useWidgetValues';
@@ -58,8 +58,9 @@ function DevToolsButton() {
 	const widgetId = useWidgetId();
 	const { openDialog } = useDialog();
 	const { settings } = useSettings();
-	const { setDevEditorMode } = useDevEditorMode();
+	const { setDevPage } = useWidgetDevPage();
 	const { replace } = useWidgetValuesDispatch();
+	const { widgetMeta } = useWidgetMeta(widgetId);
 
 	if (!settings.devMode) return;
 
@@ -94,10 +95,20 @@ function DevToolsButton() {
 					<p>Open Folder</p>
 				</MenuItem>
 
+				{widgetMeta?.type.includes('bot') && (
+					<MenuItem
+						className='dark-menu-item'
+						onClick={() => setDevPage('bot-log')}
+					>
+						<EyeSvg className='size-4.5' />
+						<p>View Bot Logs</p>
+					</MenuItem>
+				)}
+
 				<MenuItem
 					className='dark-menu-item'
 					onClick={() => {
-						setDevEditorMode(true);
+						setDevPage('editor');
 					}}
 				>
 					<PencilSvg className='size-4.5' />
