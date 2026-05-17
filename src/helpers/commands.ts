@@ -87,6 +87,13 @@ export async function saveTempWidgetFile(
 	return invoke('save_temp_widget_file', { fileName, widgetId });
 }
 
+export async function saveTempWidgetCoreIcon(
+	fileName: string,
+	widgetId: string,
+): Promise<string> {
+	return invoke('save_temp_widget_core_icon', { fileName, widgetId });
+}
+
 export async function getSecretKey(key: string): Promise<string> {
 	return invoke('get_secret_key', { key });
 }

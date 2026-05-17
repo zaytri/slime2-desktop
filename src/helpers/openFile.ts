@@ -1,11 +1,13 @@
-import { open } from '@tauri-apps/plugin-dialog';
+import { open, type DialogFilter } from '@tauri-apps/plugin-dialog';
 
 export type MediaType = 'audio' | 'image' | 'video';
 
-export async function openImage(): Promise<null | string> {
+export async function openImage(
+	filters?: DialogFilter[],
+): Promise<null | string> {
 	return open({
 		title: 'Choose Image File',
-		filters: [IMAGE_FILTER],
+		filters: filters || [IMAGE_FILTER],
 	});
 }
 

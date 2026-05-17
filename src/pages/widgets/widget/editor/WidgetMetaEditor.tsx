@@ -37,7 +37,7 @@ export default function WidgetMetaEditor({
 							onChange={newValue => {
 								onChange({
 									...meta,
-									name: newValue.trim(),
+									name: newValue,
 								});
 							}}
 						/>
@@ -50,7 +50,7 @@ export default function WidgetMetaEditor({
 							onChange={newValue => {
 								onChange({
 									...meta,
-									creator: newValue.trim(),
+									creator: newValue,
 								});
 							}}
 						/>
@@ -63,7 +63,7 @@ export default function WidgetMetaEditor({
 							onChange={newValue => {
 								onChange({
 									...meta,
-									version: newValue.trim(),
+									version: newValue,
 								});
 							}}
 						/>
@@ -76,7 +76,7 @@ export default function WidgetMetaEditor({
 							onChange={newValue => {
 								onChange({
 									...meta,
-									website: newValue.trim(),
+									website: newValue,
 								});
 							}}
 						/>
@@ -89,7 +89,7 @@ export default function WidgetMetaEditor({
 							onChange={newValue => {
 								onChange({
 									...meta,
-									support: newValue.trim(),
+									support: newValue,
 								});
 							}}
 						/>
