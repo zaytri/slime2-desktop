@@ -535,16 +535,18 @@ export function widgetSettingsEditorReducer(
 					throw new Error('Category already exists!');
 				}
 
-				// create new category
-				copiedState[id] = { label, settings: {} };
-				return copiedState;
+				// add new category on top
+				return {
+					[id]: { label, settings: {} },
+					...copiedState,
+				};
 			}
 			case 'add-setting': {
 				const { id, categoryId, sectionId, setting } = action;
 
 				if (sectionId) {
 					if (setting.type === 'section' || setting.type === 'multi-section') {
-						throw new Error('Cannot add section to category!');
+						throw new Error('Cannot add section to another section!');
 					}
 
 					if (
@@ -560,8 +562,11 @@ export function widgetSettingsEditorReducer(
 						throw new Error('Setting already exists!');
 					}
 
-					copiedState[categoryId].settings[sectionId].settings[id] =
-						deepCopyObject(setting);
+					// add new subsetting on top
+					copiedState[categoryId].settings[sectionId].settings = {
+						[id]: deepCopyObject(setting),
+						...copiedState[categoryId].settings[sectionId].settings,
+					};
 
 					return copiedState;
 				} else {
@@ -573,7 +578,11 @@ export function widgetSettingsEditorReducer(
 						throw new Error('Setting already exists!');
 					}
 
-					copiedState[categoryId].settings[id] = deepCopyObject(setting);
+					// add new setting on top
+					copiedState[categoryId].settings = {
+						[id]: deepCopyObject(setting),
+						...copiedState[categoryId].settings,
+					};
 
 					return copiedState;
 				}

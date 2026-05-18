@@ -1,5 +1,3 @@
-import useWidgetSettingsEditor from '@/contexts/widget_settings_editor/useWidgetSettingsEditor';
-import { useWidgetSettingsEditorDispatch } from '@/contexts/widget_settings_editor/useWidgetSettingsEditorDispatch';
 import { type WidgetSetting } from '@@/json/widgetSettings';
 import GearSvg from '@@/svg/GearSvg';
 import { Menu, MenuButton, MenuProvider } from '@ariakit/react';
@@ -35,9 +33,6 @@ export default function SettingEditorMenu({
 	categoryId,
 	sectionId,
 }: SettingEditorMenuProps) {
-	const {} = useWidgetSettingsEditor();
-	const {} = useWidgetSettingsEditorDispatch();
-
 	let colorsClassName = clsx(
 		'text-green-800 over:border-green-900 over:bg-green-800',
 	);
