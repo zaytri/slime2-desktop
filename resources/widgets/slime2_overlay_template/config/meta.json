@@ -1,0 +1,24 @@
+{
+	"name": "Overlay Widget Template",
+	"creator": "Slime2",
+	"version": "1.0.0",
+	"website": "https://slime2.stream/",
+	"support": "https://forums.slime2.stream/",
+	"type": [
+		"overlay"
+	],
+	"accounts": [
+		{
+			"type": "read",
+			"service": "twitch"
+		}
+	],
+	"import": {
+		"js": [
+			"script.js"
+		],
+		"css": [
+			"styles.css"
+		]
+	}
+}

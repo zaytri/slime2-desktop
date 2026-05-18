@@ -1,7 +1,8 @@
 import chatBoxIconImage from '@/assets/icons/slime2_chat_box.png';
+import templateIconImage from '@/assets/icons/slime2_template.png';
 
 export type DefaultWidget = {
-	type: 'bot' | 'overlay';
+	type: 'bot' | 'overlay' | 'template';
 	name: string;
 	icon: string;
 	description: string;
@@ -14,6 +15,8 @@ export type DefaultWidgetId =
 	| 'slime2_goal_bar'
 	| 'slime2_command_bot'
 	| 'slime2_timer_bot'
+	| 'slime2_overlay_template'
+	| 'slime2_bot_template'
 	| 'test';
 
 const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
@@ -22,6 +25,18 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 		type: 'overlay',
 		icon: chatBoxIconImage,
 		description: 'Display chat messages',
+	},
+	slime2_overlay_template: {
+		name: 'Overlay Widget Template',
+		type: 'template',
+		icon: templateIconImage,
+		description: 'Starter overlay template',
+	},
+	slime2_bot_template: {
+		name: 'Bot Widget Template',
+		type: 'template',
+		icon: templateIconImage,
+		description: 'Starter bot template',
 	},
 	// slime2_alert_box: {
 	// 	name: 'Alert Box',
@@ -64,14 +79,21 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 export function groupDefaultWidgets() {
 	const overlayWidgets = new Map<DefaultWidgetId, DefaultWidget>();
 	const botWidgets = new Map<DefaultWidgetId, DefaultWidget>();
+	const templateWidgets = new Map<DefaultWidgetId, DefaultWidget>();
 
-	Object.entries(defaultWidgets).forEach(([widgetId, widget]) => {
-		if (widget.type === 'overlay') {
-			overlayWidgets.set(widgetId as DefaultWidgetId, widget);
-		} else if (widget.type === 'bot') {
-			botWidgets.set(widgetId as DefaultWidgetId, widget);
+	Object.entries(defaultWidgets).forEach(entry => {
+		const [widgetId, widget] = entry as [DefaultWidgetId, DefaultWidget];
+		switch (widget.type) {
+			case 'bot':
+				botWidgets.set(widgetId, widget);
+				break;
+			case 'overlay':
+				overlayWidgets.set(widgetId, widget);
+				break;
+			case 'template':
+				templateWidgets.set(widgetId, widget);
 		}
 	});
 
-	return { overlayWidgets, botWidgets };
+	return { overlayWidgets, botWidgets, templateWidgets };
 }

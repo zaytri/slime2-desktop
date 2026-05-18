@@ -1,6 +1,7 @@
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { usePage } from '@/contexts/pages/usePage';
 import { usePageContext } from '@/contexts/pages/usePageContext';
+import { useSettings } from '@/contexts/settings/useSettings';
 import {
 	groupDefaultWidgets,
 	type DefaultWidget,
@@ -10,10 +11,11 @@ import ArrowDownTraySvg from '@@/svg/ArrowDownTraySvg';
 import type { CreateTileContext, CreateTilePages } from '.';
 import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
 
-const { overlayWidgets, botWidgets } = groupDefaultWidgets();
+const { overlayWidgets, botWidgets, templateWidgets } = groupDefaultWidgets();
 
 export default function CreateWidgetPage() {
 	const { setPage } = usePage<CreateTilePages>();
+	const { settings } = useSettings();
 
 	return (
 		<div className='flex w-200 flex-col gap-4'>
@@ -32,6 +34,13 @@ export default function CreateWidgetPage() {
 				</DialogConfirmButton>
 			</div>
 
+			{settings.devMode && (
+				<DefaultWidgetList
+					title='Developer Templates'
+					widgets={templateWidgets}
+					description='Starter templates for widget developers.'
+				/>
+			)}
 			<DefaultWidgetList
 				title='Overlays'
 				widgets={overlayWidgets}
