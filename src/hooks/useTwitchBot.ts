@@ -38,90 +38,97 @@ export default function useTwitchBot() {
 		const bot = new Worker(URL.createObjectURL(blob));
 
 		bot.onmessage = async (
-			event: MessageEvent<{ type: string; data: unknown }>,
+			event: MessageEvent<{ type: string; data: Record<string, unknown> }>,
 		) => {
 			// return if event is formatted incorrectly
 			if (!event.data || !event.data.type || !event.data.data) return;
 
 			const { type, data } = event.data;
-			switch (type) {
-				case 'send-chat-message': {
-					try {
-						const {
-							account_id,
-							broadcaster_id,
-							sender_id,
-							message,
-							reply_parent_message_id,
-						} = SendChatMessageData.parse(data);
-
-						twitchApi.sendChatMessage(
-							account_id,
-							broadcaster_id,
-							sender_id,
-							message,
-							reply_parent_message_id,
-						);
-					} catch (error) {
-						logZodError(error, data);
-					}
-					break;
-				}
-				case 'log': {
-					try {
+			try {
+				switch (type) {
+					case 'slime2:log': {
 						const { message, level } = LogData.parse(data);
 						addBotLog(widgetId, JSON.stringify(message, null, '\t'), level);
-					} catch (error) {
-						logZodError(error, data);
+
+						break;
 					}
-					break;
-				}
-				case 'request': {
-					try {
+					case 'slime2:request': {
 						const {
 							type: requestType,
 							request_id,
 							payload,
 						} = RequestData.parse(data);
-						const postMessageType = `slime2:widget-response`;
 
-						switch (requestType) {
-							case 'get-pronouns': {
-								const { platform, user_id, username } = payload;
-								const pronouns = await getPronouns(platform, user_id, username);
-								bot.postMessage({
-									widgetId,
-									type: postMessageType,
-									data: {
-										request_id,
-										type: requestType,
-										response: pronouns,
-									},
-								});
-								break;
-							}
-							case 'get-twitch-follow-date': {
-								const { user_id, account_id } = payload;
-								const account = accounts[account_id];
-								const followDate = account
-									? await getTwitchFollowDate(account, user_id)
-									: null;
-								bot.postMessage({
-									widgetId,
-									type: postMessageType,
-									data: {
-										request_id,
-										type: requestType,
-										response: followDate,
-									},
-								});
-								break;
-							}
+						function botResponse(response: unknown) {
+							bot.postMessage({
+								widgetId,
+								type: 'slime2:response',
+								data: {
+									request_id,
+									type: requestType,
+									response,
+								},
+							});
 						}
-					} catch (error) {
-						logZodError(error, data);
+
+						try {
+							switch (requestType) {
+								case 'get-pronouns': {
+									const { platform, user_id, username } = payload;
+									const pronouns = await getPronouns(
+										platform,
+										user_id,
+										username,
+									);
+									botResponse(pronouns);
+									break;
+								}
+								case 'get-twitch-follow-date': {
+									const { user_id, account_id } = payload;
+									const account = accounts[account_id];
+									const followDate = account
+										? await getTwitchFollowDate(account, user_id)
+										: null;
+									botResponse(followDate);
+
+									break;
+								}
+								case 'post-twitch-chat-message':
+									{
+										const {
+											account_id,
+											broadcaster_id,
+											sender_id,
+											message,
+											reply_parent_message_id,
+										} = payload;
+
+										const response = await twitchApi.sendChatMessage(
+											account_id,
+											broadcaster_id,
+											sender_id,
+											message,
+											reply_parent_message_id,
+										);
+										botResponse(response.data.data[0]);
+
+										response.data;
+									}
+									break;
+							}
+						} catch (error) {
+							botResponse({ error });
+							throw error;
+						}
 					}
 				}
+			} catch (error) {
+				const formattedError = logZodError(error, data);
+				addBotLog(
+					widgetId,
+					`[${type}${type === 'slime2:request' ? ` - ${data.type}` : ''}] ${formattedError}`,
+					'error',
+				);
 			}
 		};
 
@@ -223,14 +230,6 @@ export default function useTwitchBot() {
 	}, []);
 }
 
-const SendChatMessageData = z.object({
-	account_id: z.string(),
-	broadcaster_id: z.string(),
-	sender_id: z.string(),
-	message: z.string(),
-	reply_parent_message_id: z.optional(z.string()),
-});
-
 const LogData = z.object({
 	message: z.unknown(),
 	level: z.catch(z.literal(['info', 'log', 'error', 'debug', 'warn']), 'log'),
@@ -251,6 +250,16 @@ const RequestData = z.intersection(
 			payload: z.object({
 				account_id: z.string(),
 				user_id: z.string(),
+			}),
+		}),
+		z.object({
+			type: z.literal('post-twitch-chat-message'),
+			payload: z.object({
+				account_id: z.string(),
+				broadcaster_id: z.string(),
+				sender_id: z.string(),
+				message: z.string(),
+				reply_parent_message_id: z.optional(z.string()),
 			}),
 		}),
 	]),
