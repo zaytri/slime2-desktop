@@ -80,8 +80,8 @@ function LogLine({ level, message, onClick, highlighted }: LogLineProps) {
 			ref={containerRef}
 			className={clsx(
 				'group text-rose-2100 relative flex shrink-0 gap-1 overflow-hidden rounded-1 bg-zinc-400/10 px-1 py-0.5 text-zinc-200 -outline-offset-1 outline-white/25 text-shadow-[0_1px_black] over:outline',
-				level === 'error' && 'bg-rose-400/40 text-rose-200!',
-				level === 'warn' && 'bg-amber-400/30 text-amber-200!',
+				level === 'error' && 'bg-rose-400/40! text-rose-200!',
+				level === 'warn' && 'bg-amber-400/30! text-amber-200!',
 				highlighted && 'outline',
 			)}
 			onClick={() => {
