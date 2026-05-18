@@ -165,21 +165,21 @@ function widgetValuesListener(event) {
 function widgetAccountsListener(event) {
 	logEventDetails(event.type, event.detail);
 
-	const data = event.detail.accounts[0];
-	Account.id = data.id;
+	const account = event.detail.accounts[0];
+	Account.id = account.id;
 
 	// collect bttv emotes into Account.bttvEmotes
-	data.betterTTV?.emotes?.forEach(emote => {
+	account.betterTTV?.emotes?.forEach(emote => {
 		Account.thirdPartyEmotes.set(emote.code, { type: 'bttv', data: emote });
 	});
 
 	// collect ffz emotes into Account.ffzEmotes
-	data.frankerFaceZ?.emotes?.forEach(emote => {
+	account.frankerFaceZ?.emotes?.forEach(emote => {
 		Account.thirdPartyEmotes.set(emote.name, { type: 'ffz', data: emote });
 	});
 
 	// collect global badges into Account.globalBadges
-	data.globalBadges.forEach(badge => {
+	account.globalBadges.forEach(badge => {
 		const badgeVersions = new Map();
 
 		badge.versions.forEach(version => {
@@ -193,7 +193,7 @@ function widgetAccountsListener(event) {
 	});
 
 	// collect channel badges into Account.channelBadges
-	data.channelBadges.forEach(badge => {
+	account.channelBadges.forEach(badge => {
 		const badgeVersions = new Map();
 
 		badge.versions.forEach(version => {
@@ -207,7 +207,7 @@ function widgetAccountsListener(event) {
 	});
 
 	// collect cheermotes into Account.cheermotes
-	data.cheermotes.forEach(cheermote => {
+	account.cheermotes.forEach(cheermote => {
 		const cheermoteTiers = new Map();
 
 		cheermote.tiers.forEach(tier => {
