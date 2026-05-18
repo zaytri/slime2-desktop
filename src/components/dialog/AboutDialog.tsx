@@ -10,7 +10,7 @@ export default function AboutDialog() {
 
 	return (
 		<DialogContent className='flex flex-col justify-between gap-4 p-4'>
-			<div className='px- flex gap-8'>
+			<div className='flex gap-8 pl-4'>
 				<div className='flex flex-col items-center gap-2'>
 					<img alt='' src={slime2TvImage} className='h-50 smooth-image' />
 					<img alt='' src={slime2TextImage} className='h-20 smooth-image' />
