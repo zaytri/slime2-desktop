@@ -18,6 +18,7 @@ import GenericDeleteDialog from '@@/dialog/GenericDeleteDialog';
 import OverlayURLDialog from '@@/dialog/OverlayURLDialog';
 import ArrowLeftRightSvg from '@@/svg/ArrowLeftRightSvg';
 import ArrowUpTraySvg from '@@/svg/ArrowUpTraySvg';
+import BookSvg from '@@/svg/BookSvg';
 import ChainLinkSvg from '@@/svg/ChainLinkSvg';
 import EyeSvg from '@@/svg/EyeSvg';
 import GearSvg from '@@/svg/GearSvg';
@@ -100,8 +101,8 @@ function DevToolsButton() {
 						className='dark-menu-item'
 						onClick={() => setDevPage('bot-log')}
 					>
-						<EyeSvg className='size-4.5' />
-						<p>View Bot Logs</p>
+						<BookSvg className='size-4.5' />
+						<p>Bot Logs</p>
 					</MenuItem>
 				)}
 
