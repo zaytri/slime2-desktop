@@ -64,6 +64,7 @@ export default function SettingMultiSubsection({
 		<Disclosure as='section' className='flex flex-col'>
 			<div className='flex items-center gap-2'>
 				<DisclosureButton
+					id={`${id}.button`}
 					className='group/sub z-10 flex flex-1 items-center gap-2 rounded-2 border border-white bg-zinc-100 bg-linear-to-b from-zinc-100 to-zinc-200/50 px-4 py-2 outline-2 outline-offset-0! outline-zinc-400/50 data-open:rounded-b-0 data-open:bg-none over:bg-lime-200 over:bg-none over:text-green-900 over:outline-4 over:outline-lime-600'
 					ref={disclosureButtonRef}
 				>

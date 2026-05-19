@@ -10,7 +10,7 @@ import {
 	DisclosurePanel,
 } from '@headlessui/react';
 import { nanoid } from 'nanoid';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TextField from '../input_fields/TextField';
 import PlusSvg from '../svg/PlusSvg';
 import TriangleDownSvg from '../svg/TriangleDownSvg';
@@ -34,12 +34,22 @@ export default function SettingMultiSection({
 }: SettingMultiSectionProps) {
 	const { setValue: set, duplicate } = useWidgetValuesDispatch();
 	const [newName, setNewName] = useState<string>('');
+	const [addedId, setAddedId] = useState<string>('');
 
 	const disclosureButtonRef = useRef<HTMLButtonElement>(null);
 	useAutoScrollDisclosureOpen(
 		disclosureButtonRef,
 		widgetSettingsScrollContainerId,
 	);
+
+	useEffect(() => {
+		if (!addedId) return;
+
+		const subSectionDisclosureButton = document.getElementById(
+			`${addedId}.button`,
+		);
+		subSectionDisclosureButton?.click();
+	}, [addedId]);
 
 	function removeSubsectionAtIndex(index: number) {
 		const newValues = [...values];
@@ -88,6 +98,7 @@ export default function SettingMultiSection({
 							);
 							onChange([newSubsectionId, ...values]);
 							setNewName('');
+							setAddedId(newSubsectionId);
 						}}
 					>
 						<div className='absolute inset-0 bottom-1/2 bg-linear-to-b from-white/30 to-white/20'></div>
