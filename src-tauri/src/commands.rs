@@ -2,7 +2,7 @@
 // Websocket commmands found under server/websocket/ws_commands.rs
 
 use crate::{
-	file,
+	file, get_log_file_name,
 	secret::{delete_secret, get_secret, set_secret},
 	server,
 };
@@ -16,7 +16,8 @@ use std::{
 	io::{Read, Write},
 	path::{Path, PathBuf},
 };
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
+use tauri_plugin_opener::OpenerExt;
 use walkdir::WalkDir;
 use zip::write::SimpleFileOptions;
 
@@ -301,7 +302,7 @@ pub async fn package_custom_widget(
 			Ok(name) => name,
 			// ignore file if strip prefix fails
 			Err(error) => {
-				println!("Error stripping prefix: {}", error);
+				log::error!("Error stripping prefix: {}", error);
 				continue;
 			}
 		};
@@ -309,7 +310,7 @@ pub async fn package_custom_widget(
 			Some(string) => string,
 			// ignore file if not valid UTF-8
 			None => {
-				println!("Found path failing UTF-8 validation!");
+				log::error!("Found path failing UTF-8 validation!");
 				continue;
 			}
 		};
@@ -321,9 +322,9 @@ pub async fn package_custom_widget(
 				zip_writer.start_file(path_as_string, zip_options)
 			{
 				// ignore file if starting to write fails
-				println!("Error starting to write to zip: {}", error);
+				log::error!("Error starting to write to zip: {}", error);
 				if let Err(error) = zip_writer.abort_file() {
-					println!("Error aborting zip write: {}", error);
+					log::error!("Error aborting zip write: {}", error);
 				};
 				continue;
 			}
@@ -332,9 +333,9 @@ pub async fn package_custom_widget(
 				Ok(file) => file,
 				// ignore file if it can't be opened
 				Err(error) => {
-					println!("Error opening file: {}", error);
+					log::error!("Error opening file: {}", error);
 					if let Err(error) = zip_writer.abort_file() {
-						println!("Error aborting zip write: {}", error);
+						log::error!("Error aborting zip write: {}", error);
 					};
 					continue;
 				}
@@ -343,9 +344,9 @@ pub async fn package_custom_widget(
 			if let Err(error) = file.read_to_end(&mut buffer) {
 				// ignore file and clear buffer if it can't be read to end
 				buffer.clear();
-				println!("Error reading file: {}", error);
+				log::error!("Error reading file: {}", error);
 				if let Err(error) = zip_writer.abort_file() {
-					println!("Error aborting zip write: {}", error);
+					log::error!("Error aborting zip write: {}", error);
 				};
 				continue;
 			}
@@ -353,9 +354,9 @@ pub async fn package_custom_widget(
 			if let Err(error) = zip_writer.write_all(&buffer) {
 				// ignore file and clear buffer if it can't be fully written
 				buffer.clear();
-				println!("Error writing file: {}", error);
+				log::error!("Error writing file: {}", error);
 				if let Err(error) = zip_writer.abort_file() {
-					println!("Error aborting zip write: {}", error);
+					log::error!("Error aborting zip write: {}", error);
 				};
 				continue;
 			}
@@ -367,7 +368,7 @@ pub async fn package_custom_widget(
 			if let Err(error) =
 				zip_writer.add_directory(path_as_string, zip_options)
 			{
-				println!("Error adding directory to zip: {}", error);
+				log::error!("Error adding directory to zip: {}", error);
 			};
 		}
 	}
@@ -604,6 +605,24 @@ pub async fn delete_secret_key(key: &str) -> Result<(), String> {
 				"Error deleting secret key ({}): {}",
 				key, error
 			));
+		}
+	};
+}
+
+#[tauri::command]
+pub async fn reveal_log_file(app_handle: AppHandle) -> Result<(), String> {
+	let log_file_path = app_handle
+		.path()
+		.resolve(
+			format!("{}.log", get_log_file_name()),
+			tauri::path::BaseDirectory::AppLog,
+		)
+		.expect("Failed to resolve path to log file!");
+
+	return match app_handle.opener().reveal_item_in_dir(log_file_path) {
+		Ok(()) => Ok(()),
+		Err(error) => {
+			return Err(format!("Error revealing log file {}", error));
 		}
 	};
 }

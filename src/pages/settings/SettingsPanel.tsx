@@ -3,9 +3,11 @@ import ToggleField from '@/components/input_fields/ToggleField';
 import GearSvg from '@/components/svg/GearSvg';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useSettings } from '@/contexts/settings/useSettings';
+import { revealLogFile } from '@/helpers/commands';
 import useAppVersionQuery from '@/hooks/useAppVersionQuery';
 import AboutDialog from '@@/dialog/AboutDialog';
 import BookSvg from '@@/svg/BookSvg';
+import EyeSvg from '@@/svg/EyeSvg';
 
 export default function SettingsPanel() {
 	const appVersionQuery = useAppVersionQuery();
@@ -28,23 +30,23 @@ export default function SettingsPanel() {
 					<HeaderButton
 						label='About'
 						icon={BookSvg}
-						className='border-yellow-300 bg-yellow-300 from-yellow-300 to-amber-400 text-amber-900 over:outline-yellow-600'
+						className='border-lime-400 bg-lime-300 from-lime-400 to-green-400 text-green-900 over:outline-green-600'
 						onClick={() => {
 							openDialog('About', <AboutDialog />);
+						}}
+					/>
+
+					<HeaderButton
+						label='Show Logs'
+						icon={EyeSvg}
+						className='border-yellow-300 bg-yellow-300 from-yellow-300 to-amber-400 text-amber-900 over:outline-yellow-600'
+						onClick={() => {
+							revealLogFile();
 						}}
 					/>
 				</div>
 
 				<div className='flex flex-1 flex-col gap-4 light-container p-4'>
-					<ToggleField
-						label='Developer Mode'
-						value={settings.devMode}
-						onChange={value => {
-							setSettings({ ...settings, devMode: value });
-						}}
-						description='Enables extra features for widget developers'
-					/>
-
 					<ToggleField
 						label='Disable UI Animations'
 						value={settings.disableAnimations}
@@ -52,6 +54,15 @@ export default function SettingsPanel() {
 							setSettings({ ...settings, disableAnimations: value });
 						}}
 						description='UI transitions will be instant rather than animated (does not affect overlay widget animations)'
+					/>
+
+					<ToggleField
+						label='Developer Mode'
+						value={settings.devMode}
+						onChange={value => {
+							setSettings({ ...settings, devMode: value });
+						}}
+						description='Enables extra features for widget developers'
 					/>
 				</div>
 			</div>

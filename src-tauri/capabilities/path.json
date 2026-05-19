@@ -1,0 +1,9 @@
+{
+	"identifier": "path",
+	"description": "This capability allows file paths to be used and resolved.",
+	"windows": ["main"],
+	"permissions": [
+		"core:path:allow-resolve-directory",
+		"core:path:allow-resolve"
+	]
+}

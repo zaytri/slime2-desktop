@@ -121,3 +121,7 @@ type FontData = {
 export async function loadSystemFonts(): Promise<FontData[]> {
 	return invoke('load_system_fonts');
 }
+
+export async function revealLogFile(): Promise<void> {
+	return invoke('reveal_log_file');
+}

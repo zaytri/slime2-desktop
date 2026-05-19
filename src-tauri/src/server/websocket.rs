@@ -36,7 +36,7 @@ impl WebsocketConnection {
 				websocket_sender
 					.send(message)
 					.unwrap_or_else(|error| {
-						eprintln!("Websocket Send Error: {}", error)
+						log::error!("Websocket Send Error: {}", error)
 					})
 					.await
 			}
@@ -65,14 +65,14 @@ pub async fn connect(websocket: WebSocket, connections: WebsocketConnections) {
 	// use a counter to assign a new unique ID for this connection
 	let connection_id = NEXT_CONNECTION_ID.fetch_add(1, Ordering::Relaxed);
 	if cfg!(dev) {
-		eprintln!("New Websocket Connection (ID: {})", connection_id)
+		log::info!("New Websocket Connection (ID: {})", connection_id)
 	}
 
 	if let Err(error) =
 		message_handler(websocket, &connections, connection_id).await
 	{
 		if cfg!(dev) {
-			eprintln!("{}", error);
+			log::error!("Websocket Message Handler Error: {}", error);
 		}
 	}
 
@@ -212,6 +212,6 @@ async fn disconnect(connection_id: usize, connections: &WebsocketConnections) {
 	connections.write().await.remove(&connection_id);
 
 	if cfg!(dev) {
-		eprintln!("Disconnected Websocket (ID: {})", connection_id)
+		log::info!("Disconnected Websocket (ID: {})", connection_id)
 	}
 }

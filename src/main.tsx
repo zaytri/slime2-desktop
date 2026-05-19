@@ -1,4 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query';
+import { debug, error, info, trace, warn } from '@tauri-apps/plugin-log';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import AccountsProvider from './contexts/accounts/AccountsProvider';
@@ -14,6 +15,30 @@ import WidgetMetasProvider from './contexts/widget_metas/WidgetMetasProvider';
 import { queryClient } from './helpers/queryClient';
 import MainTabs from './pages/MainTabs';
 import './styles.css';
+
+// Override console messages to additionally send to logger plugin
+function forwardConsole(
+	fnName: 'log' | 'debug' | 'info' | 'warn' | 'error',
+	logger: (message: string) => Promise<void>,
+) {
+	const original = console[fnName];
+	console[fnName] = (...data: any[]) => {
+		original(...data);
+		logger(
+			data
+				.map(item => {
+					return typeof item === 'string' ? item : JSON.stringify(item);
+				})
+				.join(' '),
+		);
+	};
+}
+
+forwardConsole('log', trace);
+forwardConsole('debug', debug);
+forwardConsole('info', info);
+forwardConsole('warn', warn);
+forwardConsole('error', error);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>

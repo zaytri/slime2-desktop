@@ -1,0 +1,6 @@
+{
+	"identifier": "log",
+	"description": "This capability allows logging to be used.",
+	"windows": ["main"],
+	"permissions": ["log:allow-log"]
+}

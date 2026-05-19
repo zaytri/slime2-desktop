@@ -46,11 +46,12 @@
 				"default",
 				"dialog",
 				"clipboard",
-				"file",
+				"path",
 				"event",
 				"version",
 				"watcher",
-				"opener"
+				"opener",
+				"log"
 			],
 			"csp": {
 				"default-src": ["'self'", "http://localhost:*"],
