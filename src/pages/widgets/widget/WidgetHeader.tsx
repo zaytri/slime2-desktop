@@ -83,7 +83,7 @@ function DevToolsButton() {
 							'tiles',
 							widgetId,
 							// opens folder by revealing this subfolder
-							'config',
+							'core',
 						].join('\\');
 						try {
 							await revealItemInDir(widgetDirectory);
