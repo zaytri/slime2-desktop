@@ -62,11 +62,10 @@ export default function SettingsGroup({ settings }: SettingsGroupProps) {
 				const alt = 'alt' in setting ? i18nStringTransform(setting.alt) : '';
 
 				return (
-					<div className='flex'>
+					<div key={id} className='flex'>
 						<DevPeek id={id} setting={setting} />
 						<div className='flex flex-1 flex-col'>
 							<WidgetSetting
-								key={id}
 								id={id}
 								{...setting}
 								label={label}
