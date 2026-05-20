@@ -7,6 +7,8 @@ import { loadWidgetValues } from '@/helpers/json/widgetValues';
 import { sendWidgetAccounts, sendWidgetValues } from '@/helpers/widgetMessage';
 import logZodError from '@/helpers/zodError';
 import { getEventLogId } from '@@/json/eventsLog';
+import { loadTileMeta } from '@@/json/tileMeta';
+import { loadWidgetMeta } from '@@/json/widgetMeta';
 import { listen } from '@tauri-apps/api/event';
 import { useEffect, useState } from 'react';
 import { z } from 'zod/mini';
@@ -15,25 +17,25 @@ export default function useWidgetRegistration() {
 	const accounts = useAccounts();
 	const eventsLog = useEventsLog();
 	const widgetMetas = useWidgetMetas();
-	const [registeredWidgets, setRegisteredWidgets] = useState<
-		Record<string, boolean>
-	>({});
+	const [registeredWidgets, setRegisteredWidgets] = useState(new Set<string>());
 
 	// sends widget values upon webhook registration / bot connection
 	useEffect(() => {
 		async function registerWidget(widgetId: string) {
-			console.info(`Connecting overlay widget: ${widgetMetas[widgetId]?.name}`);
-
-			const [settings, values] = await Promise.all([
+			const [settings, values, widgetMeta, tileMeta] = await Promise.all([
 				loadWidgetSettings(widgetId),
 				loadWidgetValues(widgetId),
+				loadWidgetMeta(widgetId),
+				loadTileMeta(widgetId),
 			]);
 
-			await sendWidgetValues(widgetId, settings, values);
+			console.info(
+				`${tileMeta.name}${widgetMeta.name !== tileMeta.name ? ` (${widgetMeta.name})` : ''}: Widget connected.`,
+			);
 
-			setRegisteredWidgets({
-				...registeredWidgets,
-				[widgetId]: true,
+			await sendWidgetValues(widgetId, settings, values);
+			setRegisteredWidgets(state => {
+				return new Set([...state.values(), widgetId]);
 			});
 		}
 
@@ -42,11 +44,6 @@ export default function useWidgetRegistration() {
 			event: CustomEventInit<{ widgetId: string }>,
 		) {
 			if (!event.detail?.widgetId) return;
-
-			console.info(
-				`Connecting bot widget: ${widgetMetas[event.detail.widgetId]?.name}`,
-			);
-
 			registerWidget(event.detail.widgetId);
 		}
 
@@ -59,7 +56,6 @@ export default function useWidgetRegistration() {
 				try {
 					// just in case payload isn't formatted correctly
 					const { id: widgetId } = WidgetRegistration.parse(event.payload);
-
 					registerWidget(widgetId);
 				} catch (error) {
 					logZodError(error, event.payload);
@@ -79,7 +75,7 @@ export default function useWidgetRegistration() {
 	useEffect(() => {
 		async function sendAllAccountData() {
 			await Promise.all(
-				Object.keys(registeredWidgets).map(async widgetId => {
+				[...registeredWidgets.values()].map(async widgetId => {
 					const meta = widgetMetas[widgetId];
 					if (!meta || !meta.accounts || meta.accounts.length === 0) {
 						return;
