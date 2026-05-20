@@ -1,4 +1,5 @@
 import chatBoxIconImage from '@/assets/icons/slime2_chat_box.png';
+import commandBotIconImage from '@/assets/icons/slime2_command_bot.png';
 import templateIconImage from '@/assets/icons/slime2_template.png';
 
 export type DefaultWidget = {
@@ -62,12 +63,12 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 	// 	icon: EventLabelIcon,
 	// 	description: '',
 	// },
-	// slime2_command_bot: {
-	// 	name: 'Command Bot',
-	// 	type: 'bot',
-	// 	icon: CommandBotIcon,
-	// 	description: 'Responds to custom chat commands',
-	// },
+	slime2_command_bot: {
+		name: 'Command Bot',
+		type: 'bot',
+		icon: commandBotIconImage,
+		description: 'Replies to custom chat commands',
+	},
 	// 'slime2_timer_bot': {
 	// 	name: 'Timer Bot',
 	// 	type: 'bot',

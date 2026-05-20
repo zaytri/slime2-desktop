@@ -1,6 +1,6 @@
 import { saveTileMeta, type TileMeta } from '@/helpers/json/tileMeta';
 import { createContext, useContext } from 'react';
-import { contextErrorMessage, deepCopyObject } from '../common';
+import { contextErrorMessage } from '../common';
 import type { TileMetas } from './useTileMetas';
 
 type TileMetasAction = { type: 'set'; id: string; meta: TileMeta };
@@ -32,10 +32,10 @@ export function tileMetasReducer(
 	switch (action.type) {
 		case 'set': {
 			const { id, meta } = action;
-			const newState = deepCopyObject(state);
+			const newState = structuredClone(state);
 
 			// deep copy data
-			const newMeta: TileMeta = deepCopyObject(meta);
+			const newMeta: TileMeta = structuredClone(meta);
 
 			// add new tile meta
 			newState[id] = newMeta;

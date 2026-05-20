@@ -2,11 +2,13 @@ import HeaderButton from '@/components/header/HeaderButton';
 import TileHeader from '@/components/header/TileHeader';
 import useBotLog from '@/contexts/bot_logs/useBotLog';
 import type { BotLogLevel } from '@/contexts/bot_logs/useBotLogsDispatch';
-import { deepCopyObject } from '@/contexts/common';
 import { useWidgetId } from '@/contexts/widget_id/useWidgetId';
 import { scrollToElement } from '@/helpers/scroll';
+import ExclamationTriangleSvg from '@@/svg/ExclamationTriangleSvg';
+import QuestionCircleSvg from '@@/svg/QuestionCircleSvg';
 import TrashSvg from '@@/svg/TrashSvg';
 import TriangleDownSvg from '@@/svg/TriangleDownSvg';
+import XSvg from '@@/svg/XSvg';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
@@ -20,7 +22,7 @@ export default function WidgetBotLogs({ onBack }: WidgetBotLogsProps) {
 	const widgetId = useWidgetId();
 	const { botLog, clearLog } = useBotLog(widgetId);
 	const [lastClicked, setLastClicked] = useState<string | null>(null);
-	const logReverse = deepCopyObject(botLog).reverse();
+	const logReverse = structuredClone(botLog).reverse();
 
 	return (
 		<div className='flex w-full flex-1 p-4'>
@@ -46,7 +48,7 @@ export default function WidgetBotLogs({ onBack }: WidgetBotLogsProps) {
 									key={log.id}
 									level={log.level}
 									message={log.message}
-									highlighted={log.id === lastClicked}
+									selected={log.id === lastClicked}
 									onClick={() => {
 										setLastClicked(log.id);
 									}}
@@ -61,13 +63,13 @@ export default function WidgetBotLogs({ onBack }: WidgetBotLogsProps) {
 }
 
 type LogLineProps = {
-	highlighted: boolean;
+	selected: boolean;
 	onClick: VoidFunction;
 	level: BotLogLevel;
 	message: string;
 };
 
-function LogLine({ level, message, onClick, highlighted }: LogLineProps) {
+function LogLine({ level, message, onClick, selected }: LogLineProps) {
 	const [collapsed, setCollapsed] = useState<boolean>(true);
 	const containerRef = useRef<HTMLDivElement>(null);
 
@@ -75,14 +77,26 @@ function LogLine({ level, message, onClick, highlighted }: LogLineProps) {
 		scrollToElement(document.getElementById(SCROLL_ID), containerRef.current);
 	}, [collapsed]);
 
+	const Icon =
+		level === 'error'
+			? XSvg
+			: level === 'warn'
+				? ExclamationTriangleSvg
+				: level === 'info'
+					? QuestionCircleSvg
+					: null;
+
 	return (
 		<div
 			ref={containerRef}
 			className={clsx(
 				'group text-rose-2100 relative flex shrink-0 gap-1 overflow-hidden rounded-1 bg-zinc-400/10 px-1 py-0.5 text-zinc-200 -outline-offset-1 outline-white/25 text-shadow-[0_1px_black] over:outline',
-				level === 'error' && 'bg-rose-400/40! text-rose-200!',
-				level === 'warn' && 'bg-amber-400/30! text-amber-200!',
-				highlighted && 'outline',
+				!selected && [
+					level === 'error' && 'bg-rose-400/40! text-rose-200!',
+					level === 'warn' && 'bg-amber-300/30! text-amber-200!',
+					level === 'info' && 'bg-sky-300/30! text-cyan-200!',
+				],
+				selected && 'outline',
 			)}
 			onClick={() => {
 				if (getSelection()?.isCollapsed) {
@@ -94,9 +108,10 @@ function LogLine({ level, message, onClick, highlighted }: LogLineProps) {
 			<div
 				className={clsx(
 					'pointer-events-none absolute inset-0 group-over:bg-white/10',
-					highlighted && 'bg-white/10',
+					selected && 'bg-white/10',
 				)}
 			></div>
+			{Icon && <Icon className='mx-1 mt-0.5 size-3.5 shrink-0' />}
 			{typeof collapsed === 'boolean' && (
 				<TriangleDownSvg
 					className={clsx('mt-1 size-2.5 shrink-0', collapsed && '-rotate-90')}

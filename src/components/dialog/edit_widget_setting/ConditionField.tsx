@@ -2,7 +2,6 @@ import DropdownField from '@/components/input_fields/DropdownField';
 import NumberField from '@/components/input_fields/NumberField';
 import SelectField from '@/components/input_fields/SelectField';
 import TextField from '@/components/input_fields/TextField';
-import { deepCopyObject } from '@/contexts/common';
 import type { WidgetSetting } from '@@/json/widgetSettings';
 import PlusSvg from '@@/svg/PlusSvg';
 import XSvg from '@@/svg/XSvg';
@@ -66,7 +65,7 @@ export default function ConditionField({
 	}
 
 	function removeConditionAtIndex(index: number) {
-		const newConditions = deepCopyObject(conditions);
+		const newConditions = structuredClone(conditions);
 		newConditions.splice(index, 1);
 		onChangeCondition(newConditions);
 	}
@@ -93,7 +92,7 @@ export default function ConditionField({
 
 		if (error || newValue === null) return;
 
-		const newValues = deepCopyObject(conditions);
+		const newValues = structuredClone(conditions);
 		onChangeCondition([...newValues, { id, value: newValue }]);
 		setId(id === filteredIds[0] ? filteredIds[1] : filteredIds[0]);
 
@@ -222,13 +221,16 @@ export default function ConditionField({
 			</Fieldset>
 
 			{conditions.length > 0 && (
-				<div className='flex flex-col gap-1.5 pl-4'>
+				<div className='flex flex-col gap-1.5 pl-1'>
 					{conditions.map((condition, index) => {
 						return (
 							<div
 								key={`${condition.id}_${condition.value}_${index}`}
 								className='flex gap-1'
 							>
+								<p className='w-6 pt-0.5 text-3.5 font-bold uppercase'>
+									{index > 0 ? 'Or' : ''}
+								</p>
 								<div className='flex flex-1 rounded-1 bg-zinc-700 text-3.5 outline outline-offset-0! outline-zinc-800'>
 									<div className='flex flex-1 items-center'>
 										<p className='px-2 py-0.5 font-bold text-white'>ID</p>

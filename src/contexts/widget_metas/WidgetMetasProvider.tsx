@@ -40,18 +40,17 @@ export default function WidgetMetasProvider({ children }: Props.WithChildren) {
 
 	useEffect(() => {
 		// remove widgetMeta if widget is deleted
-		function widgetDeleteListener(event: CustomEvent<{ widgetId: string }>) {
-			const { widgetId } = event.detail;
-			dispatch({ type: 'delete', id: widgetId });
+		function widgetDeleteListener(
+			event: CustomEventInit<{ widgetId: string }>,
+		) {
+			if (!event.detail?.widgetId) return;
+			dispatch({ type: 'delete', id: event.detail.widgetId });
 		}
 
-		addEventListener('widget-delete', widgetDeleteListener as EventListener);
+		addEventListener('widget-delete', widgetDeleteListener);
 
 		return () => {
-			removeEventListener(
-				'widget-delete',
-				widgetDeleteListener as EventListener,
-			);
+			removeEventListener('widget-delete', widgetDeleteListener);
 		};
 	}, [dispatch]);
 

@@ -1,7 +1,6 @@
 import DropdownField from '@/components/input_fields/DropdownField';
 import MultiSelectField from '@/components/input_fields/MultiSelectField';
 import TextField from '@/components/input_fields/TextField';
-import { deepCopyObject } from '@/contexts/common';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { capitalizeWord } from '@/helpers/string';
 import GenericDeleteDialog from '@@/dialog/GenericDeleteDialog';
@@ -146,7 +145,7 @@ export default function WidgetMetaEditor({
 										service={account.service}
 										type={account.type}
 										onChangeService={service => {
-											const newAccounts = deepCopyObject(meta.accounts);
+											const newAccounts = structuredClone(meta.accounts);
 											newAccounts[index]!.service = service;
 											onChange({
 												...meta,
@@ -154,7 +153,7 @@ export default function WidgetMetaEditor({
 											});
 										}}
 										onChangeType={type => {
-											const newAccounts = deepCopyObject(meta.accounts);
+											const newAccounts = structuredClone(meta.accounts);
 											newAccounts[index]!.type = type;
 											onChange({
 												...meta,
@@ -162,7 +161,7 @@ export default function WidgetMetaEditor({
 											});
 										}}
 										onDelete={() => {
-											const newAccounts = deepCopyObject(meta.accounts);
+											const newAccounts = structuredClone(meta.accounts);
 											newAccounts.splice(index, 1);
 											onChange({
 												...meta,

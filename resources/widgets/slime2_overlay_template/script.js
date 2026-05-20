@@ -2,14 +2,11 @@
 const slime2 = window.slime2;
 
 // set to true to automatically console log event data
-const USE_DETAILS_LOG = true;
+const LOG_EVENT_DATA = true;
 
 const Widget = {
+	readAccount: { id: '' },
 	values: new Map(),
-};
-
-const Account = {
-	id: '',
 };
 
 /* Listeners *****************************************************************/
@@ -20,30 +17,30 @@ addEventListener('slime2:twitch-event', twitchEventListener);
 addEventListener('slime2:widget-button-click', widgetButtonClickListener);
 
 function widgetButtonClickListener(event) {
-	logEventDetails(event.type, event.detail);
+	logEventData(event.type, event.detail);
 
 	if (event.detail.id === 'button-id') {
 	}
 }
 
 function widgetValuesListener(event) {
-	logEventDetails(event.type, event.detail);
+	logEventData(event.type, event.detail);
 
 	Widget.values = new Map(Object.entries(event.detail));
 
-	const settingValue = Widget.values.get('setting-id');
+	const settingValue = Widget.values.get('setting-id') ?? 'fallback-value';
 }
 
 function widgetAccountsListener(event) {
-	logEventDetails(event.type, event.detail);
+	logEventData(event.type, event.detail);
 
-	const account = event.detail.accounts[0];
+	const accounts = event.detail?.accounts ?? [];
 
-	Account.id = account?.id;
+	Widget.readAccount = accounts[0] ?? Widget.readAccount;
 }
 
 function twitchEventListener(event) {
-	logEventDetails(`${event.type} - ${event.detail.type}`, event.detail);
+	logEventData(`${event.type} - ${event.detail.type}`, event.detail);
 
 	const { type, data } = event.detail;
 
@@ -111,23 +108,11 @@ function twitchEventListener(event) {
 	}
 }
 
-/* Requests ******************************************************************/
-
-/** Returns array of pronouns to show, or `null` if they haven't set any */
-async function getPronouns(userId, username) {
-	return await slime2.getPronouns('twitch', userId, username);
-}
-
-/** Returns ISO string of follow date, or `null` if they aren't following. */
-async function getFollowDate(userId) {
-	return await slime2.getTwitchFollowDate(Account.id, userId);
-}
-
 /* Helpers *******************************************************************/
 
-/** Formatted console log given type and data, if `USE_DETAILS_LOG = true` */
-function logEventDetails(type, data) {
-	if (!USE_DETAILS_LOG) return;
+/** Formatted console log given type and data, if `LOG_EVENT_DATA = true` */
+function logEventData(type, data) {
+	if (!LOG_EVENT_DATA) return;
 
 	console.log(
 		`%c${type}`,

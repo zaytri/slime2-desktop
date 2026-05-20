@@ -1,4 +1,3 @@
-import { deepCopyObject } from '@/contexts/common';
 import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidgetValueKey';
 import { sendWebsocketMessage } from './commands';
 import type { WidgetSetting, WidgetSettings } from './json/widgetSettings';
@@ -142,7 +141,7 @@ function mergeDefaultValues(
 	settings: WidgetSettings,
 	widgetValues: WidgetValues,
 ): WidgetValues {
-	const mergedValues: WidgetValues = deepCopyObject(widgetValues);
+	const mergedValues: WidgetValues = structuredClone(widgetValues);
 
 	Object.values(settings).forEach(category => {
 		Object.entries(category.settings).forEach(([settingId, setting]) => {
@@ -214,7 +213,7 @@ function mergeValue(
 
 		// transform value into URL or null
 		values[settingId] =
-			typeof newValue === 'string' && newValue !== ''
+			typeof newValue === 'string' && newValue.trim() !== ''
 				? getWidgetMediaSrc(widgetId, newValue)
 				: null;
 	} else if (
@@ -231,5 +230,11 @@ function mergeValue(
 		setting.type !== 'image-display'
 	) {
 		values[settingId] = values[settingId] ?? setting.defaultValue ?? null;
+		if (
+			typeof values[settingId] === 'string' &&
+			values[settingId].trim() === ''
+		) {
+			values[settingId] = null;
+		}
 	}
 }

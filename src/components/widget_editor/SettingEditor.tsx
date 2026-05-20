@@ -52,7 +52,11 @@ export default function SettingEditor({
 		values.push(displayI18n('Placeholder', setting.placeholder));
 	}
 
-	if ('options' in setting && setting.options !== undefined) {
+	if (
+		'options' in setting &&
+		setting.options !== undefined &&
+		setting.options.length > 0
+	) {
 		values.push(displayValue('Options', setting.options));
 	}
 
@@ -89,6 +93,10 @@ export default function SettingEditor({
 				<div className='mr-9.25 flex'>
 					<div className='m-px -mt-0.5 flex flex-1 flex-wrap gap-2 rounded-b-2 border-2 border-x-8 border-green-900 bg-green-100 px-2 py-2 outline outline-green-900 empty:hidden'>
 						{values.map(({ label, value, full }) => {
+							if (Array.isArray(value) && value.length === 0) {
+								return;
+							}
+
 							return (
 								<SettingProperty
 									key={label}
@@ -98,7 +106,14 @@ export default function SettingEditor({
 									{Array.isArray(value) ? (
 										<div className='flex flex-col'>
 											{value.map((item, index) => {
-												return <p key={index}>{JSON.stringify(item)},</p>;
+												return (
+													<p
+														key={index}
+														className='after:content-[","] first:before:content-["["] last:after:content-["]"]'
+													>
+														{JSON.stringify(item)}
+													</p>
+												);
 											})}
 										</div>
 									) : (

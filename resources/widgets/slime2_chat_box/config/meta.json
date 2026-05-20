@@ -4,10 +4,17 @@
 	"version": "1.0.0",
 	"website": "https://slime2.stream/",
 	"support": "https://forums.slime2.stream/",
-	"type": ["overlay"],
+	"type": [
+		"overlay"
+	],
 	"import": {
-		"js": ["script.js", "https://colorjs.io/dist/color.global.min.js"],
-		"css": ["styles.css"]
+		"js": [
+			"script.js",
+			"https://colorjs.io/dist/color.global.min.js"
+		],
+		"css": [
+			"styles.css"
+		]
 	},
 	"accounts": [
 		{

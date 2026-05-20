@@ -2,7 +2,6 @@ import DropdownField from '@/components/input_fields/DropdownField';
 import NumberField from '@/components/input_fields/NumberField';
 import TextAreaField from '@/components/input_fields/TextAreaField';
 import TextField from '@/components/input_fields/TextField';
-import { deepCopyObject } from '@/contexts/common';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import {
 	SECTION_SETTING_GROUPED_OPTIONS,
@@ -316,7 +315,7 @@ export default function EditWidgetSettingDialog({
 							return;
 						}
 
-						const copiedData = deepCopyObject(newData);
+						const copiedData = structuredClone(newData);
 
 						if ('defaultValue' in copiedData) {
 							if (typeof copiedData.defaultValue === 'string') {

@@ -27,7 +27,15 @@ import SettingsPanel from './settings/SettingsPanel';
 import SimulatorPanel from './simulator/SimulatorPanel';
 import WidgetsPanel from './widgets/WidgetsPanel';
 
-function MainTabs() {
+export default function MainTabsWrapper() {
+	return (
+		<MainTabsHooksWrapper>
+			<MainTabs />
+		</MainTabsHooksWrapper>
+	);
+}
+
+function MainTabsHooksWrapper({ children }: Props.WithChildren) {
 	useWidgetRegistration();
 	useWidgetRequest();
 	useWidgetCoreChange();
@@ -35,6 +43,10 @@ function MainTabs() {
 	useTwitchBot();
 	useSystemFontsQuery();
 
+	return children;
+}
+
+function MainTabs() {
 	const [selectedId, setSelectedId] = useState<string | null | undefined>('1');
 	const { folderId } = useFolderId();
 	const { tileMeta } = useTileMeta(folderId);
@@ -162,8 +174,6 @@ function MainTabs() {
 		</TabProvider>
 	);
 }
-
-export default MainTabs;
 
 const StyledTab = forwardRef<
 	ComponentRef<typeof Tab>,

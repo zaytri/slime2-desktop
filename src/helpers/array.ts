@@ -1,5 +1,3 @@
-import { deepCopyObject } from '@/contexts/common';
-
 /** Returns a copy of the array with the items at the specified indices swapped. */
 export function swapItems<T>(
 	array: NonUndefined<T>[],
@@ -24,7 +22,7 @@ export function swapItems<T>(
 		);
 	}
 
-	const newArray = deepCopyObject(array);
+	const newArray = structuredClone(array);
 	newArray.splice(newIndex, 0, newArray.splice(oldIndex, 1)[0]!);
 	return newArray;
 }

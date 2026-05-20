@@ -1,16 +1,11 @@
-import useAccounts from '@/contexts/accounts/useAccounts';
 import { useBotsLogDispatch } from '@/contexts/bot_logs/useBotLogsDispatch';
 import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
 import { cacheBust, createTilesUrl } from '@/helpers/serverUrl';
-import { getPronouns } from '@/helpers/services/pronouns';
-import twitchApi from '@/helpers/services/twitch/twitchApi';
-import { getTwitchFollowDate } from '@/helpers/services/twitch/twitchFollowDate';
 import logZodError from '@/helpers/zodError';
 import { useEffect, useRef } from 'react';
 import { z } from 'zod/mini';
 
 export default function useTwitchBot() {
-	const accounts = useAccounts();
 	const { addBotLog } = useBotsLogDispatch();
 	const widgetMetas = useWidgetMetas();
 	const twitchBots = useRef(new Map<string, Worker>());
@@ -53,92 +48,23 @@ export default function useTwitchBot() {
 						break;
 					}
 					case 'slime2:request': {
-						const {
-							type: requestType,
-							request_id,
-							payload,
-						} = RequestData.parse(data);
-
-						function botResponse(response: unknown) {
-							bot.postMessage({
-								widgetId,
-								type: 'slime2:response',
-								data: {
-									request_id,
-									type: requestType,
-									response,
-								},
-							});
-						}
-
-						try {
-							switch (requestType) {
-								case 'get-pronouns': {
-									const { platform, user_id, username } = payload;
-									const pronouns = await getPronouns(
-										platform,
-										user_id,
-										username,
-									);
-									botResponse(pronouns);
-									break;
-								}
-								case 'get-twitch-follow-date': {
-									const { user_id, account_id } = payload;
-									const account = accounts[account_id];
-									const followDate = account
-										? await getTwitchFollowDate(account, user_id)
-										: null;
-									botResponse(followDate);
-
-									break;
-								}
-								case 'post-twitch-chat-message':
-									{
-										const {
-											account_id,
-											broadcaster_id,
-											sender_id,
-											message,
-											reply_parent_message_id,
-										} = payload;
-
-										const response = await twitchApi.sendChatMessage(
-											account_id,
-											broadcaster_id,
-											sender_id,
-											message,
-											reply_parent_message_id,
-										);
-										botResponse(response.data.data[0]);
-
-										response.data;
-									}
-									break;
-							}
-						} catch (error) {
-							botResponse({ error });
-							throw error;
-						}
+						dispatchEvent(
+							new CustomEvent('bot-request', {
+								detail: { ...data, widget_id: widgetId },
+							}),
+						);
+						break;
 					}
 				}
 			} catch (error) {
 				const formattedError = logZodError(error, data);
-				addBotLog(
-					widgetId,
-					`[${type}${type === 'slime2:request' ? ` - ${data.type}` : ''}] ${formattedError}`,
-					'error',
-				);
+				addBotLog(widgetId, `[${type}] ${formattedError}`, 'error');
 			}
 		};
 
 		bot.onerror = event => {
-			console.error('Bot Error!', event);
-			addBotLog(
-				widgetId,
-				`[Line: ${event.lineno}, Column: ${event.colno}] ${event.message}`,
-				'error',
-			);
+			const errorMessage = `[Line: ${event.lineno}, Column: ${event.colno}] ${event.message}`;
+			addBotLog(widgetId, errorMessage, 'error');
 		};
 
 		// timestamp for cache breaking
@@ -160,24 +86,19 @@ export default function useTwitchBot() {
 
 		// disconnect and reconnect bot on core change
 		function widgetCoreChangeListener(
-			event: CustomEvent<{ widgetId: string }>,
+			event: CustomEventInit<{ widgetId: string }>,
 		) {
+			if (!event.detail?.widgetId) return;
 			const { widgetId } = event.detail;
 			if (widgetMetas[widgetId] && widgetMetas[widgetId].type.includes('bot')) {
 				connectBot(widgetId, true);
 			}
 		}
 
-		addEventListener(
-			'widget-core-change',
-			widgetCoreChangeListener as EventListener,
-		);
+		addEventListener('widget-core-change', widgetCoreChangeListener);
 
 		return () => {
-			removeEventListener(
-				'widget-core-change',
-				widgetCoreChangeListener as EventListener,
-			);
+			removeEventListener('widget-core-change', widgetCoreChangeListener);
 		};
 	}, [widgetMetas]);
 
@@ -188,6 +109,7 @@ export default function useTwitchBot() {
 			'widget-values',
 			'widget-accounts',
 			'widget-button-click',
+			'widget-response',
 		];
 
 		// directly passing the above events into the bots
@@ -197,10 +119,14 @@ export default function useTwitchBot() {
 				data: unknown;
 			}>,
 		) {
+			if (!event.detail) return;
 			const { widgetId, data } = event.detail;
 			twitchBots.current.get(widgetId)?.postMessage({
 				widgetId,
-				type: `slime2:${event.type}`,
+				type:
+					event.type === 'widget-response'
+						? 'slime2:response'
+						: `slime2:${event.type}`,
 				data,
 			});
 		}
@@ -210,22 +136,21 @@ export default function useTwitchBot() {
 		});
 
 		// disconnect bot if widget is deleted
-		function widgetDeleteListener(event: CustomEvent<{ widgetId: string }>) {
-			const { widgetId } = event.detail;
-			disconnectBot(widgetId);
+		function widgetDeleteListener(
+			event: CustomEventInit<{ widgetId: string }>,
+		) {
+			if (!event.detail?.widgetId) return;
+			disconnectBot(event.detail.widgetId);
 		}
 
-		addEventListener('widget-delete', widgetDeleteListener as EventListener);
+		addEventListener('widget-delete', widgetDeleteListener);
 
 		return () => {
 			directMessageTypes.forEach(type => {
 				removeEventListener(type, widgetMessageListener as EventListener);
 			});
 
-			removeEventListener(
-				'widget-delete',
-				widgetDeleteListener as EventListener,
-			);
+			removeEventListener('widget-delete', widgetDeleteListener);
 		};
 	}, []);
 }
@@ -234,36 +159,3 @@ const LogData = z.object({
 	message: z.unknown(),
 	level: z.catch(z.literal(['info', 'log', 'error', 'debug', 'warn']), 'log'),
 });
-
-const RequestData = z.intersection(
-	z.discriminatedUnion('type', [
-		z.object({
-			type: z.literal('get-pronouns'),
-			payload: z.object({
-				platform: z.literal('twitch'),
-				user_id: z.string(),
-				username: z.string(),
-			}),
-		}),
-		z.object({
-			type: z.literal('get-twitch-follow-date'),
-			payload: z.object({
-				account_id: z.string(),
-				user_id: z.string(),
-			}),
-		}),
-		z.object({
-			type: z.literal('post-twitch-chat-message'),
-			payload: z.object({
-				account_id: z.string(),
-				broadcaster_id: z.string(),
-				sender_id: z.string(),
-				message: z.string(),
-				reply_parent_message_id: z.optional(z.string()),
-			}),
-		}),
-	]),
-	z.object({
-		request_id: z.string(),
-	}),
-);

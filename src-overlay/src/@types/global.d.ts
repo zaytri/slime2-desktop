@@ -1,12 +1,8 @@
 declare var slime2: {
-	getPronouns: (
-		platform: 'twitch',
-		userId: string,
-		username: string,
-	) => Promise<string[] | null>;
-	getTwitchFollowDate: (
+	request: (
 		accountId: string,
-		userId: string,
-	) => Promise<string | null>;
+		requestType: string,
+		payload?: unknown,
+	) => Promise<unknown>;
 	widgetId: string | null;
 };

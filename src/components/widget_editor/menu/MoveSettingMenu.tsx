@@ -47,7 +47,9 @@ export default function MoveSettingMenu({
 					const optionId = option.value.id;
 					return {
 						...option,
-						disabled: categoryId === optionId || sectionId === optionId,
+						disabled: sectionId
+							? sectionId === optionId
+							: categoryId === optionId,
 					};
 				});
 

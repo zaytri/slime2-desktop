@@ -4,7 +4,7 @@ import {
 	type TileLocations,
 } from '@/helpers/json/tileLocations';
 import { createContext, useContext } from 'react';
-import { contextErrorMessage, deepCopyObject } from '../common';
+import { contextErrorMessage } from '../common';
 import { mapTileFolderLocationsByIndex } from './useTileFolder';
 
 type TileLocationsAction =
@@ -79,7 +79,7 @@ export function tileLocationsReducer(
 	state: TileLocations,
 	action: TileLocationsAction,
 ): TileLocations {
-	const newState = deepCopyObject(state);
+	const newState = structuredClone(state);
 
 	switch (action.type) {
 		case 'set': {
@@ -88,7 +88,7 @@ export function tileLocationsReducer(
 
 		case 'add': {
 			// deep copy tile
-			const newTile: TileLocation = deepCopyObject(action.tile);
+			const newTile: TileLocation = structuredClone(action.tile);
 
 			// add new tile
 			newState[newTile.id] = newTile;

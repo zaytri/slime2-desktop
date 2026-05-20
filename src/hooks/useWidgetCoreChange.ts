@@ -1,40 +1,16 @@
 import { sendWidgetCoreChange } from '@/helpers/widgetMessage';
-import { appDataDir } from '@tauri-apps/api/path';
-import { BaseDirectory, watch } from '@tauri-apps/plugin-fs';
+import { listen } from '@tauri-apps/api/event';
 import { useEffect } from 'react';
 
 export default function useWidgetCoreChange() {
 	useEffect(() => {
-		const unwatchPromise = watch(
-			'tiles',
-			async event => {
-				const baseDirectory = await appDataDir();
-
-				event.paths.forEach(path => {
-					const pathComponents = path
-						.replace(`${baseDirectory}\\`, '')
-						.split('\\');
-					const [tilesDirName, widgetId, innerDirName] = pathComponents;
-					if (
-						tilesDirName === 'tiles' &&
-						widgetId &&
-						widgetId.startsWith('widget') &&
-						innerDirName === 'core'
-					) {
-						sendWidgetCoreChange(widgetId);
-					}
-				});
-			},
-			{
-				baseDir: BaseDirectory.AppData,
-				delayMs: 1000,
-				recursive: true,
-			},
-		);
+		const unlistenPromise = listen<string>('widget-core-watch', event => {
+			sendWidgetCoreChange(event.payload);
+		});
 
 		return () => {
-			unwatchPromise.then(unwatch => {
-				if (unwatch) unwatch();
+			unlistenPromise.then(unlisten => {
+				if (unlisten) unlisten();
 			});
 		};
 	}, []);

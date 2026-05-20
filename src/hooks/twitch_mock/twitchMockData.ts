@@ -8,22 +8,28 @@ function badgeData(
 
 export type TwitchMockBadgeSetId =
 	| 'broadcaster'
+	| 'lead_moderator'
 	| 'moderator'
 	| 'vip'
 	| 'artist-badge'
-	| 'subscriber';
+	| 'subscriber'
+	| 'founder';
 
 export const twitchBadgeMap: Record<TwitchMockBadgeSetId, Twitch.Badge> = {
 	broadcaster: badgeData('broadcaster'),
+	lead_moderator: badgeData('lead_moderator'),
 	moderator: badgeData('moderator'),
 	vip: badgeData('vip'),
 	'artist-badge': badgeData('artist-badge'),
 	subscriber: badgeData('subscriber', '0', '1'),
+	founder: badgeData('founder', '0'),
 };
 
 export const twitchBadgeImageMap: Record<TwitchMockBadgeSetId, string> = {
 	broadcaster:
 		'https://static-cdn.jtvnw.net/badges/v1/5527c58c-fb7d-422d-b71b-f309dcb85cc1/3',
+	lead_moderator:
+		'https://static-cdn.jtvnw.net/badges/v1/0822047b-65e0-46f2-94a9-d1091d685d33/3',
 	moderator:
 		'https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3',
 	vip: 'https://static-cdn.jtvnw.net/badges/v1/b817aba4-fad8-49e2-b88a-7cc744dfa6ec/3',
@@ -31,39 +37,51 @@ export const twitchBadgeImageMap: Record<TwitchMockBadgeSetId, string> = {
 		'https://static-cdn.jtvnw.net/badges/v1/4300a897-03dc-4e83-8c0e-c332fee7057f/3',
 	subscriber:
 		'https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3',
+	founder:
+		'https://static-cdn.jtvnw.net/badges/v1/511b78a9-ab37-472f-9569-457753bbe7d3/3',
 };
 
 export const TWITCH_MOCK_BADGES: Twitch.Badge[][] = [
 	// broadcaster
 	[twitchBadgeMap['broadcaster'], twitchBadgeMap['subscriber']],
 
-	// subscriber
-	[twitchBadgeMap['subscriber']],
-
-	// vip
-	[twitchBadgeMap['vip']],
-
-	// vip subscriber
-	[twitchBadgeMap['vip'], twitchBadgeMap['subscriber']],
-
-	// moderator
-	[twitchBadgeMap['moderator']],
-
-	// moderator subscriber
-	[twitchBadgeMap['moderator'], twitchBadgeMap['subscriber']],
-
 	// artist
 	[twitchBadgeMap['artist-badge']],
 
-	// artist subscriber
-	[twitchBadgeMap['artist-badge'], twitchBadgeMap['subscriber']],
+	// subscriber/founder,
+	// and + artist
+	...(['subscriber', 'founder'] satisfies TwitchMockBadgeSetId[]).flatMap(
+		sub => {
+			return [
+				[twitchBadgeMap[sub]],
+				[twitchBadgeMap[sub], twitchBadgeMap['artist-badge']],
+			];
+		},
+	),
 
-	// vip artist subscriber
-	[
-		twitchBadgeMap['vip'],
-		twitchBadgeMap['artist-badge'],
-		twitchBadgeMap['subscriber'],
-	],
+	// lead moderator/moderator/vip
+	// and + artist, and + subscriber/founder,
+	// and + subscriber/founder + artist
+	...(
+		['lead_moderator', 'moderator', 'vip'] satisfies TwitchMockBadgeSetId[]
+	).flatMap(role => {
+		return [
+			[twitchBadgeMap[role]],
+			[twitchBadgeMap[role], twitchBadgeMap['artist-badge']],
+			...(['subscriber', 'founder'] satisfies TwitchMockBadgeSetId[]).flatMap(
+				sub => {
+					return [
+						[twitchBadgeMap[role], twitchBadgeMap[sub]],
+						[
+							twitchBadgeMap[role],
+							twitchBadgeMap[sub],
+							twitchBadgeMap['artist-badge'],
+						],
+					];
+				},
+			),
+		];
+	}),
 ];
 
 export const TWITCH_MOCK_MESSAGE_TYPES: Twitch.WebsocketEvent.ChatMessage['message_type'][] =

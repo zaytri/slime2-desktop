@@ -99,8 +99,8 @@ fn get_command(
 					// text cannot be deserialized into a Command
 					Err(error) => {
 						return Err(format!(
-							"Failed to deserialize Message into a Command: {}",
-							error
+							"Failed to deserialize Message ({}) into a Command! {}",
+							message_text, error
 						));
 					}
 				};

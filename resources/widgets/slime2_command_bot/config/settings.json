@@ -2,36 +2,105 @@
 	"commands-category": {
 		"label": "Commands",
 		"settings": {
-			"basic-commands": {
-				"label": "Basic Commands",
+			"ignore-list": {
+				"label": "Ignore Users",
+				"type": "multi-text-input",
+				"defaultValue": [
+					"Sery_Bot"
+				],
+				"placeholder": "Name",
+				"description": "The bot will ignore any users in this list. Recommended to put your other bots in this list."
+			},
+			"commands-list": {
+				"label": "Commands List",
 				"type": "multi-section",
 				"settings": {
 					"command": {
-						"label": "Command",
 						"type": "text-input",
 						"placeholder": "!hello",
-						"description": "The bot will respond to messages that start with this command, case-insensitive."
+						"description": "The bot will reply to messages that start with this command.",
+						"label": "Command"
 					},
-					"response": {
-						"label": "Response",
+					"reply": {
 						"type": "text-area-input",
-						"placeholder": "Chat response...",
-						"description": "The bot's response to the above command."
+						"placeholder": "Bot message",
+						"description": "The bot's reply to the above command.",
+						"label": "Reply"
 					},
-					"advanced-settings": {
-						"label": "Show Advanced Settings",
-						"type": "toggle-input",
-						"defaultValue": false
+					"allowed-roles": {
+						"type": "multi-select-input",
+						"defaultValue": [
+							"everyone"
+						],
+						"description": "Users must have one of these roles to use this command.",
+						"options": [
+							{
+								"label": "Everyone",
+								"value": "everyone"
+							},
+							{
+								"label": "Follower",
+								"value": "follower"
+							},
+							{
+								"label": "Subscriber",
+								"value": "sub"
+							},
+							{
+								"label": "VIP",
+								"value": "vip"
+							},
+							{
+								"label": "Moderator",
+								"value": "mod"
+							},
+							{
+								"label": "Broadcaster",
+								"value": "broadcaster"
+							}
+						],
+						"label": "Allowed Roles",
+						"condition": {}
+					},
+					"follow-age": {
+						"type": "number-input",
+						"defaultValue": 0,
+						"min": 0,
+						"description": "Will only reply to followers that have followed for at least this many hours.",
+						"label": "Follow Age (hours)",
+						"condition": {
+							"allowed-roles": "follower"
+						}
+					},
+					"user-cooldown": {
+						"type": "number-input",
+						"defaultValue": 5,
+						"min": 0,
+						"step": 1,
+						"description": "Time before this command can be used again by the same user.",
+						"label": "User Cooldown (seconds)"
+					},
+					"global-cooldown": {
+						"type": "number-input",
+						"defaultValue": 0,
+						"min": 0,
+						"step": 1,
+						"description": "Time before any user can use this command again.",
+						"label": "Global Cooldown (seconds)"
 					},
 					"aliases": {
-						"label": "Aliases",
 						"type": "multi-text-input",
-						"condition": {
-							"advanced-settings": true
-						},
 						"defaultValue": [],
 						"placeholder": "!hi",
-						"description": "Alternative commands that will use the same response."
+						"description": "Also replies if the message starts with these alternatives.",
+						"label": "Aliases",
+						"condition": {}
+					},
+					"keywords": {
+						"type": "multi-text-input",
+						"placeholder": "hello",
+						"description": "Also replies if these words appear anywhere in the message.",
+						"label": "Keywords"
 					}
 				}
 			}

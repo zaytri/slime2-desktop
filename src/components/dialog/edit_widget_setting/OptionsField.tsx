@@ -2,7 +2,6 @@ import DropdownField from '@/components/input_fields/DropdownField';
 import NumberField from '@/components/input_fields/NumberField';
 import SelectField from '@/components/input_fields/SelectField';
 import TextField from '@/components/input_fields/TextField';
-import { deepCopyObject } from '@/contexts/common';
 import { swapItems } from '@/helpers/array';
 import { i18nStringTransform } from '@/helpers/i18n';
 import type { WidgetSetting } from '@@/json/widgetSettings';
@@ -97,7 +96,7 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 
 		if (error || newValue === null) return;
 
-		const newValues = deepCopyObject(values);
+		const newValues = structuredClone(values);
 		onChange([...newValues, { label: trimmedLabel, value: newValue }]);
 
 		setLabel('');

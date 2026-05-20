@@ -1,6 +1,6 @@
 import type { WidgetValue, WidgetValues } from '@/helpers/json/widgetValues';
 import { createContext, useContext } from 'react';
-import { contextErrorMessage, deepCopyObject } from '../common';
+import { contextErrorMessage } from '../common';
 
 type WidgetValuesAction =
 	| {
@@ -64,10 +64,10 @@ export function widgetValuesReducer(
 	switch (action.type) {
 		case 'set-multiple': {
 			const { values } = action;
-			const copiedState = deepCopyObject(state);
+			const copiedState = structuredClone(state);
 
 			// deep copy data
-			const newValues: WidgetValues = deepCopyObject(values);
+			const newValues: WidgetValues = structuredClone(values);
 
 			// set new widget values
 			const newState = { ...copiedState, ...newValues };
@@ -78,18 +78,18 @@ export function widgetValuesReducer(
 			const { values } = action;
 
 			// deep copy data
-			const newState: WidgetValues = deepCopyObject(values);
+			const newState: WidgetValues = structuredClone(values);
 
 			// return entirely new state
 			return newState;
 		}
 		case 'set': {
 			const { key, value } = action;
-			const newState = deepCopyObject(state);
+			const newState = structuredClone(state);
 
 			// deep copy data
 			const newValue: WidgetValue =
-				value === undefined ? undefined : deepCopyObject(value);
+				value === undefined ? undefined : structuredClone(value);
 
 			// set new widget value
 			newState[key] = newValue;
@@ -102,12 +102,12 @@ export function widgetValuesReducer(
 			// skip duplication if source value doesn't exist
 			if (state[sourceKey] === undefined) return state;
 
-			const newState = deepCopyObject(state);
+			const newState = structuredClone(state);
 			const sourceValue = newState[sourceKey];
 
 			// deep copy source data
 			const copiedValue: WidgetValue =
-				sourceValue === undefined ? undefined : deepCopyObject(sourceValue);
+				sourceValue === undefined ? undefined : structuredClone(sourceValue);
 
 			// set new widget value
 			newState[newKey] = copiedValue;

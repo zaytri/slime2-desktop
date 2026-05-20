@@ -1,7 +1,7 @@
 import { swapItems } from '@/helpers/array';
 import type { WidgetSetting, WidgetSettings } from '@@/json/widgetSettings';
 import { createContext, useContext } from 'react';
-import { contextErrorMessage, deepCopyObject } from '../common';
+import { contextErrorMessage } from '../common';
 
 export function useWidgetSettingsEditorDispatch() {
 	const dispatch = useContext(WidgetSettingsEditorDispatchContext);
@@ -211,7 +211,7 @@ export function widgetSettingsEditorReducer(
 	state: WidgetSettings,
 	action: WidgetSettingsEditorAction,
 ): WidgetSettings {
-	const copiedState = deepCopyObject(state);
+	const copiedState = structuredClone(state);
 
 	try {
 		switch (action.type) {
@@ -246,7 +246,7 @@ export function widgetSettingsEditorReducer(
 								(newSectionSettings, [subSettingId, subSetting]) => {
 									return {
 										...newSectionSettings,
-										[subSettingId]: deepCopyObject(subSetting),
+										[subSettingId]: structuredClone(subSetting),
 									};
 								},
 								{},
@@ -269,7 +269,7 @@ export function widgetSettingsEditorReducer(
 							(newCategorySettings, [settingId, setting]) => {
 								return {
 									...newCategorySettings,
-									[settingId]: deepCopyObject(setting),
+									[settingId]: structuredClone(setting),
 								};
 							},
 							{},
@@ -288,7 +288,7 @@ export function widgetSettingsEditorReducer(
 					return newEntries.reduce((newState, [categoryId, category]) => {
 						return {
 							...newState,
-							[categoryId]: deepCopyObject(category),
+							[categoryId]: structuredClone(category),
 						};
 					}, {});
 				}
@@ -301,7 +301,7 @@ export function widgetSettingsEditorReducer(
 
 				let added = false;
 				let deleted = false;
-				const copiedSetting = deepCopyObject(setting);
+				const copiedSetting = structuredClone(setting);
 
 				// iterate through categories
 				for (const [categoryId, category] of Object.entries(state)) {
@@ -311,7 +311,10 @@ export function widgetSettingsEditorReducer(
 
 					if (newGroupId === categoryId) {
 						// add setting to new category
-						copiedState[categoryId].settings[id] = copiedSetting;
+						copiedState[categoryId].settings = {
+							[id]: copiedSetting,
+							...copiedState[categoryId].settings,
+						};
 						added = true;
 					} else if (oldGroupId === categoryId) {
 						// remove setting from old category
@@ -349,8 +352,10 @@ export function widgetSettingsEditorReducer(
 
 						if (newGroupId === categorySettingId) {
 							// add setting to new section
-							copiedState[categoryId].settings[categorySettingId].settings[id] =
-								copiedSetting;
+							copiedState[categoryId].settings[categorySettingId].settings = {
+								[id]: copiedSetting,
+								...copiedState[categoryId].settings[categorySettingId].settings,
+							};
 							added = true;
 						} else if (oldGroupId === categorySettingId) {
 							// remove setting from old section
@@ -392,14 +397,17 @@ export function widgetSettingsEditorReducer(
 						throw new Error('Category contains sections!');
 					}
 
-					newSection.settings[settingId] = deepCopyObject(setting);
+					newSection.settings[settingId] = structuredClone(setting);
 				}
 
 				// remove original category
 				delete copiedState[id];
 
 				// add new section into new category
-				copiedState[newCategoryId].settings[id] = newSection;
+				copiedState[newCategoryId].settings = {
+					[id]: newSection,
+					...copiedState[newCategoryId].settings,
+				};
 
 				return copiedState;
 			}
@@ -412,13 +420,15 @@ export function widgetSettingsEditorReducer(
 
 				// create new category using label and settings
 				const { label, settings }: WidgetSetting.Category =
-					deepCopyObject(section);
-				copiedState[id] = { label, settings };
+					structuredClone(section);
 
 				// remove original section
 				delete copiedState[categoryId].settings[id];
 
-				return copiedState;
+				return {
+					[id]: { label, settings },
+					...copiedState,
+				};
 			}
 			case 'edit-category': {
 				const { id, index, label } = action;
@@ -426,7 +436,7 @@ export function widgetSettingsEditorReducer(
 				// reconstruct settings with new id at original index
 				return Object.entries(copiedState).reduce(
 					(newState, [categoryId, category], oldIndex) => {
-						const copiedCategory = deepCopyObject(category);
+						const copiedCategory = structuredClone(category);
 						return {
 							...newState,
 							...(index === oldIndex
@@ -456,7 +466,7 @@ export function widgetSettingsEditorReducer(
 				copiedState[categoryId].settings = Object.entries(
 					copiedState[categoryId].settings,
 				).reduce((newCategorySettings, [settingId, setting], oldIndex) => {
-					const copiedSetting = deepCopyObject(setting);
+					const copiedSetting = structuredClone(setting);
 					return {
 						...newCategorySettings,
 						...(index === oldIndex
@@ -493,12 +503,15 @@ export function widgetSettingsEditorReducer(
 						copiedState[categoryId].settings[sectionId].settings,
 					).reduce(
 						(newSectionSettings, [subSettingId, oldSubSetting], oldIndex) => {
-							const copiedSubSetting = deepCopyObject(oldSubSetting);
+							const copiedSubSetting = structuredClone(oldSubSetting);
 							return {
 								...newSectionSettings,
 								...(index === oldIndex
 									? {
-											[id]: { ...copiedSubSetting, ...deepCopyObject(setting) },
+											[id]: {
+												...copiedSubSetting,
+												...structuredClone(setting),
+											},
 										}
 									: { [subSettingId]: copiedSubSetting }),
 							};
@@ -516,11 +529,11 @@ export function widgetSettingsEditorReducer(
 					copiedState[categoryId].settings = Object.entries(
 						copiedState[categoryId].settings,
 					).reduce((newCategorySettings, [settingId, oldSetting], oldIndex) => {
-						const copiedSetting = deepCopyObject(oldSetting);
+						const copiedSetting = structuredClone(oldSetting);
 						return {
 							...newCategorySettings,
 							...(index === oldIndex
-								? { [id]: { ...copiedSetting, ...deepCopyObject(setting) } }
+								? { [id]: { ...copiedSetting, ...structuredClone(setting) } }
 								: { [settingId]: copiedSetting }),
 						};
 					}, {});
@@ -564,7 +577,7 @@ export function widgetSettingsEditorReducer(
 
 					// add new subsetting on top
 					copiedState[categoryId].settings[sectionId].settings = {
-						[id]: deepCopyObject(setting),
+						[id]: structuredClone(setting),
 						...copiedState[categoryId].settings[sectionId].settings,
 					};
 
@@ -580,7 +593,7 @@ export function widgetSettingsEditorReducer(
 
 					// add new setting on top
 					copiedState[categoryId].settings = {
-						[id]: deepCopyObject(setting),
+						[id]: structuredClone(setting),
 						...copiedState[categoryId].settings,
 					};
 

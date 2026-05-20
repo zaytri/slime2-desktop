@@ -31,6 +31,7 @@ pub struct RegisterData {
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct RequestData {
+	account_id: String,
 	widget_id: String,
 	request_id: String,
 	request_type: String,
@@ -64,13 +65,13 @@ pub async fn register(
 	channels.insert(format!("widget_{}", register_data.id));
 
 	if let Err(error) = get_app_handle().emit(
-		"widget-registration",
+		"websocket-registration",
 		RegisterPayload {
 			id: register_data.id,
 		},
 	) {
 		return Err(format!(
-			"Error emitting widget-registration event: {}",
+			"Error emitting websocket-registration event: {}",
 			error
 		));
 	};
@@ -89,8 +90,12 @@ pub fn request(command_data: CommandData) -> Result<(), String> {
 		return Err(String::from("Request command is incorrectly formatted!"));
 	};
 
-	if let Err(error) = get_app_handle().emit("widget-request", request_data) {
-		return Err(format!("Error emitting widget-request event: {}", error));
+	if let Err(error) = get_app_handle().emit("websocket-request", request_data)
+	{
+		return Err(format!(
+			"Error emitting websocket-request event: {}",
+			error
+		));
 	}
 
 	Ok(())

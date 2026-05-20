@@ -111,7 +111,7 @@ const twitchAuth = {
 				try {
 					await twitchAuth.validateAccessToken(tokens.accessToken);
 				} catch (error) {
-					console.error(
+					console.debug(
 						`Twitch Access Token for ${accountId} no longer valid! Refreshing...`,
 						error,
 					);

@@ -15,22 +15,26 @@ export default function TwitchBadgeMultiSelect({
 	label,
 }: TwitchBadgeMultiSelectProps) {
 	const [broadcaster, setBroadcaster] = useState(false);
+	const [leadModerator, setLeadModerator] = useState(false);
 	const [moderator, setModerator] = useState(false);
 	const [vip, setVip] = useState(false);
 	const [artist, setArtist] = useState(false);
+	const [founder, setFounder] = useState(false);
 	const [subscriber, setSubscriber] = useState(false);
 
 	useEffect(() => {
 		const badges: TwitchMockBadgeSetId[] = [];
 
 		if (broadcaster) badges.push('broadcaster');
+		if (leadModerator) badges.push('lead_moderator');
 		if (moderator) badges.push('moderator');
 		if (vip) badges.push('vip');
 		if (artist) badges.push('artist-badge');
+		if (founder) badges.push('founder');
 		if (subscriber) badges.push('subscriber');
 
 		onChange(badges);
-	}, [broadcaster, moderator, vip, artist, subscriber]);
+	}, [broadcaster, leadModerator, moderator, vip, artist, founder, subscriber]);
 
 	return (
 		<Fieldset>
@@ -43,6 +47,13 @@ export default function TwitchBadgeMultiSelect({
 						image={twitchBadgeImageMap.broadcaster}
 						value={broadcaster}
 						onChange={setBroadcaster}
+					/>
+
+					<BadgeOption
+						label='Lead Moderator'
+						image={twitchBadgeImageMap.lead_moderator}
+						value={leadModerator}
+						onChange={setLeadModerator}
 					/>
 
 					<BadgeOption
@@ -64,6 +75,13 @@ export default function TwitchBadgeMultiSelect({
 						image={twitchBadgeImageMap['artist-badge']}
 						value={artist}
 						onChange={setArtist}
+					/>
+
+					<BadgeOption
+						label='Founder'
+						image={twitchBadgeImageMap.founder}
+						value={founder}
+						onChange={setFounder}
 					/>
 
 					<BadgeOption

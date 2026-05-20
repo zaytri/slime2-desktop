@@ -4,7 +4,7 @@ import {
 	type LoggedEvent,
 } from '@@/json/eventsLog';
 import { createContext, useContext } from 'react';
-import { contextErrorMessage, deepCopyObject } from '../common';
+import { contextErrorMessage } from '../common';
 
 export function useEventsLogDispatch() {
 	const dispatch = useContext(EventsLogDispatchContext);
@@ -30,14 +30,14 @@ export function eventsLogReducer(
 	state: Record<string, EventsLog>,
 	action: EventsLogAction,
 ): Record<string, EventsLog> {
-	const newState = deepCopyObject(state);
+	const newState = structuredClone(state);
 
 	switch (action.type) {
 		case 'set': {
 			const { id, log } = action;
 
 			// deep copy new data
-			const newLog: EventsLog = deepCopyObject(log);
+			const newLog: EventsLog = structuredClone(log);
 
 			// set new events log
 			newState[id] = newLog;
@@ -48,7 +48,7 @@ export function eventsLogReducer(
 			const { id, event } = action;
 
 			// deep copy new data
-			const newEvent: LoggedEvent = deepCopyObject(event);
+			const newEvent: LoggedEvent = structuredClone(event);
 
 			// shouldn't happen but just in case
 			if (!newState[id]) {
@@ -57,7 +57,7 @@ export function eventsLogReducer(
 
 			// add new log
 			newState[id].push(newEvent);
-			saveEventsLog(id, deepCopyObject(newState[id]));
+			saveEventsLog(id, structuredClone(newState[id]));
 			break;
 		}
 	}

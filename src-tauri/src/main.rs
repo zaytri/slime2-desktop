@@ -11,6 +11,7 @@ mod commands;
 mod file;
 mod secret;
 mod server;
+mod watcher;
 
 // thanks to https://github.com/tauri-apps/tauri/discussions/6309#discussioncomment-10295527
 static APP_HANDLE: OnceLock<AppHandle> = OnceLock::new();
@@ -128,7 +129,6 @@ async fn main() {
 				])
 				.build(),
 		)
-		.plugin(tauri_plugin_fs::init())
 		.plugin(tauri_plugin_shell::init())
 		.plugin(tauri_plugin_dialog::init())
 		.plugin(tauri_plugin_clipboard_manager::init())
@@ -160,7 +160,12 @@ async fn main() {
 					file::tiles_path(&app_handle),
 					file::temp_files_path(&app_handle),
 				),
-			)
+			)?;
+
+			let watch_path = file::tiles_path(&app_handle);
+			tokio::task::spawn(watcher::async_watch(watch_path));
+
+			Ok(())
 		})
 		.invoke_handler(tauri::generate_handler![
 			commands::send_websocket_message,

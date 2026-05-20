@@ -1,30 +1,19 @@
 /* Globals *******************************************************************/
-const slime2 = {
-	getPronouns,
-	getTwitchFollowDate,
-};
-
 const RequestResolveRejectMap = new Map();
 
 const Widget = {
+	readAccount: { id: '', serviceId: '' },
+	botAccount: { id: '', serviceId: '' },
 	values: new Map(),
 };
 
-const ReadAccount = {
-	id: '',
-	serviceId: '',
-};
-
-const BotAccount = {
-	id: '',
-	serviceId: '',
-};
-
 // set to true to automatically log event data
-const USE_DETAILS_LOG = true;
+const LOG_EVENT_DATA = true;
 
-// use the provided `log` function rather than `console.log`
-// to log data to the bot logs, available in the widget dev tools
+/*
+ * Use the provided `log` function rather than `console.log`
+ * to log data to the bot logs, available in the widget dev tools
+ */
 
 /* Listeners *****************************************************************/
 
@@ -46,19 +35,19 @@ function messageListener(message) {
 		case 'slime2:widget-button-click':
 			return widgetButtonClickListener(event);
 		case 'slime2:response':
-			return widgetResponseListener(event);
+			return responseListener(event);
 	}
 }
 
 function widgetButtonClickListener(event) {
-	logEventDetails(event.type, event.data);
+	logEventData(event.type, event.data);
 
 	if (event.data.id === 'button-id') {
 	}
 }
 
 function widgetValuesListener(event) {
-	logEventDetails(event.type, event.data);
+	logEventData(event.type, event.data);
 
 	Widget.values = new Map(Object.entries(event.data));
 
@@ -66,20 +55,21 @@ function widgetValuesListener(event) {
 }
 
 function widgetAccountsListener(event) {
-	logEventDetails(event.type, event.data);
+	logEventData(event.type, event.data);
 
-	const [readAccount = {}, botAccount = {}] = event.data?.accounts ?? [];
+	const accounts = event.data?.accounts ?? [];
 
-	ReadAccount.id = readAccount.id ?? '';
-	ReadAccount.serviceId = readAccount.serviceId ?? '';
-	BotAccount.id = botAccount.id ?? '';
-	BotAccount.serviceId = botAccount.serviceId ?? '';
+	Widget.readAccount = accounts[0] ?? Widget.readAccount;
+	Widget.botAccount = accounts[1] ?? Widget.botAccount;
 }
 
 function twitchEventListener(event) {
-	logEventDetails(`${event.type} - ${event.data.type}`, event.data);
+	logEventData(`${event.type} - ${event.data.type}`, event.data);
 
-	const { type, data } = event.data;
+	const { type, data, mock } = event.data;
+
+	// ignore mock events
+	if (mock) return;
 
 	// https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
 	// event.data.data = event of each of these EventSub payloads
@@ -146,8 +136,8 @@ function twitchEventListener(event) {
 }
 
 // used to resolve requests that use the `sendRequest` function
-function widgetResponseListener(event) {
-	logEventDetails(`${event.type} - ${event.data.type}`, event.data);
+function responseListener(event) {
+	logEventData(`${event.type} - ${event.data.type}`, event.data);
 
 	const { type, response, request_id } = event.data;
 
@@ -173,29 +163,10 @@ async function sendChatMessage(
 	message,
 	reply_parent_message_id, // optional
 ) {
-	return sendRequest('post-twitch-chat-message', {
-		account_id: BotAccount.id,
-		broadcaster_id: ReadAccount.serviceId,
-		sender_id: BotAccount.serviceId,
+	return sendRequest(Widget.botAccount.id, 'post-twitch-chat-message', {
+		broadcaster_id: Widget.readAccount.serviceId,
 		message,
 		reply_parent_message_id,
-	});
-}
-
-/** Returns array of pronouns to show, or `null` if they haven't set any */
-async function getPronouns(platform, userId, username) {
-	return sendRequest('get-pronouns', {
-		platform,
-		user_id: userId,
-		username,
-	});
-}
-
-/** Returns ISO string of follow date, or `null` if they aren't following. */
-async function getTwitchFollowDate(accountId, userId) {
-	return sendRequest('get-twitch-follow-date', {
-		account_id: accountId,
-		user_id: userId,
 	});
 }
 
@@ -207,27 +178,32 @@ function send(type, data) {
 }
 
 /** Sends a request to Slime2, to be resolved from a slime2:response event */
-async function sendRequest(type, payload) {
+async function sendRequest(accountId, type, payload) {
 	const requestId = `${type}_${Date.now()}`;
 
 	return new Promise((resolve, reject) => {
-		ResolveRejectMap.set(requestId, [resolve, reject]);
-		send('slime2:request', payload);
+		RequestResolveRejectMap.set(requestId, [resolve, reject]);
+		send('slime2:request', {
+			account_id: accountId,
+			request_id: requestId,
+			request_type: type,
+			payload,
+		});
 	});
 }
 
 /**
  * Log message to the Bot Log, must be JSON serializable
  *
- * level = "info" | "log" | "error" | "debug" | "warn"
+ * Level = "info" | "log" | "error" | "debug" | "warn"
  */
 function log(message, level = 'log') {
 	send('slime2:log', { message, level });
 }
 
-/** Log given type and data, if `USE_DETAILS_LOG = true` */
-function logEventDetails(type, data) {
-	if (!USE_DETAILS_LOG) return;
+/** Log given type and data, if `LOG_EVENT_DATA = true` */
+function logEventData(type, data) {
+	if (!LOG_EVENT_DATA) return;
 
-	log({ type, data });
+	log({ type, data }, 'info');
 }

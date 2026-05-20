@@ -16,12 +16,9 @@ declare module '@tanstack/react-router' {
 	}
 }
 
-// setup slime2 global var for the widget to use
+// Setup slime2 global var for the widget to use
 globalThis.slime2 = {
-	async getPronouns() {
-		return null;
-	},
-	async getTwitchFollowDate() {
+	async request() {
 		return null;
 	},
 	widgetId: null,

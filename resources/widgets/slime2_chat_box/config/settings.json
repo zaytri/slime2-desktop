@@ -417,12 +417,9 @@
 					"hide-users": {
 						"type": "multi-text-input",
 						"defaultValue": [
-							"Sery_Bot",
-							"Nightbot",
-							"StreamElements",
-							"Streamlabs"
+							"Sery_Bot"
 						],
-						"placeholder": "Chatter Name",
+						"placeholder": "Name",
 						"label": "Hide Users"
 					},
 					"follower-only": {
@@ -449,7 +446,9 @@
 				"settings": {
 					"hide-prefixes": {
 						"type": "multi-text-input",
-						"defaultValue": ["!"],
+						"defaultValue": [
+							"!"
+						],
 						"placeholder": "Prefix",
 						"label": "Hide messages starting with:"
 					},

@@ -6,6 +6,7 @@ import { i18nStringTransform, i18nUndefined } from '@/helpers/i18n';
 import type { WidgetSetting as WidgetSettingType } from '@@/json/widgetSettings';
 import EyeSvg from '@@/svg/EyeSvg';
 import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react';
+import clsx from 'clsx';
 import WidgetSetting from './WidgetSetting';
 
 type SettingsGroupProps = {
@@ -88,18 +89,14 @@ type DevPeekProps = {
 
 function DevPeek({ id, setting }: DevPeekProps) {
 	const { settings: appSettings } = useSettings();
+	const parentId = useWidgetSettingParent();
 
-	if (
-		!appSettings.devMode ||
-		setting.type === 'section' ||
-		setting.type === 'multi-section'
-	)
-		return;
+	if (!appSettings.devMode || setting.type === 'section') return;
 
 	return (
 		<TooltipProvider timeout={0} placement='right'>
 			<TooltipAnchor
-				className='z-10 -mb-100 -ml-4 self-start'
+				className='z-10 mt-1 -mb-100 -ml-4 self-start'
 				render={<button type='button' />}
 			>
 				<div className='rounded-1 p-1 text-zinc-600 over:bg-zinc-700 over:text-white over:outline over:outline-zinc-800'>
@@ -115,6 +112,9 @@ function DevPeek({ id, setting }: DevPeekProps) {
 						Dev Peek
 					</h5>
 
+					{parentId && (
+						<PeekTag label='Multi-Section ID' value={parentId.split('[')[0]} />
+					)}
 					<PeekTag label='ID' value={id} />
 					{'defaultValue' in setting && (
 						<PeekTag
@@ -155,10 +155,21 @@ function PeekTag({ label, value }: PeekTagProps) {
 	return (
 		<div className='grid grid-cols-2 items-center overflow-hidden rounded-1 border-2 border-zinc-400 bg-zinc-700 whitespace-nowrap text-white'>
 			<p className='px-2 text-3.5 font-bold'>{label}</p>
-			<div className='flex flex-col border-l border-zinc-400 bg-zinc-800 px-2 font-mono'>
+			<div
+				className={clsx(
+					'flex flex-col border-l border-zinc-400 bg-zinc-800 px-2 font-mono',
+				)}
+			>
 				{Array.isArray(value) ? (
 					value.map((item, index) => {
-						return <p key={index}>{JSON.stringify(item)}</p>;
+						return (
+							<p
+								key={index}
+								className='after:content-[","] first:before:content-["["] last:after:content-["]"]'
+							>
+								{JSON.stringify(item)}
+							</p>
+						);
 					})
 				) : (
 					<p>{JSON.stringify(value)}</p>

@@ -4,9 +4,17 @@
 	"version": "1.0.0",
 	"website": "https://slime2.stream/",
 	"support": "https://forums.slime2.stream/",
-	"type": ["bot"],
+	"type": [
+		"bot"
+	],
 	"accounts": [
-		{ "type": "read", "service": "twitch" },
-		{ "type": "bot", "service": "twitch" }
+		{
+			"type": "read",
+			"service": "twitch"
+		},
+		{
+			"type": "bot",
+			"service": "twitch"
+		}
 	]
 }

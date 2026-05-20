@@ -11,11 +11,8 @@ const WebSocketEvent = z.object({
 	data: z.record(z.string(), z.json()),
 });
 
-const RequestType = z.literal(['get-pronouns', 'get-twitch-follow-date']);
-type RequestType = z.infer<typeof RequestType>;
-
 const ResponseEventData = z.object({
-	type: RequestType,
+	type: z.string(),
 	request_id: z.string(),
 	response: z.unknown(),
 });
@@ -35,19 +32,21 @@ export default function useSlime2Websocket() {
 
 		const websocket = new WebSocket(WEBSOCKET_BASE_URL);
 
-		// requests sent from widget to slime2
-		const sendRequest = async <Payload, Response>(
-			type: RequestType,
-			payload: Payload,
-		): Promise<Response> => {
+		// allow widget to make requests to slime2 using the slime2 var
+		globalThis.slime2.request = async (
+			accountId: string,
+			type: string,
+			payload: unknown = {},
+		) => {
 			const requestId = `${type}_${nanoid()}_${Date.now()}`;
 
-			return new Promise<Response>((resolve, reject) => {
+			return new Promise((resolve, reject) => {
 				resolveRejectMapRef.current.set(requestId, [resolve, reject]);
 				websocket.send(
 					JSON.stringify({
 						type: 'request',
 						data: {
+							account_id: accountId,
 							widget_id: widgetId,
 							request_id: requestId,
 							request_type: type,
@@ -55,22 +54,6 @@ export default function useSlime2Websocket() {
 						},
 					}),
 				);
-			});
-		};
-
-		// allow widget to make requests using the slime2 var
-		globalThis.slime2.getPronouns = (platform, userId, username) => {
-			return sendRequest('get-pronouns', {
-				platform,
-				user_id: userId,
-				username,
-			});
-		};
-
-		globalThis.slime2.getTwitchFollowDate = (accountId, userId) => {
-			return sendRequest('get-twitch-follow-date', {
-				account_id: accountId,
-				user_id: userId,
 			});
 		};
 
@@ -99,17 +82,7 @@ export default function useSlime2Websocket() {
 				if (type === 'widget-response') {
 					// resolve the request promise from the widget
 					try {
-						const { type, request_id, response } =
-							ResponseEventData.parse(data);
-
-						// ensure request type is expected
-						try {
-							RequestType.parse(type);
-						} catch (error) {
-							console.error('Invalid request type!');
-							logZodError(error);
-							return;
-						}
+						const { request_id, response } = ResponseEventData.parse(data);
 
 						// find and resolve the related promise
 						const resolveReject = resolveRejectMapRef.current.get(request_id);

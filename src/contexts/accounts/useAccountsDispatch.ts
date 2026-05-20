@@ -5,7 +5,7 @@ import {
 	saveAccounts,
 } from '@/helpers/json/accounts';
 import { createContext, useContext } from 'react';
-import { contextErrorMessage, deepCopyObject } from '../common';
+import { contextErrorMessage } from '../common';
 
 type AccountsAction =
 	| {
@@ -99,7 +99,7 @@ export function accountsReducer(
 	state: Accounts,
 	action: AccountsAction,
 ): Accounts {
-	const newState = deepCopyObject(state);
+	const newState = structuredClone(state);
 
 	switch (action.type) {
 		case 'set': {
@@ -107,7 +107,7 @@ export function accountsReducer(
 		}
 		case 'add': {
 			// deep copy data
-			const newAccount: Account = deepCopyObject(action.account);
+			const newAccount: Account = structuredClone(action.account);
 
 			// set/update new account value
 			newState[newAccount.id] = newAccount;

@@ -3,22 +3,21 @@
 const slime2 = window.slime2;
 
 // set to true to automatically console log event data
-const USE_DETAILS_LOG = false;
+const LOG_EVENT_DATA = false;
 
-const EPOCH = new Date(0);
+const EPOCH_DATE = new Date(0);
 
 const Widget = {
+	readAccount: { id: '' },
 	values: new Map(),
 	messagesDeleted: new Map(),
 	usersCleared: new Map(),
-	lastChatClear: EPOCH,
-	lastPlayedSound: EPOCH,
+	lastChatClear: EPOCH_DATE,
+	lastPlayedSound: EPOCH_DATE,
 };
 
-const Account = {
-	id: '',
-	channelBadges: new Map(),
-	globalBadges: new Map(),
+const Twitch = {
+	badges: new Map(),
 	cheermotes: new Map(),
 	thirdPartyEmotes: new Map(),
 };
@@ -31,7 +30,7 @@ addEventListener('slime2:widget-accounts', widgetAccountsListener);
 addEventListener('slime2:twitch-event', twitchEventListener);
 
 function widgetValuesListener(event) {
-	logEventDetails(event.type, event.detail);
+	logEventData(event.type, event.detail);
 
 	Widget.values = new Map(Object.entries(event.detail));
 
@@ -162,59 +161,75 @@ function widgetValuesListener(event) {
 	);
 }
 
-function widgetAccountsListener(event) {
-	logEventDetails(event.type, event.detail);
+async function widgetAccountsListener(event) {
+	logEventData(event.type, event.detail);
 
-	const account = event.detail.accounts[0];
-	Account.id = account.id;
+	const accounts = event.detail?.accounts ?? [];
+	const newReadAccount = accounts[0];
 
-	// collect bttv emotes into Account.bttvEmotes
-	account.betterTTV?.emotes?.forEach(emote => {
-		Account.thirdPartyEmotes.set(emote.code, { type: 'bttv', data: emote });
+	// same account as stored account or undefined, skip processing
+	if (!newReadAccount?.id || Widget.readAccount.id === newReadAccount.id) {
+		return;
+	}
+
+	Widget.readAccount = newReadAccount;
+
+	const [cheermotes, globalBadges, channelBadges, bttvUser, ffzRoom] =
+		await Promise.all([
+			getTwitchCheermotes(),
+			getTwitchGlobalBadges(),
+			getTwitchChannelChatBadges(),
+			getBttvUser(),
+			getFfzRoom(),
+		]);
+
+	// collect bttv emotes into Twitch.thirdPartyEmotes
+	bttvUser?.emotes?.forEach(emote => {
+		Twitch.thirdPartyEmotes.set(emote.code, { type: 'bttv', data: emote });
 	});
 
-	// collect ffz emotes into Account.ffzEmotes
-	account.frankerFaceZ?.emotes?.forEach(emote => {
-		Account.thirdPartyEmotes.set(emote.name, { type: 'ffz', data: emote });
+	// collect ffz emotes into Twitch.thirdPartyEmotes
+	ffzRoom?.emotes?.forEach(emote => {
+		Twitch.thirdPartyEmotes.set(emote.name, { type: 'ffz', data: emote });
 	});
 
-	// collect global badges into Account.globalBadges
-	account.globalBadges.forEach(badge => {
+	// collect global badges into Twitch.badges
+	globalBadges?.forEach(badge => {
 		const badgeVersions = new Map();
 
 		badge.versions.forEach(version => {
 			badgeVersions.set(version.id, version);
 		});
 
-		Account.globalBadges.set(badge.set_id, {
+		Twitch.badges.set(badge.set_id, {
 			...badge,
 			versions: badgeVersions,
 		});
 	});
 
-	// collect channel badges into Account.channelBadges
-	account.channelBadges.forEach(badge => {
+	// collect channel badges into Twitch.badges
+	channelBadges?.forEach(badge => {
 		const badgeVersions = new Map();
 
 		badge.versions.forEach(version => {
 			badgeVersions.set(version.id, version);
 		});
 
-		Account.channelBadges.set(badge.set_id, {
+		Twitch.badges.set(badge.set_id, {
 			...badge,
 			versions: badgeVersions,
 		});
 	});
 
-	// collect cheermotes into Account.cheermotes
-	account.cheermotes.forEach(cheermote => {
+	// collect cheermotes into Twitch.cheermotes
+	cheermotes?.forEach(cheermote => {
 		const cheermoteTiers = new Map();
 
 		cheermote.tiers.forEach(tier => {
 			cheermoteTiers.set(tier.min_bits, tier);
 		});
 
-		Account.cheermotes.set(cheermote.prefix, {
+		Twitch.cheermotes.set(cheermote.prefix, {
 			...cheermote,
 			tiers: cheermoteTiers,
 		});
@@ -222,25 +237,25 @@ function widgetAccountsListener(event) {
 }
 
 function twitchEventListener(event) {
-	logEventDetails(`${event.type} - ${event.detail.type}`, event.detail);
+	logEventData(`${event.type} - ${event.detail.type}`, event.detail);
 
-	const timestamp = new Date(event.detail.timestamp);
+	const eventDate = new Date(event.detail.timestamp);
 
 	const { type, data } = event.detail;
 
 	switch (type) {
 		case 'channel.chat.message':
-			return handleChatMessage(data, timestamp);
+			return handleChatMessage(data, eventDate);
 		case 'channel.chat.message_delete':
 			return handleChatMessageDelete(data);
 		case 'channel.chat.clear':
-			return handleChatClear(timestamp);
+			return handleChatClear(eventDate);
 		case 'channel.chat.clear_user_messages':
-			return handleChatClearUserMessages(data, timestamp);
+			return handleChatClearUserMessages(data, eventDate);
 		case 'channel.chat.notification':
 			if (data.notice_type === 'announcement') {
 				// treat announcements as regular chat messages
-				return handleChatMessage(data, timestamp);
+				return handleChatMessage(data, eventDate);
 			}
 			break;
 	}
@@ -249,7 +264,7 @@ function twitchEventListener(event) {
 // Twitch Event Handlers
 // ***************************************************************************
 
-async function handleChatMessage(data, timestamp) {
+async function handleChatMessage(data, eventDate) {
 	const {
 		message,
 		chatter_user_name,
@@ -290,26 +305,15 @@ async function handleChatMessage(data, timestamp) {
 		return;
 	}
 
-	// get user's pronouns and follow age
-	const [pronouns, followDateString] = await Promise.all([
-		slime2.getPronouns('twitch', chatter_user_id, chatter_user_login),
-		slime2.getTwitchFollowDate(Account.id, chatter_user_id),
-	]);
+	// filter out users who fail the follow age check
+	if (!(await checkFollowAge(chatter_user_id, eventDate))) return;
 
-	// follow age check
-	if (Widget.values.get('follower-only')) {
-		if (!followDateString) return; // user isn't a follower
-
-		const followDate = new Date(followDateString);
-
-		// follow age given in hours
-		const minFollowTime =
-			(Widget.values.get('follow-age') ?? 0) * 60 * 60 * 100;
-		const userFollowTime = timestamp.getTime() - followDate.getTime();
-		if (userFollowTime < minFollowTime) {
-			return;
-		}
-	}
+	// get user's pronouns
+	const pronouns = await getPronouns(
+		'twitch',
+		chatter_user_id,
+		chatter_user_login,
+	);
 
 	const messageTemplateClone = cloneTemplate('message-template');
 	const messageElement = messageTemplateClone.querySelector('.message');
@@ -356,11 +360,11 @@ async function handleChatMessage(data, timestamp) {
 
 			if (
 				// chat cleared
-				timestamp < Widget.lastChatClear ||
+				eventDate < Widget.lastChatClear ||
 				// message deleted
 				Widget.messagesDeleted.get(message_id) ||
 				// user banned or timed out
-				timestamp < (Widget.usersCleared.get(chatter_user_id) ?? EPOCH)
+				eventDate < (Widget.usersCleared.get(chatter_user_id) ?? EPOCH_DATE)
 			) {
 				// if message was already deleted by the above checks, don't render
 				return;
@@ -433,17 +437,17 @@ function handleChatMessageDelete(data) {
 		?.remove();
 }
 
-function handleChatClear(timestamp) {
-	Widget.lastChatClear = timestamp;
+function handleChatClear(eventDate) {
+	Widget.lastChatClear = eventDate;
 	document
 		.getElementById('widget')
 		.querySelectorAll('.message')
 		.forEach(element => element.remove());
 }
 
-function handleChatClearUserMessages(data, timestamp) {
+function handleChatClearUserMessages(data, eventDate) {
 	const { target_user_id } = data;
-	Widget.usersCleared.set(target_user_id, timestamp);
+	Widget.usersCleared.set(target_user_id, eventDate);
 	document
 		.getElementById('widget')
 		.querySelectorAll(`[data-user-id='${target_user_id}']`)
@@ -481,9 +485,9 @@ function buildUser(displayName, username, pronouns, badges) {
 
 function buildBadges(badges) {
 	return badges.map(userBadge => {
-		const badgeVersion =
-			Account.channelBadges.get(userBadge.set_id)?.versions.get(userBadge.id) ??
-			Account.globalBadges.get(userBadge.set_id)?.versions.get(userBadge.id);
+		const badgeVersion = Twitch.badges
+			.get(userBadge.set_id)
+			?.versions.get(userBadge.id);
 
 		const badgeClone = cloneTemplate('badge-template');
 
@@ -516,11 +520,11 @@ function buildTextFragment(textFragment) {
 
 	const parsedFragments = [];
 
-	const thirdPartyEmoteNames = Array.from(Account.thirdPartyEmotes.keys());
+	const thirdPartyEmoteNames = Array.from(Twitch.thirdPartyEmotes.keys());
 	text.split(createEmoteRegex(thirdPartyEmoteNames)).forEach(part => {
 		if (part === '') return;
 
-		const thirdPartyEmote = Account.thirdPartyEmotes.get(part) ?? {};
+		const thirdPartyEmote = Twitch.thirdPartyEmotes.get(part) ?? {};
 
 		if (thirdPartyEmote.type === 'bttv') {
 			const { id, animated } = thirdPartyEmote.data;
@@ -567,7 +571,7 @@ function buildEmoteFragment(emoteFragment) {
 
 	let src = buildTwitchEmoteImageUrl(emote.id);
 
-	const thirdPartyEmote = Account.thirdPartyEmotes.get(text) ?? {};
+	const thirdPartyEmote = Twitch.thirdPartyEmotes.get(text) ?? {};
 
 	// allow third party emotes to override twitch emotes
 	if (thirdPartyEmote.type === 'bttv') {
@@ -595,7 +599,7 @@ function buildCheermoteFragment(cheermoteFragment) {
 
 	const cheermoteClone = cloneTemplate('cheermote-fragment-template');
 
-	const tier = Account.cheermotes
+	const tier = Twitch.cheermotes
 		.get(cheermote.prefix)
 		?.tiers.get(cheermote.tier);
 
@@ -611,8 +615,101 @@ function buildCheermoteFragment(cheermoteFragment) {
 	return cheermoteClone;
 }
 
+// Requests
+// ***************************************************************************
+
+/** Returns array of pronouns to show, or `null` if they haven't set any */
+async function getPronouns(platform, userId, username) {
+	return slime2.request(Widget.readAccount.id, 'get-pronouns', {
+		platform,
+		user_id: userId,
+		username,
+	});
+}
+
+/** Returns ISO string of follow date, or `null` if they aren't following. */
+async function getTwitchFollowDate(userId) {
+	return slime2.request(Widget.readAccount.id, 'get-twitch-follow-date', {
+		user_id: userId,
+	});
+}
+
+/**
+ * Returns array of Twitch Cheermotes
+ *
+ * https://dev.twitch.tv/docs/api/reference/#get-cheermotes
+ */
+async function getTwitchCheermotes() {
+	return slime2.request(Widget.readAccount.id, 'get-twitch-cheermotes');
+}
+
+/**
+ * Returns array of Twitch Global Badges
+ *
+ * https://dev.twitch.tv/docs/api/reference/#get-global-chat-badges
+ */
+async function getTwitchGlobalBadges() {
+	return slime2.request(Widget.readAccount.id, 'get-twitch-global-badges');
+}
+
+/**
+ * Returns array of Twitch Channel Chat Badges
+ *
+ * https://dev.twitch.tv/docs/api/reference/#get-channel-chat-badges
+ */
+async function getTwitchChannelChatBadges() {
+	return slime2.request(
+		Widget.readAccount.id,
+		'get-twitch-channel-chat-badges',
+	);
+}
+
+/**
+ * Returns BetterTTV Twitch User
+ *
+ * https://betterttv.com/developers/api#user
+ */
+async function getBttvUser() {
+	return slime2.request(Widget.readAccount.id, 'get-betterttv-user', {
+		platform: 'twitch',
+	});
+}
+
+/**
+ * Returns FrankerFaceZ Twitch Room
+ *
+ * https://api.frankerfacez.com/docs/#/Rooms
+ */
+async function getFfzRoom() {
+	return slime2.request(Widget.readAccount.id, 'get-frankerfacez-room', {
+		platform: 'twitch',
+	});
+}
+
 // Helpers
 // ***************************************************************************
+
+/** Returns true if user passes the min follow age check */
+async function checkFollowAge(userId, eventDate) {
+	if (!Widget.values.get('follower-only')) {
+		// not in follower only mode, allow everyone
+		return true;
+	}
+
+	const followDateString = await getTwitchFollowDate(userId);
+	if (!followDateString) {
+		// user isn't a follower
+		return false;
+	}
+
+	const followDate = new Date(followDateString);
+
+	// follow age given in hours
+	const minFollowTime = (Widget.values.get('follow-age') ?? 0) * 60 * 60 * 1000;
+	const userFollowTime = eventDate.getTime() - followDate.getTime();
+
+	return userFollowTime > minFollowTime;
+}
 
 /** Builds Twitch emote image URL given the emote ID. */
 const BASE_TWITCH_EMOTE_URL = 'https://static-cdn.jtvnw.net/emoticons/v2';
@@ -695,9 +792,9 @@ function accessibleTextColor(textColor, backgroundColor) {
 	return new Color(newColor).toString({ format: 'hex' });
 }
 
-/** Formatted console log given type and data, if `USE_DETAILS_LOG = true` */
-function logEventDetails(type, data) {
-	if (!USE_DETAILS_LOG) return;
+/** Formatted console log given type and data, if `LOG_EVENT_DATA = true` */
+function logEventData(type, data) {
+	if (!LOG_EVENT_DATA) return;
 
 	console.log(
 		`%c${type}`,

@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import { createContext, useContext } from 'react';
-import { contextErrorMessage, deepCopyObject } from '../common';
+import { contextErrorMessage } from '../common';
 
 export function useBotsLogDispatch() {
 	const dispatch = useContext(BotLogsDispatchContext);
@@ -31,7 +31,7 @@ export const BotLogsDispatchContext = createContext<
 >(undefined);
 
 export function botLogsReducer(state: BotLogs, action: BotLogsAction): BotLogs {
-	const newState = deepCopyObject(state);
+	const newState = structuredClone(state);
 
 	switch (action.type) {
 		case 'add': {

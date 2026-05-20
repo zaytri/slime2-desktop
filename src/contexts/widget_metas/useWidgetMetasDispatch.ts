@@ -1,6 +1,6 @@
 import { saveWidgetMeta, type WidgetMeta } from '@/helpers/json/widgetMeta';
 import { createContext, useContext } from 'react';
-import { contextErrorMessage, deepCopyObject } from '../common';
+import { contextErrorMessage } from '../common';
 import type { WidgetMetas } from './useWidgetMetas';
 
 type WidgetMetasAction =
@@ -41,14 +41,14 @@ export function widgetMetasReducer(
 	state: WidgetMetas,
 	action: WidgetMetasAction,
 ): WidgetMetas {
-	const newState = deepCopyObject(state);
+	const newState = structuredClone(state);
 
 	switch (action.type) {
 		case 'set': {
 			const { id, meta } = action;
 
 			// deep copy new data
-			const newMeta: WidgetMeta = deepCopyObject(meta);
+			const newMeta: WidgetMeta = structuredClone(meta);
 
 			// add new widget meta
 			newState[id] = newMeta;

@@ -24,9 +24,10 @@ junk_file = "0.1"
 keyring = { version = "3", features = ["apple-native", "windows-native", "linux-native"] }
 log = "0.4"
 nanoid = "0.5"
+notify = "8.2.0"
+notify-debouncer-full = "0.7.0"
 tauri-plugin-clipboard-manager = "2"
 tauri-plugin-dialog = "2"
-tauri-plugin-fs = { version = "2", features = ["watch"] }
 tauri-plugin-log = "2"
 tauri-plugin-opener = "2"
 tauri-plugin-shell = "2"

@@ -4,11 +4,9 @@ import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
 import type { Account } from '@/helpers/json/accounts';
 import { loadWidgetSettings } from '@/helpers/json/widgetSettings';
 import { loadWidgetValues } from '@/helpers/json/widgetValues';
-import bttvApi from '@/helpers/services/emotes/betterTTV';
-import ffzApi from '@/helpers/services/emotes/frankerFaceZ';
-import twitchApi from '@/helpers/services/twitch/twitchApi';
 import { sendWidgetAccounts, sendWidgetValues } from '@/helpers/widgetMessage';
 import logZodError from '@/helpers/zodError';
+import { getEventLogId } from '@@/json/eventsLog';
 import { listen } from '@tauri-apps/api/event';
 import { useEffect, useState } from 'react';
 import { z } from 'zod/mini';
@@ -38,19 +36,18 @@ export default function useWidgetRegistration() {
 		}
 
 		// registration from bot
-		function botRegistrationListener(event: CustomEvent<{ widgetId: string }>) {
-			const { widgetId } = event.detail;
-			registerWidget(widgetId);
+		function botRegistrationListener(
+			event: CustomEventInit<{ widgetId: string }>,
+		) {
+			if (!event.detail?.widgetId) return;
+			registerWidget(event.detail.widgetId);
 		}
 
-		addEventListener(
-			'bot-registration',
-			botRegistrationListener as EventListener,
-		);
+		addEventListener('bot-registration', botRegistrationListener);
 
 		// registration from overlay
 		const unlistenPromise = listen<WidgetRegistration>(
-			'widget-registration',
+			'websocket-registration',
 			async event => {
 				try {
 					// just in case payload isn't formatted correctly
@@ -64,10 +61,7 @@ export default function useWidgetRegistration() {
 		);
 
 		return () => {
-			removeEventListener(
-				'bot-registration',
-				botRegistrationListener as EventListener,
-			);
+			removeEventListener('bot-registration', botRegistrationListener);
 
 			unlistenPromise.then(unlisten => {
 				if (unlisten) unlisten();
@@ -126,28 +120,9 @@ export default function useWidgetRegistration() {
 								return accountData;
 							}
 
-							const [
-								cheermotesResponse,
-								globalBadgesResponse,
-								channelChatBadgesResponse,
-								bttvData,
-								ffzData,
-							] = await Promise.all([
-								twitchApi.getCheermotes(account.id, account.serviceId),
-								twitchApi.getGlobalBadges(account.id),
-								twitchApi.getChannelChatBadges(account.id, account.serviceId),
-								bttvApi.getUser('twitch', account.serviceId),
-								ffzApi.getRoom('twitch', account.serviceId),
-							]);
-
 							return {
 								...accountData,
-								eventsLog: eventsLog[account.id] || [],
-								cheermotes: cheermotesResponse.data.data,
-								channelBadges: channelChatBadgesResponse.data.data,
-								globalBadges: globalBadgesResponse.data.data,
-								betterTTV: bttvData,
-								frankerFaceZ: ffzData,
+								eventsLog: eventsLog[getEventLogId(account)] || [],
 							};
 						}),
 					);
