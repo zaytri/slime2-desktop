@@ -8,6 +8,10 @@ on:
       - release/beta
       - release/live
 
+concurrency:
+  group: ${{ github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   publish-tauri:
     permissions:

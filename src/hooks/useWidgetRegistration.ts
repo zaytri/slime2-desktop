@@ -22,6 +22,8 @@ export default function useWidgetRegistration() {
 	// sends widget values upon webhook registration / bot connection
 	useEffect(() => {
 		async function registerWidget(widgetId: string) {
+			console.info(`Connecting overlay widget: ${widgetMetas[widgetId]?.name}`);
+
 			const [settings, values] = await Promise.all([
 				loadWidgetSettings(widgetId),
 				loadWidgetValues(widgetId),
@@ -40,6 +42,11 @@ export default function useWidgetRegistration() {
 			event: CustomEventInit<{ widgetId: string }>,
 		) {
 			if (!event.detail?.widgetId) return;
+
+			console.info(
+				`Connecting bot widget: ${widgetMetas[event.detail.widgetId]?.name}`,
+			);
+
 			registerWidget(event.detail.widgetId);
 		}
 

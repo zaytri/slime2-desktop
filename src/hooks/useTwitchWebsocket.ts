@@ -7,6 +7,7 @@ import twitchApi, {
 	createEventSubParamsList,
 } from '@/helpers/services/twitch/twitchApi';
 import twitchAuth from '@/helpers/services/twitch/twitchAuth';
+import { capitalizeWord } from '@/helpers/string';
 import { sendTwitchEvent } from '@/helpers/widgetMessage';
 import { getEventLogId } from '@@/json/eventsLog';
 import { useEffect, useRef } from 'react';
@@ -38,6 +39,10 @@ export default function useTwitchWebsocket() {
 	) {
 		const account = getAccount(twitchReadAccountId);
 		if (!account) return;
+
+		console.info(
+			`Connecting ${capitalizeWord(account.service)} account: ${account.displayName}`,
+		);
 
 		twitchWebsockets.current.set(account.id, 'connecting');
 
@@ -167,6 +172,8 @@ export default function useTwitchWebsocket() {
 									account.default)
 							) {
 								relatedWidgets.push(widgetId);
+
+								console.info(`Connecting widget to Twitch: ${widgetMeta.name}`);
 
 								const { subscription_type, message_timestamp: timestamp } =
 									notificationMessage.metadata;

@@ -50,7 +50,6 @@ pub async fn send_websocket_message(
 	channel: &str,
 	state: tauri::State<'_, server::websocket::WebsocketConnections>,
 ) -> Result<(), String> {
-	log::info!("[channel {}]: {}", channel, message);
 	// send message to all connections
 	for (_connection_id, connection) in state.read().await.iter() {
 		connection.send(message, channel);
