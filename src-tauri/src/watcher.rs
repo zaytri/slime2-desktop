@@ -1,5 +1,5 @@
-use notify::{ReadDirectoryChangesWatcher, RecursiveMode};
-use notify_debouncer_full::{DebouncedEvent, Debouncer, FileIdMap};
+use notify::{RecommendedWatcher, RecursiveMode};
+use notify_debouncer_full::{DebouncedEvent, Debouncer, RecommendedCache};
 use std::{ffi::OsStr, path::PathBuf, time::Duration};
 use tauri::Emitter;
 use tokio::sync::mpsc::{UnboundedReceiver, unbounded_channel};
@@ -7,7 +7,7 @@ use tokio::sync::mpsc::{UnboundedReceiver, unbounded_channel};
 use crate::get_app_handle;
 
 fn async_watcher() -> notify::Result<(
-	Debouncer<ReadDirectoryChangesWatcher, FileIdMap>,
+	Debouncer<RecommendedWatcher, RecommendedCache>,
 	UnboundedReceiver<Result<Vec<DebouncedEvent>, Vec<notify::Error>>>,
 )> {
 	let (ub_sender, ub_receiver) = unbounded_channel();
