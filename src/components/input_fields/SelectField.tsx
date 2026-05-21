@@ -1,4 +1,5 @@
 import InputDescription from '@/components/input_fields/InputDescription';
+import CheckSvg from '@@/svg/CheckSvg';
 import {
 	Field,
 	Fieldset,
@@ -80,8 +81,12 @@ export default function SelectField<V>({
 					{options.map(option => {
 						return (
 							<Field key={option.label}>
-								<Radio value={option.value} className='input-select-option'>
-									<Label className='cursor-pointer select-none'>
+								<Radio
+									value={option.value}
+									className='group/select input-select-option'
+								>
+									<Label className='flex cursor-pointer items-center gap-2 select-none'>
+										<CheckSvg className='-mb-0.5 hidden size-3 group-data-checked/select:block' />
 										{option.label}
 									</Label>
 								</Radio>

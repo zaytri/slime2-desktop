@@ -82,14 +82,15 @@ export default function MultiSelectField<V>({
 						return (
 							<Field key={option.label}>
 								<Checkbox
-									className='input-select-option'
+									className='group/select input-select-option'
 									checked={values.includes(option.value)}
 									onKeyDown={onKeyDown}
 									onChange={newCheckedValue => {
 										onCheckOption(newCheckedValue, option.value);
 									}}
 								>
-									<Label className='cursor-pointer select-none'>
+									<Label className='flex cursor-pointer items-center gap-2 select-none'>
+										<CheckSvg className='-mb-0.5 hidden size-3 group-data-checked/select:block' />
 										{option.label}
 									</Label>
 								</Checkbox>
