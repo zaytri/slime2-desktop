@@ -17,6 +17,13 @@ type WidgetBotLogsProps = {
 };
 
 const SCROLL_ID = 'slime2-bot-log-container';
+const TIME_FORMATTER = new Intl.DateTimeFormat(undefined, {
+	hour12: false,
+	hour: '2-digit',
+	minute: '2-digit',
+	second: '2-digit',
+	fractionalSecondDigits: 3,
+});
 
 export default function WidgetBotLogs({ onBack }: WidgetBotLogsProps) {
 	const widgetId = useWidgetId();
@@ -47,7 +54,8 @@ export default function WidgetBotLogs({ onBack }: WidgetBotLogsProps) {
 								<LogLine
 									key={log.id}
 									level={log.level}
-									message={log.message}
+									data={log.data}
+									date={log.date}
 									selected={log.id === lastClicked}
 									onClick={() => {
 										setLastClicked(log.id);
@@ -66,10 +74,11 @@ type LogLineProps = {
 	selected: boolean;
 	onClick: VoidFunction;
 	level: BotLogLevel;
-	message: string;
+	date: Date;
+	data: unknown[];
 };
 
-function LogLine({ level, message, onClick, selected }: LogLineProps) {
+function LogLine({ level, date, data, onClick, selected }: LogLineProps) {
 	const [collapsed, setCollapsed] = useState<boolean>(true);
 	const containerRef = useRef<HTMLDivElement>(null);
 
@@ -94,7 +103,8 @@ function LogLine({ level, message, onClick, selected }: LogLineProps) {
 				!selected && [
 					level === 'error' && 'bg-rose-400/40! text-rose-200!',
 					level === 'warn' && 'bg-amber-300/30! text-amber-200!',
-					level === 'info' && 'bg-sky-300/30! text-cyan-200!',
+					level === 'info' && 'bg-sky-300/15!',
+					level === 'debug' && 'bg-green-300/15!',
 				],
 				selected && 'outline',
 			)}
@@ -123,7 +133,13 @@ function LogLine({ level, message, onClick, selected }: LogLineProps) {
 					collapsed ? 'line-clamp-1' : 'whitespace-pre-wrap',
 				)}
 			>
-				{message}
+				{[
+					`[${TIME_FORMATTER.format(date)}]`,
+					`[${level.toUpperCase()}]`,
+					...data.map(item => {
+						return JSON.stringify(item, null, '\t');
+					}),
+				].join(' ')}
 			</p>
 		</div>
 	);

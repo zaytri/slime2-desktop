@@ -13,10 +13,10 @@ export function useBotsLogDispatch() {
 
 	const addBotLog = (
 		widgetId: string,
-		message: string,
+		data: unknown[],
 		level: BotLogLevel = 'log',
 	) => {
-		dispatch({ type: 'add', widgetId, level, message });
+		dispatch({ type: 'add', widgetId, level, data });
 	};
 
 	const clearBotLog = (widgetId: string) => {
@@ -35,14 +35,16 @@ export function botLogsReducer(state: BotLogs, action: BotLogsAction): BotLogs {
 
 	switch (action.type) {
 		case 'add': {
-			const { widgetId, message, level } = action;
+			const { widgetId, data, level } = action;
+			const date = new Date();
 
 			newState[widgetId] = [
 				...(newState[widgetId] || []),
 				{
-					id: `${nanoid()}_${Date.now()}`,
+					id: `${nanoid()}_${date.getTime()}`,
+					date,
 					level,
-					message,
+					data,
 				},
 			];
 			break;
@@ -62,7 +64,7 @@ type BotLogsAction =
 	| {
 			type: 'add';
 			widgetId: string;
-			message: string;
+			data: unknown[];
 			level: BotLogLevel;
 	  }
 	| {
@@ -73,7 +75,8 @@ type BotLogsAction =
 export type BotLogLevel = 'info' | 'log' | 'error' | 'debug' | 'warn';
 export type BotLog = {
 	id: string;
+	date: Date;
 	level: BotLogLevel;
-	message: string;
+	data: unknown[];
 }[];
 export type BotLogs = Record<string, BotLog>;

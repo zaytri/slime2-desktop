@@ -159,7 +159,7 @@ export default function useWidgetRequest() {
 				if (widgetId) {
 					addBotLog(
 						widgetId,
-						`[slime2:request - ${requestType}] ${formattedError}`,
+						[`[slime2:request - ${requestType}]`, formattedError],
 						'error',
 					);
 

@@ -42,8 +42,8 @@ export default function useTwitchBot() {
 			try {
 				switch (type) {
 					case 'slime2:log': {
-						const { message, level } = LogData.parse(data);
-						addBotLog(widgetId, JSON.stringify(message, null, '\t'), level);
+						const { data: logData, level } = LogData.parse(data);
+						addBotLog(widgetId, logData, level);
 
 						break;
 					}
@@ -58,13 +58,16 @@ export default function useTwitchBot() {
 				}
 			} catch (error) {
 				const formattedError = logZodError(error, data);
-				addBotLog(widgetId, `[${type}] ${formattedError}`, 'error');
+				addBotLog(widgetId, [`[${type}]`, formattedError], 'error');
 			}
 		};
 
 		bot.onerror = event => {
-			const errorMessage = `[Line: ${event.lineno}, Column: ${event.colno}] ${event.message}`;
-			addBotLog(widgetId, errorMessage, 'error');
+			addBotLog(
+				widgetId,
+				[`[Line: ${event.lineno}, Column: ${event.colno}]`, event.message],
+				'error',
+			);
 		};
 
 		// timestamp for cache breaking
@@ -156,6 +159,6 @@ export default function useTwitchBot() {
 }
 
 const LogData = z.object({
-	message: z.unknown(),
+	data: z.array(z.unknown()),
 	level: z.catch(z.literal(['info', 'log', 'error', 'debug', 'warn']), 'log'),
 });
