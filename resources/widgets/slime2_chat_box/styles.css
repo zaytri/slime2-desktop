@@ -51,7 +51,7 @@
 
 .message {
 	flex-shrink: 0;
-	max-width: var(--max-width);
+	max-width: min(var(--max-width), 100%);
 	padding: 4px;
 	animation: none;
 
