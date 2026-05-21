@@ -2,7 +2,7 @@ import useAccounts from '@/contexts/accounts/useAccounts';
 import { useAccountsDispatch } from '@/contexts/accounts/useAccountsDispatch';
 import { useEventsLogDispatch } from '@/contexts/events_log/useEventsLogDispatch';
 import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
-import { type Account, deleteTokens } from '@/helpers/json/accounts';
+import { deleteTokens, type Account } from '@/helpers/json/accounts';
 import twitchApi, {
 	createEventSubParamsList,
 } from '@/helpers/services/twitch/twitchApi';
@@ -32,6 +32,17 @@ export default function useTwitchWebsocket() {
 		return accountsRef.current[accountId];
 	}
 
+	// necesary to get updated widget metas within functions
+	const widgetMetasRef = useRef(widgetMetas);
+
+	useEffect(() => {
+		widgetMetasRef.current = widgetMetas;
+	}, [widgetMetas]);
+
+	function getWidgetMetas() {
+		return widgetMetasRef.current;
+	}
+
 	async function connectTwitchWebsocket(
 		twitchReadAccountId: string,
 		reconnectUrl?: string,
@@ -53,55 +64,52 @@ export default function useTwitchWebsocket() {
 		let connectionLostTimer: number | null = null;
 		let keepAliveTimeoutSeconds: number | null = null;
 
-		function disconnectTwitchWebsocket() {
+		const disconnectTwitchWebsocket = () => {
 			const account = getAccount(twitchReadAccountId);
-			if (!account) return;
-
 			websocket.close();
-			twitchWebsockets.current.delete(account.id);
-		}
+			if (account) {
+				twitchWebsockets.current.delete(account.id);
+			}
+		};
 
 		// clear out the existing timer
-		function clearConnectionLostTimer() {
+		const clearConnectionLostTimer = () => {
 			if (connectionLostTimer) {
 				clearTimeout(connectionLostTimer);
 				connectionLostTimer = null;
 			}
-		}
+		};
 
 		// start/restart timer
-		function startConnectionLostTimer() {
+		const startConnectionLostTimer = () => {
 			const account = getAccount(twitchReadAccountId);
-			if (!account) return;
-
 			clearConnectionLostTimer();
 
 			if (keepAliveTimeoutSeconds) {
 				connectionLostTimer = setTimeout(() => {
 					// connection has been lost, disconnect and create a new connection
 					disconnectTwitchWebsocket();
-					connectTwitchWebsocket(account.id);
+					if (account) {
+						connectTwitchWebsocket(account.id);
+					}
 
 					// 1200 instead of 1000 to allow extra time
 				}, keepAliveTimeoutSeconds * 1200);
 			}
-		}
+		};
 
 		// disconnect and set account to need reauthorization
-		function reauthorizationNeeded() {
+		const reauthorizationNeeded = () => {
 			const account = getAccount(twitchReadAccountId);
-			if (!account) return;
-
 			clearConnectionLostTimer();
 			disconnectTwitchWebsocket();
-			updateAccount({
-				...account,
-				reauthorize: true,
-			});
-			deleteTokens(account.id);
-		}
+			if (account) {
+				updateAccount({ ...account, reauthorize: true });
+				deleteTokens(account.id);
+			}
+		};
 
-		websocket.addEventListener('message', async message => {
+		websocket.addEventListener('message', async (message: MessageEvent) => {
 			const account = getAccount(twitchReadAccountId);
 			if (!account) return;
 
@@ -162,6 +170,7 @@ export default function useTwitchWebsocket() {
 						twitchMessage as Twitch.WebsocketMessage.Notification;
 
 					const relatedWidgets: string[] = [];
+					const widgetMetas = getWidgetMetas();
 					Object.entries(widgetMetas).forEach(([widgetId, widgetMeta]) => {
 						widgetMeta.accounts.forEach((accountSlot, index) => {
 							if (

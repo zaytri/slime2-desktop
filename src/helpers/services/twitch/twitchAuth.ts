@@ -113,7 +113,6 @@ const twitchAuth = {
 				} catch (error) {
 					console.debug(
 						`Twitch Access Token for ${accountId} no longer valid! Refreshing...`,
-						error,
 					);
 
 					// access token might be expired, refresh it
