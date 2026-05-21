@@ -1,4 +1,5 @@
-/* Globals *******************************************************************/
+// Globals
+// ***************************************************************************
 const RequestResolveRejectMap = new Map();
 
 // set to true to automatically log event data
@@ -9,15 +10,29 @@ const EPOCH_DATE = new Date(0);
 const Widget = {
 	readAccount: { id: '', serviceId: '' },
 	botAccount: { id: '', serviceId: '' },
+	/** @type {Map<string, any>} */
 	values: new Map(),
-	messagesDeleted: new Map(),
+
+	/** @type {Set<string>} */
+	messagesDeleted: new Set(),
+
+	/** @type {Map<string, Date>} */
 	usersCleared: new Map(),
+
 	lastChatClear: EPOCH_DATE,
+
+	/** @type {Map<string, Map<string, Date>>} */
 	lastSent: new Map(),
+
+	/** @type {Set<string>} */
 	botMessageIds: new Set(),
+
+	/** @type {Map<string, Promise<void>>} */
+	replyPromises: new Map(),
 };
 
-/* Listeners *****************************************************************/
+// Listeners
+// ***************************************************************************
 
 addEventListener('message', messageListener);
 function messageListener(message) {
@@ -67,6 +82,14 @@ function twitchEventListener(event) {
 	switch (type) {
 		case 'channel.chat.message':
 			return handleChatMessage(data, eventDate);
+
+		// used to ensure that deleted messages aren't replied to
+		case 'channel.chat.message_delete':
+			return handleChatMessageDelete(data);
+		case 'channel.chat.clear':
+			return handleChatClear(eventDate);
+		case 'channel.chat.clear_user_messages':
+			return handleChatClearUserMessages(data, eventDate);
 	}
 }
 
@@ -91,26 +114,8 @@ function responseListener(event) {
 	RequestResolveRejectMap.delete(request_id);
 }
 
-// Event Handlers
+// Twitch Event Handlers
 // ***************************************************************************
-
-async function sendReply(
-	replyMessage,
-	replyParentId,
-	commandId,
-	userId,
-	eventDate,
-) {
-	const replyId = await sendChatMessage(replyMessage, replyParentId);
-	Widget.botMessageIds.add(replyId);
-
-	if (!Widget.lastSent.has(commandId)) {
-		Widget.lastSent.set(commandId, new Map());
-	}
-
-	Widget.lastSent.get(commandId).set('global', eventDate);
-	Widget.lastSent.get(commandId).set(userId, eventDate);
-}
 
 async function handleChatMessage(data, eventDate) {
 	const {
@@ -123,160 +128,336 @@ async function handleChatMessage(data, eventDate) {
 		chatter_user_login,
 	} = data;
 
-	const ignoreList = Widget.values.get('ignore-list') ?? [];
-
-	if (
-		// don't respond to messages that the bot had sent, to prevent loops
-		Widget.botMessageIds.has(message_id) ||
-		// don't respond to messages from users in the ignore list
-		ignoreList.some(ignoreUser => {
-			const lowerCaseIgnore = ignoreUser.toLowerCase();
-			return (
-				lowerCaseIgnore === chatter_user_name.toLowerCase() ||
-				lowerCaseIgnore === chatter_user_login.toLowerCase()
-			);
-		})
-	) {
+	// wait for previous bot replies to be processed
+	// ensures that Widget.botMessageIds is accurate
+	await Promise.allSettled([...Widget.replyPromises.values()]);
+	if (Widget.botMessageIds.has(message_id)) {
+		// don't respond to messages that the bot had sent, to prevent bot loops
 		return;
 	}
 
+	const ignoreList = Widget.values.get('ignore-list') ?? [];
+	if (
+		ignoreList.some(ignoreUser => {
+			// user display name and username can be different, so check both
+			// https://blog.twitch.tv/en/2016/08/22/localized-display-names-e00ee8d3250a/
+			return [chatter_user_name, chatter_user_login].some(user => {
+				return ignoreUser.toLowerCase() === user.toLowerCase();
+			});
+		})
+	) {
+		// ignore messages from users in the ignore list
+		return;
+	}
+
+	/** @type {string | null | undefined} */
+	let userFollowDateString = undefined;
+
 	const commandIds = Widget.values.get('commands-list') ?? [];
 	for (const commandId of commandIds) {
+		/** @param {string} settingId */
 		function getValue(settingId) {
 			return getMultiSectionValue(commandId, settingId);
 		}
 
-		// ignore command if command has no reply
 		const reply = (getValue('reply') ?? '').trim();
-		if (!reply) break;
-
-		const lastSentGlobalDate =
-			Widget.lastSent.get(commandId)?.get('global') ?? EPOCH_DATE;
-		const timeSinceGlobalSent =
-			eventDate.getTime() - lastSentGlobalDate.getTime();
-
-		const lastSentUserDate =
-			Widget.lastSent.get(commandId)?.get(chatter_user_id) ?? EPOCH_DATE;
-		const timeSinceUserSent = eventDate.getTime() - lastSentUserDate.getTime();
-
-		const globalCooldown = getValue('global-cooldown') ?? 0;
-		const userCooldown = getValue('user-cooldown') ?? 5;
-
-		if (
-			(globalCooldown > 0 && timeSinceGlobalSent < globalCooldown * 1000) ||
-			(userCooldown > 0 && timeSinceUserSent < userCooldown * 1000)
-		) {
-			break;
-		}
-
-		const allowedRoles = getValue('allowed-roles') ?? ['everyone'];
-
-		function badgeCheck(role, ...badgeSetIds) {
-			return (
-				allowedRoles.includes(role) &&
-				badges.some(badge => {
-					return badgeSetIds.some(setId => {
-						return badge.set_id === setId;
-					});
-				})
-			);
-		}
-
-		if (
-			!allowedRoles.includes('everyone') &&
-			!badgeCheck('broadcaster', 'broadcaster') &&
-			!badgeCheck('mod', 'moderator', 'lead_moderator') &&
-			!badgeCheck('vip', 'vip') &&
-			!badgeCheck('sub', 'subscriber', 'founder') &&
-			!(
-				allowedRoles.includes('follower') &&
-				(await followAgeCheck(
-					chatter_user_id,
-					getValue('follow-age') ?? 0,
-					eventDate,
-				))
-			)
-		) {
-			// user did not pass allowed roles
+		if (!reply) {
+			// ignore command if it has no reply
 			break;
 		}
 
 		const aliases = getValue('aliases') ?? [];
 		const command = getValue('command') ?? '';
 		const keywords = getValue('keywords') ?? [];
-		const prefixRegexPart = stringsToRegexOr([command, ...aliases]);
-		const keywordRegexPart = stringsToRegexOr(keywords);
 
-		const regexParts = [];
-		if (prefixRegexPart) regexParts.push(`^(${prefixRegexPart})`);
-		if (keywordRegexPart) regexParts.push(`\b(${keywordRegexPart})\b`);
-
-		if (regexParts.length === 0) {
-			// no prefixes or keywords defined
+		if (!hasCommand(message.text, [command, ...aliases], keywords)) {
+			// message doesn't contain any command words
 			break;
 		}
 
-		// create case insensitive regex for checking both prefixes and keywords
-		const regex = new RegExp(regexParts.join('|'), 'i');
+		const globalCooldown = getValue('global-cooldown') ?? 0;
+		if (onCooldown(eventDate, commandId, 'global', globalCooldown)) {
+			// global cooldown active
+			breka;
+		}
 
-		if (regex.test(message.text)) {
-			sendReply(reply, message_id, commandId, chatter_user_id, eventDate);
+		const userCooldown = getValue('user-cooldown') ?? 5;
+		if (onCooldown(eventDate, commandId, chatter_user_id, userCooldown)) {
+			// user cooldown active
+			break;
+		}
+
+		// check allowed roles
+
+		const allowedRoles = getValue('allowed-roles') ?? ['everyone'];
+
+		function badgeRoleCheck(role, ...badgeSetIds) {
+			return allowedRoles.includes(role) && hasBadge(badges, ...badgeSetIds);
+		}
+
+		if (
+			!allowedRoles.includes('everyone') &&
+			!badgeRoleCheck('broadcaster', 'broadcaster') &&
+			!badgeRoleCheck('mod', 'moderator', 'lead_moderator') &&
+			!badgeRoleCheck('vip', 'vip') &&
+			!badgeRoleCheck('sub', 'subscriber', 'founder')
+		) {
+			// user did not pass badge roles
+
+			if (!allowedRoles.includes('follower')) {
+				break;
+			}
+
+			if (userFollowDateString === undefined) {
+				// cache for the other command checks
+				userFollowDateString = await getTwitchFollowDate(userId);
+			}
+
+			const minFollowHours = getValue('follow-age') ?? 0;
+			if (!followAgeCheck(userFollowDateString, eventDate, minFollowHours)) {
+				// user did not pass follow age check
+				break;
+			}
+		}
+
+		if (
+			// chat cleared
+			eventDate < Widget.lastChatClear ||
+			// message deleted
+			Widget.messagesDeleted.has(message_id) ||
+			// user banned or timed out
+			eventDate < (Widget.usersCleared.get(chatter_user_id) ?? EPOCH_DATE)
+		) {
+			// if message was already deleted by the above checks,
+			// don't reply and skip processing of other commands
 			return;
 		}
+
+		// all checks passed
+
+		// set last sent map for this command if it doesn't already exist
+		if (!Widget.lastSent.has(commandId)) {
+			Widget.lastSent.set(commandId, new Map());
+		}
+
+		// set global and user last sent dates for cooldown checks
+		Widget.lastSent.get(commandId).set('global', eventDate);
+		Widget.lastSent.get(commandId).set(chatter_user_id, eventDate);
+
+		// send reply and skip processing of other commands
+		sendReply(reply, message_id);
+		return;
 	}
 }
 
-/* Requests ******************************************************************/
+function handleChatMessageDelete(data) {
+	const { message_id } = data;
+	Widget.messagesDeleted.add(message_id);
+}
 
-/** Message can include any emote that the bot has access to. */
+function handleChatClear(eventDate) {
+	Widget.lastChatClear = eventDate;
+}
+
+function handleChatClearUserMessages(data, eventDate) {
+	const { target_user_id } = data;
+	Widget.usersCleared.set(target_user_id, eventDate);
+}
+
+// Requests
+// ***************************************************************************
+
+/**
+ * Sends a chat message, which can include any emote that the bot has access to.
+ *
+ * @param {string} message
+ * @param {string} [parentMessageId] - If specified, chat message is sent as a
+ *   reply to that message.
+ * @returns {Promise<{
+ * 	message_id: string;
+ * 	is_sent: boolean;
+ * 	drop_reason?: { code: string; message: string };
+ * }>}
+ */
 async function sendChatMessage(
 	message,
-	reply_parent_message_id, // optional
+	parentMessageId, // optional
 ) {
 	return sendRequest(Widget.botAccount.id, 'post-twitch-chat-message', {
 		broadcaster_id: Widget.readAccount.serviceId,
 		message,
-		reply_parent_message_id,
+		reply_parent_message_id: parentMessageId,
 	});
 }
 
-/** Returns ISO string of follow date, or `null` if they aren't following. */
+/**
+ * Returns ISO string of follow date, or `null` if they aren't following.
+ *
+ * @param {string} userId
+ * @returns {Promise<null | string>}
+ */
 async function getTwitchFollowDate(userId) {
 	return sendRequest(Widget.readAccount.id, 'get-twitch-follow-date', {
 		user_id: userId,
 	});
 }
 
-/* Helpers *******************************************************************/
+// Helpers
+// ***************************************************************************
 
-/** Returns true if user passes the min follow age check */
-async function followAgeCheck(userId, minHours, eventDate) {
-	const followDateString = await getTwitchFollowDate(userId);
+/**
+ * Returns `true` if the message contains the provided prefixes or keywords.
+ *
+ * @param {string} message
+ * @param {string[]} prefixes
+ * @param {string[]} keywords
+ * @returns {boolean}
+ */
+function hasCommand(messageText, prefixes, keywords) {
+	const prefixRegexPart = stringsToRegexOr(prefixes);
+	const keywordRegexPart = stringsToRegexOr(keywords);
+
+	const regexParts = [];
+
+	if (prefixRegexPart) {
+		// ^ matches start of string, \b is word boundary
+		regexParts.push(String.raw`^(${prefixRegexPart})\b`);
+	}
+
+	if (keywordRegexPart) {
+		// \b is word boundary
+		regexParts.push(String.raw`\b(${keywordRegexPart})\b`);
+	}
+
+	if (regexParts.length === 0) {
+		// no prefixes or keywords defined
+		return false;
+	}
+
+	// case insensitive regex for checking both prefixes and keywords
+	const regex = new RegExp(regexParts.join('|'), 'i');
+
+	return regex.test(messageText);
+}
+
+/**
+ * Returns true if the given `eventDate` is within the command's cooldown.
+ *
+ * @param {Date} eventDate - Message Date
+ * @param {string} commandId - Command reference
+ * @param {string} cooldownId - `"global"` or user ID
+ * @param {number} cooldownSeconds - Cooldown amount in seconds
+ * @returns {boolean}
+ */
+function onCooldown(eventDate, commandId, cooldownId, cooldownSeconds) {
+	if (cooldownSeconds === 0) {
+		// no cooldown
+		return false;
+	}
+
+	const lastSentDate =
+		Widget.lastSent.get(commandId)?.get(cooldownId) ?? EPOCH_DATE;
+
+	const timeSinceLastSent = eventDate.getTime() - lastSentDate.getTime();
+
+	return timeSinceLastSent < cooldownSeconds * 1000;
+}
+
+/**
+ * Returns `true` if the Badges contain at least one of the Badge Set IDs.
+ *
+ * @param {{
+ * 	set_id: string;
+ * 	id: string;
+ * 	info: string;
+ * }[]} badges
+ * @param {...string} badgeSetIds
+ * @returns {boolean}
+ */
+function hasBadge(badges, ...badgeSetIds) {
+	return badges.some(badge => {
+		return badgeSetIds.some(setId => {
+			return badge.set_id === setId;
+		});
+	});
+}
+
+/**
+ * Returns `true` if the difference between the `followDateString` and
+ * `eventDate` is greater than `minFollowHours`.
+ *
+ * @param {string | null} followDateString - From {@link getTwitchFollowDate}
+ * @param {Date} eventDate
+ * @param {number} minFollowHours
+ * @returns {boolean}
+ */
+function followAgeCheck(followDateString, eventDate, minFollowHours) {
 	if (!followDateString) {
-		// user isn't a follower
+		// user is not a follower
 		return false;
 	}
 
 	const followDate = new Date(followDateString);
-
-	// follow age given in hours
-	const minFollowTime = (minHours ?? 0) * 60 * 60 * 1000;
+	const minFollowTime = minFollowHours * 60 * 60 * 1000;
 	const userFollowTime = eventDate.getTime() - followDate.getTime();
 
-	return userFollowTime > minFollowTime;
+	return userFollowTime > minFollowHours;
 }
 
-/** Gets a value from within a Multi-Section */
+/**
+ * Sends a chat message as a reply.
+ *
+ * @param {string} replyMessage
+ * @param {string} parentMessageId
+ */
+function sendReply(replyMessage, parentMessageId) {
+	const promiseId = `${parentMessageId}_${Date.now()}`;
+
+	const replyPromise = async () => {
+		try {
+			const response = await sendChatMessage(replyMessage, parentMessageId);
+			const botMessageId = response.message_id;
+			// save botMessageId to ensure that the bot ignores
+			// messages that it had sent through this widget
+			Widget.botMessageIds.add(botMessageId);
+		} finally {
+			// promise settled, delete from external map
+			Widget.replyPromises.delete(promiseId);
+		}
+	};
+
+	// add promise to external map
+	Widget.replyPromises.set(promiseId, replyPromise);
+	replyPromise();
+}
+
+/**
+ * Gets a value from within a Multi-Section
+ *
+ * @param {string} subsectionId
+ * @param {string} settingId
+ */
 function getMultiSectionValue(subsectionId, settingId) {
 	return Widget.values.get(`${subsectionId}.${settingId}`);
 }
 
-/** Sends data back to Slime2 */
+/**
+ * Sends data back to Slime2
+ *
+ * @param {string} type
+ * @param {any} data
+ */
 function send(type, data) {
 	postMessage({ type, data });
 }
 
-/** Sends a request to Slime2, to be resolved from a slime2:response event */
+/**
+ * Sends a request to Slime2, resolved by `'slime2:response'` event listener
+ *
+ * @param {string} accountId - Account used for the request
+ * @param {string} type - Request type
+ * @param {any} payload - Request data
+ */
 async function sendRequest(accountId, type, payload) {
 	const requestId = `${type}_${Date.now()}`;
 
@@ -292,21 +473,13 @@ async function sendRequest(accountId, type, payload) {
 }
 
 /**
- * Log message to the Bot Log, must be JSON serializable
+ * Given a string array, joins them in a regex OR.
  *
- * Level = "info" | "log" | "error" | "debug" | "warn"
+ * The strings are trimmed, discarding empty ones, and regex escaped.
+ *
+ * @param {string[]} stringArray
+ * @returns {string}
  */
-function log(message, level = 'log') {
-	send('slime2:log', { message, level });
-}
-
-/** Log given type and data, if `LOG_EVENT_DATA = true` */
-function logEventData(type, data) {
-	if (!LOG_EVENT_DATA) return;
-
-	log({ type, data }, 'info');
-}
-
 function stringsToRegexOr(stringArray) {
 	return stringArray
 		.reduce((result, prefix) => {
@@ -324,7 +497,34 @@ function stringsToRegexOr(stringArray) {
  * a backslash before them
  *
  * Characters escaped: . * + ? ^ $ { } ( ) | [ ] \
+ *
+ * @param {string} string
+ * @returns {string}
  */
 function escapeRegExp(string) {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
+
+/**
+ * Log given type and data, if `LOG_EVENT_DATA = true`
+ *
+ * @param {string} type
+ * @param {any} data
+ */
+function logEventData(type, data) {
+	if (!LOG_EVENT_DATA) return;
+
+	console.info(type, data);
+}
+
+// Console Message Override
+// ***************************************************************************
+
+['log', 'debug', 'info', 'warn', 'error'].forEach(level => {
+	const consoleFunction = console[level];
+	console[level] = (...data) => {
+		consoleFunction(...data);
+		// forward to bot log
+		send('slime2:log', { data, level });
+	};
+});

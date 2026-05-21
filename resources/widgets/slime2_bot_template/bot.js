@@ -1,5 +1,9 @@
-/* Globals *******************************************************************/
+// Globals
+// ***************************************************************************
 const RequestResolveRejectMap = new Map();
+
+// set to true to automatically log event data
+const LOG_EVENT_DATA = true;
 
 const Widget = {
 	readAccount: { id: '', serviceId: '' },
@@ -7,15 +11,8 @@ const Widget = {
 	values: new Map(),
 };
 
-// set to true to automatically log event data
-const LOG_EVENT_DATA = true;
-
-/*
- * Use the provided `log` function rather than `console.log`
- * to log data to the bot logs, available in the widget dev tools
- */
-
-/* Listeners *****************************************************************/
+// Listeners
+// ***************************************************************************
 
 addEventListener('message', messageListener);
 function messageListener(message) {
@@ -156,28 +153,52 @@ function responseListener(event) {
 	RequestResolveRejectMap.delete(request_id);
 }
 
-/* Requests ******************************************************************/
+// Requests
+// ***************************************************************************
 
-/** Message can include any emote that the bot has access to. */
+/**
+ * Sends a chat message, which can include any emote that the bot has access to.
+ *
+ * @param {string} message
+ * @param {string} [parentMessageId] - If specified, chat message is sent as a
+ *   reply to that message.
+ * @returns {Promise<{
+ * 	message_id: string;
+ * 	is_sent: boolean;
+ * 	drop_reason?: { code: string; message: string };
+ * }>}
+ */
 async function sendChatMessage(
 	message,
-	reply_parent_message_id, // optional
+	parentMessageId, // optional
 ) {
 	return sendRequest(Widget.botAccount.id, 'post-twitch-chat-message', {
 		broadcaster_id: Widget.readAccount.serviceId,
 		message,
-		reply_parent_message_id,
+		reply_parent_message_id: parentMessageId,
 	});
 }
 
-/* Helpers *******************************************************************/
+// Helpers
+// ***************************************************************************
 
-/** Sends data back to Slime2 */
+/**
+ * Sends data back to Slime2
+ *
+ * @param {string} type
+ * @param {any} data
+ */
 function send(type, data) {
 	postMessage({ type, data });
 }
 
-/** Sends a request to Slime2, to be resolved from a slime2:response event */
+/**
+ * Sends a request to Slime2, resolved by `'slime2:response'` event listener
+ *
+ * @param {string} accountId - Account used for the request
+ * @param {string} type - Request type
+ * @param {any} payload - Request data
+ */
 async function sendRequest(accountId, type, payload) {
 	const requestId = `${type}_${Date.now()}`;
 
@@ -193,17 +214,25 @@ async function sendRequest(accountId, type, payload) {
 }
 
 /**
- * Log message to the Bot Log, must be JSON serializable
+ * Log given type and data, if `LOG_EVENT_DATA = true`
  *
- * Level = "info" | "log" | "error" | "debug" | "warn"
+ * @param {string} type
+ * @param {any} data
  */
-function log(message, level = 'log') {
-	send('slime2:log', { message, level });
-}
-
-/** Log given type and data, if `LOG_EVENT_DATA = true` */
 function logEventData(type, data) {
 	if (!LOG_EVENT_DATA) return;
 
-	log({ type, data }, 'info');
+	console.info(type, data);
 }
+
+// Console Message Override
+// ***************************************************************************
+
+['log', 'debug', 'info', 'warn', 'error'].forEach(level => {
+	const consoleFunction = console[level];
+	console[level] = (...data) => {
+		consoleFunction(...data);
+		// forward to bot log
+		send('slime2:log', { data, level });
+	};
+});

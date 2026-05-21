@@ -10,7 +10,7 @@ const EPOCH_DATE = new Date(0);
 const Widget = {
 	readAccount: { id: '' },
 	values: new Map(),
-	messagesDeleted: new Map(),
+	messagesDeleted: new Set(),
 	usersCleared: new Map(),
 	lastChatClear: EPOCH_DATE,
 	lastPlayedSound: EPOCH_DATE,
@@ -362,7 +362,7 @@ async function handleChatMessage(data, eventDate) {
 				// chat cleared
 				eventDate < Widget.lastChatClear ||
 				// message deleted
-				Widget.messagesDeleted.get(message_id) ||
+				Widget.messagesDeleted.has(message_id) ||
 				// user banned or timed out
 				eventDate < (Widget.usersCleared.get(chatter_user_id) ?? EPOCH_DATE)
 			) {
@@ -430,7 +430,7 @@ function hideMessage(messageElement) {
 
 function handleChatMessageDelete(data) {
 	const { message_id } = data;
-	Widget.messagesDeleted.set(message_id, true);
+	Widget.messagesDeleted.add(message_id);
 	const messageElement = document
 		.getElementById('widget')
 		.querySelector(`[data-message-id='${message_id}']`)
