@@ -11,11 +11,12 @@
 						"label": "Font"
 					},
 					"font-size": {
-						"type": "number-input",
+						"type": "slider-input",
 						"defaultValue": 14,
 						"min": 1,
 						"step": 1,
-						"label": "Font Size (px)"
+						"label": "Font Size (px)",
+						"max": 72
 					},
 					"font-weight": {
 						"type": "select-input",
@@ -129,7 +130,7 @@
 						"type": "slider-input",
 						"defaultValue": 0,
 						"min": 0,
-						"max": 5,
+						"max": 10,
 						"step": 1,
 						"description": "Can be used to create an outline",
 						"label": "Shadow Spread (px)",
@@ -141,7 +142,7 @@
 						"type": "slider-input",
 						"defaultValue": 0,
 						"min": 0,
-						"max": 5,
+						"max": 10,
 						"step": 0.5,
 						"label": "Shadow Blur (px)",
 						"condition": {
@@ -151,8 +152,8 @@
 					"shadow-offset-x": {
 						"type": "slider-input",
 						"defaultValue": 0,
-						"min": -5,
-						"max": 5,
+						"min": -10,
+						"max": 10,
 						"step": 1,
 						"label": "Shadow Offset Horizontal (px)",
 						"condition": {
@@ -162,8 +163,8 @@
 					"shadow-offset-y": {
 						"type": "slider-input",
 						"defaultValue": 0,
-						"min": -5,
-						"max": 5,
+						"min": -10,
+						"max": 10,
 						"step": 1,
 						"label": "Shadow Offset Vertical (px)",
 						"condition": {
@@ -416,9 +417,7 @@
 				"settings": {
 					"hide-users": {
 						"type": "multi-text-input",
-						"defaultValue": [
-							"Sery_Bot"
-						],
+						"defaultValue": ["Sery_Bot"],
 						"placeholder": "Name",
 						"label": "Hide Users"
 					},
@@ -446,9 +445,7 @@
 				"settings": {
 					"hide-prefixes": {
 						"type": "multi-text-input",
-						"defaultValue": [
-							"!"
-						],
+						"defaultValue": ["!"],
 						"placeholder": "Prefix",
 						"label": "Hide messages starting with:"
 					},

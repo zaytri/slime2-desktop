@@ -7,6 +7,20 @@ const LOG_EVENT_DATA = false;
 
 const EPOCH_DATE = new Date(0);
 
+// for feColorMatrix
+const IDENTITY_COLOR_MATRIX = [
+	'1 0 0 0 0',
+	'0 1 0 0 0',
+	'0 0 1 0 0',
+	'0 0 0 1 0',
+];
+const ALPHA_MULTIPLY_COLOR_MATRIX = [
+	'1 0 0 0 0',
+	'0 1 0 0 0',
+	'0 0 1 0 0',
+	'0 0 0 30 0',
+];
+
 const Widget = {
 	readAccount: { id: '' },
 	values: new Map(),
@@ -80,7 +94,6 @@ function widgetValuesListener(event) {
 	toggleClass('use-shadow', Widget.values.get('use-shadow') ?? false);
 
 	[
-		['morph', 'radius', 'shadow-spread'],
 		['flood', 'flood-color', 'shadow-color'],
 		['blur', 'stdDeviation', 'shadow-blur'],
 		['offset', 'dx', 'shadow-offset-x'],
@@ -89,6 +102,20 @@ function widgetValuesListener(event) {
 		document
 			.getElementById(id)
 			.setAttribute(attributeName, Widget.values.get(valueKey) ?? 0);
+	});
+
+	const shadowSpread = Widget.values.get('shadow-spread') ?? 0;
+	const useRounding = shadowSpread > 1; // apply rounding when spread is 2+
+	const colorMatrix = useRounding
+		? ALPHA_MULTIPLY_COLOR_MATRIX
+		: IDENTITY_COLOR_MATRIX;
+	[
+		// using rounding effectively adds 2px, so subtract that when used
+		['morph', 'radius', useRounding ? shadowSpread - 2 : shadowSpread],
+		['rounding-blur', 'stdDeviation', useRounding ? 1 : 0],
+		['rounding-matrix', 'values', colorMatrix.join(' ')],
+	].forEach(([id, attributeName, value]) => {
+		document.getElementById(id).setAttribute(attributeName, value);
 	});
 
 	// direction settings

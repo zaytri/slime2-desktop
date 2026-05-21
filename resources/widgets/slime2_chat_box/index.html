@@ -50,11 +50,33 @@
 				result="shadow-spread"
 			/>
 
+			<!-- slight blur for rounding -->
+			<feGaussianBlur
+				id="rounding-blur"
+				stdDeviation="0"
+				in="shadow-spread"
+				result="shadow-spread-blur"
+			/>
+
+			<!-- alpha manipulation for rounding -->
+			<feColorMatrix
+				id="rounding-matrix"
+				type="matrix"
+				values="
+					1 0 0 0 0
+					0 1 0 0 0
+					0 0 1 0 0
+					0 0 0 1 0
+				"
+				in="shadow-spread-blur"
+				result="shadow-rounded"
+			/>
+
 			<!-- shadow blur -->
 			<feGaussianBlur
 				id="blur"
 				stdDeviation="0"
-				in="shadow-spread"
+				in="shadow-rounded"
 				result="shadow-blur"
 			/>
 
