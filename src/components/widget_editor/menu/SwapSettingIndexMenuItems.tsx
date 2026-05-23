@@ -22,7 +22,7 @@ export default function SwapSettingIndexMenuItems({
 		? sectionId
 			? getSetting(sectionId, categoryId)
 			: getCategory(categoryId)
-		: settings;
+		: { settings };
 
 	const groupLength =
 		group && 'settings' in group ? Object.keys(group.settings).length : 0;
