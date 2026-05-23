@@ -27,13 +27,22 @@ export default function OverlayURLDialog({
 							URL
 						</Label>
 						{devMode && (
-							<ExternalLink
-								href={link}
-								className='-mt-1 flex items-center gap-1 rounded-1 bg-zinc-800 px-2 py-0.5 text-3.5 font-semibold text-white outline-2 -outline-offset-1! outline-zinc-400 over:bg-zinc-700 over:outline-4 over:outline-lime-600'
-							>
-								<DoorOpenSvg className='size-4' />
-								<p>Open URL in Browser</p>
-							</ExternalLink>
+							<>
+								<ExternalLink
+									href={link}
+									className='-mt-1 flex items-center gap-1 rounded-1 bg-white px-2 py-0.5 text-3.5 font-semibold text-zinc-800 outline-2 -outline-offset-1! outline-zinc-400 over:bg-lime-200 over:outline-4 over:outline-lime-600'
+								>
+									<DoorOpenSvg className='size-4' />
+									<p>Open In Light Mode</p>
+								</ExternalLink>
+								<ExternalLink
+									href={`${link}&dark=true`}
+									className='-mt-1 flex items-center gap-1 rounded-1 bg-zinc-800 px-2 py-0.5 text-3.5 font-semibold text-white outline-2 -outline-offset-1! outline-zinc-400 over:bg-green-900 over:outline-4 over:outline-lime-600'
+								>
+									<DoorOpenSvg className='size-4' />
+									<p>Open In Dark Mode</p>
+								</ExternalLink>
+							</>
 						)}
 					</div>
 					<div className='input-wrapper flex overflow-visible p-0'>

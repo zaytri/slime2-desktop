@@ -1,18 +1,20 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { z } from 'zod/mini';
 import Widget from '../components/Widget';
 import { getHtml, getMeta } from '../helpers/widgetApi';
 
+const searchSchema = z.object({
+	widgetId: z.catch(z.string(), ''),
+	dark: z.catch(z.boolean(), false),
+});
+
 export const Route = createFileRoute('/$')({
-	validateSearch: (search: Record<string, unknown>) => {
-		return {
-			widgetId: (search.widgetId as string) ?? '',
-		};
-	},
+	validateSearch: searchSchema,
 	loaderDeps: ({ search }) => {
-		return { widgetId: search.widgetId };
+		return search;
 	},
 	loader: async ({ deps }) => {
-		const { widgetId } = deps;
+		const { widgetId, dark } = deps;
 
 		// get widget data
 		const [html, meta] = await Promise.all([
@@ -21,7 +23,7 @@ export const Route = createFileRoute('/$')({
 		]);
 
 		// pass widget HTML to component
-		return { html, meta, widgetId };
+		return { html, meta, widgetId, dark };
 	},
 	component: Widget,
 });
