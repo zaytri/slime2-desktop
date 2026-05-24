@@ -93,6 +93,19 @@ export default function EditWidgetSettingDialog({
 							if ('options' in newData && 'options' in defaultData) {
 								defaultData.options = newData.options;
 							}
+
+							// don't lose min/max/step when switching to another number type
+							if (
+								(newData.type === 'number-input' ||
+									newData.type === 'slider-input') &&
+								(defaultData.type === 'number-input' ||
+									defaultData.type === 'slider-input')
+							) {
+								defaultData.min = newData.min ?? defaultData.min;
+								defaultData.max = newData.max ?? defaultData.max;
+								defaultData.step = newData.step ?? defaultData.step;
+							}
+
 							setNewData(defaultData);
 						}}
 						options={SECTION_SETTING_GROUPED_OPTIONS}
