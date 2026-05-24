@@ -88,7 +88,12 @@ export default function EditWidgetSettingDialog({
 						compact
 						value={newData.type}
 						onChange={newType => {
-							setNewData(SETTINGS_DATA[newType].defaultData);
+							const defaultData = SETTINGS_DATA[newType].defaultData;
+							// don't lose options when switching to another type with options
+							if ('options' in newData && 'options' in defaultData) {
+								defaultData.options = newData.options;
+							}
+							setNewData(defaultData);
 						}}
 						options={SECTION_SETTING_GROUPED_OPTIONS}
 					/>
