@@ -340,7 +340,7 @@ export default function WidgetSetting({
 		case 'button': {
 			return (
 				<NonGroupWrapper id={id} setting={setting}>
-					<WidgetButton id={key} label={label} />;
+					<WidgetButton id={key} label={label} />
 				</NonGroupWrapper>
 			);
 		}
