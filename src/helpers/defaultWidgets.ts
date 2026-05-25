@@ -10,18 +10,18 @@ export type DefaultWidget = {
 };
 
 export type DefaultWidgetId =
-	| 'slime2_chat_box'
-	| 'slime2_alert_box'
-	| 'slime2_event_label'
-	| 'slime2_goal_bar'
-	| 'slime2_command_bot'
-	| 'slime2_timer_bot'
+	| 'slime2_overlay_chat_box'
+	| 'slime2_overlay_alert_box'
+	| 'slime2_overlay_event_label'
+	| 'slime2_overlay_goal_bar'
+	| 'slime2_bot_commands'
+	| 'slime2_bot_timers'
 	| 'slime2_template_overlay'
 	| 'slime2_template_bot'
 	| 'test';
 
 const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
-	slime2_chat_box: {
+	slime2_overlay_chat_box: {
 		name: 'Chat Box',
 		type: 'overlay',
 		icon: chatBoxIconImage,
@@ -63,7 +63,7 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 	// 	icon: EventLabelIcon,
 	// 	description: '',
 	// },
-	slime2_command_bot: {
+	slime2_bot_commands: {
 		name: 'Command Bot',
 		type: 'bot',
 		icon: commandBotIconImage,
