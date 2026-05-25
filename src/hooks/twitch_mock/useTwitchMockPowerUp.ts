@@ -86,11 +86,39 @@ async function sendMockPowerUp(
 		user_input: userText,
 	};
 
-	return sendMockTwitchEvent(
-		widgetId,
-		'channel.custom_power_up_redemption.add',
-		'beta',
-		timestamp,
-		powerUpEvent,
-	);
+	const powerUpBitsUseEvent: Twitch.WebsocketEvent.BitsUse = {
+		broadcaster_user_id: MOCK_BROADCASTER_DETAILS.id,
+		broadcaster_user_login: MOCK_BROADCASTER_DETAILS.login,
+		broadcaster_user_name: MOCK_BROADCASTER_DETAILS.name,
+		user_id: mockUser.id,
+		user_login: mockUser.login,
+		user_name: mockUser.name,
+		bits,
+		message: {
+			text: userText,
+			fragments: [{ type: 'text', text: userText }],
+		},
+		type: 'custom_power_up',
+		custom_power_up: {
+			title: powerUpName,
+			reward_id: `mock_custom_power_up_${powerUpName}`,
+		},
+	};
+
+	return Promise.all([
+		sendMockTwitchEvent(
+			widgetId,
+			'channel.custom_power_up_redemption.add',
+			'beta',
+			timestamp,
+			powerUpEvent,
+		),
+		sendMockTwitchEvent(
+			widgetId,
+			'channel.bits.use',
+			'1',
+			timestamp,
+			powerUpBitsUseEvent,
+		),
+	]);
 }

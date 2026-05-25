@@ -349,28 +349,37 @@ namespace Twitch {
 
 		// when bits are used, such as with cheers or power-ups
 		type BitsUse = With.BroadcasterDetails<
-			| ({
-					// bits user details
-					user_id: string;
-					user_login: string;
-					user_name: string;
+			{
+				// bits user details
+				user_id: string;
+				user_login: string;
+				user_name: string;
 
-					bits: number;
+				bits: number;
 
-					// if cheer or message_effect power-up
-					message?: Message;
-			  } & {
-					type: 'cheer';
-			  })
-			| {
-					type: 'power_up';
-					power_up:
-						| {
-								type: 'celebration' | 'gigantify_an_emote';
-								emote: { id: string; name: string };
-						  }
-						| { type: 'message_effect'; message_effect_id: string };
-			  }
+				// if cheer or message_effect power-up
+				message?: Message;
+			} & (
+				| {
+						type: 'cheer';
+				  }
+				| {
+						type: 'power_up';
+						power_up:
+							| {
+									type: 'celebration' | 'gigantify_an_emote';
+									emote: { id: string; name: string };
+							  }
+							| { type: 'message_effect'; message_effect_id: string };
+				  }
+				| {
+						type: 'custom_power_up';
+						custom_power_up: {
+							title: string;
+							reward_id: string;
+						};
+				  }
+			)
 		>;
 
 		// when a user cheers
