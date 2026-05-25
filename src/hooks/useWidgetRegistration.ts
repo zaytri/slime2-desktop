@@ -1,12 +1,10 @@
 import useAccounts from '@/contexts/accounts/useAccounts';
-import useEventsLog from '@/contexts/events_log/useEventsLog';
 import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
 import type { Account } from '@/helpers/json/accounts';
 import { loadWidgetSettings } from '@/helpers/json/widgetSettings';
 import { loadWidgetValues } from '@/helpers/json/widgetValues';
 import { sendWidgetAccounts, sendWidgetValues } from '@/helpers/widgetMessage';
 import logZodError from '@/helpers/zodError';
-import { getEventLogId } from '@@/json/eventsLog';
 import { loadTileMeta } from '@@/json/tileMeta';
 import { loadWidgetMeta } from '@@/json/widgetMeta';
 import { listen } from '@tauri-apps/api/event';
@@ -15,7 +13,7 @@ import { z } from 'zod/mini';
 
 export default function useWidgetRegistration() {
 	const accounts = useAccounts();
-	const eventsLog = useEventsLog();
+	// const eventsLog = useEventsLog();
 	const widgetMetas = useWidgetMetas();
 	const [registeredWidgets, setRegisteredWidgets] = useState(new Set<string>());
 
@@ -125,7 +123,8 @@ export default function useWidgetRegistration() {
 
 							return {
 								...accountData,
-								eventsLog: eventsLog[getEventLogId(account)] || [],
+								//* disable eventsLog for now
+								// eventsLog: eventsLog[getEventLogId(account)] || [],
 							};
 						}),
 					);
