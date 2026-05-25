@@ -747,7 +747,7 @@ namespace Twitch {
 		type Param = {
 			type: Type;
 			version: string;
-			condition?: Record<string, string>;
+			condition: Record<string, string>;
 		};
 
 		// all of the eventsub types that slime2 subscribes to
@@ -780,6 +780,7 @@ namespace Twitch {
 			// bits
 			| 'channel.bits.use'
 			| 'channel.cheer'
+			| 'channel.custom_power_up_redemption.add'
 
 			// ad break
 			| 'channel.ad_break.begin'

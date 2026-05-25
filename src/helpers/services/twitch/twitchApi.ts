@@ -168,8 +168,8 @@ async function twitchApiDelete<T = any, R = AxiosResponse<T>, D = any>(
 
 function createEventSubParams(
 	type: Twitch.EventSub.Type,
-	version?: string,
-	condition?: Record<string, string>,
+	version: string,
+	condition: Record<string, string>,
 ): Twitch.EventSub.Param {
 	return {
 		type,
@@ -182,6 +182,10 @@ function createEventSubParams(
 export function createEventSubParamsList(
 	userId: string,
 ): Twitch.EventSub.Param[] {
+	const defaultCondition = {
+		broadcaster_user_id: userId,
+	};
+
 	return [
 		// chat
 		...(
@@ -194,14 +198,14 @@ export function createEventSubParamsList(
 			] as Twitch.EventSub.Type[]
 		).map(type =>
 			createEventSubParams(type, '1', {
-				broadcaster_user_id: userId,
+				...defaultCondition,
 				user_id: userId,
 			}),
 		),
 
 		// follow
 		createEventSubParams('channel.follow', '2', {
-			broadcaster_user_id: userId,
+			...defaultCondition,
 			moderator_user_id: userId,
 		}),
 
@@ -212,15 +216,18 @@ export function createEventSubParamsList(
 
 		// shoutout
 		createEventSubParams('channel.shoutout.create', '1', {
-			broadcaster_user_id: userId,
+			...defaultCondition,
 			moderator_user_id: userId,
 		}),
 
 		// channel points
-		createEventSubParams('channel.channel_points_custom_reward_redemption.add'),
-		createEventSubParams(
-			'channel.channel_points_automatic_reward_redemption.add',
-			'2',
+		...(
+			[
+				['channel.channel_points_custom_reward_redemption.add', '1'],
+				['channel.channel_points_automatic_reward_redemption.add', '2'],
+			] as [Twitch.EventSub.Type, string][]
+		).map(([type, version]) =>
+			createEventSubParams(type, version, defaultCondition),
 		),
 
 		// hype train
@@ -230,10 +237,13 @@ export function createEventSubParamsList(
 				'channel.hype_train.progress',
 				'channel.hype_train.end',
 			] as Twitch.EventSub.Type[]
-		).map(type =>
-			createEventSubParams(type, '2', {
-				broadcaster_user_id: userId,
-			}),
+		).map(type => createEventSubParams(type, '2', defaultCondition)),
+
+		// custom power-ups
+		createEventSubParams(
+			'channel.custom_power_up_redemption.add',
+			'beta',
+			defaultCondition,
 		),
 
 		...(
@@ -272,6 +282,6 @@ export function createEventSubParamsList(
 				'channel.goal.progress',
 				'channel.goal.end',
 			] as Twitch.EventSub.Type[]
-		).map(type => createEventSubParams(type)),
+		).map(type => createEventSubParams(type, '1', defaultCondition)),
 	];
 }
