@@ -769,8 +769,15 @@ function buildFfzEmoteImageUrl(urls) {
 	return urls['4'] || urls['2'] || urls['1'];
 }
 
-/** Given the ID of an HTML template, returns the cloned contents */
+/**
+ * Given the ID of an HTML template, returns a copy of its DocumentFragment
+ * contents
+ *
+ * @param {string} id
+ * @returns {DocumentFragment}
+ */
 function cloneTemplate(id) {
+	/** @type {HTMLTemplateElement} */
 	const element = document.getElementById(id);
 
 	if (!element) {
@@ -781,7 +788,7 @@ function cloneTemplate(id) {
 		throw Error(`Element with id "${id}" is not a template!`);
 	}
 
-	return element.content.cloneNode(true);
+	return document.importNode(element.content, true);
 }
 
 /** Lightens the text color if needed to be accessible on a black background */
