@@ -16,7 +16,7 @@ export default function DisplayAbout({ widgetId }: DisplayAboutProps) {
 	const services = getWidgetMetaServices(widgetMeta);
 
 	return (
-		<div className='flex gap-4 rounded-2 border border-white bg-zinc-100 bg-linear-to-b from-zinc-50 to-zinc-100 p-3 pt-2 outline-2 outline-zinc-300'>
+		<div className='col-span-full flex gap-4 rounded-2 border border-white bg-zinc-100 bg-linear-to-b from-zinc-50 to-zinc-100 p-3 pt-2 outline-2 outline-zinc-300'>
 			<div className='flex flex-1 flex-col gap-2'>
 				<div className='flex items-center gap-6'>
 					<h3 className='flex-1 text-shadow-[0_1px_white]'>

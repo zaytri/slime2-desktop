@@ -1,5 +1,6 @@
 import DropdownField from '@/components/input_fields/DropdownField';
 import NumberField from '@/components/input_fields/NumberField';
+import SelectField from '@/components/input_fields/SelectField';
 import TextAreaField from '@/components/input_fields/TextAreaField';
 import TextField from '@/components/input_fields/TextField';
 import { useDialog } from '@/contexts/dialog/useDialog';
@@ -111,6 +112,22 @@ export default function EditWidgetSettingDialog({
 						options={SECTION_SETTING_GROUPED_OPTIONS}
 					/>
 
+					<SelectField
+						label='Half Span'
+						compact
+						value={newData.halfSpan ?? false}
+						onChange={value => {
+							setNewData({
+								...newData,
+								halfSpan: value || undefined,
+							});
+						}}
+						options={[
+							{ label: 'True', value: true },
+							{ label: 'False', value: false },
+						]}
+					/>
+
 					{(newData.type === 'text-input' ||
 						newData.type === 'text-area-input' ||
 						newData.type === 'multi-text-input' ||
@@ -118,21 +135,23 @@ export default function EditWidgetSettingDialog({
 						newData.type === 'dropdown-input' ||
 						newData.type === 'color-input' ||
 						newData.type === 'font-input') && (
-						<TextField
-							label='Placeholder'
-							compact
-							value={
-								typeof newData.placeholder === 'string'
-									? newData.placeholder
-									: ''
-							}
-							onChange={newValue => {
-								setNewData({
-									...newData,
-									placeholder: newValue,
-								});
-							}}
-						/>
+						<div className='col-span-2'>
+							<TextField
+								label='Placeholder'
+								compact
+								value={
+									typeof newData.placeholder === 'string'
+										? newData.placeholder
+										: ''
+								}
+								onChange={newValue => {
+									setNewData({
+										...newData,
+										placeholder: newValue,
+									});
+								}}
+							/>
+						</div>
 					)}
 
 					{(newData.type === 'dropdown-input' ||

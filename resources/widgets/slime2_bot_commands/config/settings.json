@@ -3,35 +3,33 @@
 		"label": "Commands",
 		"settings": {
 			"ignore-list": {
-				"label": "Ignore Users",
 				"type": "multi-text-input",
-				"defaultValue": [
-					"Sery_Bot"
-				],
+				"label": "Ignore Users",
+				"defaultValue": ["Sery_Bot"],
 				"placeholder": "Name",
 				"description": "The bot will ignore any users in this list. Recommended to put your other bots in this list."
 			},
 			"commands-list": {
-				"label": "Commands List",
 				"type": "multi-section",
+				"label": "Commands List",
 				"settings": {
 					"command": {
 						"type": "text-input",
+						"label": "Command",
 						"placeholder": "!hello",
-						"description": "The bot will reply to messages that start with this command.",
-						"label": "Command"
+						"description": "The bot will reply to messages that start with this command."
 					},
 					"reply": {
 						"type": "text-area-input",
+						"label": "Reply",
 						"placeholder": "Bot message",
-						"description": "The bot's reply to the above command.",
-						"label": "Reply"
+						"description": "The bot's reply to the above command."
 					},
 					"allowed-roles": {
 						"type": "multi-select-input",
-						"defaultValue": [
-							"everyone"
-						],
+						"label": "Allowed Roles",
+						"condition": {},
+						"defaultValue": ["everyone"],
 						"description": "Users must have one of these roles to use this command.",
 						"options": [
 							{
@@ -58,49 +56,50 @@
 								"label": "Broadcaster",
 								"value": "broadcaster"
 							}
-						],
-						"label": "Allowed Roles",
-						"condition": {}
+						]
 					},
 					"follow-age": {
 						"type": "number-input",
-						"defaultValue": 0,
-						"min": 0,
-						"description": "Will only reply to followers that have followed for at least this many hours.",
 						"label": "Follow Age (hours)",
 						"condition": {
 							"allowed-roles": "follower"
-						}
+						},
+						"defaultValue": 0,
+						"min": 0,
+						"description": "Will only reply to followers that have followed for at least this many hours."
 					},
 					"user-cooldown": {
 						"type": "number-input",
+						"label": "User Cooldown (seconds)",
 						"defaultValue": 5,
 						"min": 0,
 						"step": 1,
 						"description": "Time before this command can be used again by the same user.",
-						"label": "User Cooldown (seconds)"
+						"halfSpan": true
 					},
 					"global-cooldown": {
 						"type": "number-input",
+						"label": "Global Cooldown (seconds)",
 						"defaultValue": 0,
 						"min": 0,
 						"step": 1,
 						"description": "Time before any user can use this command again.",
-						"label": "Global Cooldown (seconds)"
+						"halfSpan": true
 					},
 					"aliases": {
 						"type": "multi-text-input",
-						"defaultValue": [],
+						"label": "Aliases",
+						"condition": {},
 						"placeholder": "!hi",
 						"description": "Also replies if the message starts with these alternatives.",
-						"label": "Aliases",
-						"condition": {}
+						"halfSpan": true
 					},
 					"keywords": {
 						"type": "multi-text-input",
+						"label": "Keywords",
 						"placeholder": "hello",
 						"description": "Also replies if these words appear anywhere in the message.",
-						"label": "Keywords"
+						"halfSpan": true
 					}
 				}
 			}

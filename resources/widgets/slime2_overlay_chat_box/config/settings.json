@@ -3,23 +3,27 @@
 		"label": "Message",
 		"settings": {
 			"font-section": {
-				"label": "Text",
 				"type": "section",
+				"label": "Text",
 				"settings": {
 					"font-name": {
 						"type": "font-input",
-						"label": "Font"
+						"label": "Font",
+						"halfSpan": true
 					},
 					"font-size": {
 						"type": "slider-input",
+						"label": "Font Size (px)",
+						"halfSpan": true,
 						"defaultValue": 14,
 						"min": 1,
-						"step": 1,
-						"label": "Font Size (px)",
-						"max": 72
+						"max": 72,
+						"step": 1
 					},
 					"font-weight": {
 						"type": "select-input",
+						"label": "Font Weight",
+						"condition": {},
 						"defaultValue": 400,
 						"options": [
 							{
@@ -58,17 +62,16 @@
 								"label": "Heavy",
 								"value": 900
 							}
-						],
-						"label": "Font Weight",
-						"condition": {}
+						]
 					},
 					"message-color": {
 						"type": "color-input",
-						"defaultValue": "white",
-						"label": "Message Color"
+						"label": "Message Color",
+						"defaultValue": "white"
 					},
 					"username-color": {
 						"type": "select-input",
+						"label": "Username Color",
 						"defaultValue": "twitch-light",
 						"options": [
 							{
@@ -87,106 +90,112 @@
 								"label": "Custom",
 								"value": "custom"
 							}
-						],
-						"label": "Username Color"
+						]
 					},
 					"custom-username-color": {
 						"type": "color-input",
-						"defaultValue": "white",
 						"label": "Custom Username Color",
 						"condition": {
 							"username-color": "custom"
-						}
+						},
+						"defaultValue": "white"
 					},
 					"max-lines": {
 						"type": "slider-input",
+						"label": "Max Lines",
+						"halfSpan": true,
 						"defaultValue": 4,
 						"min": 1,
 						"max": 10,
-						"step": 1,
-						"label": "Max Lines"
+						"step": 1
 					},
 					"max-width": {
 						"type": "number-input",
+						"label": "Max Message Width (px)",
+						"halfSpan": true,
 						"defaultValue": 500,
 						"min": 0,
 						"max": 10000,
-						"step": 1,
-						"label": "Max Message Width (px)"
+						"step": 1
 					}
 				}
 			},
 			"shadow-section": {
-				"label": "Shadow",
 				"type": "section",
+				"label": "Shadow",
 				"settings": {
 					"use-shadow": {
 						"type": "toggle-input",
+						"label": "Use Shadow?",
 						"defaultValue": false,
-						"description": "Applies a shadow to the message text, badges, and emotes",
-						"label": "Use Shadow?"
+						"description": "Applies a shadow to the message text, badges, and emotes"
 					},
 					"shadow-spread": {
 						"type": "slider-input",
-						"defaultValue": 0,
-						"min": 0,
-						"max": 10,
-						"step": 1,
-						"description": "Can be used to create an outline",
 						"label": "Shadow Spread (px)",
 						"condition": {
 							"use-shadow": true
-						}
-					},
-					"shadow-blur": {
-						"type": "slider-input",
+						},
+						"halfSpan": true,
 						"defaultValue": 0,
 						"min": 0,
 						"max": 10,
-						"step": 0.5,
+						"step": 1,
+						"description": "Can be used to create an outline"
+					},
+					"shadow-blur": {
+						"type": "slider-input",
 						"label": "Shadow Blur (px)",
 						"condition": {
 							"use-shadow": true
-						}
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 0.5
 					},
 					"shadow-offset-x": {
 						"type": "slider-input",
-						"defaultValue": 0,
-						"min": -10,
-						"max": 10,
-						"step": 1,
 						"label": "Shadow Offset Horizontal (px)",
 						"condition": {
 							"use-shadow": true
-						}
-					},
-					"shadow-offset-y": {
-						"type": "slider-input",
+						},
+						"halfSpan": true,
 						"defaultValue": 0,
 						"min": -10,
 						"max": 10,
-						"step": 1,
+						"step": 1
+					},
+					"shadow-offset-y": {
+						"type": "slider-input",
 						"label": "Shadow Offset Vertical (px)",
 						"condition": {
 							"use-shadow": true
-						}
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
 					},
 					"shadow-color": {
 						"type": "color-input",
-						"defaultValue": "black",
 						"label": "Shadow Color",
 						"condition": {
 							"use-shadow": true
-						}
+						},
+						"defaultValue": "black"
 					}
 				}
 			},
 			"direction-section": {
-				"label": "Direction",
 				"type": "section",
+				"label": "Direction",
 				"settings": {
 					"direction-axis": {
 						"type": "select-input",
+						"label": "Axis",
 						"defaultValue": "vertical",
 						"options": [
 							{
@@ -197,11 +206,15 @@
 								"label": "Horizontal",
 								"value": "horizontal"
 							}
-						],
-						"label": "Axis"
+						]
 					},
 					"direction-vertical-flow": {
 						"type": "select-input",
+						"label": "Vertical Flow",
+						"condition": {
+							"direction-axis": "vertical"
+						},
+						"halfSpan": true,
 						"defaultValue": "to-top",
 						"options": [
 							{
@@ -212,14 +225,15 @@
 								"label": "Top to Bottom",
 								"value": "to-bottom"
 							}
-						],
-						"label": "Vertical Flow",
-						"condition": {
-							"direction-axis": "vertical"
-						}
+						]
 					},
 					"direction-vertical-alignment": {
 						"type": "select-input",
+						"label": "Vertical Alignment",
+						"condition": {
+							"direction-axis": "vertical"
+						},
+						"halfSpan": true,
 						"defaultValue": "left",
 						"options": [
 							{
@@ -230,14 +244,15 @@
 								"label": "Right",
 								"value": "right"
 							}
-						],
-						"label": "Vertical Alignment",
-						"condition": {
-							"direction-axis": "vertical"
-						}
+						]
 					},
 					"direction-horizontal-flow": {
 						"type": "select-input",
+						"label": "Horizontal Flow",
+						"condition": {
+							"direction-axis": "horizontal"
+						},
+						"halfSpan": true,
 						"defaultValue": "to-left",
 						"options": [
 							{
@@ -248,14 +263,15 @@
 								"label": "Left to Right",
 								"value": "to-right"
 							}
-						],
-						"label": "Horizontal Flow",
-						"condition": {
-							"direction-axis": "horizontal"
-						}
+						]
 					},
 					"direction-horizontal-alignment": {
 						"type": "select-input",
+						"label": "Horizontal Alignment",
+						"condition": {
+							"direction-axis": "horizontal"
+						},
+						"halfSpan": true,
 						"defaultValue": "top",
 						"options": [
 							{
@@ -266,28 +282,24 @@
 								"label": "Bottom",
 								"value": "bottom"
 							}
-						],
-						"label": "Horizontal Alignment",
-						"condition": {
-							"direction-axis": "horizontal"
-						}
+						]
 					}
 				}
 			},
 			"badges-section": {
-				"label": "Badges",
 				"type": "section",
+				"label": "Badges",
 				"settings": {
 					"hide-badges": {
 						"type": "toggle-input",
-						"defaultValue": false,
-						"label": "Hide Badges?"
+						"label": "Hide Badges?",
+						"defaultValue": false
 					}
 				}
 			},
 			"pronouns-section": {
-				"label": "Pronouns",
 				"type": "section",
+				"label": "Pronouns",
 				"settings": {
 					"pronouns-text": {
 						"type": "text-display",
@@ -295,6 +307,7 @@
 					},
 					"pronouns-display": {
 						"type": "select-input",
+						"label": "Pronouns Display",
 						"defaultValue": "lowercase",
 						"options": [
 							{
@@ -313,8 +326,7 @@
 								"label": "Hidden",
 								"value": "hidden"
 							}
-						],
-						"label": "Pronouns Display"
+						]
 					}
 				}
 			}
@@ -324,8 +336,9 @@
 		"label": "Animation",
 		"settings": {
 			"entrance-animation": {
-				"label": "Entrance Animation",
 				"type": "select-input",
+				"label": "Entrance Animation",
+				"halfSpan": true,
 				"defaultValue": "none",
 				"options": [
 					{
@@ -347,8 +360,9 @@
 				]
 			},
 			"exit-animation": {
-				"label": "Exit Animation",
 				"type": "select-input",
+				"label": "Exit Animation",
+				"halfSpan": true,
 				"defaultValue": "none",
 				"options": [
 					{
@@ -375,33 +389,36 @@
 		"label": "Lifetime",
 		"settings": {
 			"delay": {
-				"label": "Message Delay (seconds)",
 				"type": "slider-input",
+				"label": "Message Delay (seconds)",
+				"halfSpan": true,
 				"defaultValue": 0,
 				"min": 0,
 				"max": 30,
 				"step": 1
 			},
 			"max-messages": {
-				"label": "Max Messages",
 				"type": "slider-input",
+				"label": "Max Messages",
+				"halfSpan": true,
 				"defaultValue": 50,
 				"min": 1,
 				"max": 200,
-				"step": 1,
-				"description": "The oldest messages beyond the max will be automatically removed"
+				"step": 1
 			},
 			"expire-messages": {
-				"label": "Hide messages after some time?",
 				"type": "toggle-input",
+				"label": "Hide messages after some time?",
+				"halfSpan": true,
 				"defaultValue": false
 			},
 			"hide-time": {
+				"type": "number-input",
 				"label": "Hide Time (seconds)",
 				"condition": {
 					"expire-messages": true
 				},
-				"type": "number-input",
+				"halfSpan": true,
 				"defaultValue": 300,
 				"min": 1,
 				"step": 1
@@ -412,52 +429,56 @@
 		"label": "Filters",
 		"settings": {
 			"user-filters": {
-				"label": "User Filters",
 				"type": "section",
+				"label": "User Filters",
 				"settings": {
 					"hide-users": {
 						"type": "multi-text-input",
+						"label": "Hide Users",
 						"defaultValue": ["Sery_Bot"],
-						"placeholder": "Name",
-						"label": "Hide Users"
+						"placeholder": "Name"
 					},
 					"follower-only": {
 						"type": "toggle-input",
-						"defaultValue": false,
-						"label": "Follower Only Mode"
+						"label": "Follower Only Mode",
+						"halfSpan": true,
+						"defaultValue": false
 					},
 					"follow-age": {
 						"type": "number-input",
-						"defaultValue": 0,
-						"min": 0,
-						"step": "any",
-						"description": "Will only show messages from followers that have followed for at least this many hours",
 						"label": "Minimum follow age (hours)",
 						"condition": {
 							"follower-only": true
-						}
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"step": "any",
+						"description": "Will only show messages from followers that have followed for at least this many hours"
 					}
 				}
 			},
 			"message-filters": {
-				"label": "Message Filters",
 				"type": "section",
+				"label": "Message Filters",
 				"settings": {
 					"hide-prefixes": {
 						"type": "multi-text-input",
+						"label": "Hide messages starting with:",
 						"defaultValue": ["!"],
 						"placeholder": "Prefix",
-						"label": "Hide messages starting with:"
+						"halfSpan": true
 					},
 					"hide-words": {
 						"type": "multi-text-input",
+						"label": "Hide messages containing these words:",
 						"placeholder": "Bad Word",
-						"label": "Hide messages containing these words:"
+						"halfSpan": true
 					},
 					"hide-first-chat": {
 						"type": "toggle-input",
-						"defaultValue": false,
-						"label": "Hide First Time Chat Messages?"
+						"label": "Hide First Time Chat Messages?",
+						"defaultValue": false
 					}
 				}
 			}
@@ -467,13 +488,13 @@
 		"label": "Sound Effect",
 		"settings": {
 			"sound": {
-				"label": "Sound",
 				"type": "audio-input",
+				"label": "Sound",
 				"description": "Play this sound effect for every chat message"
 			},
 			"sound-cooldown": {
-				"label": "Cooldown (seconds)",
 				"type": "slider-input",
+				"label": "Cooldown (seconds)",
 				"defaultValue": 5,
 				"min": 0,
 				"max": 600,

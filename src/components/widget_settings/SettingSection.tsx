@@ -18,7 +18,9 @@ export default function SettingSection({
 				{label}
 			</h3>
 
-			<div className='flex flex-col gap-2 p-4 pt-0'>{children}</div>
+			<div className='grid grid-cols-2 gap-x-4 gap-y-2 p-4 pt-0'>
+				{children}
+			</div>
 		</section>
 	);
 }

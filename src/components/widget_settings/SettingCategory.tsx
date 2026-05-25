@@ -20,7 +20,7 @@ export default function SettingCategory({
 				{i18nStringTransform(label)}
 			</h2>
 
-			<div className='flex flex-col gap-2 pt-2'>{children}</div>
+			<div className='grid grid-cols-2 gap-x-4 gap-y-2 pt-2'>{children}</div>
 		</section>
 	);
 }

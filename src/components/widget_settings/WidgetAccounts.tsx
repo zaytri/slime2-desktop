@@ -37,7 +37,7 @@ export default function WidgetAccounts({ widgetId }: WidgetAccountsProps) {
 	if (!widgetMeta) return null;
 
 	return (
-		<div className='grid grid-cols-3 gap-2 rounded-2 border border-white bg-zinc-100 bg-linear-to-b from-zinc-50 to-zinc-100 p-2 outline-2 outline-zinc-300'>
+		<div className='col-span-full grid grid-cols-2 gap-2 rounded-2 border border-white bg-zinc-100 bg-linear-to-b from-zinc-50 to-zinc-100 p-2 outline-2 outline-zinc-300'>
 			{widgetMeta.accounts.map((slot, slotIndex) => {
 				const { type, service } = slot;
 				let slottedAccount: Account | undefined = undefined;
@@ -229,13 +229,10 @@ function MiniAccountPreview({
 					<div className='flex gap-1 text-3.5 font-bold'>
 						<AccountServiceTag
 							service={service}
-							mini={account && (account.default || account.reauthorize)}
+							mini={account && account.reauthorize}
 						/>
-						<AccountTypeTag
-							type={type}
-							mini={account && (account.default || account.reauthorize)}
-						/>
-						{account?.default && <AccountDefaultTag mini />}
+						<AccountTypeTag type={type} mini={account && account.reauthorize} />
+						{account?.default && <AccountDefaultTag />}
 						{account?.reauthorize && <AccountReauthTag mini />}
 					</div>
 				</div>

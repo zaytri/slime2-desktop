@@ -136,7 +136,7 @@ export default function SettingMultiSubsection({
 				</div>
 			</div>
 
-			<DisclosurePanel className='mt-0.5 flex flex-col gap-2 rounded-2 rounded-tl-0 border border-white bg-zinc-200 bg-linear-to-b from-zinc-100 to-zinc-100/50 p-4 outline-2 outline-zinc-400/50'>
+			<DisclosurePanel className='mt-0.5 grid grid-cols-2 gap-x-4 gap-y-2 rounded-2 rounded-tl-0 border border-white bg-zinc-200 bg-linear-to-b from-zinc-100 to-zinc-100/50 p-4 outline-2 outline-zinc-400/50'>
 				{children}
 			</DisclosurePanel>
 		</Disclosure>

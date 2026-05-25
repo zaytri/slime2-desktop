@@ -177,22 +177,31 @@ const BaseSetting = z.object({
 	searchTags: z.optional(z.array(z.string())),
 });
 
+const BaseNonGroupSetting = z.object({
+	...BaseSetting.def.shape,
+	halfSpan: z.optional(z.boolean()),
+});
+
 const ButtonSetting = z.object({
 	type: z.literal('button'),
+	...BaseNonGroupSetting.def.shape,
 });
 
 const TextDisplaySetting = z.object({
 	type: z.literal('text-display'),
+	...BaseNonGroupSetting.def.shape,
 });
 
 const ImageDisplaySetting = z.object({
 	type: z.literal('image-display'),
+	...BaseNonGroupSetting.def.shape,
 	src: z.string(),
 	alt: I18nString,
 });
 
 const TextInputSetting = z.object({
 	type: z.literal('text-input'),
+	...BaseNonGroupSetting.def.shape,
 	defaultValue: z.optional(z.string()),
 	placeholder: Placeholder,
 	description: Description,
@@ -200,6 +209,7 @@ const TextInputSetting = z.object({
 
 const TextAreaInputSetting = z.object({
 	type: z.literal('text-area-input'),
+	...BaseNonGroupSetting.def.shape,
 	defaultValue: z.optional(z.string()),
 	placeholder: Placeholder,
 	description: Description,
@@ -207,6 +217,7 @@ const TextAreaInputSetting = z.object({
 
 const MultiTextInputSetting = z.object({
 	type: z.literal('multi-text-input'),
+	...BaseNonGroupSetting.def.shape,
 	defaultValue: z.optional(z.array(z.string())),
 	placeholder: Placeholder,
 	description: Description,
@@ -214,6 +225,7 @@ const MultiTextInputSetting = z.object({
 
 const NumberInputSetting = z.object({
 	type: z.literal('number-input'),
+	...BaseNonGroupSetting.def.shape,
 	defaultValue: z.optional(z.number()),
 	min: z.optional(z.number()),
 	max: z.optional(z.number()),
@@ -224,6 +236,7 @@ const NumberInputSetting = z.object({
 
 const SliderInputSetting = z.object({
 	type: z.literal('slider-input'),
+	...BaseNonGroupSetting.def.shape,
 	defaultValue: z.optional(z.number()),
 	min: z.optional(z.number()),
 	max: z.optional(z.number()),
@@ -233,12 +246,14 @@ const SliderInputSetting = z.object({
 
 const ToggleInputSetting = z.object({
 	type: z.literal('toggle-input'),
+	...BaseNonGroupSetting.def.shape,
 	defaultValue: z.optional(z.boolean()),
 	description: Description,
 });
 
 const DropdownInputSetting = z.object({
 	type: z.literal('dropdown-input'),
+	...BaseNonGroupSetting.def.shape,
 	defaultValue: z.optional(OptionValue),
 	placeholder: Placeholder,
 	description: Description,
@@ -247,6 +262,7 @@ const DropdownInputSetting = z.object({
 
 const SelectInputSetting = z.object({
 	type: z.literal('select-input'),
+	...BaseNonGroupSetting.def.shape,
 	defaultValue: z.optional(OptionValue),
 	description: Description,
 	options: Options,
@@ -254,6 +270,7 @@ const SelectInputSetting = z.object({
 
 const MultiSelectInputSetting = z.object({
 	type: z.literal('multi-select-input'),
+	...BaseNonGroupSetting.def.shape,
 	defaultValue: z.optional(z.array(OptionValue)),
 	description: Description,
 	options: Options,
@@ -261,42 +278,49 @@ const MultiSelectInputSetting = z.object({
 
 const ImageInputSetting = z.object({
 	type: z.literal('image-input'),
+	...BaseNonGroupSetting.def.shape,
 	description: Description,
 	defaultValue: MediaDefaultValue,
 });
 
 const MultiImageInputSetting = z.object({
 	type: z.literal('multi-image-input'),
+	...BaseNonGroupSetting.def.shape,
 	description: Description,
 	defaultValue: MultiMediaDefaultValue,
 });
 
 const VideoInputSetting = z.object({
 	type: z.literal('video-input'),
+	...BaseNonGroupSetting.def.shape,
 	description: Description,
 	defaultValue: MediaDefaultValue,
 });
 
 const MultiVideoInputSetting = z.object({
 	type: z.literal('multi-video-input'),
+	...BaseNonGroupSetting.def.shape,
 	description: Description,
 	defaultValue: MultiMediaDefaultValue,
 });
 
 const AudioInputSetting = z.object({
 	type: z.literal('audio-input'),
+	...BaseNonGroupSetting.def.shape,
 	description: Description,
 	defaultValue: MediaDefaultValue,
 });
 
 const MultiAudioInputSetting = z.object({
 	type: z.literal('multi-audio-input'),
+	...BaseNonGroupSetting.def.shape,
 	description: Description,
 	defaultValue: MultiMediaDefaultValue,
 });
 
 const ColorInputSetting = z.object({
 	type: z.literal('color-input'),
+	...BaseNonGroupSetting.def.shape,
 	defaultValue: z.optional(z.string()),
 	description: Description,
 	placeholder: Placeholder,
@@ -304,12 +328,13 @@ const ColorInputSetting = z.object({
 
 const FontInputSetting = z.object({
 	type: z.literal('font-input'),
+	...BaseNonGroupSetting.def.shape,
 	defaultValue: z.optional(z.string()),
 	description: Description,
 	placeholder: Placeholder,
 });
 
-const BaseSectionSetting = z.discriminatedUnion('type', [
+const NonGroupSetting = z.discriminatedUnion('type', [
 	ButtonSetting,
 	TextDisplaySetting,
 	ImageDisplaySetting,
@@ -332,33 +357,29 @@ const BaseSectionSetting = z.discriminatedUnion('type', [
 	FontInputSetting,
 ]);
 
-const NonGroupSetting = z.intersection(BaseSectionSetting, BaseSetting);
-
 const SectionSetting = z.object({
 	type: z.literal('section'),
+	...BaseSetting.def.shape,
 	settings: z.record(z.string(), NonGroupSetting),
 });
 
 const MultiSectionSetting = z.object({
 	type: z.literal('multi-section'),
+	...BaseSetting.def.shape,
 	settings: z.record(z.string(), NonGroupSetting),
 });
 
-const BaseCategorySetting = z.discriminatedUnion('type', [
-	...BaseSectionSetting.def.options,
+const NonCategorySetting = z.discriminatedUnion('type', [
+	...NonGroupSetting.def.options,
 	SectionSetting,
 	MultiSectionSetting,
 ]);
 
-const NonCategorySetting = z.intersection(BaseSetting, BaseCategorySetting);
 type NonCategorySetting = z.infer<typeof NonCategorySetting>;
 
 const CategorySetting = z.object({
 	label: I18nString,
-	settings: z.record(
-		z.string(),
-		z.intersection(BaseSetting, NonCategorySetting),
-	),
+	settings: z.record(z.string(), NonCategorySetting),
 });
 type CategorySetting = z.infer<typeof CategorySetting>;
 

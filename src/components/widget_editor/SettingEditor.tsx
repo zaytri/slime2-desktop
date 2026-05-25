@@ -24,6 +24,10 @@ export default function SettingEditor({
 }: SettingEditorProps) {
 	const values: ValueDisplay[] = [];
 
+	if ('halfSpan' in setting && setting.halfSpan !== undefined) {
+		values.push(displayValue('Half Span', setting.halfSpan));
+	}
+
 	if ('defaultValue' in setting && setting.defaultValue !== undefined) {
 		values.push(displayValue('Default Value', setting.defaultValue));
 	}

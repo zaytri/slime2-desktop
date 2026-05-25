@@ -13,6 +13,7 @@ import {
 } from '@/helpers/media';
 import type { WidgetValue } from '@@/json/widgetValues';
 import { z } from 'zod/mini';
+import DevPeek from '../DevPeek';
 import ColorField from '../input_fields/ColorField';
 import DropdownField from '../input_fields/DropdownField';
 import FontField from '../input_fields/FontField';
@@ -96,64 +97,76 @@ export default function WidgetSetting({
 
 	switch (setting.type) {
 		case 'text-display': {
-			return <DisplayText label={label} />;
+			return (
+				<NonGroupWrapper id={id} setting={setting}>
+					<DisplayText label={label} />
+				</NonGroupWrapper>
+			);
 		}
 		// case 'image-display': {
 		// 	return <DisplayImage label={label} src={setting.src} alt={alt} />;
 		// }
 		case 'text-input': {
 			return (
-				<TextField
-					label={label}
-					value={z
-						.catch(z.string(), setting.defaultValue ?? '')
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					placeholder={placeholder}
-					description={description}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<TextField
+						label={label}
+						value={z
+							.catch(z.string(), setting.defaultValue ?? '')
+							.parse(widgetValue)}
+						onChange={setWidgetValue}
+						placeholder={placeholder}
+						description={description}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'text-area-input': {
 			return (
-				<TextAreaField
-					label={label}
-					value={z
-						.catch(z.string(), setting.defaultValue ?? '')
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					placeholder={placeholder}
-					description={description}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<TextAreaField
+						label={label}
+						value={z
+							.catch(z.string(), setting.defaultValue ?? '')
+							.parse(widgetValue)}
+						onChange={setWidgetValue}
+						placeholder={placeholder}
+						description={description}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'multi-text-input': {
 			return (
-				<MultiTextField
-					label={label}
-					values={z
-						.catch(z.array(z.string()), setting.defaultValue ?? [])
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					placeholder={placeholder}
-					description={description}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<MultiTextField
+						label={label}
+						values={z
+							.catch(z.array(z.string()), setting.defaultValue ?? [])
+							.parse(widgetValue)}
+						onChange={setWidgetValue}
+						placeholder={placeholder}
+						description={description}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'number-input': {
 			return (
-				<NumberField
-					label={label}
-					value={z
-						.catch(z.nullable(z.number()), setting.defaultValue ?? null)
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					placeholder={placeholder}
-					description={description}
-					step={setting.step}
-					min={setting.min}
-					max={setting.max}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<NumberField
+						label={label}
+						value={z
+							.catch(z.nullable(z.number()), setting.defaultValue ?? null)
+							.parse(widgetValue)}
+						onChange={setWidgetValue}
+						placeholder={placeholder}
+						description={description}
+						step={setting.step}
+						min={setting.min}
+						max={setting.max}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'slider-input': {
@@ -162,150 +175,174 @@ export default function WidgetSetting({
 			const max = setting.max ?? 100;
 
 			return (
-				<SliderField
-					label={label}
-					value={z
-						.catch(
-							z.number(),
-							setting.defaultValue === undefined
-								? min
-								: Math.max(Math.min(setting.defaultValue, max), min),
-						)
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					description={description}
-					step={setting.step}
-					min={min}
-					max={max}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<SliderField
+						label={label}
+						value={z
+							.catch(
+								z.number(),
+								setting.defaultValue === undefined
+									? min
+									: Math.max(Math.min(setting.defaultValue, max), min),
+							)
+							.parse(widgetValue)}
+						onChange={setWidgetValue}
+						description={description}
+						step={setting.step}
+						min={min}
+						max={max}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'dropdown-input': {
 			return (
-				<DropdownField
-					label={label}
-					value={z
-						.catch(
-							z.union([z.string(), z.number(), z.boolean()]),
-							setting.defaultValue ?? options[0]?.value ?? '',
-						)
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					options={options}
-					placeholder={placeholder}
-					description={description}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<DropdownField
+						label={label}
+						value={z
+							.catch(
+								z.union([z.string(), z.number(), z.boolean()]),
+								setting.defaultValue ?? options[0]?.value ?? '',
+							)
+							.parse(widgetValue)}
+						onChange={setWidgetValue}
+						options={options}
+						placeholder={placeholder}
+						description={description}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'select-input': {
 			return (
-				<SelectField
-					label={label}
-					value={z
-						.catch(
-							z.union([z.string(), z.number(), z.boolean()]),
-							setting.defaultValue ?? options[0]?.value ?? '',
-						)
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					options={options}
-					description={description}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<SelectField
+						label={label}
+						value={z
+							.catch(
+								z.union([z.string(), z.number(), z.boolean()]),
+								setting.defaultValue ?? options[0]?.value ?? '',
+							)
+							.parse(widgetValue)}
+						onChange={setWidgetValue}
+						options={options}
+						description={description}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'multi-select-input': {
 			return (
-				<MultiSelectField
-					label={label}
-					values={z
-						.catch(
-							z.array(z.union([z.string(), z.number(), z.boolean()])),
-							setting.defaultValue ?? [],
-						)
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					options={options}
-					description={description}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<MultiSelectField
+						label={label}
+						values={z
+							.catch(
+								z.array(z.union([z.string(), z.number(), z.boolean()])),
+								setting.defaultValue ?? [],
+							)
+							.parse(widgetValue)}
+						onChange={setWidgetValue}
+						options={options}
+						description={description}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'toggle-input': {
 			return (
-				<ToggleField
-					label={label}
-					value={z
-						.catch(z.boolean(), setting.defaultValue ?? false)
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					description={description}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<ToggleField
+						label={label}
+						value={z
+							.catch(z.boolean(), setting.defaultValue ?? false)
+							.parse(widgetValue)}
+						onChange={setWidgetValue}
+						description={description}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'font-input': {
 			return (
-				<FontField
-					label={label}
-					value={z
-						.catch(z.string(), setting.defaultValue ?? '')
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					description={description}
-					placeholder={placeholder}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<FontField
+						label={label}
+						value={z
+							.catch(z.string(), setting.defaultValue ?? '')
+							.parse(widgetValue)}
+						onChange={setWidgetValue}
+						description={description}
+						placeholder={placeholder}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'color-input': {
 			return (
-				<ColorField
-					label={label}
-					value={z
-						.catch(z.string(), setting.defaultValue ?? '')
-						.parse(widgetValue)}
-					onChange={setWidgetValue}
-					description={description}
-					placeholder={placeholder}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<ColorField
+						label={label}
+						value={z
+							.catch(z.string(), setting.defaultValue ?? '')
+							.parse(widgetValue)}
+						onChange={setWidgetValue}
+						description={description}
+						placeholder={placeholder}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'image-input': {
 			return (
-				<MediaField
-					type='image'
-					label={label}
-					value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
-					onChange={onChangeMedia}
-					description={description}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<MediaField
+						type='image'
+						label={label}
+						value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
+						onChange={onChangeMedia}
+						description={description}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'video-input': {
 			return (
-				<MediaField
-					type='video'
-					label={label}
-					value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
-					onChange={onChangeMedia}
-					description={description}
-					volume={volume}
-					onChangeVolume={onChangeVolume}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<MediaField
+						type='video'
+						label={label}
+						value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
+						onChange={onChangeMedia}
+						description={description}
+						volume={volume}
+						onChangeVolume={onChangeVolume}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'audio-input': {
 			return (
-				<MediaField
-					type='audio'
-					label={label}
-					value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
-					onChange={onChangeMedia}
-					description={description}
-					volume={volume}
-					onChangeVolume={onChangeVolume}
-				/>
+				<NonGroupWrapper id={id} setting={setting}>
+					<MediaField
+						type='audio'
+						label={label}
+						value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
+						onChange={onChangeMedia}
+						description={description}
+						volume={volume}
+						onChangeVolume={onChangeVolume}
+					/>
+				</NonGroupWrapper>
 			);
 		}
 		case 'button': {
-			return <WidgetButton id={key} label={label} />;
+			return (
+				<NonGroupWrapper id={id} setting={setting}>
+					<WidgetButton id={key} label={label} />;
+				</NonGroupWrapper>
+			);
 		}
 		case 'section': {
 			return (
@@ -337,4 +374,22 @@ function getMediaValue(
 ) {
 	const src = z.catch(z.string(), defaultValue ?? '').parse(value);
 	return getWidgetMediaSrc(widgetId, src);
+}
+
+type NonGroupWrapperProps = {
+	id: string;
+	setting: DistributiveOmit<WidgetSettingType.NonGroup, 'label'>;
+};
+
+function NonGroupWrapper({
+	id,
+	setting,
+	children,
+}: Props.WithChildren<NonGroupWrapperProps>) {
+	return (
+		<div className='relative'>
+			<DevPeek id={id} setting={setting} />
+			{children}
+		</div>
+	);
 }

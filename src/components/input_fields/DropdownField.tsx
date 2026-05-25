@@ -58,7 +58,7 @@ export default function DropdownField<V>({
 
 	if (compact) {
 		return (
-			<div className='flex'>
+			<div className='flex h-full'>
 				<SelectProvider value={selectedItemLabel}>
 					<div className='group/dropdown z-5 flex flex-1 items-center justify-between rounded-1 bg-zinc-700 outline -outline-offset-1 outline-zinc-800 has-focus-visible:bg-green-800 has-focus-visible:outline-3 has-focus-visible:outline-offset-0! has-focus-visible:outline-lime-600 over:bg-green-800 over:outline-3 over:outline-offset-0! over:outline-lime-600'>
 						{label && (
