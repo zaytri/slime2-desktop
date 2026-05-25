@@ -6,5 +6,6 @@ export function useWidgetSettingsQuery(id: string) {
 		queryKey: ['widgetSettings', id],
 		queryFn: async () => loadWidgetSettings(id),
 		networkMode: 'always',
+		structuralSharing: false,
 	});
 }
