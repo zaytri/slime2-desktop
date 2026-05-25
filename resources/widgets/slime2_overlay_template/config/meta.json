@@ -1,12 +1,10 @@
 {
 	"name": "Overlay Widget Template",
 	"creator": "Slime2",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"website": "https://slime2.stream/",
 	"support": "https://forums.slime2.stream/",
-	"type": [
-		"overlay"
-	],
+	"type": ["overlay"],
 	"accounts": [
 		{
 			"type": "read",
@@ -14,11 +12,7 @@
 		}
 	],
 	"import": {
-		"js": [
-			"script.js"
-		],
-		"css": [
-			"styles.css"
-		]
+		"js": ["script.js"],
+		"css": ["styles.css"]
 	}
 }

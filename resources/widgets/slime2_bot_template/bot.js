@@ -99,6 +99,7 @@ function twitchEventListener(event) {
 		// bits
 		case 'channel.bits.use':
 		case 'channel.cheer':
+		case 'channel.custom_power_up_redemption.add':
 
 		// ad break
 		case 'channel.ad_break.begin':
