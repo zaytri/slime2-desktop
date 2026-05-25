@@ -53,7 +53,7 @@ export default function WidgetSettingsSidebar({
 								}}
 								active={categoryId === topScrollId}
 							>
-								<ul className='flex list-disc flex-col pl-6'>
+								<ul className='flex flex-col pl-2'>
 									{Object.entries(category.settings).map(
 										([sectionId, section]) => {
 											if (
@@ -140,11 +140,12 @@ function SidebarSubcategory({
 	children,
 }: Props.WithChildren<SidebarSubcategoryProps>) {
 	return (
-		<li>
+		<li className='flex flex-col'>
 			<button
-				className='text-left font-fredoka text-4.5 outline-none text-shadow-[0_2px_#0008] over:underline'
+				className='relative pl-4 text-left font-fredoka text-4.5 outline-none text-shadow-[0_2px_#0008] over:underline'
 				onClick={onClick}
 			>
+				<div className='absolute top-2.75 left-0 size-1.5 rounded-full bg-white shadow-[0_2px_#0008]'></div>
 				{children}
 			</button>
 		</li>
