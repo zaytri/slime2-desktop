@@ -1,0 +1,12 @@
+{
+	"example-category": {
+		"label": "Example Category",
+		"settings": {
+			"example-text-input": {
+				"type": "text-input",
+				"placeholder": "Enter Text",
+				"label": "Example Text Input"
+			}
+		}
+	}
+}

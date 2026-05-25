@@ -16,8 +16,8 @@ export type DefaultWidgetId =
 	| 'slime2_goal_bar'
 	| 'slime2_command_bot'
 	| 'slime2_timer_bot'
-	| 'slime2_overlay_template'
-	| 'slime2_bot_template'
+	| 'slime2_template_overlay'
+	| 'slime2_template_bot'
 	| 'test';
 
 const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
@@ -27,13 +27,13 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 		icon: chatBoxIconImage,
 		description: 'Display chat messages',
 	},
-	slime2_overlay_template: {
+	slime2_template_overlay: {
 		name: 'Overlay Widget Template',
 		type: 'template',
 		icon: templateIconImage,
 		description: 'Starter overlay template',
 	},
-	slime2_bot_template: {
+	slime2_template_bot: {
 		name: 'Bot Widget Template',
 		type: 'template',
 		icon: templateIconImage,

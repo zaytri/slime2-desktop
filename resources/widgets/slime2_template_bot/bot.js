@@ -48,7 +48,7 @@ function widgetValuesListener(event) {
 
 	Widget.values = new Map(Object.entries(event.data));
 
-	const settingValue = Widget.values.get('setting-id') ?? 'fallback-value';
+	const text = Widget.values.get('example-text-input') ?? '';
 }
 
 function widgetAccountsListener(event) {
