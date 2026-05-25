@@ -1,11 +1,12 @@
 import AccountServiceTag from '@/components/tag/AccountServiceTag';
 import PaperAirplaneSvg from '@@/svg/PaperAirplaneSvg';
+import SimulateTwitchPowerUp from './twitch/SimluateTwitchPowerUp';
 import SimulateTwitchChatMessage from './twitch/SimulateTwitchChatMessage';
 import SimulateTwitchCheer from './twitch/SimulateTwitchCheer';
 import SimulateTwitchFollow from './twitch/SimulateTwitchFollow';
 import SimulateTwitchGiftSubscription from './twitch/SimulateTwitchGiftSubscription';
 import SimulateTwitchRaid from './twitch/SimulateTwitchRaid';
-import SimulateTwitchRedeem from './twitch/SimulateTwitchRedeem';
+import SimulateTwitchReward from './twitch/SimulateTwitchReward';
 import SimulateTwitchSubscription from './twitch/SimulateTwitchSubscription';
 
 export default function SimulatorPanel() {
@@ -31,11 +32,12 @@ export default function SimulatorPanel() {
 						<div className='grid grid-cols-3 gap-4'>
 							<SimulateTwitchChatMessage />
 							<SimulateTwitchFollow />
-							<SimulateTwitchRedeem />
+							<SimulateTwitchRaid />
+							<SimulateTwitchReward />
 							<SimulateTwitchCheer />
+							<SimulateTwitchPowerUp />
 							<SimulateTwitchSubscription />
 							<SimulateTwitchGiftSubscription />
-							<SimulateTwitchRaid />
 						</div>
 
 						<em className='self-end text-3.5 text-zinc-600 text-shadow-[0_1px_white]'>

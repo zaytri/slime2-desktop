@@ -9,7 +9,7 @@ import { sendMockTwitchEvent } from '@/helpers/widgetMessage';
 import { TWITCH_MOCK_REWARDS } from './twitchMockData';
 import useTwitchWidgetIds from './useTwitchWidgetIds';
 
-export default function useTwitchMockRedeem() {
+export default function useTwitchMockReward() {
 	const widgetIds = useTwitchWidgetIds();
 
 	function sendCustom(
@@ -20,7 +20,7 @@ export default function useTwitchMockRedeem() {
 		userText: string,
 	) {
 		widgetIds.forEach(widgetId => {
-			sendMockRedeem(widgetId, {
+			sendMockReward(widgetId, {
 				displayName,
 				rewardName,
 				cost,
@@ -36,7 +36,7 @@ export default function useTwitchMockRedeem() {
 			const reward = Random.item(TWITCH_MOCK_REWARDS);
 			const cost = Random.integer(1, 1000 * 1000);
 
-			sendMockRedeem(widgetId, {
+			sendMockReward(widgetId, {
 				displayName,
 				rewardName: reward.name,
 				cost,
@@ -49,7 +49,7 @@ export default function useTwitchMockRedeem() {
 	return { sendCustom, sendRandom };
 }
 
-type MockRedeemData = {
+type MockRewardData = {
 	displayName: string;
 	rewardName: string;
 	cost: number;
@@ -57,14 +57,14 @@ type MockRedeemData = {
 	userText: string;
 };
 
-async function sendMockRedeem(
+async function sendMockReward(
 	widgetId: string,
-	{ displayName, rewardName, cost, description, userText }: MockRedeemData,
+	{ displayName, rewardName, cost, description, userText }: MockRewardData,
 ) {
 	const timestamp = mockTimeStamp();
 	const mockUser = mockUserDetails(displayName);
 
-	const redemptionEvent: Twitch.WebsocketEvent.ChannelPointsCustomRewardRedemption =
+	const rewardEvent: Twitch.WebsocketEvent.ChannelPointsCustomRewardRedemption =
 		{
 			broadcaster_user_id: MOCK_BROADCASTER_DETAILS.id,
 			broadcaster_user_login: MOCK_BROADCASTER_DETAILS.login,
@@ -89,6 +89,6 @@ async function sendMockRedeem(
 		'channel.channel_points_custom_reward_redemption.add',
 		'1',
 		timestamp,
-		redemptionEvent,
+		rewardEvent,
 	);
 }

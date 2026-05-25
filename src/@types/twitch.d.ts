@@ -103,6 +103,7 @@ namespace Twitch {
 			| ChannelPointsCustomRewardRedemption
 			| BitsUse
 			| Cheer
+			| CustomPowerUpRedemption
 			| AdBreakBegin
 			| Subscribe
 			| SubscriptionGift
@@ -382,6 +383,26 @@ namespace Twitch {
 
 			message: string;
 			bits: number;
+		}>;
+
+		// when a custom power-up is redeemed
+		type CustomPowerUpRedemption = With.BroadcasterDetails<{
+			// redeemer details
+			user_id: string;
+			user_login: string;
+			user_name: string;
+
+			id: string; // id of the redemption, not the power-up
+			user_input: string; // empty string if not provided
+			status: 'unfulfilled' | 'unknown' | 'fulfilled' | 'canceled';
+			redeemed_at: string; // RFC3339 format
+
+			custom_power_up: {
+				id: string;
+				title: string;
+				bits: number;
+				prompt: string; // power-up description
+			};
 		}>;
 
 		// when a user subscribes

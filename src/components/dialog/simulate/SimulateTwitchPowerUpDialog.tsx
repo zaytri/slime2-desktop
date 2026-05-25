@@ -1,33 +1,37 @@
 import SliderField from '@/components/input_fields/SliderField';
 import TextAreaField from '@/components/input_fields/TextAreaField';
 import TextField from '@/components/input_fields/TextField';
+import {
+	POWER_UP_MAX_BITS,
+	POWER_UP_MIN_BITS,
+} from '@/hooks/twitch_mock/useTwitchMockPowerUp';
 import PaperAirplaneSvg from '@@/svg/PaperAirplaneSvg';
 import { useState } from 'react';
 import DialogCancelButton from '../DialogButton/DialogCancelButton';
 import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
 import DialogContent from '../DialogContent';
 
-type SimulateTwitchRedeemDialogProps = {
+type SimulateTwitchPowerUpDialogProps = {
 	onSend: (
 		displayName: string,
-		rewardName: string,
-		cost: number,
+		powerUpName: string,
+		bits: number,
 		description: string,
 		userText: string,
 	) => void;
 };
 
-export default function SimulateTwitchRedeemDialog({
+export default function SimulateTwitchPowerUpDialog({
 	onSend,
-}: SimulateTwitchRedeemDialogProps) {
+}: SimulateTwitchPowerUpDialogProps) {
 	const [name, setName] = useState('');
-	const [reward, setReward] = useState('');
-	const [cost, setCost] = useState(100);
+	const [powerUp, setPowerUp] = useState('');
+	const [bits, setBits] = useState(100);
 	const [description, setDescription] = useState('');
 	const [text, setText] = useState('');
 
 	const namePlaceholder = 'MockChatter';
-	const rewardPlaceholder = 'MockReward';
+	const powerUpPlaceholder = 'MockPowerUp';
 	const optionalPlaceholder = '(Optional)';
 
 	return (
@@ -60,23 +64,23 @@ export default function SimulateTwitchRedeemDialog({
 					</h3>
 
 					<TextField
-						label='Reward Name'
-						value={reward}
-						onChange={setReward}
-						placeholder={rewardPlaceholder}
+						label='Power-Up Name'
+						value={powerUp}
+						onChange={setPowerUp}
+						placeholder={powerUpPlaceholder}
 					/>
 
 					<SliderField
-						label='Channel Point Cost'
-						value={cost}
-						onChange={setCost}
+						label='Power-Up Bits Cost'
+						value={bits}
+						onChange={setBits}
 						step={1}
-						min={1}
-						max={999999}
+						min={POWER_UP_MIN_BITS}
+						max={POWER_UP_MAX_BITS}
 					/>
 
 					<TextAreaField
-						label='Reward Description'
+						label='Power-Up Description'
 						value={description}
 						onChange={setDescription}
 						placeholder={optionalPlaceholder}
@@ -91,12 +95,12 @@ export default function SimulateTwitchRedeemDialog({
 					icon={<PaperAirplaneSvg className='size-4' />}
 					onClick={() => {
 						const trimmedName = name.trim();
-						const trimmedReward = reward.trim();
+						const trimmedPowerUp = powerUp.trim();
 
 						onSend(
 							trimmedName || namePlaceholder,
-							trimmedReward || rewardPlaceholder,
-							cost,
+							trimmedPowerUp || powerUpPlaceholder,
+							bits,
 							description.trim(),
 							text.trim(),
 						);
