@@ -5,7 +5,7 @@ import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValue
 import type { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { widgetSettingsScrollContainerId } from '@/helpers/scroll';
 import useAutoScrollDisclosureOpen from '@/hooks/useAutoScrollDisclosureOpen';
-import CreateMultiSubsectionDialog from '@@/dialog/CreateMultiSubsectionDialog';
+import NameMultiSubsectionDialog from '@@/dialog/NameMultiSubsectionDialog';
 import {
 	Disclosure,
 	DisclosureButton,
@@ -85,9 +85,9 @@ export default function SettingMultiSection({
 					onClick={() => {
 						openDialog(
 							'Create New Item',
-							<CreateMultiSubsectionDialog
+							<NameMultiSubsectionDialog
 								multiSectionName={label}
-								onCreate={name => {
+								onSave={name => {
 									const newSubsectionName = name.trim() || `New ${label} Item`;
 									const newSubsectionId =
 										createNewSubsection(newSubsectionName);
@@ -110,6 +110,7 @@ export default function SettingMultiSection({
 						<WidgetSettingParentProvider key={subsectionId} id={subsectionId}>
 							<SettingMultiSubsection
 								id={subsectionId}
+								parentName={label}
 								onDelete={() => {
 									removeSubsectionAtIndex(index);
 								}}

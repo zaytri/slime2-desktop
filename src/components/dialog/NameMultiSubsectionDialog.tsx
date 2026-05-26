@@ -5,17 +5,19 @@ import DialogCancelButton from './DialogButton/DialogCancelButton';
 import DialogConfirmButton from './DialogButton/DialogConfirmButton';
 import DialogContent from './DialogContent';
 
-type CreateMultiSubsectionDialogProps = {
+type NameMultiSubsectionDialogProps = {
 	multiSectionName: string;
-	onCreate: (name: string) => void;
+	onSave: (name: string) => void;
+	value?: string;
 };
 
-export default function CreateMultiSubsectionDialog({
+export default function NameMultiSubsectionDialog({
 	multiSectionName,
-	onCreate,
-}: CreateMultiSubsectionDialogProps) {
-	const placeholder = `New ${multiSectionName} Item`;
-	const [name, setName] = useState('');
+	onSave,
+	value,
+}: NameMultiSubsectionDialogProps) {
+	const placeholder = `${multiSectionName} Item`;
+	const [name, setName] = useState(value ?? '');
 	const { closeDialog } = useDialog();
 
 	return (
@@ -32,11 +34,11 @@ export default function CreateMultiSubsectionDialog({
 				<DialogCancelButton />
 				<DialogConfirmButton
 					onClick={() => {
-						onCreate(name.trim() || placeholder);
+						onSave(name.trim() || placeholder);
 						closeDialog();
 					}}
 				>
-					Create
+					{value ? 'Save' : 'Create'}
 				</DialogConfirmButton>
 			</div>
 		</DialogContent>
