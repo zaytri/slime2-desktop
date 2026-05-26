@@ -109,7 +109,13 @@ export default function EditWidgetSettingDialog({
 								defaultClone.step = newData.step ?? defaultClone.step;
 							}
 
-							setNewData(defaultClone);
+							// don't lose globals when switching to another type
+							setNewData({
+								condition: newData.condition,
+								halfSpan: newData.halfSpan,
+								searchTags: newData.searchTags,
+								...defaultClone,
+							});
 						}}
 						options={[...SECTION_SETTING_GROUPED_OPTIONS]}
 					/>
