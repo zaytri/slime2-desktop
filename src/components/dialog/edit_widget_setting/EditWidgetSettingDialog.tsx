@@ -109,6 +109,19 @@ export default function EditWidgetSettingDialog({
 								defaultClone.step = newData.step ?? defaultClone.step;
 							}
 
+							// don't lose description when switching to most other types
+							if (
+								newData.type !== 'button' &&
+								newData.type !== 'text-display' &&
+								newData.type !== 'image-display' &&
+								defaultClone.type !== 'button' &&
+								defaultClone.type !== 'text-display' &&
+								defaultClone.type !== 'image-display'
+							) {
+								defaultClone.description =
+									newData.description ?? defaultClone.description;
+							}
+
 							// don't lose globals when switching to another type
 							setNewData({
 								condition: newData.condition,
