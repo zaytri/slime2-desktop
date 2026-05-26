@@ -35,7 +35,7 @@ async function widgetSettingsPath(id: string) {
 
 // consts
 
-export const SETTINGS_DATA: SettingsData = {
+export const SETTINGS_DATA: SettingsData = Object.freeze({
 	section: { label: 'Section', defaultData: { type: 'section', settings: {} } },
 	'multi-section': {
 		label: 'Multi-Section',
@@ -100,7 +100,7 @@ export const SETTINGS_DATA: SettingsData = {
 		label: 'Multi-Video Input',
 		defaultData: { type: 'multi-video-input' },
 	},
-};
+});
 
 export const SECTION_SETTING_GROUPED_OPTIONS: GroupedOptions<
 	WidgetSetting.NonGroup['type']

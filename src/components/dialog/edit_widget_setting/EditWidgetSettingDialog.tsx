@@ -89,27 +89,29 @@ export default function EditWidgetSettingDialog({
 						compact
 						value={newData.type}
 						onChange={newType => {
-							const defaultData = SETTINGS_DATA[newType].defaultData;
+							const defaultClone = structuredClone(
+								SETTINGS_DATA[newType].defaultData,
+							);
 							// don't lose options when switching to another type with options
-							if ('options' in newData && 'options' in defaultData) {
-								defaultData.options = newData.options;
+							if ('options' in newData && 'options' in defaultClone) {
+								defaultClone.options = newData.options;
 							}
 
 							// don't lose min/max/step when switching to another number type
 							if (
 								(newData.type === 'number-input' ||
 									newData.type === 'slider-input') &&
-								(defaultData.type === 'number-input' ||
-									defaultData.type === 'slider-input')
+								(defaultClone.type === 'number-input' ||
+									defaultClone.type === 'slider-input')
 							) {
-								defaultData.min = newData.min ?? defaultData.min;
-								defaultData.max = newData.max ?? defaultData.max;
-								defaultData.step = newData.step ?? defaultData.step;
+								defaultClone.min = newData.min ?? defaultClone.min;
+								defaultClone.max = newData.max ?? defaultClone.max;
+								defaultClone.step = newData.step ?? defaultClone.step;
 							}
 
-							setNewData(defaultData);
+							setNewData(defaultClone);
 						}}
-						options={SECTION_SETTING_GROUPED_OPTIONS}
+						options={[...SECTION_SETTING_GROUPED_OPTIONS]}
 					/>
 
 					<SelectField

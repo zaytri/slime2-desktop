@@ -50,7 +50,7 @@ export default function AddSettingMenu({
 						addSetting(
 							newId,
 							{
-								...SETTINGS_DATA[newType].defaultData,
+								...structuredClone(SETTINGS_DATA[newType].defaultData),
 								label: newLabel,
 								condition: newCondition,
 								searchTags: newSearchTags,
@@ -66,7 +66,7 @@ export default function AddSettingMenu({
 				<EditWidgetSettingDialog
 					idExists={idExists}
 					conditionIds={getConditionIds(categoryId, sectionId)}
-					data={SETTINGS_DATA[type].defaultData}
+					data={structuredClone(SETTINGS_DATA[type].defaultData)}
 					onSave={(newId, newLabel, newData) => {
 						addSetting(
 							newId,
