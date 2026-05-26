@@ -4,6 +4,8 @@ import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValue
 import { widgetSettingsScrollContainerId } from '@/helpers/scroll';
 import useAutoScrollDisclosureOpen from '@/hooks/useAutoScrollDisclosureOpen';
 import NameMultiSubsectionDialog from '@@/dialog/NameMultiSubsectionDialog';
+import ArrowDownSvg from '@@/svg/ArrowDownSvg';
+import ArrowUpSvg from '@@/svg/ArrowUpSvg';
 import {
 	Tooltip,
 	TooltipAnchor,
@@ -38,6 +40,8 @@ export default function SettingMultiSubsection({
 	parentName,
 	onDelete,
 	onDuplicate,
+	onMoveUp,
+	onMoveDown,
 	children,
 }: Props.WithChildren<SettingMultiSubsectionProps>) {
 	const { widgetValue } = useWidgetValue(id);
@@ -93,6 +97,20 @@ export default function SettingMultiSubsection({
 					/>
 
 					<SubsectionAction
+						label='Move Up'
+						disabled={!onMoveUp}
+						icon={<ArrowUpSvg className='size-5' />}
+						onClick={onMoveUp}
+					/>
+
+					<SubsectionAction
+						label='Move Down'
+						disabled={!onMoveDown}
+						icon={<ArrowDownSvg className='size-5' />}
+						onClick={onMoveDown}
+					/>
+
+					<SubsectionAction
 						label='Duplicate'
 						icon={<DoubleSquareSvg className='size-6' />}
 						onClick={() => {
@@ -129,8 +147,9 @@ export default function SettingMultiSubsection({
 type SubsectionActionProps = {
 	icon: React.ReactNode;
 	label: string;
-	onClick: VoidFunction;
+	onClick?: VoidFunction;
 	dangerAction?: boolean;
+	disabled?: boolean;
 };
 
 function SubsectionAction({
@@ -138,15 +157,17 @@ function SubsectionAction({
 	icon,
 	onClick,
 	dangerAction = false,
+	disabled = false,
 }: SubsectionActionProps) {
 	return (
 		<TooltipProvider>
 			<TooltipAnchor
+				disabled={disabled}
 				render={
 					<button
 						type='button'
 						className={clsx(
-							'rounded-2 p-2 outline-none',
+							'rounded-2 p-2 outline-none disabled:text-zinc-300',
 							dangerAction
 								? 'text-rose-900 over:bg-rose-800 over:text-rose-100'
 								: 'text-zinc-700 over:bg-lime-600 over:text-lime-100',

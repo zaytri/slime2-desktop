@@ -2,6 +2,7 @@ import { useDialog } from '@/contexts/dialog/useDialog';
 import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidgetValueKey';
 import WidgetSettingParentProvider from '@/contexts/widget_setting_parent/WidgetSettingParentProvider';
 import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValuesDispatch';
+import { swapItems } from '@/helpers/array';
 import type { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { widgetSettingsScrollContainerId } from '@/helpers/scroll';
 import useAutoScrollDisclosureOpen from '@/hooks/useAutoScrollDisclosureOpen';
@@ -52,16 +53,21 @@ export default function SettingMultiSection({
 		subSectionDisclosureButton?.click();
 	}, [addedId]);
 
-	function removeSubsectionAtIndex(index: number) {
-		const newValues = [...values];
-		newValues.splice(index, 1);
-		onChange(newValues);
-	}
-
 	function createNewSubsection(name: string) {
 		const newId = `${id}[${nanoid()}]`;
 		set(newId, name);
 		return newId;
+	}
+
+	function swapSubsectionIndex(oldIndex: number, newIndex: number) {
+		const newValues = [...values];
+		onChange(swapItems(newValues, oldIndex, newIndex));
+	}
+
+	function removeSubsectionAtIndex(index: number) {
+		const newValues = [...values];
+		newValues.splice(index, 1);
+		onChange(newValues);
 	}
 
 	return (
@@ -106,11 +112,28 @@ export default function SettingMultiSection({
 				</button>
 
 				{values.map((subsectionId, index) => {
+					const canSwapUp = index > 0;
+					const canSwapDown = index < values.length - 1;
+
 					return (
 						<WidgetSettingParentProvider key={subsectionId} id={subsectionId}>
 							<SettingMultiSubsection
 								id={subsectionId}
 								parentName={label}
+								onMoveUp={
+									canSwapUp
+										? () => {
+												swapSubsectionIndex(index, index - 1);
+											}
+										: undefined
+								}
+								onMoveDown={
+									canSwapDown
+										? () => {
+												swapSubsectionIndex(index, index + 1);
+											}
+										: undefined
+								}
 								onDelete={() => {
 									removeSubsectionAtIndex(index);
 								}}
