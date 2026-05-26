@@ -16,6 +16,7 @@ export default function DialogProvider({ children }: Props.WithChildren) {
 	function closeDialog() {
 		setComponent(null);
 		setOnCancel(undefined);
+		setOnBack(undefined);
 		dialogStore.hide();
 	}
 

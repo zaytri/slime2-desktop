@@ -1,9 +1,11 @@
+import { useDialog } from '@/contexts/dialog/useDialog';
 import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidgetValueKey';
 import WidgetSettingParentProvider from '@/contexts/widget_setting_parent/WidgetSettingParentProvider';
 import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValuesDispatch';
 import type { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { widgetSettingsScrollContainerId } from '@/helpers/scroll';
 import useAutoScrollDisclosureOpen from '@/hooks/useAutoScrollDisclosureOpen';
+import CreateMultiSubsectionDialog from '@@/dialog/CreateMultiSubsectionDialog';
 import {
 	Disclosure,
 	DisclosureButton,
@@ -11,7 +13,6 @@ import {
 } from '@headlessui/react';
 import { nanoid } from 'nanoid';
 import { useEffect, useRef, useState } from 'react';
-import TextField from '../input_fields/TextField';
 import PlusSvg from '../svg/PlusSvg';
 import TriangleDownSvg from '../svg/TriangleDownSvg';
 import SettingMultiSubsection from './SettingMultiSubsection';
@@ -32,8 +33,8 @@ export default function SettingMultiSection({
 	onChange,
 	settings,
 }: SettingMultiSectionProps) {
+	const { openDialog } = useDialog();
 	const { setValue: set, duplicate } = useWidgetValuesDispatch();
-	const [newName, setNewName] = useState<string>('');
 	const [addedId, setAddedId] = useState<string>('');
 
 	const disclosureButtonRef = useRef<HTMLButtonElement>(null);
@@ -78,36 +79,31 @@ export default function SettingMultiSection({
 			</DisclosureButton>
 
 			<DisclosurePanel className='mt-0.5 flex flex-col gap-4 rounded-2 rounded-t-0 border border-white bg-zinc-100 bg-linear-to-b from-zinc-50 to-zinc-100 p-4 outline-2 outline-zinc-300'>
-				<div className='flex items-center gap-4'>
-					<div className='flex-1'>
-						<TextField
-							label='Name'
-							value={newName}
-							placeholder={`New Item`}
-							onChange={setNewName}
-						/>
+				<button
+					type='button'
+					className='relative flex rounded-2 border border-white bg-zinc-200 bg-linear-to-b from-zinc-200 to-zinc-300 px-2 py-1.5 font-fredoka text-4.5 font-medium text-zinc-700 outline-2 outline-offset-0! outline-zinc-400 over:bg-lime-200 over:bg-none over:text-lime-800 over:outline-4 over:outline-lime-600'
+					onClick={() => {
+						openDialog(
+							'Create New Item',
+							<CreateMultiSubsectionDialog
+								multiSectionName={label}
+								onCreate={name => {
+									const newSubsectionName = name.trim() || `New ${label} Item`;
+									const newSubsectionId =
+										createNewSubsection(newSubsectionName);
+									onChange([newSubsectionId, ...values]);
+									setAddedId(newSubsectionId);
+								}}
+							/>,
+						);
+					}}
+				>
+					<div className='absolute inset-0 bottom-1/2 bg-linear-to-b from-white/30 to-white/20'></div>
+					<div className='relative flex flex-1 items-center justify-center gap-2 drop-shadow-[0_1px_3px_#FFFB]'>
+						<PlusSvg className='size-4.5' />
+						<p>Create New {label} Item</p>
 					</div>
-
-					<button
-						type='button'
-						className='relative flex rounded-2 border border-white bg-zinc-200 bg-linear-to-b from-zinc-200 to-zinc-300 px-2 py-1.5 font-fredoka text-4.5 font-medium text-zinc-700 outline-2 outline-offset-0! outline-zinc-400 over:bg-lime-200 over:bg-none over:text-lime-800 over:outline-4 over:outline-lime-600'
-						onClick={() => {
-							const newSubsectionName = newName.trim();
-							const newSubsectionId = createNewSubsection(
-								newSubsectionName || 'New Item',
-							);
-							onChange([newSubsectionId, ...values]);
-							setNewName('');
-							setAddedId(newSubsectionId);
-						}}
-					>
-						<div className='absolute inset-0 bottom-1/2 bg-linear-to-b from-white/30 to-white/20'></div>
-						<div className='relative flex flex-1 items-center gap-2 drop-shadow-[0_1px_3px_#FFFB]'>
-							<PlusSvg className='size-4.5' />
-							<p>Add Item</p>
-						</div>
-					</button>
-				</div>
+				</button>
 
 				{values.map((subsectionId, index) => {
 					return (

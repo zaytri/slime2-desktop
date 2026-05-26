@@ -232,7 +232,9 @@ function MiniAccountPreview({
 							mini={account && account.reauthorize}
 						/>
 						<AccountTypeTag type={type} mini={account && account.reauthorize} />
-						{account?.default && <AccountDefaultTag />}
+						{account?.default && (
+							<AccountDefaultTag mini={account?.reauthorize} />
+						)}
 						{account?.reauthorize && <AccountReauthTag mini />}
 					</div>
 				</div>
