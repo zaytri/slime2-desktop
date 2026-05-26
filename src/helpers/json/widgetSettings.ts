@@ -183,7 +183,9 @@ const Options = z.array(
 
 const BaseSetting = z.object({
 	label: I18nString,
-	condition: z.optional(z.record(z.string(), OptionValue)),
+	condition: z.optional(
+		z.record(z.string(), z.union([OptionValue, z.array(OptionValue)])),
+	),
 	searchTags: z.optional(z.array(z.string())),
 });
 

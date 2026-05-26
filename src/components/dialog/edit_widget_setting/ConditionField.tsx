@@ -13,7 +13,9 @@ type Condition = { id: string; value: WidgetSetting.OptionValue };
 
 type ConditionFieldProps = {
 	value: WidgetSetting.NonCategory['condition'];
-	onChange: (value: WidgetSetting.NonCategory['condition']) => void;
+	onChange: (
+		value: NonUndefined<WidgetSetting.NonCategory['condition']>,
+	) => void;
 	ids: string[];
 };
 
@@ -22,16 +24,16 @@ export default function ConditionField({
 	onChange,
 	ids,
 }: ConditionFieldProps) {
-	const usedIdSet = new Set<string>();
-	const conditions: Condition[] = Object.entries(value || {}).map(
+	const conditions: Condition[] = Object.entries(value || {}).flatMap(
 		([conditionId, conditionValue]) => {
-			usedIdSet.add(conditionId);
+			if (Array.isArray(conditionValue)) {
+				return conditionValue.map(value => {
+					return { id: conditionId, value };
+				});
+			}
 			return { id: conditionId, value: conditionValue };
 		},
 	);
-	const filteredIds = ids.filter(id => {
-		return !usedIdSet.has(id);
-	});
 
 	const [valueType, setValueType] = useState<ValueOption>(
 		conditions.length > 0
@@ -43,7 +45,7 @@ export default function ConditionField({
 			: 'boolean',
 	);
 
-	const [id, setId] = useState(filteredIds[0]);
+	const [id, setId] = useState(ids[0]);
 	const [valueError, setValueError] = useState('');
 	const [text, setText] = useState('');
 	const [number, setNumber] = useState<number | null>(null);
@@ -58,9 +60,16 @@ export default function ConditionField({
 
 	function onChangeCondition(newConditions: Condition[]) {
 		onChange(
-			newConditions.reduce((conditionObject, condition) => {
-				return { ...conditionObject, [condition.id]: condition.value };
-			}, {}),
+			newConditions.reduce<Record<string, WidgetSetting.OptionValue[]>>(
+				(conditionObject, condition) => {
+					if (!conditionObject[condition.id]) {
+						conditionObject[condition.id] = [];
+					}
+					conditionObject[condition.id]?.push(condition.value);
+					return conditionObject;
+				},
+				{},
+			),
 		);
 	}
 
@@ -94,8 +103,6 @@ export default function ConditionField({
 
 		const newValues = structuredClone(conditions);
 		onChangeCondition([...newValues, { id, value: newValue }]);
-		setId(id === filteredIds[0] ? filteredIds[1] : filteredIds[0]);
-
 		resetInputValue();
 	}
 
@@ -145,7 +152,7 @@ export default function ConditionField({
 							placeholder='Select ID...'
 							value={id}
 							onChange={setId}
-							options={filteredIds.map(id => {
+							options={ids.map(id => {
 								return { label: id, value: id };
 							})}
 						/>

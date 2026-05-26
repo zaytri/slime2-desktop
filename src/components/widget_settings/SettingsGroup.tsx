@@ -22,26 +22,32 @@ export default function SettingsGroup({ settings }: SettingsGroupProps) {
 			{Object.entries(settings).map(([id, setting]) => {
 				const conditionsMet =
 					!setting.condition ||
-					Object.entries(setting.condition).every(condition => {
+					Object.entries(setting.condition).some(condition => {
 						// settings within multisubsections can only be dependent
 						// on other settings within that same multisubsection
-						const [conditionId, conditionValue] = condition;
-						const trueConditionId = parentId
-							? getWidgetValueChildKey(parentId, conditionId)
-							: conditionId;
+						const [conditionId, conditionValues] = condition;
 
-						const dependentSetting = settings[conditionId];
-						const dependentDefaultValue =
-							dependentSetting && 'defaultValue' in dependentSetting
-								? dependentSetting.defaultValue
-								: undefined;
+						const conditionArray = Array.isArray(conditionValues)
+							? conditionValues
+							: [conditionValues];
+						return conditionArray.some(conditionValue => {
+							const trueConditionId = parentId
+								? getWidgetValueChildKey(parentId, conditionId)
+								: conditionId;
 
-						const dependentValue =
-							values[trueConditionId] ?? dependentDefaultValue;
+							const dependentSetting = settings[conditionId];
+							const dependentDefaultValue =
+								dependentSetting && 'defaultValue' in dependentSetting
+									? dependentSetting.defaultValue
+									: undefined;
 
-						return Array.isArray(dependentValue)
-							? dependentValue.includes(conditionValue)
-							: dependentValue === conditionValue;
+							const dependentValue =
+								values[trueConditionId] ?? dependentDefaultValue;
+
+							return Array.isArray(dependentValue)
+								? dependentValue.includes(conditionValue)
+								: dependentValue === conditionValue;
+						});
 					});
 
 				if (!conditionsMet) return null;
