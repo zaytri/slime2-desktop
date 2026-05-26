@@ -36,10 +36,22 @@ export default function SettingsGroup({ settings }: SettingsGroupProps) {
 								: conditionId;
 
 							const dependentSetting = settings[conditionId];
-							const dependentDefaultValue =
+							let dependentDefaultValue =
 								dependentSetting && 'defaultValue' in dependentSetting
 									? dependentSetting.defaultValue
 									: undefined;
+
+							if (
+								dependentSetting &&
+								'options' in dependentSetting &&
+								!dependentDefaultValue
+							) {
+								if (dependentSetting.type === 'multi-select-input') {
+									dependentDefaultValue = [];
+								} else {
+									dependentDefaultValue = dependentSetting.options[0]?.value;
+								}
+							}
 
 							const dependentValue =
 								values[trueConditionId] ?? dependentDefaultValue;
