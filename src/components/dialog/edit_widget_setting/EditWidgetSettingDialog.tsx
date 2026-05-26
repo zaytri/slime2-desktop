@@ -170,7 +170,13 @@ export default function EditWidgetSettingDialog({
 
 					{newData.type !== 'button' &&
 						newData.type !== 'text-display' &&
-						newData.type !== 'image-display' && (
+						newData.type !== 'image-display' &&
+						newData.type !== 'image-input' &&
+						newData.type !== 'audio-input' &&
+						newData.type !== 'video-input' &&
+						newData.type !== 'multi-image-input' &&
+						newData.type !== 'multi-audio-input' &&
+						newData.type !== 'multi-video-input' && (
 							<div className='col-span-2'>
 								<DefaultValueField
 									data={newData}
@@ -187,9 +193,6 @@ export default function EditWidgetSettingDialog({
 										switch (newData.type) {
 											case 'text-input':
 											case 'text-area-input':
-											case 'image-input':
-											case 'audio-input':
-											case 'video-input':
 											case 'font-input':
 											case 'color-input':
 												if (typeof newDefaultValue === 'string') {

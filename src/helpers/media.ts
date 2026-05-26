@@ -1,7 +1,7 @@
 import { cacheBust, createPreviewUrl, createTilesUrl } from './serverUrl';
 
 export function getTileIconSrc(id: string, fileName: string) {
-	return createTilesUrl(id, cacheBust(`config/${fileName}`));
+	return createTilesUrl(id, `config/${fileName}`);
 }
 
 export function getTempFileSrc(fileName: string) {
@@ -13,12 +13,12 @@ export function getWidgetIconSrc(id: string) {
 }
 
 export function getWidgetMediaCoreSrc(id: string, filePath: string) {
-	return createTilesUrl(id, cacheBust(`core/${filePath}`));
+	return createTilesUrl(id, `core/${filePath}`);
 }
 
 export function getWidgetMediaCustomSrc(id: string, customFileName: string) {
 	const [_local, fileName] = customFileName.split(':');
-	return createTilesUrl(id, cacheBust(`config/assets/${fileName}`));
+	return createTilesUrl(id, `config/assets/${fileName}`);
 }
 
 const LOCAL_MEDIA_PREFIX = 'local:';

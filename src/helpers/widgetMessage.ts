@@ -1,7 +1,7 @@
 import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidgetValueKey';
 import { sendWebsocketMessage } from './commands';
 import type { WidgetSetting, WidgetSettings } from './json/widgetSettings';
-import type { WidgetValues } from './json/widgetValues';
+import { DEFAULT_VOLUME, type WidgetValues } from './json/widgetValues';
 import { getWidgetMediaSrc } from './media';
 
 export async function sendWidgetValues(
@@ -205,7 +205,7 @@ function mergeValue(
 		if (setting.type === 'audio-input' || setting.type === 'video-input') {
 			const volumeId = getWidgetValueChildKey(settingId, 'volume');
 			if (values[volumeId] === undefined) {
-				values[volumeId] = 20; // default volume to 20
+				values[volumeId] = DEFAULT_VOLUME; // default volume to DEFAULT_VOLUME
 			}
 		}
 
@@ -217,11 +217,43 @@ function mergeValue(
 				? getWidgetMediaSrc(widgetId, newValue)
 				: null;
 	} else if (
-		setting.type === 'multi-text-input' ||
 		setting.type === 'multi-audio-input' ||
 		setting.type === 'multi-image-input' ||
-		setting.type === 'multi-select-input' ||
 		setting.type === 'multi-video-input'
+	) {
+		const newValues = Array.isArray(values[settingId])
+			? (values[settingId] ?? setting.defaultValue ?? [])
+			: [];
+
+		// handle volume subvalue for audio and video
+		if (
+			setting.type === 'multi-audio-input' ||
+			setting.type === 'multi-video-input'
+		) {
+			const volumeId = getWidgetValueChildKey(settingId, 'volume');
+			if (!Array.isArray(values[volumeId])) {
+				values[volumeId] = Array(newValues.length).fill(DEFAULT_VOLUME);
+			}
+
+			values[volumeId] = newValues.map((_, index) => {
+				const volume = Array.isArray(values[volumeId])
+					? values[volumeId][index]
+					: undefined;
+				// default volumes to DEFAULT_VOLUME
+				return typeof volume === 'number' ? volume : DEFAULT_VOLUME;
+			});
+		}
+
+		// transform valid values into URL and combine into array
+		values[settingId] = newValues.reduce<string[]>((medias, value) => {
+			if (typeof value === 'string' && value.trim() !== '') {
+				medias.push(getWidgetMediaSrc(widgetId, value));
+			}
+			return medias;
+		}, []);
+	} else if (
+		setting.type === 'multi-text-input' ||
+		setting.type === 'multi-select-input'
 	) {
 		values[settingId] = values[settingId] ?? setting.defaultValue ?? [];
 	} else if (

@@ -21,11 +21,11 @@ export type DefaultWidgetId =
 	| 'test';
 
 const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
-	slime2_overlay_chat_box: {
-		name: 'Chat Box',
-		type: 'overlay',
-		icon: chatBoxIconImage,
-		description: 'Display chat messages',
+	test: {
+		name: 'test',
+		type: 'template',
+		icon: templateIconImage,
+		description: '',
 	},
 	slime2_template_overlay: {
 		name: 'Overlay Widget Template',
@@ -57,12 +57,12 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 	// 	icon: ChatOverlayIcon,
 	// 	description: 'Progression bar for a specified goal',
 	// },
-	// test: {
-	// 	name: 'test',
-	// 	type: 'overlay',
-	// 	icon: EventLabelIcon,
-	// 	description: '',
-	// },
+	slime2_overlay_chat_box: {
+		name: 'Chat Box',
+		type: 'overlay',
+		icon: chatBoxIconImage,
+		description: 'Display chat messages',
+	},
 	slime2_bot_commands: {
 		name: 'Command Bot',
 		type: 'bot',

@@ -111,7 +111,17 @@ export const SECTION_SETTING_GROUPED_OPTIONS: GroupedOptions<
 		['Number', ['number-input', 'slider-input']],
 		['Boolean', ['toggle-input']],
 		['Options', ['dropdown-input', 'select-input', 'multi-select-input']],
-		['Media', ['image-input', 'audio-input', 'video-input']],
+		[
+			'Media',
+			[
+				'image-input',
+				'audio-input',
+				'video-input',
+				'multi-image-input',
+				'multi-audio-input',
+				'multi-video-input',
+			],
+		],
 		['Other', ['text-display', 'button']],
 	] satisfies [string, WidgetSetting.NonGroup['type'][]][]
 ).map(([groupLabel, types]) => {

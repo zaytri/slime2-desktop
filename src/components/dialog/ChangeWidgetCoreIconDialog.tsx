@@ -4,7 +4,7 @@ import { getTempFileSrc } from '@/helpers/media';
 import { openImage } from '@/helpers/openFile';
 import { useRef, useState } from 'react';
 import MediaIcon from '../MediaIcon';
-import MediaInputPreview from '../MediaInputPreview';
+import MediaPreview from '../MediaPreview';
 import DialogCancelButton from './DialogButton/DialogCancelButton';
 import DialogConfirmButton from './DialogButton/DialogConfirmButton';
 import DialogContent from './DialogContent';
@@ -60,7 +60,7 @@ export default function ChangeWidgetCoreIconDialog({
 
 				{value && (
 					<div className='flex items-center justify-center overflow-hidden rounded-1 border border-white bg-alpha-checkerboard p-1 outline outline-zinc-400 has-focus-visible:outline-2 has-focus-visible:outline-black'>
-						<MediaInputPreview
+						<MediaPreview
 							type='image'
 							src={getTempFileSrc(value)}
 							className='max-h-80 min-h-24 max-w-80'

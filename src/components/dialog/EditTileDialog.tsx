@@ -17,7 +17,7 @@ import {
 import clsx from 'clsx';
 import { useState } from 'react';
 import TextField from '../input_fields/TextField';
-import MediaInputPreview from '../MediaInputPreview';
+import MediaPreview from '../MediaPreview';
 import PhotoSvg from '../svg/PhotoSvg';
 import DialogCancelButton from './DialogButton/DialogCancelButton';
 import DialogConfirmButton from './DialogButton/DialogConfirmButton';
@@ -63,7 +63,7 @@ export default function EditTileDialog({
 						<Label className='input-label'>{capitalType} Icon</Label>
 						<div className='flex gap-4 p-2'>
 							<div className='flex size-40 items-center justify-center overflow-hidden rounded-2 border border-white bg-alpha-checkerboard outline outline-zinc-400'>
-								<MediaInputPreview
+								<MediaPreview
 									type='image'
 									src={tempIcon ? getTempFileSrc(tempIcon) : iconSrc}
 									className='max-h-full'

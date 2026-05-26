@@ -11,13 +11,14 @@ import {
 	createWidgetMediaLocalValue,
 	getWidgetMediaSrc,
 } from '@/helpers/media';
-import type { WidgetValue } from '@@/json/widgetValues';
+import { DEFAULT_VOLUME, type WidgetValue } from '@@/json/widgetValues';
 import { z } from 'zod/mini';
 import DevPeek from '../DevPeek';
 import ColorField from '../input_fields/ColorField';
 import DropdownField from '../input_fields/DropdownField';
 import FontField from '../input_fields/FontField';
 import MediaField from '../input_fields/MediaField';
+import MultiMediaField from '../input_fields/MultiMediaField';
 import MultiSelectField from '../input_fields/MultiSelectField';
 import MultiTextField from '../input_fields/MultiTextField';
 import NumberField from '../input_fields/NumberField';
@@ -67,32 +68,44 @@ export default function WidgetSetting({
 		setValue(key, value);
 	}
 
-	// Any subvalues added here also need to be handled in mergeDefaultValues
-
-	// default volume to 20, ensure it's between 0 and 100
-	const volume = z
-		.catch(z.number().check(z.gte(0), z.lte(100)), 20)
-		.parse(getSubValue('volume'));
-
 	function setSubValue(subKey: string, value: WidgetValue) {
 		setValue(getWidgetValueChildKey(key, subKey), value);
 	}
 
-	async function onChangeMedia(newValue: string) {
+	async function getNewMediaValue(newValue: string) {
 		if (
 			newValue === '' ||
 			newValue.startsWith('https://') ||
 			newValue.startsWith('http://')
 		) {
-			setWidgetValue(newValue);
+			return newValue;
 		} else {
 			const fileName = await saveTempWidgetFile(newValue, widgetId);
-			setWidgetValue(createWidgetMediaLocalValue(fileName));
+			return createWidgetMediaLocalValue(fileName);
 		}
+	}
+
+	async function onChangeMedia(newValue: string) {
+		const newMediaValue = await getNewMediaValue(newValue);
+		setWidgetValue(newMediaValue);
+	}
+
+	async function onChangeMediaArray(newValues: string[]) {
+		const newMediaValues = await Promise.all(
+			newValues.map(async newValue => {
+				return getNewMediaValue(newValue);
+			}),
+		);
+
+		setWidgetValue(newMediaValues);
 	}
 
 	function onChangeVolume(newVolume: number) {
 		setSubValue('volume', newVolume);
+	}
+
+	function onChangeVolumeArray(newVolumes: number[]) {
+		setSubValue('volume', newVolumes);
 	}
 
 	switch (setting.type) {
@@ -300,9 +313,10 @@ export default function WidgetSetting({
 					<MediaField
 						type='image'
 						label={label}
-						value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
+						value={parseMediaValue(widgetId, widgetValue, setting.defaultValue)}
 						onChange={onChangeMedia}
 						description={description}
+						halfSpan={setting.halfSpan}
 					/>
 				</NonGroupWrapper>
 			);
@@ -313,11 +327,12 @@ export default function WidgetSetting({
 					<MediaField
 						type='video'
 						label={label}
-						value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
+						value={parseMediaValue(widgetId, widgetValue, setting.defaultValue)}
 						onChange={onChangeMedia}
 						description={description}
-						volume={volume}
+						volume={parseMediaVolume(getSubValue('volume'))}
 						onChangeVolume={onChangeVolume}
+						halfSpan={setting.halfSpan}
 					/>
 				</NonGroupWrapper>
 			);
@@ -328,11 +343,70 @@ export default function WidgetSetting({
 					<MediaField
 						type='audio'
 						label={label}
-						value={getMediaValue(widgetId, widgetValue, setting.defaultValue)}
+						value={parseMediaValue(widgetId, widgetValue, setting.defaultValue)}
 						onChange={onChangeMedia}
 						description={description}
-						volume={volume}
+						volume={parseMediaVolume(getSubValue('volume'))}
 						onChangeVolume={onChangeVolume}
+						halfSpan={setting.halfSpan}
+					/>
+				</NonGroupWrapper>
+			);
+		}
+		case 'multi-image-input': {
+			return (
+				<NonGroupWrapper id={id} setting={setting}>
+					<MultiMediaField
+						type='image'
+						label={label}
+						values={parseMediaValueArray(
+							widgetId,
+							widgetValue,
+							setting.defaultValue,
+						)}
+						onChange={onChangeMediaArray}
+						description={description}
+						halfSpan={setting.halfSpan}
+					/>
+				</NonGroupWrapper>
+			);
+		}
+		case 'multi-video-input': {
+			return (
+				<NonGroupWrapper id={id} setting={setting}>
+					<MultiMediaField
+						type='video'
+						label={label}
+						values={parseMediaValueArray(
+							widgetId,
+							widgetValue,
+							setting.defaultValue,
+						)}
+						onChange={onChangeMediaArray}
+						description={description}
+						volumes={parseMediaVolumeArray(getSubValue('volume'))}
+						onChangeVolumes={onChangeVolumeArray}
+						halfSpan={setting.halfSpan}
+					/>
+				</NonGroupWrapper>
+			);
+		}
+		case 'multi-audio-input': {
+			return (
+				<NonGroupWrapper id={id} setting={setting}>
+					<MultiMediaField
+						type='audio'
+						label={label}
+						values={parseMediaValueArray(
+							widgetId,
+							widgetValue,
+							setting.defaultValue,
+						)}
+						onChange={onChangeMediaArray}
+						description={description}
+						volumes={parseMediaVolumeArray(getSubValue('volume'))}
+						onChangeVolumes={onChangeVolumeArray}
+						halfSpan={setting.halfSpan}
 					/>
 				</NonGroupWrapper>
 			);
@@ -367,13 +441,37 @@ export default function WidgetSetting({
 	}
 }
 
-function getMediaValue(
+// Any subvalues added here also need to be handled in mergeDefaultValues
+
+// default volume to DEFAULT_VOLUME, ensure it's between 0 and 1
+const VolumeZ = z.catch(z.number().check(z.gte(0), z.lte(1)), DEFAULT_VOLUME);
+
+function parseMediaVolume(value: WidgetValue) {
+	return VolumeZ.parse(value);
+}
+
+function parseMediaVolumeArray(values: WidgetValue) {
+	return z.catch(z.array(VolumeZ), []).parse(values);
+}
+
+function parseMediaValue(
 	widgetId: string,
 	value: WidgetValue,
 	defaultValue?: string,
 ) {
 	const src = z.catch(z.string(), defaultValue ?? '').parse(value);
 	return getWidgetMediaSrc(widgetId, src);
+}
+
+function parseMediaValueArray(
+	widgetId: string,
+	values: WidgetValue,
+	defaultValue?: string[],
+) {
+	const srcs = z.catch(z.array(z.string()), defaultValue ?? []).parse(values);
+	return srcs.map(src => {
+		return getWidgetMediaSrc(widgetId, src);
+	});
 }
 
 type NonGroupWrapperProps = {

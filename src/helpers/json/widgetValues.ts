@@ -4,6 +4,10 @@ import logZodError from '../zodError';
 import { tileFolderPath } from './jsonPaths';
 import { queueSaveJson } from './queueSaveJson';
 
+// consts
+
+export const DEFAULT_VOLUME = 0.2;
+
 // functions
 
 export async function loadWidgetValues(id: string): Promise<WidgetValues> {

@@ -14,7 +14,7 @@ import { useRef, useState } from 'react';
 import TextField from '../input_fields/TextField';
 import ToggleField from '../input_fields/ToggleField';
 import MediaIcon from '../MediaIcon';
-import MediaInputPreview from '../MediaInputPreview';
+import MediaPreview from '../MediaPreview';
 import DialogCancelButton from './DialogButton/DialogCancelButton';
 import DialogConfirmButton from './DialogButton/DialogConfirmButton';
 import DialogContent from './DialogContent';
@@ -121,7 +121,7 @@ export default function MediaSelectDialog({
 								'overflow-visible border-none bg-none outline-none',
 						)}
 					>
-						<MediaInputPreview
+						<MediaPreview
 							type={type}
 							src={urlMode ? mediaPath : getTempFileSrc(mediaPath)}
 							className={clsx(
