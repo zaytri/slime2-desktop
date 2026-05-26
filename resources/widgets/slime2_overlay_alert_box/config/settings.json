@@ -1,70 +1,2048 @@
 {
-	"textCategory": {
-		"label": "Text",
+	"global-category": {
+		"label": "Global Options",
 		"settings": {
-			"font-name": {
-				"label": "Font Name",
-				"type": "font-input"
+			"global-description": {
+				"type": "text-display",
+				"label": "These options will be applied to all alerts."
 			},
-			"font-size": {
-				"label": "Font Size (px)",
-				"type": "number-input",
+			"delay": {
+				"type": "slider-input",
+				"label": "Alert Delay (seconds)",
+				"halfSpan": true,
+				"defaultValue": 0,
 				"min": 0,
-				"step": 1,
-				"defaultValue": 14
+				"max": 30,
+				"step": 1
 			},
-			"font-weight": {
-				"label": "Font Weight",
-				"type": "select-input",
-				"defaultValue": "normal",
-				"options": [
-					{ "label": "Normal", "value": "normal" },
-					{ "label": "Bold", "value": "bold" },
-					{ "label": "100", "value": 100 },
-					{ "label": "200", "value": 200 },
-					{ "label": "300", "value": 300 },
-					{ "label": "400", "value": 400 },
-					{ "label": "500", "value": 500 },
-					{ "label": "600", "value": 600 },
-					{ "label": "700", "value": 700 },
-					{ "label": "800", "value": 800 },
-					{ "label": "900", "value": 900 }
-				]
+			"use-interrupt": {
+				"type": "toggle-input",
+				"label": "Allow Alert Interruption?",
+				"halfSpan": true,
+				"defaultValue": false,
+				"description": "New alerts will replace any alert that is already playing."
+			},
+			"hide-words": {
+				"type": "multi-text-input",
+				"label": "Hide alerts that contain these words:",
+				"placeholder": "Bad Word"
 			}
 		}
 	},
-	"colorCategory": {
-		"label": "Color",
+	"alerts-category": {
+		"label": "Alerts",
 		"settings": {
-			"username-color": {
-				"label": "Username Color",
-				"type": "select-input",
-				"defaultValue": "twitch-light",
-				"options": [
-					{ "label": "Twitch", "value": "twitch" },
-					{ "label": "Twitch Light", "value": "twitch-light" },
-					{ "label": "Twitch Dark", "value": "twitch-dark" },
-					{ "label": "Custom", "value": "custom" }
-				]
+			"alert-description": {
+				"type": "text-display",
+				"label": "Alert conditions are checked from top to bottom, so you should order them from most specific to least specific. Additionally, if multiple images, videos, or sounds are added to an alert, a random one is chosen."
 			},
-			"custom-username-color": {
-				"label": "Custom Username Color",
-				"type": "color-input",
-				"condition": {
-					"username-color": "custom"
-				},
-				"defaultValue": "black",
-				"description": "This will only be applied when you select \"Custom\" above."
+			"follow": {
+				"type": "multi-section",
+				"label": "Follow",
+				"settings": {
+					"follow-enabled": {
+						"type": "toggle-input",
+						"label": "Alert Enabled?",
+						"defaultValue": true
+					},
+					"follow-message": {
+						"type": "text-area-input",
+						"label": "Message",
+						"defaultValue": "{username} just followed!",
+						"description": "{username} - Follower Name"
+					},
+					"follow-layout": {
+						"type": "dropdown-input",
+						"label": "Message Layout",
+						"halfSpan": true,
+						"defaultValue": "below",
+						"options": [
+							{
+								"label": "Below Visual",
+								"value": "below"
+							},
+							{
+								"label": "Above Visual",
+								"value": "above"
+							},
+							{
+								"label": "Left of Visual",
+								"value": "left"
+							},
+							{
+								"label": "Right of Visual",
+								"value": "right"
+							},
+							{
+								"label": "On Top of Visual",
+								"value": "over"
+							}
+						]
+					},
+					"follow-visual": {
+						"type": "dropdown-input",
+						"label": "Visual",
+						"halfSpan": true,
+						"defaultValue": "none",
+						"options": [
+							{
+								"label": "No Visual",
+								"value": "none"
+							},
+							{
+								"label": "Image",
+								"value": "image"
+							},
+							{
+								"label": "Video",
+								"value": "video"
+							}
+						]
+					},
+					"follow-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound",
+						"halfSpan": true
+					},
+					"follow-video": {
+						"type": "multi-video-input",
+						"label": "Video",
+						"condition": {
+							"follow-visual": "video"
+						},
+						"halfSpan": true
+					},
+					"follow-image": {
+						"type": "multi-image-input",
+						"label": "Image",
+						"condition": {
+							"follow-visual": "image"
+						},
+						"halfSpan": true
+					},
+					"follow-duration": {
+						"type": "slider-input",
+						"label": "Alert Duration (seconds)",
+						"defaultValue": 5,
+						"min": 2,
+						"max": 90,
+						"step": 1
+					},
+					"follow-enter": {
+						"type": "dropdown-input",
+						"label": "Enter Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceIn",
+						"options": [
+							{
+								"label": "Bounce In",
+								"value": "bounceIn"
+							}
+						]
+					},
+					"follow-exit": {
+						"type": "dropdown-input",
+						"label": "Exit Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceOut",
+						"options": [
+							{
+								"label": "Bounce Out",
+								"value": "bounceOut"
+							}
+						]
+					},
+					"follow-font": {
+						"type": "font-input",
+						"label": "Font",
+						"halfSpan": true,
+						"defaultValue": "Nunito"
+					},
+					"follow-font-weight": {
+						"type": "dropdown-input",
+						"label": "Font Weight",
+						"halfSpan": true,
+						"defaultValue": "700",
+						"options": [
+							{
+								"label": "Thin",
+								"value": "100"
+							},
+							{
+								"label": "Extra-Light",
+								"value": "200"
+							},
+							{
+								"label": "Light",
+								"value": "300"
+							},
+							{
+								"label": "Normal",
+								"value": "400"
+							},
+							{
+								"label": "Medium",
+								"value": "500"
+							},
+							{
+								"label": "Semi-Bold",
+								"value": "600"
+							},
+							{
+								"label": "Bold",
+								"value": "700"
+							},
+							{
+								"label": "Extra-Bold",
+								"value": "800"
+							},
+							{
+								"label": "Heavy",
+								"value": "900"
+							}
+						]
+					},
+					"follow-font-size": {
+						"type": "slider-input",
+						"label": "Font Size (px)",
+						"halfSpan": true,
+						"defaultValue": 32,
+						"min": 1,
+						"max": 72,
+						"step": 1
+					},
+					"follow-text-align": {
+						"type": "select-input",
+						"label": "Text Align",
+						"halfSpan": true,
+						"defaultValue": "left",
+						"options": [
+							{
+								"label": "Left",
+								"value": "left"
+							},
+							{
+								"label": "Center",
+								"value": "center"
+							},
+							{
+								"label": "Right",
+								"value": "right"
+							}
+						]
+					},
+					"follow-text-color": {
+						"type": "color-input",
+						"label": "Message Color",
+						"halfSpan": true,
+						"defaultValue": "#fff"
+					},
+					"follow-accent-color": {
+						"type": "color-input",
+						"label": "Accent Color",
+						"halfSpan": true,
+						"defaultValue": "#BCE760"
+					},
+					"follow-use-shadow": {
+						"type": "toggle-input",
+						"label": "Use Text Shadow?",
+						"defaultValue": false
+					},
+					"follow-shadow-spread": {
+						"type": "slider-input",
+						"label": "Shadow Spread (px)",
+						"condition": {
+							"follow-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 1,
+						"description": "Can be used to create an outline."
+					},
+					"follow-shadow-blur": {
+						"type": "slider-input",
+						"label": "Shadow Blur (px)",
+						"condition": {
+							"follow-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 0.5
+					},
+					"follow-shadow-offset-x": {
+						"type": "slider-input",
+						"label": "Shadow Offset Horizontal (px)",
+						"condition": {
+							"follow-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"follow-shadow-offset-y": {
+						"type": "slider-input",
+						"label": "Shadow Offset Vertical (px)",
+						"condition": {
+							"follow-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"follow-shadow-color": {
+						"type": "color-input",
+						"label": "Shadow Color",
+						"condition": {
+							"follow-use-shadow": true
+						},
+						"defaultValue": "#000"
+					}
+				}
 			},
-			"message-color": {
-				"label": "Message Text Color",
-				"type": "color-input",
-				"defaultValue": "black"
+			"raid": {
+				"type": "multi-section",
+				"label": "Raid",
+				"settings": {
+					"raid-condition": {
+						"type": "dropdown-input",
+						"label": "Condition",
+						"halfSpan": true,
+						"defaultValue": "at-least",
+						"options": [
+							{
+								"label": "Raided with at least",
+								"value": "at-least"
+							},
+							{
+								"label": "Raided with exactly",
+								"value": "exactly"
+							},
+							{
+								"label": "Raided by",
+								"value": "users"
+							}
+						]
+					},
+					"raid-users": {
+						"type": "multi-text-input",
+						"label": "User(s)",
+						"condition": {
+							"raid-condition": "users"
+						},
+						"halfSpan": true
+					},
+					"raid-amount": {
+						"type": "number-input",
+						"label": "Viewers",
+						"condition": {
+							"raid-condition": ["at-least", "exactly"]
+						},
+						"halfSpan": true,
+						"defaultValue": 1,
+						"min": 1,
+						"step": 1
+					},
+					"raid-message": {
+						"type": "text-input",
+						"label": "Message",
+						"defaultValue": "{username} just raided with {amount} viewers!",
+						"description": "{username} - Raider Name\n{amount} - Number of Viewers"
+					},
+					"raid-layout": {
+						"type": "select-input",
+						"label": "Message Layout",
+						"defaultValue": "below",
+						"options": [
+							{
+								"label": "Below Visual",
+								"value": "below"
+							},
+							{
+								"label": "Above Visual",
+								"value": "above"
+							},
+							{
+								"label": "Left of Visual",
+								"value": "left"
+							},
+							{
+								"label": "Right of Visual",
+								"value": "right"
+							},
+							{
+								"label": "On Top of Visual",
+								"value": "over"
+							}
+						]
+					},
+					"raid-visual": {
+						"type": "select-input",
+						"label": "Visual",
+						"defaultValue": "none",
+						"options": [
+							{
+								"label": "Image",
+								"value": "image"
+							},
+							{
+								"label": "Video",
+								"value": "video"
+							},
+							{
+								"label": "No Visual",
+								"value": "none"
+							}
+						]
+					},
+					"raid-video": {
+						"type": "multi-video-input",
+						"label": "Video",
+						"condition": {
+							"raid-visual": "video"
+						},
+						"description": "If multiple videos are added, a random one will be used each time."
+					},
+					"raid-image": {
+						"type": "multi-image-input",
+						"label": "Image",
+						"condition": {
+							"raid-visual": "image"
+						},
+						"description": "If multiple images are added, a random one will be used each time."
+					},
+					"raid-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound"
+					},
+					"raid-duration": {
+						"type": "slider-input",
+						"label": "Duration (seconds)",
+						"defaultValue": 5,
+						"min": 2,
+						"max": 90,
+						"step": 1
+					},
+					"raid-enter": {
+						"type": "dropdown-input",
+						"label": "Enter Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceIn",
+						"options": [
+							{
+								"label": "Bounce In",
+								"value": "bounceIn"
+							}
+						]
+					},
+					"raid-exit": {
+						"type": "dropdown-input",
+						"label": "Exit Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceOut",
+						"options": [
+							{
+								"label": "Bounce Out",
+								"value": "bounceOut"
+							}
+						]
+					},
+					"raid-font": {
+						"type": "font-input",
+						"label": "Font",
+						"halfSpan": true,
+						"defaultValue": "Nunito"
+					},
+					"raid-font-weight": {
+						"type": "dropdown-input",
+						"label": "Font Weight",
+						"halfSpan": true,
+						"defaultValue": "700",
+						"options": [
+							{
+								"label": "Thin",
+								"value": "100"
+							},
+							{
+								"label": "Extra-Light",
+								"value": "200"
+							},
+							{
+								"label": "Light",
+								"value": "300"
+							},
+							{
+								"label": "Normal",
+								"value": "400"
+							},
+							{
+								"label": "Medium",
+								"value": "500"
+							},
+							{
+								"label": "Semi-Bold",
+								"value": "600"
+							},
+							{
+								"label": "Bold",
+								"value": "700"
+							},
+							{
+								"label": "Extra-Bold",
+								"value": "800"
+							},
+							{
+								"label": "Heavy",
+								"value": "900"
+							}
+						]
+					},
+					"raid-font-size": {
+						"type": "slider-input",
+						"label": "Font Size (px)",
+						"halfSpan": true,
+						"defaultValue": 32,
+						"min": 1,
+						"max": 72,
+						"step": 1
+					},
+					"raid-text-align": {
+						"type": "select-input",
+						"label": "Text Align",
+						"halfSpan": true,
+						"defaultValue": "left",
+						"options": [
+							{
+								"label": "Left",
+								"value": "left"
+							},
+							{
+								"label": "Center",
+								"value": "center"
+							},
+							{
+								"label": "Right",
+								"value": "right"
+							}
+						]
+					},
+					"raid-text-color": {
+						"type": "color-input",
+						"label": "Message Color",
+						"halfSpan": true,
+						"defaultValue": "#fff"
+					},
+					"raid-accent-color": {
+						"type": "color-input",
+						"label": "Accent Color",
+						"halfSpan": true,
+						"defaultValue": "#BCE760"
+					},
+					"raid-use-shadow": {
+						"type": "toggle-input",
+						"label": "Use Text Shadow?",
+						"defaultValue": false
+					},
+					"raid-shadow-spread": {
+						"type": "slider-input",
+						"label": "Shadow Spread (px)",
+						"condition": {
+							"raid-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 1,
+						"description": "Can be used to create an outline."
+					},
+					"raid-shadow-blur": {
+						"type": "slider-input",
+						"label": "Shadow Blur (px)",
+						"condition": {
+							"raid-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 0.5
+					},
+					"raid-shadow-offset-x": {
+						"type": "slider-input",
+						"label": "Shadow Offset Horizontal (px)",
+						"condition": {
+							"raid-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"raid-shadow-offset-y": {
+						"type": "slider-input",
+						"label": "Shadow Offset Vertical (px)",
+						"condition": {
+							"raid-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"raid-shadow-color": {
+						"type": "color-input",
+						"label": "Shadow Color",
+						"condition": {
+							"raid-use-shadow": true
+						},
+						"defaultValue": "#000"
+					}
+				}
 			},
-			"background-color": {
-				"label": "Background Color",
-				"type": "color-input",
-				"defaultValue": "transparent"
+			"reward": {
+				"type": "multi-section",
+				"label": "Channel Point Reward",
+				"settings": {
+					"reward-condition": {
+						"type": "text-input",
+						"label": "Condition: Reward Name",
+						"placeholder": "My Channel Point Reward"
+					},
+					"reward-message": {
+						"type": "text-input",
+						"label": "Message",
+						"defaultValue": "{username} just redeemed {reward}!",
+						"description": "{username} - User Name\n{reward} - Channel Point Reward Name\n{amount} - Reward Cost\n{message} - User Redeem Message"
+					},
+					"reward-layout": {
+						"type": "select-input",
+						"label": "Message Layout",
+						"defaultValue": "below",
+						"options": [
+							{
+								"label": "Below Visual",
+								"value": "below"
+							},
+							{
+								"label": "Above Visual",
+								"value": "above"
+							},
+							{
+								"label": "Left of Visual",
+								"value": "left"
+							},
+							{
+								"label": "Right of Visual",
+								"value": "right"
+							},
+							{
+								"label": "On Top of Visual",
+								"value": "over"
+							}
+						]
+					},
+					"reward-visual": {
+						"type": "select-input",
+						"label": "Visual",
+						"defaultValue": "none",
+						"options": [
+							{
+								"label": "Image",
+								"value": "image"
+							},
+							{
+								"label": "Video",
+								"value": "video"
+							},
+							{
+								"label": "No Visual",
+								"value": "none"
+							}
+						]
+					},
+					"reward-video": {
+						"type": "multi-video-input",
+						"label": "Video",
+						"condition": {
+							"reward-visual": "video"
+						},
+						"description": "If multiple videos are added, a random one will be used each time."
+					},
+					"reward-image": {
+						"type": "multi-image-input",
+						"label": "Image",
+						"condition": {
+							"reward-visual": "image"
+						},
+						"description": "If multiple images are added, a random one will be used each time."
+					},
+					"reward-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound"
+					},
+					"reward-duration": {
+						"type": "slider-input",
+						"label": "Duration (seconds)",
+						"defaultValue": 5,
+						"min": 2,
+						"max": 90,
+						"step": 1
+					},
+					"reward-enter": {
+						"type": "dropdown-input",
+						"label": "Enter Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceIn",
+						"options": [
+							{
+								"label": "Bounce In",
+								"value": "bounceIn"
+							}
+						]
+					},
+					"reward-exit": {
+						"type": "dropdown-input",
+						"label": "Exit Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceOut",
+						"options": [
+							{
+								"label": "Bounce Out",
+								"value": "bounceOut"
+							}
+						]
+					},
+					"reward-font": {
+						"type": "font-input",
+						"label": "Font",
+						"halfSpan": true,
+						"defaultValue": "Nunito"
+					},
+					"reward-font-weight": {
+						"type": "dropdown-input",
+						"label": "Font Weight",
+						"halfSpan": true,
+						"defaultValue": "700",
+						"options": [
+							{
+								"label": "Thin",
+								"value": "100"
+							},
+							{
+								"label": "Extra-Light",
+								"value": "200"
+							},
+							{
+								"label": "Light",
+								"value": "300"
+							},
+							{
+								"label": "Normal",
+								"value": "400"
+							},
+							{
+								"label": "Medium",
+								"value": "500"
+							},
+							{
+								"label": "Semi-Bold",
+								"value": "600"
+							},
+							{
+								"label": "Bold",
+								"value": "700"
+							},
+							{
+								"label": "Extra-Bold",
+								"value": "800"
+							},
+							{
+								"label": "Heavy",
+								"value": "900"
+							}
+						]
+					},
+					"reward-font-size": {
+						"type": "slider-input",
+						"label": "Font Size (px)",
+						"halfSpan": true,
+						"defaultValue": 32,
+						"min": 1,
+						"max": 72,
+						"step": 1
+					},
+					"reward-text-align": {
+						"type": "select-input",
+						"label": "Text Align",
+						"halfSpan": true,
+						"defaultValue": "left",
+						"options": [
+							{
+								"label": "Left",
+								"value": "left"
+							},
+							{
+								"label": "Center",
+								"value": "center"
+							},
+							{
+								"label": "Right",
+								"value": "right"
+							}
+						]
+					},
+					"reward-text-color": {
+						"type": "color-input",
+						"label": "Message Color",
+						"halfSpan": true,
+						"defaultValue": "#fff"
+					},
+					"reward-accent-color": {
+						"type": "color-input",
+						"label": "Accent Color",
+						"halfSpan": true,
+						"defaultValue": "#BCE760"
+					},
+					"reward-use-shadow": {
+						"type": "toggle-input",
+						"label": "Use Text Shadow?",
+						"defaultValue": false
+					},
+					"reward-shadow-spread": {
+						"type": "slider-input",
+						"label": "Shadow Spread (px)",
+						"condition": {
+							"reward-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 1,
+						"description": "Can be used to create an outline."
+					},
+					"reward-shadow-blur": {
+						"type": "slider-input",
+						"label": "Shadow Blur (px)",
+						"condition": {
+							"reward-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 0.5
+					},
+					"reward-shadow-offset-x": {
+						"type": "slider-input",
+						"label": "Shadow Offset Horizontal (px)",
+						"condition": {
+							"reward-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"reward-shadow-offset-y": {
+						"type": "slider-input",
+						"label": "Shadow Offset Vertical (px)",
+						"condition": {
+							"reward-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"reward-shadow-color": {
+						"type": "color-input",
+						"label": "Shadow Color",
+						"condition": {
+							"reward-use-shadow": true
+						},
+						"defaultValue": "#000"
+					}
+				}
+			},
+			"power-up": {
+				"type": "multi-section",
+				"label": "Power-Up",
+				"settings": {
+					"power-up-condition": {
+						"type": "text-input",
+						"label": "Condition: Power-Up Name",
+						"placeholder": "My Power-Up"
+					},
+					"power-up-message": {
+						"type": "text-input",
+						"label": "Message",
+						"defaultValue": "{username} just redeemed {power_up}!",
+						"description": "{username} - User Name\n{power_up} - Power-Up Name\n{amount} - Power-Up Cost\n{message} - User Redeem Message"
+					},
+					"power-up-layout": {
+						"type": "select-input",
+						"label": "Message Layout",
+						"defaultValue": "below",
+						"options": [
+							{
+								"label": "Below Visual",
+								"value": "below"
+							},
+							{
+								"label": "Above Visual",
+								"value": "above"
+							},
+							{
+								"label": "Left of Visual",
+								"value": "left"
+							},
+							{
+								"label": "Right of Visual",
+								"value": "right"
+							},
+							{
+								"label": "On Top of Visual",
+								"value": "over"
+							}
+						]
+					},
+					"power-up-visual": {
+						"type": "select-input",
+						"label": "Visual",
+						"defaultValue": "none",
+						"options": [
+							{
+								"label": "Image",
+								"value": "image"
+							},
+							{
+								"label": "Video",
+								"value": "video"
+							},
+							{
+								"label": "No Visual",
+								"value": "none"
+							}
+						]
+					},
+					"power-up-video": {
+						"type": "multi-video-input",
+						"label": "Video",
+						"condition": {
+							"power-up-visual": "video"
+						},
+						"description": "If multiple videos are added, a random one will be used each time."
+					},
+					"power-up-image": {
+						"type": "multi-image-input",
+						"label": "Image",
+						"condition": {
+							"power-up-visual": "image"
+						},
+						"description": "If multiple images are added, a random one will be used each time."
+					},
+					"power-up-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound"
+					},
+					"power-up-duration": {
+						"type": "slider-input",
+						"label": "Duration (seconds)",
+						"defaultValue": 5,
+						"min": 2,
+						"max": 90,
+						"step": 1
+					},
+					"power-up-enter": {
+						"type": "dropdown-input",
+						"label": "Enter Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceIn",
+						"options": [
+							{
+								"label": "Bounce In",
+								"value": "bounceIn"
+							}
+						]
+					},
+					"power-up-exit": {
+						"type": "dropdown-input",
+						"label": "Exit Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceOut",
+						"options": [
+							{
+								"label": "Bounce Out",
+								"value": "bounceOut"
+							}
+						]
+					},
+					"power-up-font": {
+						"type": "font-input",
+						"label": "Font",
+						"halfSpan": true,
+						"defaultValue": "Nunito"
+					},
+					"power-up-font-weight": {
+						"type": "dropdown-input",
+						"label": "Font Weight",
+						"halfSpan": true,
+						"defaultValue": "700",
+						"options": [
+							{
+								"label": "Thin",
+								"value": "100"
+							},
+							{
+								"label": "Extra-Light",
+								"value": "200"
+							},
+							{
+								"label": "Light",
+								"value": "300"
+							},
+							{
+								"label": "Normal",
+								"value": "400"
+							},
+							{
+								"label": "Medium",
+								"value": "500"
+							},
+							{
+								"label": "Semi-Bold",
+								"value": "600"
+							},
+							{
+								"label": "Bold",
+								"value": "700"
+							},
+							{
+								"label": "Extra-Bold",
+								"value": "800"
+							},
+							{
+								"label": "Heavy",
+								"value": "900"
+							}
+						]
+					},
+					"power-up-font-size": {
+						"type": "slider-input",
+						"label": "Font Size (px)",
+						"halfSpan": true,
+						"defaultValue": 32,
+						"min": 1,
+						"max": 72,
+						"step": 1
+					},
+					"power-up-text-align": {
+						"type": "select-input",
+						"label": "Text Align",
+						"halfSpan": true,
+						"defaultValue": "left",
+						"options": [
+							{
+								"label": "Left",
+								"value": "left"
+							},
+							{
+								"label": "Center",
+								"value": "center"
+							},
+							{
+								"label": "Right",
+								"value": "right"
+							}
+						]
+					},
+					"power-up-text-color": {
+						"type": "color-input",
+						"label": "Message Color",
+						"halfSpan": true,
+						"defaultValue": "#fff"
+					},
+					"power-up-accent-color": {
+						"type": "color-input",
+						"label": "Accent Color",
+						"halfSpan": true,
+						"defaultValue": "#BCE760"
+					},
+					"power-up-use-shadow": {
+						"type": "toggle-input",
+						"label": "Use Text Shadow?",
+						"defaultValue": false
+					},
+					"power-up-shadow-spread": {
+						"type": "slider-input",
+						"label": "Shadow Spread (px)",
+						"condition": {
+							"power-up-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 1,
+						"description": "Can be used to create an outline."
+					},
+					"power-up-shadow-blur": {
+						"type": "slider-input",
+						"label": "Shadow Blur (px)",
+						"condition": {
+							"power-up-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 0.5
+					},
+					"power-up-shadow-offset-x": {
+						"type": "slider-input",
+						"label": "Shadow Offset Horizontal (px)",
+						"condition": {
+							"power-up-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"power-up-shadow-offset-y": {
+						"type": "slider-input",
+						"label": "Shadow Offset Vertical (px)",
+						"condition": {
+							"power-up-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"power-up-shadow-color": {
+						"type": "color-input",
+						"label": "Shadow Color",
+						"condition": {
+							"power-up-use-shadow": true
+						},
+						"defaultValue": "#000"
+					}
+				}
+			},
+			"cheer": {
+				"type": "multi-section",
+				"label": "Cheer",
+				"settings": {
+					"cheer-condition": {
+						"type": "dropdown-input",
+						"label": "Condition",
+						"halfSpan": true,
+						"defaultValue": "at-least",
+						"options": [
+							{
+								"label": "Cheered at least",
+								"value": "at-least"
+							},
+							{
+								"label": "Cheered exactly",
+								"value": "exactly"
+							}
+						]
+					},
+					"cheer-amount": {
+						"type": "number-input",
+						"label": "Bits",
+						"halfSpan": true,
+						"defaultValue": 1,
+						"min": 1,
+						"max": 100000,
+						"step": 1
+					},
+					"cheer-message": {
+						"type": "text-input",
+						"label": "Message",
+						"defaultValue": "{username} just cheered {amount} bits!",
+						"description": "{username} - Cheerer Name\n{amount} - Number of Bits"
+					},
+					"cheer-layout": {
+						"type": "select-input",
+						"label": "Message Layout",
+						"defaultValue": "below",
+						"options": [
+							{
+								"label": "Below Visual",
+								"value": "below"
+							},
+							{
+								"label": "Above Visual",
+								"value": "above"
+							},
+							{
+								"label": "Left of Visual",
+								"value": "left"
+							},
+							{
+								"label": "Right of Visual",
+								"value": "right"
+							},
+							{
+								"label": "On Top of Visual",
+								"value": "over"
+							}
+						]
+					},
+					"cheer-visual": {
+						"type": "select-input",
+						"label": "Visual",
+						"defaultValue": "none",
+						"options": [
+							{
+								"label": "Image",
+								"value": "image"
+							},
+							{
+								"label": "Video",
+								"value": "video"
+							},
+							{
+								"label": "No Visual",
+								"value": "none"
+							}
+						]
+					},
+					"cheer-video": {
+						"type": "multi-video-input",
+						"label": "Video",
+						"condition": {
+							"cheer-visual": "video"
+						},
+						"description": "If multiple videos are added, a random one will be used each time."
+					},
+					"cheer-image": {
+						"type": "multi-image-input",
+						"label": "Image",
+						"condition": {
+							"cheer-visual": "image"
+						},
+						"description": "If multiple images are added, a random one will be used each time."
+					},
+					"cheer-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound"
+					},
+					"cheer-duration": {
+						"type": "slider-input",
+						"label": "Duration (seconds)",
+						"defaultValue": 5,
+						"min": 2,
+						"max": 90,
+						"step": 1
+					},
+					"cheer-enter": {
+						"type": "dropdown-input",
+						"label": "Enter Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceIn",
+						"options": [
+							{
+								"label": "Bounce In",
+								"value": "bounceIn"
+							}
+						]
+					},
+					"cheer-exit": {
+						"type": "dropdown-input",
+						"label": "Exit Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceOut",
+						"options": [
+							{
+								"label": "Bounce Out",
+								"value": "bounceOut"
+							}
+						]
+					},
+					"cheer-font": {
+						"type": "font-input",
+						"label": "Font",
+						"halfSpan": true,
+						"defaultValue": "Nunito"
+					},
+					"cheer-font-weight": {
+						"type": "dropdown-input",
+						"label": "Font Weight",
+						"halfSpan": true,
+						"defaultValue": "700",
+						"options": [
+							{
+								"label": "Thin",
+								"value": "100"
+							},
+							{
+								"label": "Extra-Light",
+								"value": "200"
+							},
+							{
+								"label": "Light",
+								"value": "300"
+							},
+							{
+								"label": "Normal",
+								"value": "400"
+							},
+							{
+								"label": "Medium",
+								"value": "500"
+							},
+							{
+								"label": "Semi-Bold",
+								"value": "600"
+							},
+							{
+								"label": "Bold",
+								"value": "700"
+							},
+							{
+								"label": "Extra-Bold",
+								"value": "800"
+							},
+							{
+								"label": "Heavy",
+								"value": "900"
+							}
+						]
+					},
+					"cheer-font-size": {
+						"type": "slider-input",
+						"label": "Font Size (px)",
+						"halfSpan": true,
+						"defaultValue": 32,
+						"min": 1,
+						"max": 72,
+						"step": 1
+					},
+					"cheer-text-align": {
+						"type": "select-input",
+						"label": "Text Align",
+						"halfSpan": true,
+						"defaultValue": "left",
+						"options": [
+							{
+								"label": "Left",
+								"value": "left"
+							},
+							{
+								"label": "Center",
+								"value": "center"
+							},
+							{
+								"label": "Right",
+								"value": "right"
+							}
+						]
+					},
+					"cheer-text-color": {
+						"type": "color-input",
+						"label": "Message Color",
+						"halfSpan": true,
+						"defaultValue": "#fff"
+					},
+					"cheer-accent-color": {
+						"type": "color-input",
+						"label": "Accent Color",
+						"halfSpan": true,
+						"defaultValue": "#BCE760"
+					},
+					"cheer-use-shadow": {
+						"type": "toggle-input",
+						"label": "Use Text Shadow?",
+						"defaultValue": false
+					},
+					"cheer-shadow-spread": {
+						"type": "slider-input",
+						"label": "Shadow Spread (px)",
+						"condition": {
+							"cheer-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 1,
+						"description": "Can be used to create an outline."
+					},
+					"cheer-shadow-blur": {
+						"type": "slider-input",
+						"label": "Shadow Blur (px)",
+						"condition": {
+							"cheer-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 0.5
+					},
+					"cheer-shadow-offset-x": {
+						"type": "slider-input",
+						"label": "Shadow Offset Horizontal (px)",
+						"condition": {
+							"cheer-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"cheer-shadow-offset-y": {
+						"type": "slider-input",
+						"label": "Shadow Offset Vertical (px)",
+						"condition": {
+							"cheer-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"cheer-shadow-color": {
+						"type": "color-input",
+						"label": "Shadow Color",
+						"condition": {
+							"cheer-use-shadow": true
+						},
+						"defaultValue": "#000"
+					}
+				}
+			},
+			"sub": {
+				"type": "multi-section",
+				"label": "Subscription",
+				"settings": {
+					"sub-condition": {
+						"type": "dropdown-input",
+						"label": "Condition",
+						"halfSpan": true,
+						"options": [
+							{
+								"label": "Subscription is tier",
+								"value": "tier"
+							},
+							{
+								"label": "Months subscribed at least",
+								"value": "at-least"
+							},
+							{
+								"label": "Months subscribed exactly",
+								"value": "exactly"
+							}
+						]
+					},
+					"sub-amount": {
+						"type": "number-input",
+						"label": "Months",
+						"condition": {
+							"sub-condition": ["exactly", "at-least"]
+						},
+						"halfSpan": true,
+						"defaultValue": 1,
+						"min": 1,
+						"step": 1
+					},
+					"sub-tier": {
+						"type": "dropdown-input",
+						"label": "Tier",
+						"condition": {
+							"sub-condition": ["tier"]
+						},
+						"halfSpan": true,
+						"defaultValue": "tier-1",
+						"options": [
+							{
+								"label": "Tier 1",
+								"value": "tier-1"
+							},
+							{
+								"label": "Tier 2",
+								"value": "tier-2"
+							},
+							{
+								"label": "Tier 3",
+								"value": "tier-3"
+							}
+						]
+					},
+					"sub-message": {
+						"type": "text-input",
+						"label": "Message",
+						"defaultValue": "{username} just subscribed at {sub_tier}!",
+						"description": "{username} - Subscriber Name\n{sub_tier} - Subscription Tier\n{amount} - Months Subscribed\n{message} - User Resubscription Message"
+					},
+					"sub-layout": {
+						"type": "select-input",
+						"label": "Message Layout",
+						"defaultValue": "below",
+						"options": [
+							{
+								"label": "Below Visual",
+								"value": "below"
+							},
+							{
+								"label": "Above Visual",
+								"value": "above"
+							},
+							{
+								"label": "Left of Visual",
+								"value": "left"
+							},
+							{
+								"label": "Right of Visual",
+								"value": "right"
+							},
+							{
+								"label": "On Top of Visual",
+								"value": "over"
+							}
+						]
+					},
+					"sub-visual": {
+						"type": "select-input",
+						"label": "Visual",
+						"defaultValue": "none",
+						"options": [
+							{
+								"label": "Image",
+								"value": "image"
+							},
+							{
+								"label": "Video",
+								"value": "video"
+							},
+							{
+								"label": "No Visual",
+								"value": "none"
+							}
+						]
+					},
+					"sub-video": {
+						"type": "multi-video-input",
+						"label": "Video",
+						"condition": {
+							"sub-visual": "video"
+						},
+						"description": "If multiple videos are added, a random one will be used each time."
+					},
+					"sub-image": {
+						"type": "multi-image-input",
+						"label": "Image",
+						"condition": {
+							"sub-visual": "image"
+						},
+						"description": "If multiple images are added, a random one will be used each time."
+					},
+					"sub-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound"
+					},
+					"sub-duration": {
+						"type": "slider-input",
+						"label": "Duration (seconds)",
+						"defaultValue": 5,
+						"min": 2,
+						"max": 90,
+						"step": 1
+					},
+					"sub-enter": {
+						"type": "dropdown-input",
+						"label": "Enter Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceIn",
+						"options": [
+							{
+								"label": "Bounce In",
+								"value": "bounceIn"
+							}
+						]
+					},
+					"sub-exit": {
+						"type": "dropdown-input",
+						"label": "Exit Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceOut",
+						"options": [
+							{
+								"label": "Bounce Out",
+								"value": "bounceOut"
+							}
+						]
+					},
+					"sub-font": {
+						"type": "font-input",
+						"label": "Font",
+						"halfSpan": true,
+						"defaultValue": "Nunito"
+					},
+					"sub-font-weight": {
+						"type": "dropdown-input",
+						"label": "Font Weight",
+						"halfSpan": true,
+						"defaultValue": "700",
+						"options": [
+							{
+								"label": "Thin",
+								"value": "100"
+							},
+							{
+								"label": "Extra-Light",
+								"value": "200"
+							},
+							{
+								"label": "Light",
+								"value": "300"
+							},
+							{
+								"label": "Normal",
+								"value": "400"
+							},
+							{
+								"label": "Medium",
+								"value": "500"
+							},
+							{
+								"label": "Semi-Bold",
+								"value": "600"
+							},
+							{
+								"label": "Bold",
+								"value": "700"
+							},
+							{
+								"label": "Extra-Bold",
+								"value": "800"
+							},
+							{
+								"label": "Heavy",
+								"value": "900"
+							}
+						]
+					},
+					"sub-font-size": {
+						"type": "slider-input",
+						"label": "Font Size (px)",
+						"halfSpan": true,
+						"defaultValue": 32,
+						"min": 1,
+						"max": 72,
+						"step": 1
+					},
+					"sub-text-align": {
+						"type": "select-input",
+						"label": "Text Align",
+						"halfSpan": true,
+						"defaultValue": "left",
+						"options": [
+							{
+								"label": "Left",
+								"value": "left"
+							},
+							{
+								"label": "Center",
+								"value": "center"
+							},
+							{
+								"label": "Right",
+								"value": "right"
+							}
+						]
+					},
+					"sub-text-color": {
+						"type": "color-input",
+						"label": "Message Color",
+						"halfSpan": true,
+						"defaultValue": "#fff"
+					},
+					"sub-accent-color": {
+						"type": "color-input",
+						"label": "Accent Color",
+						"halfSpan": true,
+						"defaultValue": "#BCE760"
+					},
+					"sub-use-shadow": {
+						"type": "toggle-input",
+						"label": "Use Text Shadow?",
+						"defaultValue": false
+					},
+					"sub-shadow-spread": {
+						"type": "slider-input",
+						"label": "Shadow Spread (px)",
+						"condition": {
+							"sub-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 1,
+						"description": "Can be used to create an outline."
+					},
+					"sub-shadow-blur": {
+						"type": "slider-input",
+						"label": "Shadow Blur (px)",
+						"condition": {
+							"sub-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 0.5
+					},
+					"sub-shadow-offset-x": {
+						"type": "slider-input",
+						"label": "Shadow Offset Horizontal (px)",
+						"condition": {
+							"sub-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"sub-shadow-offset-y": {
+						"type": "slider-input",
+						"label": "Shadow Offset Vertical (px)",
+						"condition": {
+							"sub-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"sub-shadow-color": {
+						"type": "color-input",
+						"label": "Shadow Color",
+						"condition": {
+							"sub-use-shadow": true
+						},
+						"defaultValue": "#000"
+					}
+				}
+			},
+			"gift-sub": {
+				"type": "multi-section",
+				"label": "Gift Subscription",
+				"settings": {
+					"gift-sub-condition": {
+						"type": "dropdown-input",
+						"label": "Condition",
+						"halfSpan": true,
+						"defaultValue": "individual",
+						"options": [
+							{
+								"label": "Individual gift subscription",
+								"value": "individual"
+							},
+							{
+								"label": "Community gift count at least",
+								"value": "at-least"
+							},
+							{
+								"label": "Community gift count exactly",
+								"value": "exactly"
+							}
+						]
+					},
+					"gift-sub-amount": {
+						"type": "number-input",
+						"label": "Gift Subscriptions",
+						"condition": {
+							"gift-sub-condition": ["exactly", "at-least"]
+						},
+						"halfSpan": true,
+						"defaultValue": 1,
+						"min": 1,
+						"max": 1000,
+						"step": 1
+					},
+					"gift-sub-message": {
+						"type": "text-input",
+						"label": "Message",
+						"defaultValue": "{sender} gifted a {sub_tier} subscription to {username}!",
+						"description": "{sender} - Gifter Name\n{username} - Subscription Receiver Name\n{sub_tier} - Subscription Tier\n{amount} - Number of Gift Subscriptions"
+					},
+					"gift-sub-layout": {
+						"type": "select-input",
+						"label": "Message Layout",
+						"defaultValue": "below",
+						"options": [
+							{
+								"label": "Below Visual",
+								"value": "below"
+							},
+							{
+								"label": "Above Visual",
+								"value": "above"
+							},
+							{
+								"label": "Left of Visual",
+								"value": "left"
+							},
+							{
+								"label": "Right of Visual",
+								"value": "right"
+							},
+							{
+								"label": "On Top of Visual",
+								"value": "over"
+							}
+						]
+					},
+					"gift-sub-visual": {
+						"type": "select-input",
+						"label": "Visual",
+						"defaultValue": "none",
+						"options": [
+							{
+								"label": "Image",
+								"value": "image"
+							},
+							{
+								"label": "Video",
+								"value": "video"
+							},
+							{
+								"label": "No Visual",
+								"value": "none"
+							}
+						]
+					},
+					"gift-sub-video": {
+						"type": "multi-video-input",
+						"label": "Video",
+						"condition": {
+							"gift-sub-visual": "video"
+						},
+						"description": "If multiple videos are added, a random one will be used each time."
+					},
+					"gift-sub-image": {
+						"type": "multi-image-input",
+						"label": "Image",
+						"condition": {
+							"gift-sub-visual": "image"
+						},
+						"description": "If multiple images are added, a random one will be used each time."
+					},
+					"gift-sub-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound"
+					},
+					"gift-sub-duration": {
+						"type": "slider-input",
+						"label": "Duration (seconds)",
+						"defaultValue": 5,
+						"min": 2,
+						"max": 90,
+						"step": 1
+					},
+					"gift-sub-enter": {
+						"type": "dropdown-input",
+						"label": "Enter Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceIn",
+						"options": [
+							{
+								"label": "Bounce In",
+								"value": "bounceIn"
+							}
+						]
+					},
+					"gift-sub-exit": {
+						"type": "dropdown-input",
+						"label": "Exit Animation",
+						"halfSpan": true,
+						"defaultValue": "bounceOut",
+						"options": [
+							{
+								"label": "Bounce Out",
+								"value": "bounceOut"
+							}
+						]
+					},
+					"gift-sub-font": {
+						"type": "font-input",
+						"label": "Font",
+						"halfSpan": true,
+						"defaultValue": "Nunito"
+					},
+					"gift-sub-font-weight": {
+						"type": "dropdown-input",
+						"label": "Font Weight",
+						"halfSpan": true,
+						"defaultValue": "700",
+						"options": [
+							{
+								"label": "Thin",
+								"value": "100"
+							},
+							{
+								"label": "Extra-Light",
+								"value": "200"
+							},
+							{
+								"label": "Light",
+								"value": "300"
+							},
+							{
+								"label": "Normal",
+								"value": "400"
+							},
+							{
+								"label": "Medium",
+								"value": "500"
+							},
+							{
+								"label": "Semi-Bold",
+								"value": "600"
+							},
+							{
+								"label": "Bold",
+								"value": "700"
+							},
+							{
+								"label": "Extra-Bold",
+								"value": "800"
+							},
+							{
+								"label": "Heavy",
+								"value": "900"
+							}
+						]
+					},
+					"gift-sub-font-size": {
+						"type": "slider-input",
+						"label": "Font Size (px)",
+						"halfSpan": true,
+						"defaultValue": 32,
+						"min": 1,
+						"max": 72,
+						"step": 1
+					},
+					"gift-sub-text-align": {
+						"type": "select-input",
+						"label": "Text Align",
+						"halfSpan": true,
+						"defaultValue": "left",
+						"options": [
+							{
+								"label": "Left",
+								"value": "left"
+							},
+							{
+								"label": "Center",
+								"value": "center"
+							},
+							{
+								"label": "Right",
+								"value": "right"
+							}
+						]
+					},
+					"gift-sub-text-color": {
+						"type": "color-input",
+						"label": "Message Color",
+						"halfSpan": true,
+						"defaultValue": "#fff"
+					},
+					"gift-sub-accent-color": {
+						"type": "color-input",
+						"label": "Accent Color",
+						"halfSpan": true,
+						"defaultValue": "#BCE760"
+					},
+					"gift-sub-use-shadow": {
+						"type": "toggle-input",
+						"label": "Use Text Shadow?",
+						"defaultValue": false
+					},
+					"gift-sub-shadow-spread": {
+						"type": "slider-input",
+						"label": "Shadow Spread (px)",
+						"condition": {
+							"gift-sub-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 1,
+						"description": "Can be used to create an outline."
+					},
+					"gift-sub-shadow-blur": {
+						"type": "slider-input",
+						"label": "Shadow Blur (px)",
+						"condition": {
+							"gift-sub-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 0.5
+					},
+					"gift-sub-shadow-offset-x": {
+						"type": "slider-input",
+						"label": "Shadow Offset Horizontal (px)",
+						"condition": {
+							"gift-sub-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"gift-sub-shadow-offset-y": {
+						"type": "slider-input",
+						"label": "Shadow Offset Vertical (px)",
+						"condition": {
+							"gift-sub-use-shadow": true
+						},
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": -10,
+						"max": 10,
+						"step": 1
+					},
+					"gift-sub-shadow-color": {
+						"type": "color-input",
+						"label": "Shadow Color",
+						"condition": {
+							"gift-sub-use-shadow": true
+						},
+						"defaultValue": "#000"
+					}
+				}
 			}
 		}
 	}
