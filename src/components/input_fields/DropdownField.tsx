@@ -97,7 +97,7 @@ export default function DropdownField<V>({
 
 	return (
 		<div className='flex flex-col'>
-			<SelectProvider>
+			<SelectProvider value={selectedItemLabel}>
 				<div className='group/dropdown input-wrapper flex cursor-pointer flex-col p-0! input-wrapper-over input-wrapper-has-hover'>
 					<SelectLabel
 						className='cursor-pointer! px-2 pt-1 input-label'
