@@ -83,7 +83,7 @@ export const SETTINGS_DATA: SettingsData = Object.freeze({
 	},
 	'multi-select-input': {
 		label: 'Multi-Select Input',
-		defaultData: { type: 'multi-select-input', options: [] },
+		defaultData: { type: 'multi-select-input', options: [], defaultValue: [] },
 	},
 	'image-input': { label: 'Image Input', defaultData: { type: 'image-input' } },
 	'audio-input': { label: 'Audio Input', defaultData: { type: 'audio-input' } },

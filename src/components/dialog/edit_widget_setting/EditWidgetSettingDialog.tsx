@@ -181,10 +181,27 @@ export default function EditWidgetSettingDialog({
 						<OptionsField
 							values={newData.options}
 							onChange={newValues => {
-								setNewData({
-									...newData,
-									options: newValues,
-								});
+								if (newData.type === 'multi-select-input') {
+									setNewData({
+										...newData,
+										options: newValues,
+										defaultValue: newData.defaultValue ?? [],
+									});
+								} else {
+									const optionWithExistingDefaultValue = newValues.find(
+										option => {
+											return option.value === newData.defaultValue;
+										},
+									);
+
+									setNewData({
+										...newData,
+										options: newValues,
+										defaultValue:
+											optionWithExistingDefaultValue?.value ??
+											newValues[0]?.value,
+									});
+								}
 							}}
 						/>
 					)}
