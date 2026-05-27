@@ -90,15 +90,15 @@ export const SETTINGS_DATA: SettingsData = Object.freeze({
 	'video-input': { label: 'Video Input', defaultData: { type: 'video-input' } },
 	'multi-image-input': {
 		label: 'Multi-Image Input',
-		defaultData: { type: 'multi-image-input' },
+		defaultData: { type: 'multi-image-input', defaultValue: [] },
 	},
 	'multi-audio-input': {
 		label: 'Multi-Audio Input',
-		defaultData: { type: 'multi-audio-input' },
+		defaultData: { type: 'multi-audio-input', defaultValue: [] },
 	},
 	'multi-video-input': {
 		label: 'Multi-Video Input',
-		defaultData: { type: 'multi-video-input' },
+		defaultData: { type: 'multi-video-input', defaultValue: [] },
 	},
 });
 
