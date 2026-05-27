@@ -7,9 +7,6 @@
 	--font-weight: var(--custom-font-weight, normal);
 	--font-size: var(--custom-font-size, 14px);
 	--message-color: var(--custom-message-color, white);
-	--direction: var(--custom-direction, column);
-	--justify: var(--custom-justify, end);
-	--align: var(--custom-align, flex-start);
 	--line-clamp: var(--custom-line-clamp, 4);
 	--max-width: var(--custom-max-width, 500px);
 	--badge-display: var(--custom-badge-display, inline);
@@ -35,10 +32,51 @@
 	overflow: hidden;
 
 	display: flex;
-	flex-direction: var(--direction);
-	justify-content: var(--justify);
-	align-items: var(--align);
 	gap: 8px;
+
+	/* default is the same values as #widget.vertical.to-top.left */
+	flex-direction: column;
+	justify-content: end;
+	align-items: flex-start;
+
+	&.arrangement_vertical {
+		&.vertical_to-top {
+			flex-direction: column;
+			justify-content: end;
+		}
+		&.vertical_to-bottom {
+			flex-direction: column-reverse;
+			justify-content: start;
+		}
+		&.vertical_left {
+			align-items: flex-start;
+		}
+		&.vertical_right {
+			align-items: flex-end;
+		}
+	}
+
+	&.arrangement_horizontal {
+		flex-direction: row; /* default fallback */
+		&.horizontal_to-left {
+			flex-direction: row;
+			justify-content: end;
+		}
+		&.horizontal_to-right {
+			flex-direction: row-reverse;
+			justify-content: start;
+		}
+		&.horizontal_top {
+			align-items: flex-start;
+		}
+		&.horizontal_bottom {
+			align-items: flex-end;
+		}
+	}
+
+	&.use-shadow {
+		filter: url(#shadow-filter);
+	}
 }
 
 #shadow-svg {
@@ -52,8 +90,77 @@
 .message {
 	flex-shrink: 0;
 	max-width: min(var(--max-width), 100%);
-	padding: 4px;
+	overflow: hidden;
+
 	animation: none;
+	animation-duration: 400ms;
+	animation-fill-mode: forwards;
+	--smooth: smooth-none;
+
+	.animation-smooth.arrangement_horizontal & {
+		--smooth: smooth-y, smooth-x;
+	}
+	.animation-smooth.arrangement_vertical & {
+		--smooth: smooth-y;
+	}
+
+	&.enter {
+		.animation-enter_none & {
+			animation-name: none;
+		}
+
+		.animation-enter_fade-in & {
+			animation-name: var(--smooth), fade-in;
+		}
+
+		.animation-enter_fade-in-left & {
+			animation-name: var(--smooth), fade-in, move-from-left;
+		}
+
+		.animation-enter_fade-in-right & {
+			animation-name: var(--smooth), fade-in, move-from-right;
+		}
+
+		.animation-enter_fade-in-up & {
+			animation-name: var(--smooth), fade-in, move-from-bottom;
+		}
+
+		.animation-enter_fade-in-down & {
+			animation-name: var(--smooth), fade-in, move-from-top;
+		}
+	}
+
+	&.exit {
+		.animation-exit_none & {
+			animation-name: none;
+			display: none;
+		}
+
+		.animation-exit_fade-out & {
+			animation-name: var(--smooth), fade-out;
+		}
+
+		.animation-exit_fade-out-left & {
+			animation-name: var(--smooth), fade-out, move-to-left;
+		}
+
+		.animation-exit_fade-out-right & {
+			animation-name: var(--smooth), fade-out, move-to-right;
+		}
+
+		.animation-exit_fade-out-up & {
+			animation-name: var(--smooth), fade-out, move-to-top;
+		}
+
+		.animation-exit_fade-out-down & {
+			animation-name: var(--smooth), fade-out, move-to-bottom;
+		}
+	}
+}
+
+.message-clamp {
+	/* necessary for emotes to not be clipped */
+	padding: 4px;
 
 	/* all necessary for line clamp to work */
 	overflow: hidden;
@@ -67,26 +174,22 @@
 	display: inline;
 	color: var(--font-color);
 	font-weight: bolder;
-}
 
-#widget.username-color-custom .user {
-	color: var(--custom-username-color, var(--font-color));
-}
+	.username-color_custom & {
+		color: var(--custom-username-color, var(--font-color));
+	}
 
-#widget.username-color-twitch .user {
-	color: var(--twitch-username-color, var(--font-color));
-}
+	.username-color_twitch & {
+		color: var(--twitch-username-color, var(--font-color));
+	}
 
-#widget.username-color-twitch-light .user {
-	color: var(--twitch-light-username-color, var(--font-color));
-}
+	.username-color_twitch-light & {
+		color: var(--twitch-light-username-color, var(--font-color));
+	}
 
-#widget.username-color-twitch-dark .user {
-	color: var(--twitch-dark-username-color, var(--font-color));
-}
-
-#widget.use-shadow {
-	filter: url(#shadow-filter);
+	.username-color_twitch-dark & {
+		color: var(--twitch-dark-username-color, var(--font-color));
+	}
 }
 
 .name {
@@ -157,41 +260,7 @@
  * Animations *
  **************/
 
-.animation-enter-fade .message {
-	animation: fade-in 0.5s forwards;
-}
-
-.animation-enter-fade-left .message {
-	animation:
-		fade-in 0.5s forwards,
-		move-in-left 0.5s forwards;
-}
-
-.animation-enter-fade-right .message {
-	animation:
-		fade-in 0.5s forwards,
-		move-in-right 0.5s forwards;
-}
-
-.animation-exit-fade .message.exit {
-	animation: fade-out 0.5s forwards;
-}
-
-.animation-exit-fade-left .message.exit {
-	animation:
-		fade-out 0.5s forwards,
-		move-out-left 0.5s forwards;
-}
-
-.animation-exit-fade-right .message.exit {
-	animation:
-		fade-out 0.5s forwards,
-		move-out-right 0.5s forwards;
-}
-
-.animation-exit-none .message.exit {
-	display: none;
-}
+/* fade in/out */
 
 @keyframes fade-in {
 	from {
@@ -212,38 +281,87 @@
 	}
 }
 
-@keyframes move-in-right {
+/* slide in */
+
+@keyframes move-from-left {
 	from {
-		transform: translateX(100%);
-	}
-	to {
-		transform: translateX(0);
+		transform: translateX(-100%);
 	}
 }
 
-@keyframes move-out-right {
+@keyframes move-from-right {
 	from {
-		transform: translateX(0);
-	}
-	to {
 		transform: translateX(100%);
 	}
 }
 
-@keyframes move-in-left {
+@keyframes move-from-top {
 	from {
-		transform: translateX(-100%);
-	}
-	to {
-		transform: translateX(0);
+		transform: translateY(-200%);
 	}
 }
 
-@keyframes move-out-left {
+@keyframes move-from-bottom {
 	from {
-		transform: translateX(0);
+		transform: translateY(200%);
 	}
+}
+
+/* slide out */
+
+@keyframes move-to-left {
 	to {
 		transform: translateX(-100%);
+		display: none;
+	}
+}
+
+@keyframes move-to-right {
+	to {
+		transform: translateX(100%);
+		display: none;
+	}
+}
+
+@keyframes move-to-top {
+	to {
+		transform: translateY(-200%);
+		display: none;
+	}
+}
+
+@keyframes move-to-bottom {
+	to {
+		transform: translateY(200%);
+		display: none;
+	}
+}
+
+/* smooth max height/width */
+
+@property --line-clamp {
+	syntax: '<integer>';
+	inherits: true;
+}
+
+@keyframes smooth-y {
+	from {
+		--line-clamp: 1;
+		max-height: 0;
+	}
+
+	to {
+		max-height: var(--message-height);
+	}
+}
+
+@keyframes smooth-x {
+	from {
+		--line-clamp: 1;
+		max-width: 0;
+	}
+
+	to {
+		max-width: min(var(--message-width), var(--max-width));
 	}
 }

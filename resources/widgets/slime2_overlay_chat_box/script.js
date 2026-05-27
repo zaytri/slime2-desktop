@@ -67,6 +67,18 @@ function widgetValuesListener(event) {
 		widgetElement.classList.toggle(className, force);
 	}
 
+	function removeClassesWithPrefix(...classPrefixes) {
+		const classes = [];
+		widgetElement.classList.forEach(widgetClass => {
+			classPrefixes.forEach(prefix => {
+				if (widgetClass.startsWith(prefix)) {
+					classes.push(widgetClass);
+				}
+			});
+		});
+		removeClass(...classes);
+	}
+
 	// text settings
 	[
 		// quotation marks around font name is necessary
@@ -82,12 +94,8 @@ function widgetValuesListener(event) {
 		setCustomCSS(cssVarName, value);
 	});
 
-	removeClass(
-		...['twitch', 'twitch-light', 'twitch-dark', 'custom'].map(color => {
-			return `username-color-${color}`;
-		}),
-	);
-	addClass(`username-color-${Widget.values.get('username-color')}`);
+	removeClassesWithPrefix('username-color');
+	addClass(`username-color_${Widget.values.get('username-color')}`);
 
 	// shadow settings
 
@@ -118,38 +126,16 @@ function widgetValuesListener(event) {
 		document.getElementById(id).setAttribute(attributeName, value);
 	});
 
-	// direction settings
+	// position settings
 
-	if (Widget.values.get('direction-axis') === 'horizontal') {
-		if (Widget.values.get('direction-horizontal-flow') === 'to-right') {
-			setCustomCSS('direction', 'row-reverse');
-			setCustomCSS('justify', 'start');
-		} else {
-			setCustomCSS('direction', 'row');
-			setCustomCSS('justify', 'end');
-		}
-		setCustomCSS(
-			'align',
-			Widget.values.get('direction-horizontal-alignment') === 'bottom'
-				? 'flex-end'
-				: 'flex-start',
-		);
-	} else {
-		if (Widget.values.get('direction-vertical-flow') === 'to-bottom') {
-			setCustomCSS('direction', 'column-reverse');
-			setCustomCSS('justify', 'start');
-		} else {
-			setCustomCSS('direction', 'column');
-			setCustomCSS('justify', 'end');
-		}
-
-		setCustomCSS(
-			'align',
-			Widget.values.get('direction-vertical-alignment') === 'right'
-				? 'flex-end'
-				: 'flex-start',
-		);
-	}
+	removeClassesWithPrefix('arrangement', 'vertical', 'horizontal');
+	addClass(
+		`arrangement_${Widget.values.get('arrangement') ?? 'vertical'}`,
+		`vertical_${Widget.values.get('vertical-flow') ?? 'to-top'}`,
+		`vertical_${Widget.values.get('vertical-align') ?? 'left'}`,
+		`horizontal_${Widget.values.get('horizontal-flow') ?? 'to-left'}`,
+		`horizontal_${Widget.values.get('horizontal-align') ?? 'top'}`,
+	);
 
 	// badge settings
 
@@ -171,20 +157,11 @@ function widgetValuesListener(event) {
 
 	// animation settings
 
-	const animationClasses = ['fade', 'fade-left', 'fade-right', 'none'];
-
-	removeClass(
-		...animationClasses.map(animation => {
-			return `animation-enter-${animation}`;
-		}),
-		...animationClasses.map(animation => {
-			return `animation-exit-${animation}`;
-		}),
-	);
-
+	removeClassesWithPrefix('animation');
+	toggleClass('animation-smooth', Widget.values.get('smooth-enter') ?? true);
 	addClass(
-		`animation-enter-${Widget.values.get('entrance-animation') ?? 'none'}`,
-		`animation-exit-${Widget.values.get('exit-animation') ?? 'none'}`,
+		`animation-enter_${Widget.values.get('enter-animation') ?? 'none'}`,
+		`animation-exit_${Widget.values.get('exit-animation') ?? 'none'}`,
 	);
 }
 
@@ -397,7 +374,7 @@ async function handleChatMessage(data, eventDate) {
 				return;
 			}
 
-			widgetBody.appendChild(messageTemplateClone);
+			displayMessage(messageTemplateClone, message_id);
 
 			// sound handling
 			const soundSrc = Widget.values.get('sound');
@@ -417,14 +394,12 @@ async function handleChatMessage(data, eventDate) {
 			}
 
 			// max message handling
-			let visibleMessages = widgetBody.querySelectorAll('.message:not(.exit)');
-			while (
-				visibleMessages.length > (Widget.values.get('max-messages') ?? 50)
-			) {
-				// hide the oldest visible message
-				const messageElement = visibleMessages[0];
+			const messages = widgetBody.querySelectorAll('.message:not(.exit)');
+			const maxMessages = Widget.values.get('max-messages') ?? 50;
+			for (let i = 0; i < messages.length - maxMessages; i++) {
+				// hide the oldest visible messages
+				const messageElement = messages[i];
 				hideMessage(messageElement);
-				visibleMessages = widgetBody.querySelectorAll('.message:not(.exit)');
 			}
 
 			// message expiration handling
@@ -448,11 +423,85 @@ async function handleChatMessage(data, eventDate) {
 	);
 }
 
+function displayMessage(messageTemplateClone, messageId) {
+	/** @type {HTMLDivElement} */
+	const widgetBody = document.getElementById('widget');
+
+	const resizeObserver = new ResizeObserver((entries, observer) => {
+		const entry = entries.pop();
+		if (!entry) return;
+
+		const { inlineSize: width, blockSize: height } = entry.borderBoxSize[0];
+		const newMessageElement = entry.target;
+
+		// set enter animation and sizing as soon as message is rendered
+
+		newMessageElement.classList.add('enter');
+		[
+			['message-width', `${width}px`],
+			['message-height', `${height}px`],
+		].forEach(([cssVarName, value]) => {
+			newMessageElement.style.setProperty(`--${cssVarName}`, value);
+		});
+
+		animationsFinished(newMessageElement).finally(() => {
+			const hideClipping = Widget.values.get('hide-clipping') ?? true;
+			if (hideClipping) {
+				// handle clipping
+
+				/** @type {NodeListOf<HTMLElement>} */
+				const visibleMessages = document
+					.getElementById('widget')
+					.querySelectorAll('.message:not(.exit)');
+
+				for (const messageElement of visibleMessages) {
+					/** @type {HTMLElement} */
+					const parent = messageElement.offsetParent;
+					const { offsetTop, offsetLeft, offsetHeight, offsetWidth } =
+						messageElement;
+
+					const top = offsetTop;
+					const left = offsetLeft;
+					const bottom = parent.offsetHeight - offsetTop - offsetHeight;
+					const right = parent.offsetWidth - offsetLeft - offsetWidth;
+
+					if (top < 0 || left < 0 || bottom < 0 || right < 0) {
+						// found message clipping out of bounds
+						hideMessage(messageElement);
+					} else {
+						// all other messages are in bounds, skip processing them
+						return;
+					}
+				}
+			}
+		});
+
+		observer.disconnect();
+	});
+
+	// append clone
+	widgetBody.appendChild(messageTemplateClone);
+
+	// add observer
+	resizeObserver.observe(
+		widgetBody.querySelector(`.message[data-message-id='${messageId}']`),
+	);
+}
+
+/** @param {HTMLElement} messageElement */
 function hideMessage(messageElement) {
-	messageElement.classList.add('exit');
-	setTimeout(() => {
+	// immediately remove element from DOM if no animation
+	if ((Widget.values.get('exit-animation') ?? 'none') === 'none') {
 		messageElement.remove();
-	}, 5 * 1000);
+		return;
+	}
+
+	messageElement.classList.add('exit');
+
+	// automatically remove element after animations finish
+	animationsFinished(messageElement).finally(() => {
+		messageElement.remove();
+	});
 }
 
 function handleChatMessageDelete(data) {
@@ -789,6 +838,20 @@ function cloneTemplate(id) {
 	}
 
 	return document.importNode(element.content, true);
+}
+
+/**
+ * Returns a Promise that resolves when all of the animations on this element
+ * have finished playing.
+ *
+ * @param {HTMLElement} element
+ */
+async function animationsFinished(element) {
+	return Promise.allSettled(
+		element.getAnimations().map(animation => {
+			return animation.finished;
+		}),
+	);
 }
 
 /** Lightens the text color if needed to be accessible on a black background */

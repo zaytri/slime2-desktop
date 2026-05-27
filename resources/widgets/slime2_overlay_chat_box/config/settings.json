@@ -130,7 +130,7 @@
 						"type": "toggle-input",
 						"label": "Use Shadow?",
 						"defaultValue": false,
-						"description": "Applies a shadow to the message text, badges, and emotes"
+						"description": "Applies a shadow to the message text, badges, and emotes."
 					},
 					"shadow-spread": {
 						"type": "slider-input",
@@ -143,7 +143,7 @@
 						"min": 0,
 						"max": 10,
 						"step": 1,
-						"description": "Can be used to create an outline"
+						"description": "Can be used to create an outline."
 					},
 					"shadow-blur": {
 						"type": "slider-input",
@@ -191,13 +191,13 @@
 					}
 				}
 			},
-			"direction-section": {
+			"position-section": {
 				"type": "section",
-				"label": "Direction",
+				"label": "Position",
 				"settings": {
-					"direction-axis": {
+					"arrangement": {
 						"type": "select-input",
-						"label": "Axis",
+						"label": "Message Arrangement",
 						"defaultValue": "vertical",
 						"options": [
 							{
@@ -210,11 +210,11 @@
 							}
 						]
 					},
-					"direction-vertical-flow": {
+					"vertical-flow": {
 						"type": "select-input",
 						"label": "Vertical Flow",
 						"condition": {
-							"direction-axis": "vertical"
+							"arrangement": ["vertical"]
 						},
 						"halfSpan": true,
 						"defaultValue": "to-top",
@@ -229,11 +229,11 @@
 							}
 						]
 					},
-					"direction-vertical-alignment": {
+					"vertical-align": {
 						"type": "select-input",
 						"label": "Vertical Alignment",
 						"condition": {
-							"direction-axis": "vertical"
+							"arrangement": ["vertical"]
 						},
 						"halfSpan": true,
 						"defaultValue": "left",
@@ -248,11 +248,11 @@
 							}
 						]
 					},
-					"direction-horizontal-flow": {
+					"horizontal-flow": {
 						"type": "select-input",
 						"label": "Horizontal Flow",
 						"condition": {
-							"direction-axis": "horizontal"
+							"arrangement": ["horizontal"]
 						},
 						"halfSpan": true,
 						"defaultValue": "to-left",
@@ -267,11 +267,11 @@
 							}
 						]
 					},
-					"direction-horizontal-alignment": {
+					"horizontal-align": {
 						"type": "select-input",
 						"label": "Horizontal Alignment",
 						"condition": {
-							"direction-axis": "horizontal"
+							"arrangement": ["horizontal"]
 						},
 						"halfSpan": true,
 						"defaultValue": "top",
@@ -337,51 +337,73 @@
 	"animation-category": {
 		"label": "Animation",
 		"settings": {
-			"entrance-animation": {
-				"type": "select-input",
-				"label": "Entrance Animation",
+			"smooth-enter": {
+				"type": "toggle-input",
+				"label": "Use Smooth Scroll?",
+				"defaultValue": true,
+				"description": "Message size is animated with the enter animation."
+			},
+			"enter-animation": {
+				"type": "dropdown-input",
+				"label": "Enter Animation",
 				"halfSpan": true,
-				"defaultValue": "none",
+				"defaultValue": "fade-in",
 				"options": [
-					{
-						"label": "Fade",
-						"value": "fade"
-					},
-					{
-						"label": "Fade Left",
-						"value": "fade-left"
-					},
-					{
-						"label": "Fade Right",
-						"value": "fade-right"
-					},
 					{
 						"label": "None",
 						"value": "none"
+					},
+					{
+						"label": "Fade In",
+						"value": "fade-in"
+					},
+					{
+						"label": "Fade In Left",
+						"value": "fade-in-left"
+					},
+					{
+						"label": "Fade In Right",
+						"value": "fade-in-right"
+					},
+					{
+						"label": "Fade In Up",
+						"value": "fade-in-up"
+					},
+					{
+						"label": "Fade In Down",
+						"value": "fade-in-down"
 					}
 				]
 			},
 			"exit-animation": {
-				"type": "select-input",
+				"type": "dropdown-input",
 				"label": "Exit Animation",
 				"halfSpan": true,
-				"defaultValue": "none",
+				"defaultValue": "fade-out",
 				"options": [
-					{
-						"label": "Fade",
-						"value": "fade"
-					},
-					{
-						"label": "Fade Left",
-						"value": "fade-left"
-					},
-					{
-						"label": "Fade Right",
-						"value": "fade-right"
-					},
 					{
 						"label": "None",
 						"value": "none"
+					},
+					{
+						"label": "Fade Out",
+						"value": "fade-out"
+					},
+					{
+						"label": "Fade Out Left",
+						"value": "fade-out-left"
+					},
+					{
+						"label": "Fade Out Right",
+						"value": "fade-out-right"
+					},
+					{
+						"label": "Fade Out Up",
+						"value": "fade-out-up"
+					},
+					{
+						"label": "Fade Out Down",
+						"value": "fade-out-down"
 					}
 				]
 			}
@@ -407,6 +429,11 @@
 				"min": 1,
 				"max": 200,
 				"step": 1
+			},
+			"hide-clipping": {
+				"type": "toggle-input",
+				"label": "Hide messages that clip out of bounds?",
+				"defaultValue": true
 			},
 			"expire-messages": {
 				"type": "toggle-input",
@@ -456,7 +483,7 @@
 						"defaultValue": 0,
 						"min": 0,
 						"step": "any",
-						"description": "Will only show messages from followers that have followed for at least this many hours"
+						"description": "Will only show messages from followers that have followed for at least this many hours."
 					}
 				}
 			},
@@ -492,18 +519,18 @@
 			"sound": {
 				"type": "audio-input",
 				"label": "Sound",
-				"description": "Play this sound effect for every chat message",
-				"halfSpan": true
+				"halfSpan": true,
+				"description": "Play this sound effect for every chat message."
 			},
 			"sound-cooldown": {
 				"type": "slider-input",
 				"label": "Cooldown (seconds)",
+				"halfSpan": true,
 				"defaultValue": 5,
 				"min": 0,
 				"max": 600,
 				"step": 1,
-				"description": "Minimum time between playing sounds",
-				"halfSpan": true
+				"description": "Minimum time between playing sounds."
 			}
 		}
 	}
