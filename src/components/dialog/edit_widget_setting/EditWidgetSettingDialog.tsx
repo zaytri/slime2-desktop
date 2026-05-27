@@ -110,12 +110,38 @@ export default function EditWidgetSettingDialog({
 							const defaultClone = structuredClone(
 								SETTINGS_DATA[newType].defaultData,
 							);
-							// don't lose options when switching to another type with options
+							// don't lose options
+							// when switching to another type with options
 							if ('options' in newData && 'options' in defaultClone) {
 								defaultClone.options = newData.options;
 							}
 
-							// don't lose min/max/step when switching to another number type
+							// don't lose default
+							// when switching between select and dropdown
+							if (
+								(newData.type === 'select-input' ||
+									newData.type === 'dropdown-input') &&
+								(defaultClone.type === 'select-input' ||
+									defaultClone.type === 'dropdown-input')
+							) {
+								defaultClone.defaultValue =
+									newData.defaultValue ?? defaultClone.defaultValue;
+							}
+
+							// don't lose default
+							// when switching between text and text area
+							if (
+								(newData.type === 'text-input' ||
+									newData.type === 'text-area-input') &&
+								(defaultClone.type === 'text-input' ||
+									defaultClone.type === 'text-area-input')
+							) {
+								defaultClone.defaultValue =
+									newData.defaultValue ?? defaultClone.defaultValue;
+							}
+
+							// don't lose min/max/step/default
+							// when switching between number and slider
 							if (
 								(newData.type === 'number-input' ||
 									newData.type === 'slider-input') &&
@@ -125,6 +151,8 @@ export default function EditWidgetSettingDialog({
 								defaultClone.min = newData.min ?? defaultClone.min;
 								defaultClone.max = newData.max ?? defaultClone.max;
 								defaultClone.step = newData.step ?? defaultClone.step;
+								defaultClone.defaultValue =
+									newData.defaultValue ?? defaultClone.defaultValue;
 							}
 
 							// don't lose description when switching to most other types
@@ -140,8 +168,8 @@ export default function EditWidgetSettingDialog({
 									newData.description ?? defaultClone.description;
 							}
 
-							// don't lose globals when switching to another type
 							setNewData({
+								// don't lose globals when switching to another type
 								condition: newData.condition,
 								halfSpan: newData.halfSpan,
 								searchTags: newData.searchTags,
