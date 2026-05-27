@@ -1,41 +1,11 @@
-<div id="widget"></div>
-
-<!-- alert template, inserted into the widget above -->
-<template>
-	<div class="alert"></div>
-</template>
-
-<!-- message template, inserted into the widget above -->
-<template id="message-template">
-	<div class="message">
-		<span class="user"></span><span class="content"></span>
+<div id="widget">
+	<div id="alert">
+		<img id="image" />
+		<video id="video" loop autoplay />
+		<p id="text"></p>
 	</div>
-</template>
-
-<!-- user template, inserted into the user class -->
-<template id="user-template"
-	><span class="badges"></span><span class="name"></span
-	><span class="pronouns"></span
-></template>
-
-<!-- badge template, inserted into the badges class -->
-<template id="badge-template"><img class="badge" /></template>
-
-<!-- text template, inserted into the content class -->
-<template id="text-fragment-template"><span class="text"></span></template>
-
-<!-- mention template, inserted into the content class -->
-<template id="mention-fragment-template"
-	><span class="mention"></span
-></template>
-
-<!-- emote template, inserted into the content class -->
-<template id="emote-fragment-template"><img class="emote" /></template>
-
-<!-- cheermote template, inserted into the content class -->
-<template id="cheermote-fragment-template"
-	><img class="cheermote emote" /><span class="cheer-amount"></span
-></template>
+	<audio id="audio" autoplay />
+</div>
 
 <!-- svg used for shadow -->
 <svg id="shadow-svg" class="absolute inset-0 size-0 opacity-0">

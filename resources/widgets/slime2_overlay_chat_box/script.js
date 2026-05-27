@@ -108,10 +108,10 @@ function widgetValuesListener(event) {
 		['blur', 'stdDeviation', 'shadow-blur'],
 		['offset', 'dx', 'shadow-offset-x'],
 		['offset', 'dy', 'shadow-offset-y'],
-	].forEach(([id, attributeName, valueKey]) => {
+	].forEach(([id, attributeName, settingId]) => {
 		document
 			.getElementById(id)
-			.setAttribute(attributeName, Widget.values.get(valueKey) ?? 0);
+			.setAttribute(attributeName, Widget.values.get(settingId) ?? 0);
 	});
 
 	const shadowSpread = Widget.values.get('shadow-spread') ?? 0;
@@ -246,7 +246,6 @@ function twitchEventListener(event) {
 	logEventData(`${event.type} - ${event.detail.type}`, event.detail);
 
 	const eventDate = new Date(event.detail.timestamp);
-
 	const { type, data } = event.detail;
 
 	switch (type) {
