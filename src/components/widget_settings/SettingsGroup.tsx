@@ -20,9 +20,10 @@ export default function SettingsGroup({ settings }: SettingsGroupProps) {
 	return (
 		<>
 			{Object.entries(settings).map(([id, setting]) => {
+				const conditions = Object.entries(setting.condition ?? {});
 				const conditionsMet =
-					!setting.condition ||
-					Object.entries(setting.condition).some(condition => {
+					conditions.length === 0 ||
+					conditions.some(condition => {
 						// settings within multisubsections can only be dependent
 						// on other settings within that same multisubsection
 						const [conditionId, conditionValues] = condition;
