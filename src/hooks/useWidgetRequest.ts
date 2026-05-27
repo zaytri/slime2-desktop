@@ -6,9 +6,16 @@ import { getPronouns } from '@/helpers/services/pronouns';
 import twitchApi from '@/helpers/services/twitch/twitchApi';
 import { getTwitchFollowDate } from '@/helpers/services/twitch/twitchFollowDate';
 import { capitalizeWord } from '@/helpers/string';
-import { sendWidgetResponse } from '@/helpers/widgetMessage';
+import { sendWidgetResponse, sendWidgetValues } from '@/helpers/widgetMessage';
 import logZodError from '@/helpers/zodError';
 import type { Account } from '@@/json/accounts';
+import { loadWidgetSettings } from '@@/json/widgetSettings';
+import {
+	loadWidgetValues,
+	saveWidgetValues,
+	WidgetValuesZ,
+	type WidgetValues,
+} from '@@/json/widgetValues';
 import { listen } from '@tauri-apps/api/event';
 import { useEffect } from 'react';
 import { z } from 'zod/mini';
@@ -146,6 +153,35 @@ export default function useWidgetRequest() {
 						respond(ffz);
 						break;
 					}
+					case 'post-slime2-values': {
+						const sentValues = request.payload;
+
+						// load settings and values from json
+						const [settings, values] = await Promise.all([
+							loadWidgetSettings(widget_id),
+							loadWidgetValues(widget_id),
+						]);
+						const newValues: WidgetValues = {
+							...structuredClone(values),
+							...structuredClone(sentValues),
+						};
+
+						// send to widget and save to json
+						await Promise.all([
+							sendWidgetValues(widget_id, settings, newValues),
+							saveWidgetValues(widget_id, newValues),
+						]);
+
+						// send to widget values provider
+						dispatchEvent(
+							new CustomEvent('update-values', {
+								detail: { widget_id, values: newValues },
+							}),
+						);
+
+						respond({ success: true });
+						break;
+					}
 					default:
 						throw Error('Unhandled request type!');
 				}
@@ -180,14 +216,14 @@ export default function useWidgetRequest() {
 	}, [accounts]);
 }
 
-const FollowDateRequest = z.object({
+const FollowDateRequestZ = z.object({
 	request_type: z.literal('get-twitch-follow-date'),
 	payload: z.object({
 		user_id: z.string(),
 	}),
 });
 
-const PronounsRequest = z.object({
+const PronounsRequestZ = z.object({
 	request_type: z.literal('get-pronouns'),
 	payload: z.object({
 		platform: z.literal('twitch'),
@@ -196,14 +232,14 @@ const PronounsRequest = z.object({
 	}),
 });
 
-const PlatformRequest = z.object({
+const PlatformRequestZ = z.object({
 	request_type: z.literal(['get-betterttv-user', 'get-frankerfacez-room']),
 	payload: z.object({
 		platform: z.literal('twitch'),
 	}),
 });
 
-const AccountRequest = z.object({
+const AccountRequestZ = z.object({
 	request_type: z.literal([
 		'get-twitch-cheermotes',
 		'get-twitch-global-badges',
@@ -211,13 +247,18 @@ const AccountRequest = z.object({
 	]),
 });
 
-const ChatMessageRequest = z.object({
+const ChatMessageRequestZ = z.object({
 	request_type: z.literal('post-twitch-chat-message'),
 	payload: z.object({
 		broadcaster_id: z.string(),
 		message: z.string(),
 		reply_parent_message_id: z.string(),
 	}),
+});
+
+const ValuesRequestZ = z.object({
+	request_type: z.literal('post-slime2-values'),
+	payload: WidgetValuesZ,
 });
 
 const WidgetRequestZ = z.intersection(
@@ -227,11 +268,12 @@ const WidgetRequestZ = z.intersection(
 		account_id: z.string(),
 	}),
 	z.discriminatedUnion('request_type', [
-		PronounsRequest,
-		FollowDateRequest,
-		AccountRequest,
-		PlatformRequest,
-		ChatMessageRequest,
+		PronounsRequestZ,
+		FollowDateRequestZ,
+		AccountRequestZ,
+		PlatformRequestZ,
+		ChatMessageRequestZ,
+		ValuesRequestZ,
 	]),
 );
 

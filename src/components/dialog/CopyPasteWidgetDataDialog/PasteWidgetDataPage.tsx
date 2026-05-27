@@ -1,6 +1,6 @@
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { usePageContext } from '@/contexts/pages/usePageContext';
-import { type WidgetValues, WidgetValuesParser } from '@@/json/widgetValues';
+import { type WidgetValues, WidgetValuesZ } from '@@/json/widgetValues';
 import { Description, Field, Label, Textarea } from '@headlessui/react';
 import clsx from 'clsx';
 import { useState } from 'react';
@@ -94,7 +94,7 @@ export default function PasteWidgetDataPage() {
 
 function validateJson(json: string): WidgetValues | null {
 	try {
-		return WidgetValuesParser.parse(JSON.parse(json));
+		return WidgetValuesZ.parse(JSON.parse(json));
 	} catch (error) {
 		return null;
 	}

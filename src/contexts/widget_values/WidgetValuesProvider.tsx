@@ -2,6 +2,7 @@ import type { WidgetSettings } from '@/helpers/json/widgetSettings';
 import {
 	loadWidgetValues,
 	saveWidgetValues,
+	type WidgetValues,
 } from '@/helpers/json/widgetValues';
 import { sendWidgetValues } from '@/helpers/widgetMessage';
 import { useEffect, useReducer, useState } from 'react';
@@ -32,6 +33,25 @@ export default function WidgetValuesProvider({
 		}
 
 		getWidgetValues();
+	}, []);
+
+	useEffect(() => {
+		function updateValuesListener(
+			event: CustomEventInit<{
+				widget_id: string;
+				values: WidgetValues;
+			}>,
+		) {
+			if (!event.detail || event.detail.widget_id !== id) return;
+			const { values } = event.detail;
+			dispatch({ type: 'set-multiple', values });
+		}
+
+		addEventListener('update-values', updateValuesListener);
+
+		return () => {
+			removeEventListener('update-values', updateValuesListener);
+		};
 	}, []);
 
 	// send and save on every widgetValue change after load

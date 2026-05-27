@@ -15,7 +15,7 @@ export async function loadWidgetValues(id: string): Promise<WidgetValues> {
 		const json = await loadJson(await widgetValuesPath(id));
 
 		try {
-			return WidgetValuesParser.parse(json);
+			return WidgetValuesZ.parse(json);
 		} catch (error) {
 			logZodError(error, json);
 			return {};
@@ -40,7 +40,7 @@ async function widgetValuesPath(id: string) {
 
 // zod and types
 
-const WidgetValue = z.union([
+const WidgetValueZ = z.union([
 	// JSON values, plus undefined just in case
 	z.string(),
 	z.number(),
@@ -50,7 +50,7 @@ const WidgetValue = z.union([
 	// no arrays should allow null or undefined
 	z.array(z.union([z.boolean(), z.string(), z.number()])),
 ]);
-export type WidgetValue = z.infer<typeof WidgetValue>;
+export type WidgetValue = z.infer<typeof WidgetValueZ>;
 
-export const WidgetValuesParser = z.record(z.string(), WidgetValue);
-export type WidgetValues = z.infer<typeof WidgetValuesParser>;
+export const WidgetValuesZ = z.record(z.string(), WidgetValueZ);
+export type WidgetValues = z.infer<typeof WidgetValuesZ>;
