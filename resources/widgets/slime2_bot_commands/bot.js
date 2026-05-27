@@ -1,3 +1,5 @@
+'use strict';
+
 // Globals
 // ***************************************************************************
 const RequestResolveRejectMap = new Map();
