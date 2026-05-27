@@ -49,11 +49,11 @@ export default function SimulateTwitchGiftSubscriptionDialog({
 							/>
 
 							<SliderField
-								label='Total Subscriptions Gifted'
+								label='Total Subscriptions Gifted (All Time)'
 								value={total}
 								onChange={setTotal}
 								step={1}
-								min={0}
+								min={count}
 								max={10000}
 							/>
 						</>
@@ -68,21 +68,34 @@ export default function SimulateTwitchGiftSubscriptionDialog({
 					<SelectField
 						label='Tier'
 						value={tier}
-						onChange={setTier}
-						options={[
-							{ label: 'Tier 1', value: '1000' },
-							{ label: 'Tier 2', value: '2000' },
-							{ label: 'Tier 3', value: '3000' },
-						]}
+						onChange={value => {
+							setTier(value);
+							const max = giftMax(value);
+							if (count > max) {
+								setCount(max);
+							}
+						}}
+						options={
+							[
+								{ label: 'Tier 1', value: '1000' },
+								{ label: 'Tier 2', value: '2000' },
+								{ label: 'Tier 3', value: '3000' },
+							] as Option<Twitch.SubTier>[]
+						}
 					/>
 
 					<SliderField
 						label='Gift Count'
 						value={count}
-						onChange={setCount}
+						onChange={value => {
+							setCount(value);
+							if (total < value) {
+								setTotal(value);
+							}
+						}}
 						step={1}
 						min={1}
-						max={1000}
+						max={giftMax(tier)}
 					/>
 				</section>
 			</div>
@@ -102,4 +115,10 @@ export default function SimulateTwitchGiftSubscriptionDialog({
 			</div>
 		</DialogContent>
 	);
+}
+
+function giftMax(tier: Twitch.SubTier) {
+	if (tier === '3000') return 40;
+	if (tier === '2000') return 100;
+	return 1000;
 }
