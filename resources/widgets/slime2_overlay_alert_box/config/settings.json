@@ -3307,18 +3307,10 @@
 			"delay": {
 				"type": "slider-input",
 				"label": "Alert Delay (seconds)",
-				"halfSpan": true,
 				"defaultValue": 0,
 				"min": 0,
 				"max": 30,
 				"step": 1
-			},
-			"use-interrupt": {
-				"type": "toggle-input",
-				"label": "Allow Alert Interruption?",
-				"halfSpan": true,
-				"defaultValue": false,
-				"description": "New alerts will replace any alert that is already playing."
 			},
 			"hide-words": {
 				"type": "multi-text-input",
