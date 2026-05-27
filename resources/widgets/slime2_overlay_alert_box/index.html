@@ -1,5 +1,10 @@
 <div id="widget"></div>
 
+<!-- alert template, inserted into the widget above -->
+<template>
+	<div class="alert"></div>
+</template>
+
 <!-- message template, inserted into the widget above -->
 <template id="message-template">
 	<div class="message">
@@ -31,3 +36,86 @@
 <template id="cheermote-fragment-template"
 	><img class="cheermote emote" /><span class="cheer-amount"></span
 ></template>
+
+<!-- svg used for shadow -->
+<svg id="shadow-svg" class="absolute inset-0 size-0 opacity-0">
+	<defs>
+		<!-- extra height and width to prevent clipping -->
+		<filter id="shadow-filter" height="200%" width="200%" x="-50%" y="-50%">
+			<!--
+				This is why we use a custom svg filter.
+				In CSS, `filter: drop-shadow();` doesn't have a spread radius.
+			-->
+			<!-- shadow spread -->
+			<feMorphology
+				id="morph"
+				operator="dilate"
+				radius="0"
+				in="SourceAlpha"
+				result="shadow-spread"
+			/>
+
+			<!-- slight blur for rounding -->
+			<feGaussianBlur
+				id="rounding-blur"
+				stdDeviation="0"
+				in="shadow-spread"
+				result="shadow-spread-blur"
+			/>
+
+			<!-- alpha manipulation for rounding -->
+			<feColorMatrix
+				id="rounding-matrix"
+				type="matrix"
+				values="
+					1 0 0 0 0
+					0 1 0 0 0
+					0 0 1 0 0
+					0 0 0 1 0
+				"
+				in="shadow-spread-blur"
+				result="shadow-rounded"
+			/>
+
+			<!-- shadow blur -->
+			<feGaussianBlur
+				id="blur"
+				stdDeviation="0"
+				in="shadow-rounded"
+				result="shadow-blur"
+			/>
+
+			<!-- shadow offset -->
+			<feOffset
+				id="offset"
+				dx="0"
+				dy="0"
+				in="shadow-blur"
+				result="shadow-offset"
+			/>
+
+			<!-- shadow color -->
+			<feFlood
+				id="flood"
+				flood-color="black"
+				flood-opacity="1"
+				result="shadow-color"
+			/>
+
+			<!-- apply color -->
+			<feComposite
+				operator="in"
+				in="shadow-color"
+				in2="shadow-offset"
+				result="shadow-result"
+			/>
+
+			<feMerge>
+				<!-- draw shadow -->
+				<feMergeNode in="shadow-result" />
+				<!-- draw source -->
+				<feMergeNode in="SourceGraphic" />
+			</feMerge>
+		</filter>
+	</defs>
+</svg>

@@ -6,8 +6,11 @@
 	"support": "https://forums.slime2.stream/",
 	"type": ["overlay"],
 	"import": {
-		"js": ["script.js", "https://colorjs.io/dist/color.global.min.js"],
-		"css": ["styles.css"]
+		"js": ["script.js"],
+		"css": [
+			"styles.css",
+			"https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+		]
 	},
 	"accounts": [{ "type": "read", "service": "twitch" }]
 }
