@@ -80,7 +80,7 @@ type PeekTagProps = {
 
 function PeekTag({ label, value }: PeekTagProps) {
 	return (
-		<div className='grid grid-cols-2 items-center overflow-hidden rounded-1 border-2 border-zinc-400 bg-zinc-700 whitespace-nowrap text-white'>
+		<div className='grid shrink-0 grid-cols-2 items-center overflow-hidden rounded-1 border-2 border-zinc-400 bg-zinc-700 whitespace-nowrap text-white'>
 			<p className='px-2 text-3.5 font-bold'>{label}</p>
 			<div
 				className={clsx(
