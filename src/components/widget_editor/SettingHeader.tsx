@@ -39,7 +39,7 @@ export default function SettingHeader({
 				labelClassName={clsx('py-1! text-3.5!')}
 				valueClassName={clsx(
 					type === 'text-display'
-						? 'font-nunito!'
+						? 'font-nunito! whitespace-pre-line'
 						: '-mt-0.5 font-fredoka! text-4!',
 					valueClassName,
 				)}

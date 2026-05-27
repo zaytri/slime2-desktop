@@ -120,8 +120,12 @@ export default function SettingEditor({
 												);
 											})}
 										</div>
+									) : typeof value === 'string' ? (
+										<p className='whitespace-pre-line before:content-["\""] after:content-["\""]'>
+											{value}
+										</p>
 									) : (
-										JSON.stringify(value)
+										<p>{JSON.stringify(value)}</p>
 									)}
 								</SettingProperty>
 							);
