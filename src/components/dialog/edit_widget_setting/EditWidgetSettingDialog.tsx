@@ -4,6 +4,7 @@ import SelectField from '@/components/input_fields/SelectField';
 import TextAreaField from '@/components/input_fields/TextAreaField';
 import TextField from '@/components/input_fields/TextField';
 import { useDialog } from '@/contexts/dialog/useDialog';
+import { i18nStringTransform } from '@/helpers/i18n';
 import {
 	SECTION_SETTING_GROUPED_OPTIONS,
 	SETTINGS_DATA,
@@ -50,8 +51,25 @@ export default function EditWidgetSettingDialog({
 	const trimmedId = newId.trim();
 	const trimmedLabel = newLabel.trim();
 	const emptyOptions = 'options' in newData && newData.options.length === 0;
+	let duplicateOptionLabels = false;
+	if ('options' in newData) {
+		const labelSet = new Set<string>();
+		duplicateOptionLabels = newData.options.some(option => {
+			const label = i18nStringTransform(option.label);
+			if (labelSet.has(label)) {
+				return true;
+			} else {
+				labelSet.add(label);
+			}
+		});
+	}
 
-	const disableSave = !trimmedId || !trimmedLabel || !!idError || emptyOptions;
+	const disableSave =
+		!trimmedId ||
+		!trimmedLabel ||
+		!!idError ||
+		emptyOptions ||
+		duplicateOptionLabels;
 
 	function onChangeId(id: string) {
 		setNewId(id);
@@ -376,7 +394,9 @@ export default function EditWidgetSettingDialog({
 					{disableSave && (
 						<p className='text-3.5 font-bold text-zinc-500 italic'>
 							{'options' in newData
-								? 'Label, Unique ID, and at least one Option are required.'
+								? duplicateOptionLabels
+									? 'Duplicate Option Labels are not allowed.'
+									: 'Label, Unique ID, and at least one Option are required.'
 								: 'Label and Unique ID are required.'}
 						</p>
 					)}

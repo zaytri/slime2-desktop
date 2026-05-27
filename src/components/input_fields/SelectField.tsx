@@ -48,7 +48,7 @@ export default function SelectField<V>({
 				>
 					{options.map(option => {
 						return (
-							<Field key={option.label}>
+							<Field key={JSON.stringify(option.value)}>
 								<Radio
 									value={option.value}
 									className='group/check flex flex-1 items-center rounded-1 px-1 py-0.5 outline-lime-600 data-over:bg-lime-200 data-over:outline-2'
@@ -80,7 +80,7 @@ export default function SelectField<V>({
 				>
 					{options.map(option => {
 						return (
-							<Field key={option.label}>
+							<Field key={JSON.stringify(option.value)}>
 								<Radio
 									value={option.value}
 									className='group/select input-select-option'

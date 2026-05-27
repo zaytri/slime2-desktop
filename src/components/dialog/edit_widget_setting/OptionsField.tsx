@@ -9,7 +9,8 @@ import ArrowDownSvg from '@@/svg/ArrowDownSvg';
 import ArrowUpSvg from '@@/svg/ArrowUpSvg';
 import PlusSvg from '@@/svg/PlusSvg';
 import XSvg from '@@/svg/XSvg';
-import { Fieldset, Legend } from '@headlessui/react';
+import { Field, Fieldset, Input, Label, Legend } from '@headlessui/react';
+import clsx from 'clsx';
 import { useRef, useState } from 'react';
 
 type DefaultValueOption = 'string' | 'number' | 'boolean';
@@ -38,6 +39,21 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 	const [number, setNumber] = useState<number | null>(null);
 	const [boolean, setBoolean] = useState(false);
 
+	let generalError = '';
+	const labelSet = new Set<string>();
+	if (
+		values.some(option => {
+			const label = i18nStringTransform(option.label);
+			if (labelSet.has(label)) {
+				return true;
+			} else {
+				labelSet.add(label);
+			}
+		})
+	) {
+		generalError = 'Error: Duplicate Labels!';
+	}
+
 	function resetInputValue() {
 		setText('');
 		setNumber(null);
@@ -46,13 +62,13 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 	}
 
 	function removeOptionAtIndex(index: number) {
-		const newValues = [...(values || [])];
+		const newValues = structuredClone(values);
 		newValues.splice(index, 1);
 		onChange(newValues);
 	}
 
 	function swapOptionIndex(oldIndex: number, newIndex: number) {
-		const newValues = [...(values || [])];
+		const newValues = structuredClone(values);
 		onChange(swapItems(newValues, oldIndex, newIndex));
 	}
 
@@ -237,9 +253,16 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 					{values.map((option, index) => {
 						const canSwapUp = index > 0;
 						const canSwapDown = index < values.length - 1;
+						const hasDuplicateLabel = values.find((otherOption, otherIndex) => {
+							return (
+								index !== otherIndex &&
+								i18nStringTransform(option.label) ===
+									i18nStringTransform(otherOption.label)
+							);
+						});
 
 						return (
-							<div key={`${option.value}_${index}`} className='flex gap-1'>
+							<div key={JSON.stringify(option.value)} className='flex gap-1'>
 								<button
 									disabled={!canSwapUp}
 									type='button'
@@ -264,13 +287,26 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 									<ArrowDownSvg className='size-3.5' />
 								</button>
 
-								<div className='flex flex-1 rounded-1 bg-zinc-700 text-3.5 outline outline-offset-0! outline-zinc-800'>
-									<div className='flex flex-1 items-center'>
-										<p className='px-2 py-0.5 font-bold text-white'>Label</p>
-										<p className='flex flex-1 items-center self-stretch bg-white/75 px-1 font-bold'>
-											{i18nStringTransform(option.label)}
-										</p>
-									</div>
+								<div className='flex flex-1 rounded-1 bg-zinc-700 text-3.5 outline -outline-offset-1! outline-zinc-800'>
+									<Field className='flex flex-1 items-center'>
+										<Label className='px-2 py-0.5 font-bold text-white'>
+											Label
+										</Label>
+										<Input
+											value={i18nStringTransform(option.label)}
+											onChange={event => {
+												const newValues = structuredClone(values);
+												if (newValues[index]) {
+													newValues[index].label = event.target.value;
+													onChange(newValues);
+												}
+											}}
+											className={clsx(
+												'z-1 flex flex-1 items-center self-stretch bg-white px-1 font-bold outline -outline-offset-1 outline-zinc-800 data-focus:outline-3 data-focus:outline-lime-600',
+												hasDuplicateLabel && 'text-rose-700',
+											)}
+										/>
+									</Field>
 									<div className='flex flex-1 items-center'>
 										<p className='px-2 py-0.5 font-bold text-white'>Value</p>
 										<p className='flex flex-1 items-center self-stretch bg-white/75 px-1 font-mono'>
@@ -293,6 +329,12 @@ export default function OptionsField({ values, onChange }: OptionsFieldProps) {
 						);
 					})}
 				</div>
+			)}
+
+			{generalError && (
+				<p className='rounded-1 bg-rose-900 px-1.5 text-3.5 font-bold text-white outline outline-rose-950'>
+					{generalError}
+				</p>
 			)}
 		</div>
 	);

@@ -169,7 +169,7 @@ function DropdownFieldPopover<V>({
 								{option.options.map(option => {
 									return (
 										<SelectItem
-											key={option.label}
+											key={JSON.stringify(option.value)}
 											value={option.label}
 											className='dark-menu-item px-4! py-0.5!'
 											onClick={() => {
@@ -185,7 +185,7 @@ function DropdownFieldPopover<V>({
 					}
 					return (
 						<SelectItem
-							key={option.label}
+							key={JSON.stringify(option.value)}
 							value={option.label}
 							className='dark-menu-item'
 							onClick={() => {

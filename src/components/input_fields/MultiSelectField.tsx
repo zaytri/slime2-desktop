@@ -48,7 +48,7 @@ export default function MultiSelectField<V>({
 				<div className='flex flex-1 flex-wrap gap-2 self-stretch bg-white px-2 py-1'>
 					{options.map(option => {
 						return (
-							<Field key={option.label}>
+							<Field key={JSON.stringify(option.value)}>
 								<Checkbox
 									className='group/check flex flex-1 items-center rounded-1 px-1 py-0.5 outline-lime-600 data-over:bg-lime-200 data-over:outline-2'
 									checked={values.includes(option.value)}
@@ -80,7 +80,7 @@ export default function MultiSelectField<V>({
 				<div className='flex flex-wrap gap-1.5 py-1'>
 					{options.map(option => {
 						return (
-							<Field key={option.label}>
+							<Field key={JSON.stringify(option.value)}>
 								<Checkbox
 									className='group/select input-select-option'
 									checked={values.includes(option.value)}
