@@ -1,34 +1,4 @@
 {
-	"global-category": {
-		"label": "Global Options",
-		"settings": {
-			"global-description": {
-				"type": "text-display",
-				"label": "These options will be applied to all alerts."
-			},
-			"delay": {
-				"type": "slider-input",
-				"label": "Alert Delay (seconds)",
-				"halfSpan": true,
-				"defaultValue": 0,
-				"min": 0,
-				"max": 30,
-				"step": 1
-			},
-			"use-interrupt": {
-				"type": "toggle-input",
-				"label": "Allow Alert Interruption?",
-				"halfSpan": true,
-				"defaultValue": false,
-				"description": "New alerts will replace any alert that is already playing."
-			},
-			"hide-words": {
-				"type": "multi-text-input",
-				"label": "Hide alerts that contain these words:",
-				"placeholder": "Bad Word"
-			}
-		}
-	},
 	"alerts-category": {
 		"label": "Alerts",
 		"settings": {
@@ -45,43 +15,43 @@
 						"label": "Alert Enabled?",
 						"defaultValue": true
 					},
-					"follow-message": {
+					"follow-text": {
 						"type": "text-area-input",
-						"label": "Message",
+						"label": "Alert Text",
 						"defaultValue": "{username} just followed!",
 						"description": "{username} - Follower Name"
 					},
 					"follow-layout": {
 						"type": "dropdown-input",
-						"label": "Message Layout",
+						"label": "Alert Layout",
 						"halfSpan": true,
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Below Visual",
+								"label": "Text Below Visual",
 								"value": "below"
 							},
 							{
-								"label": "Above Visual",
+								"label": "Text Above Visual",
 								"value": "above"
 							},
 							{
-								"label": "Left of Visual",
+								"label": "Text Left of Visual",
 								"value": "left"
 							},
 							{
-								"label": "Right of Visual",
+								"label": "Text Right of Visual",
 								"value": "right"
 							},
 							{
-								"label": "On Top of Visual",
+								"label": "Text Over Visual",
 								"value": "over"
 							}
 						]
 					},
 					"follow-visual": {
 						"type": "dropdown-input",
-						"label": "Visual",
+						"label": "Alert Visual",
 						"halfSpan": true,
 						"defaultValue": "none",
 						"options": [
@@ -101,12 +71,12 @@
 					},
 					"follow-sound": {
 						"type": "multi-audio-input",
-						"label": "Sound",
+						"label": "Sound(s)",
 						"halfSpan": true
 					},
 					"follow-video": {
 						"type": "multi-video-input",
-						"label": "Video",
+						"label": "Video(s)",
 						"condition": {
 							"follow-visual": "video"
 						},
@@ -114,7 +84,7 @@
 					},
 					"follow-image": {
 						"type": "multi-image-input",
-						"label": "Image",
+						"label": "Image(s)",
 						"condition": {
 							"follow-visual": "image"
 						},
@@ -135,8 +105,96 @@
 						"defaultValue": "bounceIn",
 						"options": [
 							{
+								"label": "Back In Down",
+								"value": "backInDown"
+							},
+							{
+								"label": "Back In Left",
+								"value": "backInLeft"
+							},
+							{
+								"label": "Back In Right",
+								"value": "backInRight"
+							},
+							{
+								"label": "Back In Up",
+								"value": "backInUp"
+							},
+							{
 								"label": "Bounce In",
 								"value": "bounceIn"
+							},
+							{
+								"label": "Bounce In Down",
+								"value": "bounceInDown"
+							},
+							{
+								"label": "Bounce In Left",
+								"value": "bounceInLeft"
+							},
+							{
+								"label": "Bounce In Right",
+								"value": "bounceInRight"
+							},
+							{
+								"label": "Bounce In Up",
+								"value": "bounceInUp"
+							},
+							{
+								"label": "Fade In",
+								"value": "fadeIn"
+							},
+							{
+								"label": "Fade In Down",
+								"value": "fadeInDown"
+							},
+							{
+								"label": "Fade In Left",
+								"value": "fadeInLeft"
+							},
+							{
+								"label": "Fade In Right",
+								"value": "fadeInRight"
+							},
+							{
+								"label": "Fade In Up",
+								"value": "fadeInUp"
+							},
+							{
+								"label": "Lightspeed In Right",
+								"value": "lightSpeedInRight"
+							},
+							{
+								"label": "Lightspeed In Left",
+								"value": "lightSpeedInLeft"
+							},
+							{
+								"label": "Rotate In",
+								"value": "rotateIn"
+							},
+							{
+								"label": "Roll In",
+								"value": "rollIn"
+							},
+							{
+								"label": "Zoom In",
+								"value": "zoomIn"
+							},
+							{
+								"label": "Zoom In Down",
+								"value": "zoomInDown"
+							},
+							{
+								"label": "Zoom In Left",
+								"value": "zoomInLeft"
+							},
+							{
+								"label": "Zoom In Right",
+								"value": "zoomInRight"
+							},
+							{
+								"label": "Zoom In Up",
+								"value": "zoomInUp"
 							}
 						]
 					},
@@ -147,8 +205,96 @@
 						"defaultValue": "bounceOut",
 						"options": [
 							{
+								"label": "Back Out Down",
+								"value": "backOutDown"
+							},
+							{
+								"label": "Back Out Left",
+								"value": "backOutLeft"
+							},
+							{
+								"label": "Back Out Right",
+								"value": "backOutRight"
+							},
+							{
+								"label": "Back Out Up",
+								"value": "backOutUp"
+							},
+							{
 								"label": "Bounce Out",
 								"value": "bounceOut"
+							},
+							{
+								"label": "Bounce Out Down",
+								"value": "bounceOutDown"
+							},
+							{
+								"label": "Bounce Out Left",
+								"value": "bounceOutLeft"
+							},
+							{
+								"label": "Bounce Out Right",
+								"value": "bounceOutRight"
+							},
+							{
+								"label": "Bounce Out Up",
+								"value": "bounceOutUp"
+							},
+							{
+								"label": "Fade Out",
+								"value": "fadeOut"
+							},
+							{
+								"label": "Fade Out Down",
+								"value": "fadeOutDown"
+							},
+							{
+								"label": "Fade Out Left",
+								"value": "fadeOutLeft"
+							},
+							{
+								"label": "Fade Out Right",
+								"value": "fadeOutRight"
+							},
+							{
+								"label": "Fade Out Up",
+								"value": "fadeOutUp"
+							},
+							{
+								"label": "Lightspeed Out Right",
+								"value": "lightSpeedOutRight"
+							},
+							{
+								"label": "Lightspeed Out Left",
+								"value": "lightSpeedOutLeft"
+							},
+							{
+								"label": "Rotate Out",
+								"value": "rotateOut"
+							},
+							{
+								"label": "Roll Out",
+								"value": "rollOut"
+							},
+							{
+								"label": "Zoom Out",
+								"value": "zoomOut"
+							},
+							{
+								"label": "Zoom Out Down",
+								"value": "zoomOutDown"
+							},
+							{
+								"label": "Zoom Out Left",
+								"value": "zoomOutLeft"
+							},
+							{
+								"label": "Zoom Out Right",
+								"value": "zoomOutRight"
+							},
+							{
+								"label": "Zoom Out Up",
+								"value": "zoomOutUp"
 							}
 						]
 					},
@@ -233,7 +379,7 @@
 					},
 					"follow-text-color": {
 						"type": "color-input",
-						"label": "Message Color",
+						"label": "Text Color",
 						"halfSpan": true,
 						"defaultValue": "#fff"
 					},
@@ -311,6 +457,11 @@
 				"type": "multi-section",
 				"label": "Raid",
 				"settings": {
+					"raid-enabled": {
+						"type": "toggle-input",
+						"label": "Alert Enabled?",
+						"defaultValue": true
+					},
 					"raid-condition": {
 						"type": "dropdown-input",
 						"label": "Condition",
@@ -337,7 +488,8 @@
 						"condition": {
 							"raid-condition": "users"
 						},
-						"halfSpan": true
+						"halfSpan": true,
+						"placeholder": "Name"
 					},
 					"raid-amount": {
 						"type": "number-input",
@@ -350,44 +502,50 @@
 						"min": 1,
 						"step": 1
 					},
-					"raid-message": {
-						"type": "text-input",
-						"label": "Message",
+					"raid-text": {
+						"type": "text-area-input",
+						"label": "Alert Text",
 						"defaultValue": "{username} just raided with {amount} viewers!",
 						"description": "{username} - Raider Name\n{amount} - Number of Viewers"
 					},
 					"raid-layout": {
-						"type": "select-input",
-						"label": "Message Layout",
+						"type": "dropdown-input",
+						"label": "Alert Layout",
+						"halfSpan": true,
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Below Visual",
+								"label": "Text Below Visual",
 								"value": "below"
 							},
 							{
-								"label": "Above Visual",
+								"label": "Text Above Visual",
 								"value": "above"
 							},
 							{
-								"label": "Left of Visual",
+								"label": "Text Left of Visual",
 								"value": "left"
 							},
 							{
-								"label": "Right of Visual",
+								"label": "Text Right of Visual",
 								"value": "right"
 							},
 							{
-								"label": "On Top of Visual",
+								"label": "Text Over Visual",
 								"value": "over"
 							}
 						]
 					},
 					"raid-visual": {
-						"type": "select-input",
-						"label": "Visual",
+						"type": "dropdown-input",
+						"label": "Alert Visual",
+						"halfSpan": true,
 						"defaultValue": "none",
 						"options": [
+							{
+								"label": "No Visual",
+								"value": "none"
+							},
 							{
 								"label": "Image",
 								"value": "image"
@@ -395,36 +553,33 @@
 							{
 								"label": "Video",
 								"value": "video"
-							},
-							{
-								"label": "No Visual",
-								"value": "none"
 							}
 						]
 					},
+					"raid-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound(s)",
+						"halfSpan": true
+					},
 					"raid-video": {
 						"type": "multi-video-input",
-						"label": "Video",
+						"label": "Video(s)",
 						"condition": {
 							"raid-visual": "video"
 						},
-						"description": "If multiple videos are added, a random one will be used each time."
+						"halfSpan": true
 					},
 					"raid-image": {
 						"type": "multi-image-input",
-						"label": "Image",
+						"label": "Image(s)",
 						"condition": {
 							"raid-visual": "image"
 						},
-						"description": "If multiple images are added, a random one will be used each time."
-					},
-					"raid-sound": {
-						"type": "multi-audio-input",
-						"label": "Sound"
+						"halfSpan": true
 					},
 					"raid-duration": {
 						"type": "slider-input",
-						"label": "Duration (seconds)",
+						"label": "Alert Duration (seconds)",
 						"defaultValue": 5,
 						"min": 2,
 						"max": 90,
@@ -437,8 +592,96 @@
 						"defaultValue": "bounceIn",
 						"options": [
 							{
+								"label": "Back In Down",
+								"value": "backInDown"
+							},
+							{
+								"label": "Back In Left",
+								"value": "backInLeft"
+							},
+							{
+								"label": "Back In Right",
+								"value": "backInRight"
+							},
+							{
+								"label": "Back In Up",
+								"value": "backInUp"
+							},
+							{
 								"label": "Bounce In",
 								"value": "bounceIn"
+							},
+							{
+								"label": "Bounce In Down",
+								"value": "bounceInDown"
+							},
+							{
+								"label": "Bounce In Left",
+								"value": "bounceInLeft"
+							},
+							{
+								"label": "Bounce In Right",
+								"value": "bounceInRight"
+							},
+							{
+								"label": "Bounce In Up",
+								"value": "bounceInUp"
+							},
+							{
+								"label": "Fade In",
+								"value": "fadeIn"
+							},
+							{
+								"label": "Fade In Down",
+								"value": "fadeInDown"
+							},
+							{
+								"label": "Fade In Left",
+								"value": "fadeInLeft"
+							},
+							{
+								"label": "Fade In Right",
+								"value": "fadeInRight"
+							},
+							{
+								"label": "Fade In Up",
+								"value": "fadeInUp"
+							},
+							{
+								"label": "Lightspeed In Right",
+								"value": "lightSpeedInRight"
+							},
+							{
+								"label": "Lightspeed In Left",
+								"value": "lightSpeedInLeft"
+							},
+							{
+								"label": "Rotate In",
+								"value": "rotateIn"
+							},
+							{
+								"label": "Roll In",
+								"value": "rollIn"
+							},
+							{
+								"label": "Zoom In",
+								"value": "zoomIn"
+							},
+							{
+								"label": "Zoom In Down",
+								"value": "zoomInDown"
+							},
+							{
+								"label": "Zoom In Left",
+								"value": "zoomInLeft"
+							},
+							{
+								"label": "Zoom In Right",
+								"value": "zoomInRight"
+							},
+							{
+								"label": "Zoom In Up",
+								"value": "zoomInUp"
 							}
 						]
 					},
@@ -449,8 +692,96 @@
 						"defaultValue": "bounceOut",
 						"options": [
 							{
+								"label": "Back Out Down",
+								"value": "backOutDown"
+							},
+							{
+								"label": "Back Out Left",
+								"value": "backOutLeft"
+							},
+							{
+								"label": "Back Out Right",
+								"value": "backOutRight"
+							},
+							{
+								"label": "Back Out Up",
+								"value": "backOutUp"
+							},
+							{
 								"label": "Bounce Out",
 								"value": "bounceOut"
+							},
+							{
+								"label": "Bounce Out Down",
+								"value": "bounceOutDown"
+							},
+							{
+								"label": "Bounce Out Left",
+								"value": "bounceOutLeft"
+							},
+							{
+								"label": "Bounce Out Right",
+								"value": "bounceOutRight"
+							},
+							{
+								"label": "Bounce Out Up",
+								"value": "bounceOutUp"
+							},
+							{
+								"label": "Fade Out",
+								"value": "fadeOut"
+							},
+							{
+								"label": "Fade Out Down",
+								"value": "fadeOutDown"
+							},
+							{
+								"label": "Fade Out Left",
+								"value": "fadeOutLeft"
+							},
+							{
+								"label": "Fade Out Right",
+								"value": "fadeOutRight"
+							},
+							{
+								"label": "Fade Out Up",
+								"value": "fadeOutUp"
+							},
+							{
+								"label": "Lightspeed Out Right",
+								"value": "lightSpeedOutRight"
+							},
+							{
+								"label": "Lightspeed Out Left",
+								"value": "lightSpeedOutLeft"
+							},
+							{
+								"label": "Rotate Out",
+								"value": "rotateOut"
+							},
+							{
+								"label": "Roll Out",
+								"value": "rollOut"
+							},
+							{
+								"label": "Zoom Out",
+								"value": "zoomOut"
+							},
+							{
+								"label": "Zoom Out Down",
+								"value": "zoomOutDown"
+							},
+							{
+								"label": "Zoom Out Left",
+								"value": "zoomOutLeft"
+							},
+							{
+								"label": "Zoom Out Right",
+								"value": "zoomOutRight"
+							},
+							{
+								"label": "Zoom Out Up",
+								"value": "zoomOutUp"
 							}
 						]
 					},
@@ -535,7 +866,7 @@
 					},
 					"raid-text-color": {
 						"type": "color-input",
-						"label": "Message Color",
+						"label": "Text Color",
 						"halfSpan": true,
 						"defaultValue": "#fff"
 					},
@@ -613,49 +944,60 @@
 				"type": "multi-section",
 				"label": "Channel Point Reward",
 				"settings": {
+					"reward-enabled": {
+						"type": "toggle-input",
+						"label": "Alert Enabled?",
+						"defaultValue": true
+					},
 					"reward-condition": {
 						"type": "text-input",
 						"label": "Condition: Reward Name",
 						"placeholder": "My Channel Point Reward"
 					},
-					"reward-message": {
-						"type": "text-input",
-						"label": "Message",
+					"reward-text": {
+						"type": "text-area-input",
+						"label": "Alert Text",
 						"defaultValue": "{username} just redeemed {reward}!",
 						"description": "{username} - User Name\n{reward} - Channel Point Reward Name\n{amount} - Reward Cost\n{message} - User Redeem Message"
 					},
 					"reward-layout": {
-						"type": "select-input",
-						"label": "Message Layout",
+						"type": "dropdown-input",
+						"label": "Alert Layout",
+						"halfSpan": true,
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Below Visual",
+								"label": "Text Below Visual",
 								"value": "below"
 							},
 							{
-								"label": "Above Visual",
+								"label": "Text Above Visual",
 								"value": "above"
 							},
 							{
-								"label": "Left of Visual",
+								"label": "Text Left of Visual",
 								"value": "left"
 							},
 							{
-								"label": "Right of Visual",
+								"label": "Text Right of Visual",
 								"value": "right"
 							},
 							{
-								"label": "On Top of Visual",
+								"label": "Text Over Visual",
 								"value": "over"
 							}
 						]
 					},
 					"reward-visual": {
-						"type": "select-input",
-						"label": "Visual",
+						"type": "dropdown-input",
+						"label": "Alert Visual",
+						"halfSpan": true,
 						"defaultValue": "none",
 						"options": [
+							{
+								"label": "No Visual",
+								"value": "none"
+							},
 							{
 								"label": "Image",
 								"value": "image"
@@ -663,36 +1005,33 @@
 							{
 								"label": "Video",
 								"value": "video"
-							},
-							{
-								"label": "No Visual",
-								"value": "none"
 							}
 						]
 					},
+					"reward-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound(s)",
+						"halfSpan": true
+					},
 					"reward-video": {
 						"type": "multi-video-input",
-						"label": "Video",
+						"label": "Video(s)",
 						"condition": {
 							"reward-visual": "video"
 						},
-						"description": "If multiple videos are added, a random one will be used each time."
+						"halfSpan": true
 					},
 					"reward-image": {
 						"type": "multi-image-input",
-						"label": "Image",
+						"label": "Image(s)",
 						"condition": {
 							"reward-visual": "image"
 						},
-						"description": "If multiple images are added, a random one will be used each time."
-					},
-					"reward-sound": {
-						"type": "multi-audio-input",
-						"label": "Sound"
+						"halfSpan": true
 					},
 					"reward-duration": {
 						"type": "slider-input",
-						"label": "Duration (seconds)",
+						"label": "Alert Duration (seconds)",
 						"defaultValue": 5,
 						"min": 2,
 						"max": 90,
@@ -705,8 +1044,96 @@
 						"defaultValue": "bounceIn",
 						"options": [
 							{
+								"label": "Back In Down",
+								"value": "backInDown"
+							},
+							{
+								"label": "Back In Left",
+								"value": "backInLeft"
+							},
+							{
+								"label": "Back In Right",
+								"value": "backInRight"
+							},
+							{
+								"label": "Back In Up",
+								"value": "backInUp"
+							},
+							{
 								"label": "Bounce In",
 								"value": "bounceIn"
+							},
+							{
+								"label": "Bounce In Down",
+								"value": "bounceInDown"
+							},
+							{
+								"label": "Bounce In Left",
+								"value": "bounceInLeft"
+							},
+							{
+								"label": "Bounce In Right",
+								"value": "bounceInRight"
+							},
+							{
+								"label": "Bounce In Up",
+								"value": "bounceInUp"
+							},
+							{
+								"label": "Fade In",
+								"value": "fadeIn"
+							},
+							{
+								"label": "Fade In Down",
+								"value": "fadeInDown"
+							},
+							{
+								"label": "Fade In Left",
+								"value": "fadeInLeft"
+							},
+							{
+								"label": "Fade In Right",
+								"value": "fadeInRight"
+							},
+							{
+								"label": "Fade In Up",
+								"value": "fadeInUp"
+							},
+							{
+								"label": "Lightspeed In Right",
+								"value": "lightSpeedInRight"
+							},
+							{
+								"label": "Lightspeed In Left",
+								"value": "lightSpeedInLeft"
+							},
+							{
+								"label": "Rotate In",
+								"value": "rotateIn"
+							},
+							{
+								"label": "Roll In",
+								"value": "rollIn"
+							},
+							{
+								"label": "Zoom In",
+								"value": "zoomIn"
+							},
+							{
+								"label": "Zoom In Down",
+								"value": "zoomInDown"
+							},
+							{
+								"label": "Zoom In Left",
+								"value": "zoomInLeft"
+							},
+							{
+								"label": "Zoom In Right",
+								"value": "zoomInRight"
+							},
+							{
+								"label": "Zoom In Up",
+								"value": "zoomInUp"
 							}
 						]
 					},
@@ -717,8 +1144,96 @@
 						"defaultValue": "bounceOut",
 						"options": [
 							{
+								"label": "Back Out Down",
+								"value": "backOutDown"
+							},
+							{
+								"label": "Back Out Left",
+								"value": "backOutLeft"
+							},
+							{
+								"label": "Back Out Right",
+								"value": "backOutRight"
+							},
+							{
+								"label": "Back Out Up",
+								"value": "backOutUp"
+							},
+							{
 								"label": "Bounce Out",
 								"value": "bounceOut"
+							},
+							{
+								"label": "Bounce Out Down",
+								"value": "bounceOutDown"
+							},
+							{
+								"label": "Bounce Out Left",
+								"value": "bounceOutLeft"
+							},
+							{
+								"label": "Bounce Out Right",
+								"value": "bounceOutRight"
+							},
+							{
+								"label": "Bounce Out Up",
+								"value": "bounceOutUp"
+							},
+							{
+								"label": "Fade Out",
+								"value": "fadeOut"
+							},
+							{
+								"label": "Fade Out Down",
+								"value": "fadeOutDown"
+							},
+							{
+								"label": "Fade Out Left",
+								"value": "fadeOutLeft"
+							},
+							{
+								"label": "Fade Out Right",
+								"value": "fadeOutRight"
+							},
+							{
+								"label": "Fade Out Up",
+								"value": "fadeOutUp"
+							},
+							{
+								"label": "Lightspeed Out Right",
+								"value": "lightSpeedOutRight"
+							},
+							{
+								"label": "Lightspeed Out Left",
+								"value": "lightSpeedOutLeft"
+							},
+							{
+								"label": "Rotate Out",
+								"value": "rotateOut"
+							},
+							{
+								"label": "Roll Out",
+								"value": "rollOut"
+							},
+							{
+								"label": "Zoom Out",
+								"value": "zoomOut"
+							},
+							{
+								"label": "Zoom Out Down",
+								"value": "zoomOutDown"
+							},
+							{
+								"label": "Zoom Out Left",
+								"value": "zoomOutLeft"
+							},
+							{
+								"label": "Zoom Out Right",
+								"value": "zoomOutRight"
+							},
+							{
+								"label": "Zoom Out Up",
+								"value": "zoomOutUp"
 							}
 						]
 					},
@@ -803,7 +1318,7 @@
 					},
 					"reward-text-color": {
 						"type": "color-input",
-						"label": "Message Color",
+						"label": "Text Color",
 						"halfSpan": true,
 						"defaultValue": "#fff"
 					},
@@ -881,49 +1396,60 @@
 				"type": "multi-section",
 				"label": "Power-Up",
 				"settings": {
+					"power-up-enabled": {
+						"type": "toggle-input",
+						"label": "Alert Enabled?",
+						"defaultValue": true
+					},
 					"power-up-condition": {
 						"type": "text-input",
 						"label": "Condition: Power-Up Name",
 						"placeholder": "My Power-Up"
 					},
-					"power-up-message": {
+					"power-up-text": {
 						"type": "text-input",
-						"label": "Message",
+						"label": "Alert Text",
 						"defaultValue": "{username} just redeemed {power_up}!",
 						"description": "{username} - User Name\n{power_up} - Power-Up Name\n{amount} - Power-Up Cost\n{message} - User Redeem Message"
 					},
 					"power-up-layout": {
-						"type": "select-input",
-						"label": "Message Layout",
+						"type": "dropdown-input",
+						"label": "Alert Layout",
+						"halfSpan": true,
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Below Visual",
+								"label": "Text Below Visual",
 								"value": "below"
 							},
 							{
-								"label": "Above Visual",
+								"label": "Text Above Visual",
 								"value": "above"
 							},
 							{
-								"label": "Left of Visual",
+								"label": "Text Left of Visual",
 								"value": "left"
 							},
 							{
-								"label": "Right of Visual",
+								"label": "Text Right of Visual",
 								"value": "right"
 							},
 							{
-								"label": "On Top of Visual",
+								"label": "Text Over Visual",
 								"value": "over"
 							}
 						]
 					},
 					"power-up-visual": {
-						"type": "select-input",
-						"label": "Visual",
+						"type": "dropdown-input",
+						"label": "Alert Visual",
+						"halfSpan": true,
 						"defaultValue": "none",
 						"options": [
+							{
+								"label": "No Visual",
+								"value": "none"
+							},
 							{
 								"label": "Image",
 								"value": "image"
@@ -931,36 +1457,33 @@
 							{
 								"label": "Video",
 								"value": "video"
-							},
-							{
-								"label": "No Visual",
-								"value": "none"
 							}
 						]
 					},
+					"power-up-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound(s)",
+						"halfSpan": true
+					},
 					"power-up-video": {
 						"type": "multi-video-input",
-						"label": "Video",
+						"label": "Video(s)",
 						"condition": {
 							"power-up-visual": "video"
 						},
-						"description": "If multiple videos are added, a random one will be used each time."
+						"halfSpan": true
 					},
 					"power-up-image": {
 						"type": "multi-image-input",
-						"label": "Image",
+						"label": "Image(s)",
 						"condition": {
 							"power-up-visual": "image"
 						},
-						"description": "If multiple images are added, a random one will be used each time."
-					},
-					"power-up-sound": {
-						"type": "multi-audio-input",
-						"label": "Sound"
+						"halfSpan": true
 					},
 					"power-up-duration": {
 						"type": "slider-input",
-						"label": "Duration (seconds)",
+						"label": "Alert Duration (seconds)",
 						"defaultValue": 5,
 						"min": 2,
 						"max": 90,
@@ -973,8 +1496,96 @@
 						"defaultValue": "bounceIn",
 						"options": [
 							{
+								"label": "Back In Down",
+								"value": "backInDown"
+							},
+							{
+								"label": "Back In Left",
+								"value": "backInLeft"
+							},
+							{
+								"label": "Back In Right",
+								"value": "backInRight"
+							},
+							{
+								"label": "Back In Up",
+								"value": "backInUp"
+							},
+							{
 								"label": "Bounce In",
 								"value": "bounceIn"
+							},
+							{
+								"label": "Bounce In Down",
+								"value": "bounceInDown"
+							},
+							{
+								"label": "Bounce In Left",
+								"value": "bounceInLeft"
+							},
+							{
+								"label": "Bounce In Right",
+								"value": "bounceInRight"
+							},
+							{
+								"label": "Bounce In Up",
+								"value": "bounceInUp"
+							},
+							{
+								"label": "Fade In",
+								"value": "fadeIn"
+							},
+							{
+								"label": "Fade In Down",
+								"value": "fadeInDown"
+							},
+							{
+								"label": "Fade In Left",
+								"value": "fadeInLeft"
+							},
+							{
+								"label": "Fade In Right",
+								"value": "fadeInRight"
+							},
+							{
+								"label": "Fade In Up",
+								"value": "fadeInUp"
+							},
+							{
+								"label": "Lightspeed In Right",
+								"value": "lightSpeedInRight"
+							},
+							{
+								"label": "Lightspeed In Left",
+								"value": "lightSpeedInLeft"
+							},
+							{
+								"label": "Rotate In",
+								"value": "rotateIn"
+							},
+							{
+								"label": "Roll In",
+								"value": "rollIn"
+							},
+							{
+								"label": "Zoom In",
+								"value": "zoomIn"
+							},
+							{
+								"label": "Zoom In Down",
+								"value": "zoomInDown"
+							},
+							{
+								"label": "Zoom In Left",
+								"value": "zoomInLeft"
+							},
+							{
+								"label": "Zoom In Right",
+								"value": "zoomInRight"
+							},
+							{
+								"label": "Zoom In Up",
+								"value": "zoomInUp"
 							}
 						]
 					},
@@ -985,8 +1596,96 @@
 						"defaultValue": "bounceOut",
 						"options": [
 							{
+								"label": "Back Out Down",
+								"value": "backOutDown"
+							},
+							{
+								"label": "Back Out Left",
+								"value": "backOutLeft"
+							},
+							{
+								"label": "Back Out Right",
+								"value": "backOutRight"
+							},
+							{
+								"label": "Back Out Up",
+								"value": "backOutUp"
+							},
+							{
 								"label": "Bounce Out",
 								"value": "bounceOut"
+							},
+							{
+								"label": "Bounce Out Down",
+								"value": "bounceOutDown"
+							},
+							{
+								"label": "Bounce Out Left",
+								"value": "bounceOutLeft"
+							},
+							{
+								"label": "Bounce Out Right",
+								"value": "bounceOutRight"
+							},
+							{
+								"label": "Bounce Out Up",
+								"value": "bounceOutUp"
+							},
+							{
+								"label": "Fade Out",
+								"value": "fadeOut"
+							},
+							{
+								"label": "Fade Out Down",
+								"value": "fadeOutDown"
+							},
+							{
+								"label": "Fade Out Left",
+								"value": "fadeOutLeft"
+							},
+							{
+								"label": "Fade Out Right",
+								"value": "fadeOutRight"
+							},
+							{
+								"label": "Fade Out Up",
+								"value": "fadeOutUp"
+							},
+							{
+								"label": "Lightspeed Out Right",
+								"value": "lightSpeedOutRight"
+							},
+							{
+								"label": "Lightspeed Out Left",
+								"value": "lightSpeedOutLeft"
+							},
+							{
+								"label": "Rotate Out",
+								"value": "rotateOut"
+							},
+							{
+								"label": "Roll Out",
+								"value": "rollOut"
+							},
+							{
+								"label": "Zoom Out",
+								"value": "zoomOut"
+							},
+							{
+								"label": "Zoom Out Down",
+								"value": "zoomOutDown"
+							},
+							{
+								"label": "Zoom Out Left",
+								"value": "zoomOutLeft"
+							},
+							{
+								"label": "Zoom Out Right",
+								"value": "zoomOutRight"
+							},
+							{
+								"label": "Zoom Out Up",
+								"value": "zoomOutUp"
 							}
 						]
 					},
@@ -1071,7 +1770,7 @@
 					},
 					"power-up-text-color": {
 						"type": "color-input",
-						"label": "Message Color",
+						"label": "Text Color",
 						"halfSpan": true,
 						"defaultValue": "#fff"
 					},
@@ -1149,6 +1848,11 @@
 				"type": "multi-section",
 				"label": "Cheer",
 				"settings": {
+					"cheer-enabled": {
+						"type": "toggle-input",
+						"label": "Alert Enabled?",
+						"defaultValue": true
+					},
 					"cheer-condition": {
 						"type": "dropdown-input",
 						"label": "Condition",
@@ -1174,44 +1878,49 @@
 						"max": 100000,
 						"step": 1
 					},
-					"cheer-message": {
-						"type": "text-input",
-						"label": "Message",
+					"cheer-text": {
+						"type": "text-area-input",
+						"label": "Alert Text",
 						"defaultValue": "{username} just cheered {amount} bits!",
 						"description": "{username} - Cheerer Name\n{amount} - Number of Bits"
 					},
 					"cheer-layout": {
-						"type": "select-input",
-						"label": "Message Layout",
+						"type": "dropdown-input",
+						"label": "Alert Layout",
+						"halfSpan": true,
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Below Visual",
+								"label": "Text Below Visual",
 								"value": "below"
 							},
 							{
-								"label": "Above Visual",
+								"label": "Text Above Visual",
 								"value": "above"
 							},
 							{
-								"label": "Left of Visual",
+								"label": "Text Left of Visual",
 								"value": "left"
 							},
 							{
-								"label": "Right of Visual",
+								"label": "Text Right of Visual",
 								"value": "right"
 							},
 							{
-								"label": "On Top of Visual",
+								"label": "Text Over Visual",
 								"value": "over"
 							}
 						]
 					},
 					"cheer-visual": {
-						"type": "select-input",
-						"label": "Visual",
+						"type": "dropdown-input",
+						"label": "Alert Visual",
 						"defaultValue": "none",
 						"options": [
+							{
+								"label": "No Visual",
+								"value": "none"
+							},
 							{
 								"label": "Image",
 								"value": "image"
@@ -1219,36 +1928,33 @@
 							{
 								"label": "Video",
 								"value": "video"
-							},
-							{
-								"label": "No Visual",
-								"value": "none"
 							}
 						]
 					},
+					"cheer-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound(s)",
+						"halfSpan": true
+					},
 					"cheer-video": {
 						"type": "multi-video-input",
-						"label": "Video",
+						"label": "Video(s)",
 						"condition": {
 							"cheer-visual": "video"
 						},
-						"description": "If multiple videos are added, a random one will be used each time."
+						"halfSpan": true
 					},
 					"cheer-image": {
 						"type": "multi-image-input",
-						"label": "Image",
+						"label": "Image(s)",
 						"condition": {
 							"cheer-visual": "image"
 						},
-						"description": "If multiple images are added, a random one will be used each time."
-					},
-					"cheer-sound": {
-						"type": "multi-audio-input",
-						"label": "Sound"
+						"halfSpan": true
 					},
 					"cheer-duration": {
 						"type": "slider-input",
-						"label": "Duration (seconds)",
+						"label": "Alert Duration (seconds)",
 						"defaultValue": 5,
 						"min": 2,
 						"max": 90,
@@ -1261,8 +1967,96 @@
 						"defaultValue": "bounceIn",
 						"options": [
 							{
+								"label": "Back In Down",
+								"value": "backInDown"
+							},
+							{
+								"label": "Back In Left",
+								"value": "backInLeft"
+							},
+							{
+								"label": "Back In Right",
+								"value": "backInRight"
+							},
+							{
+								"label": "Back In Up",
+								"value": "backInUp"
+							},
+							{
 								"label": "Bounce In",
 								"value": "bounceIn"
+							},
+							{
+								"label": "Bounce In Down",
+								"value": "bounceInDown"
+							},
+							{
+								"label": "Bounce In Left",
+								"value": "bounceInLeft"
+							},
+							{
+								"label": "Bounce In Right",
+								"value": "bounceInRight"
+							},
+							{
+								"label": "Bounce In Up",
+								"value": "bounceInUp"
+							},
+							{
+								"label": "Fade In",
+								"value": "fadeIn"
+							},
+							{
+								"label": "Fade In Down",
+								"value": "fadeInDown"
+							},
+							{
+								"label": "Fade In Left",
+								"value": "fadeInLeft"
+							},
+							{
+								"label": "Fade In Right",
+								"value": "fadeInRight"
+							},
+							{
+								"label": "Fade In Up",
+								"value": "fadeInUp"
+							},
+							{
+								"label": "Lightspeed In Right",
+								"value": "lightSpeedInRight"
+							},
+							{
+								"label": "Lightspeed In Left",
+								"value": "lightSpeedInLeft"
+							},
+							{
+								"label": "Rotate In",
+								"value": "rotateIn"
+							},
+							{
+								"label": "Roll In",
+								"value": "rollIn"
+							},
+							{
+								"label": "Zoom In",
+								"value": "zoomIn"
+							},
+							{
+								"label": "Zoom In Down",
+								"value": "zoomInDown"
+							},
+							{
+								"label": "Zoom In Left",
+								"value": "zoomInLeft"
+							},
+							{
+								"label": "Zoom In Right",
+								"value": "zoomInRight"
+							},
+							{
+								"label": "Zoom In Up",
+								"value": "zoomInUp"
 							}
 						]
 					},
@@ -1273,8 +2067,96 @@
 						"defaultValue": "bounceOut",
 						"options": [
 							{
+								"label": "Back Out Down",
+								"value": "backOutDown"
+							},
+							{
+								"label": "Back Out Left",
+								"value": "backOutLeft"
+							},
+							{
+								"label": "Back Out Right",
+								"value": "backOutRight"
+							},
+							{
+								"label": "Back Out Up",
+								"value": "backOutUp"
+							},
+							{
 								"label": "Bounce Out",
 								"value": "bounceOut"
+							},
+							{
+								"label": "Bounce Out Down",
+								"value": "bounceOutDown"
+							},
+							{
+								"label": "Bounce Out Left",
+								"value": "bounceOutLeft"
+							},
+							{
+								"label": "Bounce Out Right",
+								"value": "bounceOutRight"
+							},
+							{
+								"label": "Bounce Out Up",
+								"value": "bounceOutUp"
+							},
+							{
+								"label": "Fade Out",
+								"value": "fadeOut"
+							},
+							{
+								"label": "Fade Out Down",
+								"value": "fadeOutDown"
+							},
+							{
+								"label": "Fade Out Left",
+								"value": "fadeOutLeft"
+							},
+							{
+								"label": "Fade Out Right",
+								"value": "fadeOutRight"
+							},
+							{
+								"label": "Fade Out Up",
+								"value": "fadeOutUp"
+							},
+							{
+								"label": "Lightspeed Out Right",
+								"value": "lightSpeedOutRight"
+							},
+							{
+								"label": "Lightspeed Out Left",
+								"value": "lightSpeedOutLeft"
+							},
+							{
+								"label": "Rotate Out",
+								"value": "rotateOut"
+							},
+							{
+								"label": "Roll Out",
+								"value": "rollOut"
+							},
+							{
+								"label": "Zoom Out",
+								"value": "zoomOut"
+							},
+							{
+								"label": "Zoom Out Down",
+								"value": "zoomOutDown"
+							},
+							{
+								"label": "Zoom Out Left",
+								"value": "zoomOutLeft"
+							},
+							{
+								"label": "Zoom Out Right",
+								"value": "zoomOutRight"
+							},
+							{
+								"label": "Zoom Out Up",
+								"value": "zoomOutUp"
 							}
 						]
 					},
@@ -1359,7 +2241,7 @@
 					},
 					"cheer-text-color": {
 						"type": "color-input",
-						"label": "Message Color",
+						"label": "Text Color",
 						"halfSpan": true,
 						"defaultValue": "#fff"
 					},
@@ -1437,10 +2319,16 @@
 				"type": "multi-section",
 				"label": "Subscription",
 				"settings": {
+					"sub-enabled": {
+						"type": "toggle-input",
+						"label": "Alert Enabled?",
+						"defaultValue": true
+					},
 					"sub-condition": {
 						"type": "dropdown-input",
 						"label": "Condition",
 						"halfSpan": true,
+						"defaultValue": "tier",
 						"options": [
 							{
 								"label": "Subscription is tier",
@@ -1490,44 +2378,50 @@
 							}
 						]
 					},
-					"sub-message": {
-						"type": "text-input",
-						"label": "Message",
+					"sub-text": {
+						"type": "text-area-input",
+						"label": "Alert Text",
 						"defaultValue": "{username} just subscribed at {sub_tier}!",
 						"description": "{username} - Subscriber Name\n{sub_tier} - Subscription Tier\n{amount} - Months Subscribed\n{message} - User Resubscription Message"
 					},
 					"sub-layout": {
-						"type": "select-input",
-						"label": "Message Layout",
+						"type": "dropdown-input",
+						"label": "Alert Layout",
+						"halfSpan": true,
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Below Visual",
+								"label": "Text Below Visual",
 								"value": "below"
 							},
 							{
-								"label": "Above Visual",
+								"label": "Text Above Visual",
 								"value": "above"
 							},
 							{
-								"label": "Left of Visual",
+								"label": "Text Left of Visual",
 								"value": "left"
 							},
 							{
-								"label": "Right of Visual",
+								"label": "Text Right of Visual",
 								"value": "right"
 							},
 							{
-								"label": "On Top of Visual",
+								"label": "Text Over Visual",
 								"value": "over"
 							}
 						]
 					},
 					"sub-visual": {
-						"type": "select-input",
-						"label": "Visual",
+						"type": "dropdown-input",
+						"label": "Alert Visual",
+						"halfSpan": true,
 						"defaultValue": "none",
 						"options": [
+							{
+								"label": "No Visual",
+								"value": "none"
+							},
 							{
 								"label": "Image",
 								"value": "image"
@@ -1535,36 +2429,33 @@
 							{
 								"label": "Video",
 								"value": "video"
-							},
-							{
-								"label": "No Visual",
-								"value": "none"
 							}
 						]
 					},
+					"sub-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound(s)",
+						"halfSpan": true
+					},
 					"sub-video": {
 						"type": "multi-video-input",
-						"label": "Video",
+						"label": "Video(s)",
 						"condition": {
 							"sub-visual": "video"
 						},
-						"description": "If multiple videos are added, a random one will be used each time."
+						"halfSpan": true
 					},
 					"sub-image": {
 						"type": "multi-image-input",
-						"label": "Image",
+						"label": "Image(s)",
 						"condition": {
 							"sub-visual": "image"
 						},
-						"description": "If multiple images are added, a random one will be used each time."
-					},
-					"sub-sound": {
-						"type": "multi-audio-input",
-						"label": "Sound"
+						"halfSpan": true
 					},
 					"sub-duration": {
 						"type": "slider-input",
-						"label": "Duration (seconds)",
+						"label": "Alert Duration (seconds)",
 						"defaultValue": 5,
 						"min": 2,
 						"max": 90,
@@ -1577,8 +2468,96 @@
 						"defaultValue": "bounceIn",
 						"options": [
 							{
+								"label": "Back In Down",
+								"value": "backInDown"
+							},
+							{
+								"label": "Back In Left",
+								"value": "backInLeft"
+							},
+							{
+								"label": "Back In Right",
+								"value": "backInRight"
+							},
+							{
+								"label": "Back In Up",
+								"value": "backInUp"
+							},
+							{
 								"label": "Bounce In",
 								"value": "bounceIn"
+							},
+							{
+								"label": "Bounce In Down",
+								"value": "bounceInDown"
+							},
+							{
+								"label": "Bounce In Left",
+								"value": "bounceInLeft"
+							},
+							{
+								"label": "Bounce In Right",
+								"value": "bounceInRight"
+							},
+							{
+								"label": "Bounce In Up",
+								"value": "bounceInUp"
+							},
+							{
+								"label": "Fade In",
+								"value": "fadeIn"
+							},
+							{
+								"label": "Fade In Down",
+								"value": "fadeInDown"
+							},
+							{
+								"label": "Fade In Left",
+								"value": "fadeInLeft"
+							},
+							{
+								"label": "Fade In Right",
+								"value": "fadeInRight"
+							},
+							{
+								"label": "Fade In Up",
+								"value": "fadeInUp"
+							},
+							{
+								"label": "Lightspeed In Right",
+								"value": "lightSpeedInRight"
+							},
+							{
+								"label": "Lightspeed In Left",
+								"value": "lightSpeedInLeft"
+							},
+							{
+								"label": "Rotate In",
+								"value": "rotateIn"
+							},
+							{
+								"label": "Roll In",
+								"value": "rollIn"
+							},
+							{
+								"label": "Zoom In",
+								"value": "zoomIn"
+							},
+							{
+								"label": "Zoom In Down",
+								"value": "zoomInDown"
+							},
+							{
+								"label": "Zoom In Left",
+								"value": "zoomInLeft"
+							},
+							{
+								"label": "Zoom In Right",
+								"value": "zoomInRight"
+							},
+							{
+								"label": "Zoom In Up",
+								"value": "zoomInUp"
 							}
 						]
 					},
@@ -1589,8 +2568,96 @@
 						"defaultValue": "bounceOut",
 						"options": [
 							{
+								"label": "Back Out Down",
+								"value": "backOutDown"
+							},
+							{
+								"label": "Back Out Left",
+								"value": "backOutLeft"
+							},
+							{
+								"label": "Back Out Right",
+								"value": "backOutRight"
+							},
+							{
+								"label": "Back Out Up",
+								"value": "backOutUp"
+							},
+							{
 								"label": "Bounce Out",
 								"value": "bounceOut"
+							},
+							{
+								"label": "Bounce Out Down",
+								"value": "bounceOutDown"
+							},
+							{
+								"label": "Bounce Out Left",
+								"value": "bounceOutLeft"
+							},
+							{
+								"label": "Bounce Out Right",
+								"value": "bounceOutRight"
+							},
+							{
+								"label": "Bounce Out Up",
+								"value": "bounceOutUp"
+							},
+							{
+								"label": "Fade Out",
+								"value": "fadeOut"
+							},
+							{
+								"label": "Fade Out Down",
+								"value": "fadeOutDown"
+							},
+							{
+								"label": "Fade Out Left",
+								"value": "fadeOutLeft"
+							},
+							{
+								"label": "Fade Out Right",
+								"value": "fadeOutRight"
+							},
+							{
+								"label": "Fade Out Up",
+								"value": "fadeOutUp"
+							},
+							{
+								"label": "Lightspeed Out Right",
+								"value": "lightSpeedOutRight"
+							},
+							{
+								"label": "Lightspeed Out Left",
+								"value": "lightSpeedOutLeft"
+							},
+							{
+								"label": "Rotate Out",
+								"value": "rotateOut"
+							},
+							{
+								"label": "Roll Out",
+								"value": "rollOut"
+							},
+							{
+								"label": "Zoom Out",
+								"value": "zoomOut"
+							},
+							{
+								"label": "Zoom Out Down",
+								"value": "zoomOutDown"
+							},
+							{
+								"label": "Zoom Out Left",
+								"value": "zoomOutLeft"
+							},
+							{
+								"label": "Zoom Out Right",
+								"value": "zoomOutRight"
+							},
+							{
+								"label": "Zoom Out Up",
+								"value": "zoomOutUp"
 							}
 						]
 					},
@@ -1675,7 +2742,7 @@
 					},
 					"sub-text-color": {
 						"type": "color-input",
-						"label": "Message Color",
+						"label": "Text Color",
 						"halfSpan": true,
 						"defaultValue": "#fff"
 					},
@@ -1753,16 +2820,17 @@
 				"type": "multi-section",
 				"label": "Gift Subscription",
 				"settings": {
+					"gift-sub-enabled": {
+						"type": "toggle-input",
+						"label": "Alert Enabled?",
+						"defaultValue": true
+					},
 					"gift-sub-condition": {
 						"type": "dropdown-input",
 						"label": "Condition",
 						"halfSpan": true,
-						"defaultValue": "individual",
+						"defaultValue": "at-least",
 						"options": [
-							{
-								"label": "Individual gift subscription",
-								"value": "individual"
-							},
 							{
 								"label": "Community gift count at least",
 								"value": "at-least"
@@ -1770,6 +2838,10 @@
 							{
 								"label": "Community gift count exactly",
 								"value": "exactly"
+							},
+							{
+								"label": "Individual gift subscription",
+								"value": "individual"
 							}
 						]
 					},
@@ -1785,44 +2857,50 @@
 						"max": 1000,
 						"step": 1
 					},
-					"gift-sub-message": {
-						"type": "text-input",
-						"label": "Message",
-						"defaultValue": "{sender} gifted a {sub_tier} subscription to {username}!",
-						"description": "{sender} - Gifter Name\n{username} - Subscription Receiver Name\n{sub_tier} - Subscription Tier\n{amount} - Number of Gift Subscriptions"
+					"gift-sub-text": {
+						"type": "text-area-input",
+						"label": "Alert Text",
+						"defaultValue": "{sender} gifted {amount} subscriptions to the community!",
+						"description": "{sender} - Gifter Name\n{sub_tier} - Subscription Tier\n{amount} - Number of Gift Subscriptions"
 					},
 					"gift-sub-layout": {
-						"type": "select-input",
-						"label": "Message Layout",
+						"type": "dropdown-input",
+						"label": "Alert Layout",
+						"halfSpan": true,
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Below Visual",
+								"label": "Text Below Visual",
 								"value": "below"
 							},
 							{
-								"label": "Above Visual",
+								"label": "Text Above Visual",
 								"value": "above"
 							},
 							{
-								"label": "Left of Visual",
+								"label": "Text Left of Visual",
 								"value": "left"
 							},
 							{
-								"label": "Right of Visual",
+								"label": "Text Right of Visual",
 								"value": "right"
 							},
 							{
-								"label": "On Top of Visual",
+								"label": "Text Over Visual",
 								"value": "over"
 							}
 						]
 					},
 					"gift-sub-visual": {
 						"type": "select-input",
-						"label": "Visual",
+						"label": "Alert Visual",
+						"halfSpan": true,
 						"defaultValue": "none",
 						"options": [
+							{
+								"label": "No Visual",
+								"value": "none"
+							},
 							{
 								"label": "Image",
 								"value": "image"
@@ -1830,36 +2908,33 @@
 							{
 								"label": "Video",
 								"value": "video"
-							},
-							{
-								"label": "No Visual",
-								"value": "none"
 							}
 						]
 					},
+					"gift-sub-sound": {
+						"type": "multi-audio-input",
+						"label": "Sound(s)",
+						"halfSpan": true
+					},
 					"gift-sub-video": {
 						"type": "multi-video-input",
-						"label": "Video",
+						"label": "Video(s)",
 						"condition": {
 							"gift-sub-visual": "video"
 						},
-						"description": "If multiple videos are added, a random one will be used each time."
+						"halfSpan": true
 					},
 					"gift-sub-image": {
 						"type": "multi-image-input",
-						"label": "Image",
+						"label": "Image(s)",
 						"condition": {
 							"gift-sub-visual": "image"
 						},
-						"description": "If multiple images are added, a random one will be used each time."
-					},
-					"gift-sub-sound": {
-						"type": "multi-audio-input",
-						"label": "Sound"
+						"halfSpan": true
 					},
 					"gift-sub-duration": {
 						"type": "slider-input",
-						"label": "Duration (seconds)",
+						"label": "Alert Duration (seconds)",
 						"defaultValue": 5,
 						"min": 2,
 						"max": 90,
@@ -1872,8 +2947,96 @@
 						"defaultValue": "bounceIn",
 						"options": [
 							{
+								"label": "Back In Down",
+								"value": "backInDown"
+							},
+							{
+								"label": "Back In Left",
+								"value": "backInLeft"
+							},
+							{
+								"label": "Back In Right",
+								"value": "backInRight"
+							},
+							{
+								"label": "Back In Up",
+								"value": "backInUp"
+							},
+							{
 								"label": "Bounce In",
 								"value": "bounceIn"
+							},
+							{
+								"label": "Bounce In Down",
+								"value": "bounceInDown"
+							},
+							{
+								"label": "Bounce In Left",
+								"value": "bounceInLeft"
+							},
+							{
+								"label": "Bounce In Right",
+								"value": "bounceInRight"
+							},
+							{
+								"label": "Bounce In Up",
+								"value": "bounceInUp"
+							},
+							{
+								"label": "Fade In",
+								"value": "fadeIn"
+							},
+							{
+								"label": "Fade In Down",
+								"value": "fadeInDown"
+							},
+							{
+								"label": "Fade In Left",
+								"value": "fadeInLeft"
+							},
+							{
+								"label": "Fade In Right",
+								"value": "fadeInRight"
+							},
+							{
+								"label": "Fade In Up",
+								"value": "fadeInUp"
+							},
+							{
+								"label": "Lightspeed In Right",
+								"value": "lightSpeedInRight"
+							},
+							{
+								"label": "Lightspeed In Left",
+								"value": "lightSpeedInLeft"
+							},
+							{
+								"label": "Rotate In",
+								"value": "rotateIn"
+							},
+							{
+								"label": "Roll In",
+								"value": "rollIn"
+							},
+							{
+								"label": "Zoom In",
+								"value": "zoomIn"
+							},
+							{
+								"label": "Zoom In Down",
+								"value": "zoomInDown"
+							},
+							{
+								"label": "Zoom In Left",
+								"value": "zoomInLeft"
+							},
+							{
+								"label": "Zoom In Right",
+								"value": "zoomInRight"
+							},
+							{
+								"label": "Zoom In Up",
+								"value": "zoomInUp"
 							}
 						]
 					},
@@ -1884,8 +3047,96 @@
 						"defaultValue": "bounceOut",
 						"options": [
 							{
+								"label": "Back Out Down",
+								"value": "backOutDown"
+							},
+							{
+								"label": "Back Out Left",
+								"value": "backOutLeft"
+							},
+							{
+								"label": "Back Out Right",
+								"value": "backOutRight"
+							},
+							{
+								"label": "Back Out Up",
+								"value": "backOutUp"
+							},
+							{
 								"label": "Bounce Out",
 								"value": "bounceOut"
+							},
+							{
+								"label": "Bounce Out Down",
+								"value": "bounceOutDown"
+							},
+							{
+								"label": "Bounce Out Left",
+								"value": "bounceOutLeft"
+							},
+							{
+								"label": "Bounce Out Right",
+								"value": "bounceOutRight"
+							},
+							{
+								"label": "Bounce Out Up",
+								"value": "bounceOutUp"
+							},
+							{
+								"label": "Fade Out",
+								"value": "fadeOut"
+							},
+							{
+								"label": "Fade Out Down",
+								"value": "fadeOutDown"
+							},
+							{
+								"label": "Fade Out Left",
+								"value": "fadeOutLeft"
+							},
+							{
+								"label": "Fade Out Right",
+								"value": "fadeOutRight"
+							},
+							{
+								"label": "Fade Out Up",
+								"value": "fadeOutUp"
+							},
+							{
+								"label": "Lightspeed Out Right",
+								"value": "lightSpeedOutRight"
+							},
+							{
+								"label": "Lightspeed Out Left",
+								"value": "lightSpeedOutLeft"
+							},
+							{
+								"label": "Rotate Out",
+								"value": "rotateOut"
+							},
+							{
+								"label": "Roll Out",
+								"value": "rollOut"
+							},
+							{
+								"label": "Zoom Out",
+								"value": "zoomOut"
+							},
+							{
+								"label": "Zoom Out Down",
+								"value": "zoomOutDown"
+							},
+							{
+								"label": "Zoom Out Left",
+								"value": "zoomOutLeft"
+							},
+							{
+								"label": "Zoom Out Right",
+								"value": "zoomOutRight"
+							},
+							{
+								"label": "Zoom Out Up",
+								"value": "zoomOutUp"
 							}
 						]
 					},
@@ -1970,7 +3221,7 @@
 					},
 					"gift-sub-text-color": {
 						"type": "color-input",
-						"label": "Message Color",
+						"label": "Text Color",
 						"halfSpan": true,
 						"defaultValue": "#fff"
 					},
@@ -2043,6 +3294,36 @@
 						"defaultValue": "#000"
 					}
 				}
+			}
+		}
+	},
+	"global-category": {
+		"label": "Global Options",
+		"settings": {
+			"global-description": {
+				"type": "text-display",
+				"label": "These options will be applied to all alerts."
+			},
+			"delay": {
+				"type": "slider-input",
+				"label": "Alert Delay (seconds)",
+				"halfSpan": true,
+				"defaultValue": 0,
+				"min": 0,
+				"max": 30,
+				"step": 1
+			},
+			"use-interrupt": {
+				"type": "toggle-input",
+				"label": "Allow Alert Interruption?",
+				"halfSpan": true,
+				"defaultValue": false,
+				"description": "New alerts will replace any alert that is already playing."
+			},
+			"hide-words": {
+				"type": "multi-text-input",
+				"label": "Hide alerts that contain these words:",
+				"placeholder": "Bad Word"
 			}
 		}
 	}
