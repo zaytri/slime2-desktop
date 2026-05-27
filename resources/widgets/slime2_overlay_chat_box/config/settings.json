@@ -11,19 +11,11 @@
 						"label": "Font",
 						"halfSpan": true
 					},
-					"font-size": {
-						"type": "slider-input",
-						"label": "Font Size (px)",
-						"halfSpan": true,
-						"defaultValue": 14,
-						"min": 1,
-						"max": 72,
-						"step": 1
-					},
 					"font-weight": {
-						"type": "select-input",
+						"type": "dropdown-input",
 						"label": "Font Weight",
 						"condition": {},
+						"halfSpan": true,
 						"defaultValue": 400,
 						"options": [
 							{
@@ -64,14 +56,25 @@
 							}
 						]
 					},
+					"font-size": {
+						"type": "slider-input",
+						"label": "Font Size (px)",
+						"halfSpan": true,
+						"defaultValue": 14,
+						"min": 1,
+						"max": 72,
+						"step": 1
+					},
 					"message-color": {
 						"type": "color-input",
 						"label": "Message Color",
+						"halfSpan": true,
 						"defaultValue": "white"
 					},
 					"username-color": {
-						"type": "select-input",
+						"type": "dropdown-input",
 						"label": "Username Color",
+						"halfSpan": true,
 						"defaultValue": "twitch-light",
 						"options": [
 							{
@@ -98,12 +101,12 @@
 						"condition": {
 							"username-color": "custom"
 						},
+						"halfSpan": true,
 						"defaultValue": "white"
 					},
 					"max-lines": {
 						"type": "slider-input",
 						"label": "Max Lines",
-						"halfSpan": true,
 						"defaultValue": 4,
 						"min": 1,
 						"max": 10,
@@ -112,7 +115,6 @@
 					"max-width": {
 						"type": "number-input",
 						"label": "Max Message Width (px)",
-						"halfSpan": true,
 						"defaultValue": 500,
 						"min": 0,
 						"max": 10000,
@@ -465,15 +467,15 @@
 					"hide-prefixes": {
 						"type": "multi-text-input",
 						"label": "Hide messages starting with:",
+						"halfSpan": true,
 						"defaultValue": ["!"],
-						"placeholder": "Prefix",
-						"halfSpan": true
+						"placeholder": "Prefix"
 					},
 					"hide-words": {
 						"type": "multi-text-input",
 						"label": "Hide messages containing these words:",
-						"placeholder": "Bad Word",
-						"halfSpan": true
+						"halfSpan": true,
+						"placeholder": "Bad Word"
 					},
 					"hide-first-chat": {
 						"type": "toggle-input",
@@ -490,7 +492,8 @@
 			"sound": {
 				"type": "audio-input",
 				"label": "Sound",
-				"description": "Play this sound effect for every chat message"
+				"description": "Play this sound effect for every chat message",
+				"halfSpan": true
 			},
 			"sound-cooldown": {
 				"type": "slider-input",
@@ -499,7 +502,8 @@
 				"min": 0,
 				"max": 600,
 				"step": 1,
-				"description": "Minimum time between playing sounds"
+				"description": "Minimum time between playing sounds",
+				"halfSpan": true
 			}
 		}
 	}
