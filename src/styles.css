@@ -217,7 +217,7 @@ input[type='number'] {
 }
 
 @utility dark-menu {
-	@apply z-100 flex max-h-(--popover-available-height) min-w-36 flex-col overflow-hidden dark-container rounded-2 p-1.5 font-semibold shadow-[0_5px_10px_#0008] backdrop-blur-sm;
+	@apply z-100 flex max-h-(--popover-available-height) max-w-(--popover-available-width) min-w-36 flex-col overflow-hidden dark-container rounded-2 p-1.5 font-semibold shadow-[0_5px_10px_#0008] backdrop-blur-sm;
 }
 
 @utility dark-menu-item {

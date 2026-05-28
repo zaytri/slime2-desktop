@@ -32,7 +32,11 @@ export default function DevPeek({ id, setting }: DevPeekProps) {
 				</div>
 			</TooltipAnchor>
 
-			<Tooltip render={<section />} className='dark-menu min-w-0! p-0!'>
+			<Tooltip
+				render={<section />}
+				fitViewport
+				className='dark-menu min-w-0! p-0!'
+			>
 				<div className='flex flex-col gap-2 overflow-y-auto p-3 pt-2'>
 					<h5 className='flex items-center gap-2 font-bold text-zinc-300 uppercase drop-shadow-[0_1px_black]'>
 						<EyeSvg className='size-4' />
@@ -84,7 +88,7 @@ function PeekTag({ label, value }: PeekTagProps) {
 			<p className='px-2 text-3.5 font-bold'>{label}</p>
 			<div
 				className={clsx(
-					'flex flex-col border-l border-zinc-400 bg-zinc-800 px-2 font-mono',
+					'flex flex-col border-l border-zinc-400 bg-zinc-800 px-2 font-mono whitespace-pre-wrap',
 				)}
 			>
 				{Array.isArray(value) ? (
