@@ -1,3 +1,4 @@
+import alertBoxIconImage from '@/assets/icons/slime2_alert_box.png';
 import chatBoxIconImage from '@/assets/icons/slime2_chat_box.png';
 import commandBotIconImage from '@/assets/icons/slime2_command_bot.png';
 import templateIconImage from '@/assets/icons/slime2_template.png';
@@ -21,12 +22,12 @@ export type DefaultWidgetId =
 	| 'test';
 
 const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
-	test: {
-		name: 'test',
-		type: 'template',
-		icon: templateIconImage,
-		description: '',
-	},
+	// test: {
+	// 	name: 'test',
+	// 	type: 'template',
+	// 	icon: templateIconImage,
+	// 	description: '',
+	// },
 	slime2_template_overlay: {
 		name: 'Overlay Widget Template',
 		type: 'template',
@@ -39,12 +40,12 @@ const defaultWidgets: Partial<Record<DefaultWidgetId, DefaultWidget>> = {
 		icon: templateIconImage,
 		description: 'Starter bot template',
 	},
-	// slime2_alert_box: {
-	// 	name: 'Alert Box',
-	// 	type: 'overlay',
-	// 	icon: AlertBoxIcon,
-	// 	description: 'Display custom alerts for events',
-	// },
+	slime2_overlay_alert_box: {
+		name: 'Alert Box',
+		type: 'overlay',
+		icon: alertBoxIconImage,
+		description: 'Display custom alerts for events',
+	},
 	// slime2_event_label: {
 	// 	name: 'Event Label',
 	// 	type: 'overlay',
