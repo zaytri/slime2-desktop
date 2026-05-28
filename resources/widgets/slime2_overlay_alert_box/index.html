@@ -2,10 +2,16 @@
 	<div id="alert">
 		<img id="image" />
 		<video id="video" loop autoplay />
-		<p id="text"></p>
+		<div id="message"></div>
 	</div>
 	<audio id="audio" autoplay />
 </div>
+
+<!-- text template, inserted into message element -->
+<template id="text-fragment-template"><span class="text"></span></template>
+
+<!-- accent template, inserted into message element -->
+<template id="accent-fragment-template"><span class="accent"></span></template>
 
 <!-- svg used for shadow -->
 <svg id="shadow-svg" class="absolute inset-0 size-0 opacity-0">

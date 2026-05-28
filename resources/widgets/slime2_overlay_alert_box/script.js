@@ -24,12 +24,17 @@ const ALPHA_MULTIPLY_COLOR_MATRIX = [
 const Widget = {
 	readAccount: { id: '' },
 	exitAnimation: '',
+	alertUserId: '',
+	alertTimeout: NaN,
+
+	/** @type {VoidFunction[]} */
+	alertQueue: [],
 
 	/** @type {Map<string, any>} */
 	values: new Map(),
 
-	/** @type {Map<string, Date>} */
-	usersCleared: new Map(),
+	/** @type {Set<string>} */
+	usersCleared: new Set(),
 };
 
 const Twitch = {
@@ -52,14 +57,7 @@ async function widgetAccountsListener(event) {
 	logEventData(event.type, event.detail);
 
 	const accounts = event.detail?.accounts ?? [];
-	const newReadAccount = accounts[0];
-
-	// same account as stored account or undefined, skip processing
-	if (!newReadAccount?.id || Widget.readAccount.id === newReadAccount.id) {
-		return;
-	}
-
-	Widget.readAccount = newReadAccount;
+	Widget.readAccount = accounts[0];
 }
 
 function twitchEventListener(event) {
@@ -156,7 +154,7 @@ function handlePowerUp(data, eventDate) {
 }
 
 function handleCheer(data, eventDate) {
-	const { is_anonymous, user_id, user_login, user_name, message, bits } = data;
+	const { user_id, user_login, user_name, message, bits } = data;
 }
 
 function handleSub(data, eventDate) {
@@ -175,32 +173,65 @@ function handleSubGift(data, eventDate) {
 	const { is_anonymous, user_id, user_login, user_name, total, tier } = data;
 }
 
-function handleClearUser(data, eventDate) {
+function handleClearUser(data) {
 	const { target_user_id } = data;
-	Widget.usersCleared.set(target_user_id, eventDate);
+	// add user to usersCleared list, do not show alerts from them
+	Widget.usersCleared.add(target_user_id);
+	if (Widget.alertUserId === target_user_id) {
+		// user of current alert has been banned/timed out,
+		// immediately hide alert
+		hideAlert(true);
+	}
 }
 
 function handleChatMessageDelete(data) {
 	const { target_user_id } = data;
+	if (Widget.alertUserId === target_user_id) {
+		// user of current alert has had a message deleted,
+		// immediately hide alert
+		hideAlert(true);
+	}
 }
 
 // Alerts Handler
 // ***************************************************************************
 
 /**
+ * @param {string} [userId]
  * @param {string} type
  * @param {(alertId: string) => boolean} validateAlert
  * @param {(alertText: string) => { text: string; accent?: boolean }[]} parseAlertText
  */
-function handleAlerts(type, validateAlert, parseAlertText) {
+function handleAlerts(userId, type, validateAlert, parseAlertText) {
 	/** @type {string[]} */
 	const alerts = Widget.values.get(type) ?? [];
+
 	for (const alertId of alerts) {
 		if (validateAlert(alertId)) {
 			const alertText = getMultiSectionValue(alertId, `${type}-text`) ?? '';
-			displayAlert(type, alertId, parseAlertText(alertText));
+
+			setTimeout(
+				() => {
+					queueAlert(() => {
+						playAlert(userId, type, alertId, parseAlertText(alertText));
+					});
+				},
+				// alert delay handling
+				(Widget.values.get('delay') || 0) * 1000,
+			);
 			return;
 		}
+	}
+}
+
+/** @param {VoidFunction} playAlertFunction */
+function queueAlert(playAlertFunction) {
+	// add to queue
+	Widget.alertQueue.push(playAlertFunction);
+
+	// if it's the only one in the queue, play it
+	if (Widget.alertQueue.length === 1) {
+		playAlertFunction();
 	}
 }
 
@@ -209,9 +240,13 @@ function handleAlerts(type, validateAlert, parseAlertText) {
  * @param {string} alertId
  * @param {{ text: string; accent?: boolean }[]} messageFragments
  */
-function displayAlert(type, alertId, messageFragments) {
-	/** @type {HTMLDivElement} */
-	const alertElement = document.getElementById('alert');
+function playAlert(userId, type, alertId, messageFragments) {
+	if (Widget.usersCleared.has(userId)) {
+		hideAlert(true);
+	}
+
+	Widget.alertUserId = userId;
+	const alertElement = getAlertElement();
 
 	function getValue(settingId) {
 		return getMultiSectionValue(alertId, `${type}-${settingId}`);
@@ -251,6 +286,7 @@ function displayAlert(type, alertId, messageFragments) {
 	removeClassesWithPrefix('layout', 'animate');
 	addClass(
 		`layout_${getValue('layout') ?? 'below'}`,
+		'enter',
 		'animate__animated',
 		`animate__${getValue('enter') ?? 'bounceIn'}`,
 	);
@@ -269,8 +305,7 @@ function displayAlert(type, alertId, messageFragments) {
 	const images = getValue('image') ?? [];
 	const imageIndex = images.length > 0 ? randomIndex(images) : undefined;
 
-	/** @type {HTMLAudioElement} */
-	const audioElement = document.getElementById('audio');
+	const audioElement = getAudioElement();
 	if (soundIndex === undefined) {
 		audioElement.pause();
 	} else {
@@ -290,8 +325,7 @@ function displayAlert(type, alertId, messageFragments) {
 	addClass(`visual_${getValue('visual') ?? 'none'}`);
 
 	if (visual === 'image') {
-		/** @type {HTMLImageElement} */
-		const imageElement = document.getElementById('image');
+		const imageElement = getImageElement();
 
 		if (imageIndex === undefined) {
 			removeClass('visual_image');
@@ -301,8 +335,7 @@ function displayAlert(type, alertId, messageFragments) {
 			imageElement.src = url;
 		}
 	} else if (visual === 'video') {
-		/** @type {HTMLVideoElement} */
-		const videoElement = document.getElementById('video');
+		const videoElement = getVideoElement();
 
 		if (videoIndex === undefined) {
 			videoElement.pause();
@@ -329,7 +362,7 @@ function displayAlert(type, alertId, messageFragments) {
 		['font-name', `"${getValue('font') ?? 'Nunito'}"`],
 		['font-weight', getValue('font-weight') ?? '700'],
 		['font-size', `${getValue('font-size') ?? 32}px`],
-		['text-align', `${getValue('text-align') ?? 'left'}`],
+		['text-align', `${getValue('text-align') ?? 'center'}`],
 		['text-color', getValue('text-color') ?? '#fff'],
 		['accent-color', getValue('accent-color') ?? '#BCE760'],
 	].forEach(([cssVarName, value]) => {
@@ -364,19 +397,75 @@ function displayAlert(type, alertId, messageFragments) {
 	].forEach(([id, attributeName, value]) => {
 		document.getElementById(id).setAttribute(attributeName, value);
 	});
+
+	Widget.alertTimeout = setTimeout(
+		() => {
+			hideAlert();
+		},
+		// alert duration handling
+		(getValue('duration') || 0) * 1000,
+	);
 }
 
-function hideAlert() {
-	/** @type {HTMLDivElement} */
-	const alertElement = document.getElementById('alert');
-	alertElement.classList.add(
-		'animate__animated',
-		`animate__${Widget.exitAnimation}`,
-	);
+async function hideAlert(immediate = false) {
+	clearTimeout(Widget.alertTimeout);
+	const alertElement = getAlertElement();
+
+	if (!immediate) {
+		// display and wait for exit animation
+		alertElement.classList.add(
+			'animate__animated',
+			`animate__${Widget.exitAnimation}`,
+		);
+		await animationsFinished(alertElement);
+	}
+
+	// clear all classes from alert
+	alertElement.classList.value = '';
+
+	// pause audio/video and reset playback time to 0
+	[getAudioElement(), getVideoElement()].forEach(mediaElement => {
+		mediaElement.pause();
+		mediaElement.currentTime = 0;
+	});
+
+	// remove alert from queue
+	Widget.alertQueue.shift();
+
+	// play next alert in queue
+	if (Widget.alertQueue.length > 0) {
+		const playNextAlertFunction = Widget.alertQueue[0];
+		playNextAlertFunction();
+	}
 }
 
 // Helpers
 // ***************************************************************************
+
+/** @returns {HTMLDivElement} */
+function getAlertElement() {
+	return document.getElementById('alert');
+}
+
+/** @returns {HTMLVideoElement} */
+function getVideoElement() {
+	return document.getElementById('video');
+}
+
+/** @returns {HTMLAudioElement} */
+function getAudioElement() {
+	return document.getElementById('audio');
+}
+
+/** @returns {HTMLImageElement} */
+function getImageElement() {
+	return document.getElementById('image');
+}
+
+/** @returns {HTMLDivElement} */
+function getMessageElement() {
+	return document.getElementById('message');
+}
 
 /**
  * Gets a value from within a Multi-Section
