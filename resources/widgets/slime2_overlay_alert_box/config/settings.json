@@ -28,12 +28,16 @@
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Text Below Visual",
-								"value": "below"
+								"label": "Text Over Visual",
+								"value": "over"
 							},
 							{
 								"label": "Text Above Visual",
 								"value": "above"
+							},
+							{
+								"label": "Text Below Visual",
+								"value": "below"
 							},
 							{
 								"label": "Text Left of Visual",
@@ -42,10 +46,6 @@
 							{
 								"label": "Text Right of Visual",
 								"value": "right"
-							},
-							{
-								"label": "Text Over Visual",
-								"value": "over"
 							}
 						]
 					},
@@ -515,12 +515,16 @@
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Text Below Visual",
-								"value": "below"
+								"label": "Text Over Visual",
+								"value": "over"
 							},
 							{
 								"label": "Text Above Visual",
 								"value": "above"
+							},
+							{
+								"label": "Text Below Visual",
+								"value": "below"
 							},
 							{
 								"label": "Text Left of Visual",
@@ -529,10 +533,6 @@
 							{
 								"label": "Text Right of Visual",
 								"value": "right"
-							},
-							{
-								"label": "Text Over Visual",
-								"value": "over"
 							}
 						]
 					},
@@ -967,12 +967,16 @@
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Text Below Visual",
-								"value": "below"
+								"label": "Text Over Visual",
+								"value": "over"
 							},
 							{
 								"label": "Text Above Visual",
 								"value": "above"
+							},
+							{
+								"label": "Text Below Visual",
+								"value": "below"
 							},
 							{
 								"label": "Text Left of Visual",
@@ -981,10 +985,6 @@
 							{
 								"label": "Text Right of Visual",
 								"value": "right"
-							},
-							{
-								"label": "Text Over Visual",
-								"value": "over"
 							}
 						]
 					},
@@ -1419,12 +1419,16 @@
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Text Below Visual",
-								"value": "below"
+								"label": "Text Over Visual",
+								"value": "over"
 							},
 							{
 								"label": "Text Above Visual",
 								"value": "above"
+							},
+							{
+								"label": "Text Below Visual",
+								"value": "below"
 							},
 							{
 								"label": "Text Left of Visual",
@@ -1433,10 +1437,6 @@
 							{
 								"label": "Text Right of Visual",
 								"value": "right"
-							},
-							{
-								"label": "Text Over Visual",
-								"value": "over"
 							}
 						]
 					},
@@ -1882,7 +1882,7 @@
 						"type": "text-area-input",
 						"label": "Alert Text",
 						"defaultValue": "{username} just cheered {amount} bits!",
-						"description": "{username} - Cheerer Name\n{amount} - Number of Bits"
+						"description": "{username} - Cheerer Name\n{amount} - Number of Bits\n{message} - Cheer Message"
 					},
 					"cheer-layout": {
 						"type": "dropdown-input",
@@ -1891,12 +1891,16 @@
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Text Below Visual",
-								"value": "below"
+								"label": "Text Over Visual",
+								"value": "over"
 							},
 							{
 								"label": "Text Above Visual",
 								"value": "above"
+							},
+							{
+								"label": "Text Below Visual",
+								"value": "below"
 							},
 							{
 								"label": "Text Left of Visual",
@@ -1905,10 +1909,6 @@
 							{
 								"label": "Text Right of Visual",
 								"value": "right"
-							},
-							{
-								"label": "Text Over Visual",
-								"value": "over"
 							}
 						]
 					},
@@ -1929,7 +1929,8 @@
 								"label": "Video",
 								"value": "video"
 							}
-						]
+						],
+						"halfSpan": true
 					},
 					"cheer-sound": {
 						"type": "multi-audio-input",
@@ -2362,19 +2363,19 @@
 							"sub-condition": ["tier"]
 						},
 						"halfSpan": true,
-						"defaultValue": "tier-1",
+						"defaultValue": "1000",
 						"options": [
 							{
 								"label": "Tier 1",
-								"value": "tier-1"
+								"value": "1000"
 							},
 							{
 								"label": "Tier 2",
-								"value": "tier-2"
+								"value": "2000"
 							},
 							{
 								"label": "Tier 3",
-								"value": "tier-3"
+								"value": "3000"
 							}
 						]
 					},
@@ -2391,12 +2392,16 @@
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Text Below Visual",
-								"value": "below"
+								"label": "Text Over Visual",
+								"value": "over"
 							},
 							{
 								"label": "Text Above Visual",
 								"value": "above"
+							},
+							{
+								"label": "Text Below Visual",
+								"value": "below"
 							},
 							{
 								"label": "Text Left of Visual",
@@ -2405,10 +2410,6 @@
 							{
 								"label": "Text Right of Visual",
 								"value": "right"
-							},
-							{
-								"label": "Text Over Visual",
-								"value": "over"
 							}
 						]
 					},
@@ -2870,12 +2871,16 @@
 						"defaultValue": "below",
 						"options": [
 							{
-								"label": "Text Below Visual",
-								"value": "below"
+								"label": "Text Over Visual",
+								"value": "over"
 							},
 							{
 								"label": "Text Above Visual",
 								"value": "above"
+							},
+							{
+								"label": "Text Below Visual",
+								"value": "below"
 							},
 							{
 								"label": "Text Left of Visual",
@@ -2884,10 +2889,6 @@
 							{
 								"label": "Text Right of Visual",
 								"value": "right"
-							},
-							{
-								"label": "Text Over Visual",
-								"value": "over"
 							}
 						]
 					},

@@ -1,17 +1,28 @@
 <div id="widget">
 	<div id="alert">
-		<img id="image" />
-		<video id="video" loop autoplay />
-		<div id="message"></div>
+		<img id="image" class="visual" />
+		<video
+			id="video"
+			class="visual"
+			loop
+			autoplay
+			disablepictureinpicture
+			disableremoteplayback
+		></video>
+		<div id="message-wrapper">
+			<div id="message"></div>
+		</div>
 	</div>
-	<audio id="audio" autoplay />
+	<audio id="audio" autoplay disableremoteplayback></audio>
 </div>
 
 <!-- text template, inserted into message element -->
 <template id="text-fragment-template"><span class="text"></span></template>
 
 <!-- accent template, inserted into message element -->
-<template id="accent-fragment-template"><span class="accent"></span></template>
+<template id="accent-fragment-template"
+	><span class="text accent"></span
+></template>
 
 <!-- svg used for shadow -->
 <svg id="shadow-svg" class="absolute inset-0 size-0 opacity-0">

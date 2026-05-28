@@ -23,6 +23,7 @@ const ALPHA_MULTIPLY_COLOR_MATRIX = [
 
 const Widget = {
 	readAccount: { id: '' },
+	enterAnimation: '',
 	exitAnimation: '',
 	alertUserId: '',
 	alertTimeout: NaN,
@@ -63,7 +64,6 @@ async function widgetAccountsListener(event) {
 function twitchEventListener(event) {
 	logEventData(`${event.type} - ${event.detail.type}`, event.detail);
 
-	const eventDate = new Date(event.detail.timestamp);
 	const { type, data } = event.detail;
 
 	// https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
@@ -71,69 +71,99 @@ function twitchEventListener(event) {
 	switch (type) {
 		// user banned or timed out
 		case 'channel.chat.clear_user_messages':
-			return handleClearUser(data, eventDate);
+			return handleClearUser(data);
 		// chat message deleted
 		case 'channel.chat.message_delete':
 			return handleChatMessageDelete(data);
 
 		// follow
 		case 'channel.follow':
-			return handleFollow(data, eventDate);
+			return handleFollow(data);
 
 		// raid
 		case 'channel.raid':
-			return handleRaid(data, eventDate);
+			return handleRaid(data);
 
 		// channel point reward
 		case 'channel.channel_points_custom_reward_redemption.add':
-			return handleReward(data, eventDate);
+			return handleReward(data);
 
 		// power-up
 		case 'channel.custom_power_up_redemption.add':
-			return handlePowerUp(data, eventDate);
+			return handlePowerUp(data);
 
 		// cheer
 		case 'channel.cheer':
-			return handleCheer(data, eventDate);
+			return handleCheer(data);
 
 		// sub and resub
 		case 'channel.subscribe':
 		case 'channel.subscription.message':
-			return handleSub(data, eventDate);
+			return handleSub(data);
 
 		// gift sub
 		case 'channel.subscription.gift':
-			return handleSubGift(data, eventDate);
+			return handleSubGift(data);
 	}
 }
 
 // Twitch Event Handlers
 // ***************************************************************************
 
-function handleFollow(data, eventDate) {
+function handleFollow(data) {
+	const type = 'follow';
 	const { user_id, user_login, user_name } = data;
 
-	handleAlerts(
-		'follow',
-		alertId => {
-			return true;
-		},
-		alertText => {
-			return { text: alertText };
-		},
-	);
+	handleAlerts(user_id, type, {
+		'{username}': { value: user_name, accent: true },
+	});
 }
 
-function handleRaid(data, eventDate) {
+function handleRaid(data) {
+	const type = 'raid';
 	const {
 		from_broadcaster_user_id,
 		from_broadcaster_user_login,
 		from_broadcaster_user_name,
 		viewers,
 	} = data;
+
+	handleAlerts(
+		from_broadcaster_user_id,
+		type,
+		{
+			'{username}': { value: from_broadcaster_user_name, accent: true },
+			'{amount}': { value: viewers, accent: true },
+		},
+		alertId => {
+			const getValue = createGetValueFunction(alertId, type);
+			const condition = getValue('condition') ?? 'at-least';
+			const amountCondition = getValue('amount') ?? 1;
+			/** @type {string[]} */
+			const usersCondition = getValue('users') ?? [];
+
+			switch (condition) {
+				case 'at-least':
+					return viewers >= amountCondition;
+				case 'exactly':
+					return viewers === amountCondition;
+				case 'users':
+					return usersCondition.some(user => {
+						return [
+							from_broadcaster_user_login,
+							from_broadcaster_user_name,
+						].some(name => {
+							return user.toLowerCase() === name.toLowerCase();
+						});
+					});
+			}
+			return false;
+		},
+	);
 }
 
-function handleReward(data, eventDate) {
+function handleReward(data) {
+	const type = 'reward';
 	const {
 		user_id,
 		user_login,
@@ -141,9 +171,26 @@ function handleReward(data, eventDate) {
 		user_input,
 		reward: { title, cost },
 	} = data;
+
+	handleAlerts(
+		user_id,
+		type,
+		{
+			'{username}': { value: user_name, accent: true },
+			'{reward}': { value: title, accent: true },
+			'{amount}': { value: cost, accent: true },
+			'{message}': { value: user_input },
+		},
+		alertId => {
+			const getValue = createGetValueFunction(alertId, type);
+			const rewardNameCondition = getValue('condition') ?? '';
+			return rewardNameCondition === title;
+		},
+	);
 }
 
-function handlePowerUp(data, eventDate) {
+function handlePowerUp(data) {
+	const type = 'power-up';
 	const {
 		user_id,
 		user_login,
@@ -151,13 +198,54 @@ function handlePowerUp(data, eventDate) {
 		user_input,
 		custom_power_up: { title, bits },
 	} = data;
+
+	handleAlerts(
+		user_id,
+		type,
+		{
+			'{username}': { value: user_name, accent: true },
+			'{power_up}': { value: title, accent: true },
+			'{amount}': { value: bits, accent: true },
+			'{message}': { value: user_input },
+		},
+		alertId => {
+			const getValue = createGetValueFunction(alertId, type);
+			const powerUpNameCondition = getValue('condition') ?? '';
+			return powerUpNameCondition === title;
+		},
+	);
 }
 
-function handleCheer(data, eventDate) {
+function handleCheer(data) {
+	const type = 'cheer';
 	const { user_id, user_login, user_name, message, bits } = data;
+
+	handleAlerts(
+		user_id,
+		type,
+		{
+			'{username}': { value: user_name, accent: true },
+			'{amount}': { value: bits, accent: true },
+			'{message}': { value: message },
+		},
+		alertId => {
+			const getValue = createGetValueFunction(alertId, type);
+			const condition = getValue('condition') ?? 'at-least';
+			const amountCondition = getValue('amount') ?? 1;
+
+			switch (condition) {
+				case 'at-least':
+					return bits >= amountCondition;
+				case 'exactly':
+					return bits === amountCondition;
+			}
+			return false;
+		},
+	);
 }
 
-function handleSub(data, eventDate) {
+function handleSub(data) {
+	const type = 'sub';
 	const {
 		user_id,
 		user_login,
@@ -167,10 +255,78 @@ function handleSub(data, eventDate) {
 		message,
 		cumulative_months,
 	} = data;
+
+	// don't handle gift subs here
+	if (is_gift) return;
+
+	handleAlerts(
+		user_id,
+		type,
+		{
+			'{username}': { value: user_name, accent: true },
+			'{sub_tier}': {
+				value:
+					tier === '3000' ? 'Tier 3' : tier === '2000' ? 'Tier 2' : 'Tier 1',
+				accent: true,
+			},
+			'{amount}': { value: cumulative_months ?? 1, accent: true },
+			'{message}': { value: message?.text },
+		},
+		alertId => {
+			const getValue = createGetValueFunction(alertId, type);
+			const condition = getValue('condition') ?? 'tier';
+			const tierCondition = getValue('tier') ?? '1000';
+			const amountCondition = getValue('amount') ?? 1;
+			const isResub = !!cumulative_months;
+
+			switch (condition) {
+				case 'tier':
+					return tier === tierCondition;
+				case 'at-least':
+					return amountCondition === 1 || cumulative_months >= amountCondition;
+				case 'exactly':
+					return amountCondition === 1 || cumulative_months === amountCondition;
+			}
+			return false;
+		},
+	);
 }
 
-function handleSubGift(data, eventDate) {
+function handleSubGift(data) {
+	const type = 'gift-sub';
 	const { is_anonymous, user_id, user_login, user_name, total, tier } = data;
+
+	handleAlerts(
+		user_id,
+		type,
+		{
+			'{sender}': {
+				value: is_anonymous ? 'Anonymous' : user_name,
+				accent: true,
+			},
+			'{sub_tier}': {
+				value:
+					tier === '3000' ? 'Tier 3' : tier === '2000' ? 'Tier 2' : 'Tier 1',
+				accent: true,
+			},
+			'{amount}': { value: total, accent: true },
+		},
+		alertId => {
+			const getValue = createGetValueFunction(alertId, type);
+			const condition = getValue('condition') ?? 'at-least';
+			const amountCondition = getValue('amount') ?? 1;
+
+			switch (condition) {
+				case 'at-least':
+					return total >= amountCondition;
+				case 'exactly':
+					return total === amountCondition;
+				case 'individual':
+					return total === 1;
+			}
+			return false;
+		},
+	);
 }
 
 function handleClearUser(data) {
@@ -199,21 +355,39 @@ function handleChatMessageDelete(data) {
 /**
  * @param {string} [userId]
  * @param {string} type
- * @param {(alertId: string) => boolean} validateAlert
- * @param {(alertText: string) => { text: string; accent?: boolean }[]} parseAlertText
+ * @param {Record<string, { value: string; accent?: boolean }>} variables
+ * @param {(alertId: string) => boolean} [validateAlert]
  */
-function handleAlerts(userId, type, validateAlert, parseAlertText) {
+function handleAlerts(userId, type, variables, validateAlert) {
 	/** @type {string[]} */
 	const alerts = Widget.values.get(type) ?? [];
 
 	for (const alertId of alerts) {
-		if (validateAlert(alertId)) {
-			const alertText = getMultiSectionValue(alertId, `${type}-text`) ?? '';
+		const getValue = createGetValueFunction(alertId, type);
+		const enabled = getValue('enabled') ?? true;
+
+		if (enabled && (!validateAlert || validateAlert(alertId))) {
+			/** @type {string} */
+			const alertText = getValue('text') ?? '';
+			const regexPart = stringsToRegexOr(Object.keys(variables));
+			const regex = new RegExp(`(${regexPart})`, 'g');
+
+			const messageParts = alertText.split(regex).reduce((parts, part) => {
+				if (part) {
+					const data = variables[part];
+					if (data) {
+						parts.push({ text: data.value, accent: data.accent });
+					} else {
+						parts.push({ text: part });
+					}
+				}
+				return parts;
+			}, /** @type {{ text: string; accent?: boolean }[]} */ ([]));
 
 			setTimeout(
 				() => {
 					queueAlert(() => {
-						playAlert(userId, type, alertId, parseAlertText(alertText));
+						playAlert(userId, type, alertId, messageParts);
 					});
 				},
 				// alert delay handling
@@ -238,19 +412,16 @@ function queueAlert(playAlertFunction) {
 /**
  * @param {string} type
  * @param {string} alertId
- * @param {{ text: string; accent?: boolean }[]} messageFragments
+ * @param {{ text: string; accent?: boolean }[]} messageParts
  */
-function playAlert(userId, type, alertId, messageFragments) {
+function playAlert(userId, type, alertId, messageParts) {
 	if (Widget.usersCleared.has(userId)) {
 		hideAlert(true);
 	}
 
 	Widget.alertUserId = userId;
 	const alertElement = getAlertElement();
-
-	function getValue(settingId) {
-		return getMultiSectionValue(alertId, `${type}-${settingId}`);
-	}
+	const getValue = createGetValueFunction(alertId, type);
 
 	// use in CSS as var(--custom-[cssVarName])
 	function setCustomCSS(cssVarName, value) {
@@ -283,14 +454,16 @@ function playAlert(userId, type, alertId, messageFragments) {
 
 	// layout and animation settings
 
+	Widget.enterAnimation = getValue('enter') ?? 'bounceIn';
+	Widget.exitAnimation = getValue('exit') ?? 'bounceOut';
+
 	removeClassesWithPrefix('layout', 'animate');
 	addClass(
 		`layout_${getValue('layout') ?? 'below'}`,
-		'enter',
 		'animate__animated',
-		`animate__${getValue('enter') ?? 'bounceIn'}`,
+		`animate__${Widget.enterAnimation}`,
+		'enter',
 	);
-	Widget.exitAnimation = getValue('exit') ?? 'bounceOut';
 
 	// visual and sound settings
 
@@ -313,10 +486,10 @@ function playAlert(userId, type, alertId, messageFragments) {
 		const volume = soundVolumes[soundIndex] ?? 0.2;
 
 		audioElement.src = url;
-		audioElement.volume = volume;
+		audioElement.volume = 0;
 		audioElement.play();
 		audioElement.onloadstart = () => {
-			audioElement.volume = volume;
+			smoothVolumeChange(audioElement, volume);
 		};
 	}
 
@@ -348,10 +521,12 @@ function playAlert(userId, type, alertId, messageFragments) {
 				soundIndex === undefined ? (videoVolumes[videoIndex] ?? 0.2) : 0;
 
 			videoElement.src = url;
-			videoElement.volume = volume;
+			videoElement.volume = 0;
 			videoElement.play();
 			videoElement.onloadstart = () => {
-				videoElement.volume = volume;
+				if (volume) {
+					smoothVolumeChange(videoElement, volume);
+				}
 			};
 		}
 	}
@@ -398,6 +573,17 @@ function playAlert(userId, type, alertId, messageFragments) {
 		document.getElementById(id).setAttribute(attributeName, value);
 	});
 
+	const messageChildren = messageParts.map(part => {
+		const templateId = part.accent
+			? 'accent-fragment-template'
+			: 'text-fragment-template';
+		const clone = cloneTemplate(templateId);
+		clone.querySelector('span').textContent = part.text;
+		return clone;
+	});
+
+	getMessageElement().replaceChildren(...messageChildren);
+
 	Widget.alertTimeout = setTimeout(
 		() => {
 			hideAlert();
@@ -410,24 +596,38 @@ function playAlert(userId, type, alertId, messageFragments) {
 async function hideAlert(immediate = false) {
 	clearTimeout(Widget.alertTimeout);
 	const alertElement = getAlertElement();
+	const audioElement = getAudioElement();
+	const videoElement = getVideoElement();
 
 	if (!immediate) {
 		// display and wait for exit animation
+		alertElement.classList.remove(`animate__${Widget.enterAnimation}`);
 		alertElement.classList.add(
 			'animate__animated',
 			`animate__${Widget.exitAnimation}`,
+			'exit',
 		);
-		await animationsFinished(alertElement);
+
+		// fade volume to 0
+		[audioElement, videoElement].forEach(mediaElement => {
+			smoothVolumeChange(mediaElement, 0);
+		});
+
+		await animationsFinished(getAlertElement());
 	}
 
 	// clear all classes from alert
 	alertElement.classList.value = '';
 
-	// pause audio/video and reset playback time to 0
+	// mute, pause, and reset playback time to 0 of audio and video
 	[getAudioElement(), getVideoElement()].forEach(mediaElement => {
+		mediaElement.volume = 0;
 		mediaElement.pause();
 		mediaElement.currentTime = 0;
 	});
+
+	// clear message
+	getMessageElement().replaceChildren();
 
 	// remove alert from queue
 	Widget.alertQueue.shift();
@@ -468,13 +668,63 @@ function getMessageElement() {
 }
 
 /**
+ * Reference: https://stackoverflow.com/a/13149848
+ *
+ * @param {HTMLMediaElement} element
+ * @param {number} newVolume
+ */
+async function smoothVolumeChange(
+	element,
+	newVolume,
+	{ duration = 500, interval = 25 } = {},
+) {
+	const originalVolume = element.volume;
+	const delta = newVolume - originalVolume;
+
+	const ticks = Math.max(1, Math.floor(duration / interval));
+	let tick = 0;
+
+	return new Promise(resolve => {
+		const timer = setInterval(() => {
+			tick++;
+			element.volume = Math.max(
+				0,
+				Math.min(1, originalVolume + swing(tick / ticks) * delta),
+			);
+
+			if (tick >= ticks) {
+				element.volume = newVolume;
+				clearInterval(timer);
+				resolve();
+			}
+		}, interval);
+	});
+}
+
+function swing(number) {
+	return 0.5 - Math.cos(number * Math.PI) / 2;
+}
+
+/**
  * Gets a value from within a Multi-Section
  *
  * @param {string} subsectionId
  * @param {string} settingId
+ * @returns {any}
  */
 function getMultiSectionValue(subsectionId, settingId) {
 	return Widget.values.get(`${subsectionId}.${settingId}`);
+}
+
+/**
+ * @param {string} alertId
+ * @param {string} type
+ * @returns {(settingId: string) => any}
+ */
+function createGetValueFunction(alertId, type) {
+	return settingId => {
+		return getMultiSectionValue(alertId, `${type}-${settingId}`);
+	};
 }
 
 /**
@@ -499,6 +749,61 @@ async function animationsFinished(element) {
 			return animation.finished;
 		}),
 	);
+}
+
+/**
+ * Given the ID of an HTML template, returns a copy of its DocumentFragment
+ * contents
+ *
+ * @param {string} id
+ * @returns {DocumentFragment}
+ */
+function cloneTemplate(id) {
+	/** @type {HTMLTemplateElement} */
+	const element = document.getElementById(id);
+
+	if (!element) {
+		throw Error(`Template with id "${id}" not found!`);
+	}
+
+	if (element.tagName !== 'TEMPLATE') {
+		throw Error(`Element with id "${id}" is not a template!`);
+	}
+
+	return document.importNode(element.content, true);
+}
+
+/**
+ * Given a string array, joins them in a regex OR.
+ *
+ * The strings are trimmed, discarding empty ones, and regex escaped.
+ *
+ * @param {string[]} stringArray
+ * @returns {string}
+ */
+function stringsToRegexOr(stringArray) {
+	return stringArray
+		.reduce((result, prefix) => {
+			const trimmedPrefix = prefix.trim();
+			if (trimmedPrefix !== '') {
+				result.push(escapeRegExp(trimmedPrefix));
+			}
+			return result;
+		}, [])
+		.join('|');
+}
+
+/**
+ * Escapes all characters that have special functionality in regex by inserting
+ * a backslash before them
+ *
+ * Characters escaped: . * + ? ^ $ { } ( ) | [ ] \
+ *
+ * @param {string} string
+ * @returns {string}
+ */
+function escapeRegExp(string) {
+	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /** Formatted console log given type and data, if `LOG_EVENT_DATA = true` */
