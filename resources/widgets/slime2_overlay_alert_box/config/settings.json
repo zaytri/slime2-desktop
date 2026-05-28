@@ -361,7 +361,7 @@
 						"type": "select-input",
 						"label": "Text Align",
 						"halfSpan": true,
-						"defaultValue": "left",
+						"defaultValue": "center",
 						"options": [
 							{
 								"label": "Left",
@@ -848,7 +848,7 @@
 						"type": "select-input",
 						"label": "Text Align",
 						"halfSpan": true,
-						"defaultValue": "left",
+						"defaultValue": "center",
 						"options": [
 							{
 								"label": "Left",
@@ -1300,7 +1300,7 @@
 						"type": "select-input",
 						"label": "Text Align",
 						"halfSpan": true,
-						"defaultValue": "left",
+						"defaultValue": "center",
 						"options": [
 							{
 								"label": "Left",
@@ -1752,7 +1752,7 @@
 						"type": "select-input",
 						"label": "Text Align",
 						"halfSpan": true,
-						"defaultValue": "left",
+						"defaultValue": "center",
 						"options": [
 							{
 								"label": "Left",
@@ -2223,7 +2223,7 @@
 						"type": "select-input",
 						"label": "Text Align",
 						"halfSpan": true,
-						"defaultValue": "left",
+						"defaultValue": "center",
 						"options": [
 							{
 								"label": "Left",
@@ -2724,7 +2724,7 @@
 						"type": "select-input",
 						"label": "Text Align",
 						"halfSpan": true,
-						"defaultValue": "left",
+						"defaultValue": "center",
 						"options": [
 							{
 								"label": "Left",
@@ -3203,7 +3203,7 @@
 						"type": "select-input",
 						"label": "Text Align",
 						"halfSpan": true,
-						"defaultValue": "left",
+						"defaultValue": "center",
 						"options": [
 							{
 								"label": "Left",
