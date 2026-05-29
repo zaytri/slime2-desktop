@@ -5,7 +5,7 @@
 const RequestResolveRejectMap = new Map();
 
 // set to true to automatically log event data
-const LOG_EVENT_DATA = true;
+const LOG_EVENT_DATA = false;
 
 const EPOCH_DATE = new Date(0);
 

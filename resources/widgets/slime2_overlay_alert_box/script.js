@@ -5,7 +5,7 @@
 const slime2 = window.slime2;
 
 // set to true to automatically console log event data
-const LOG_EVENT_DATA = true;
+const LOG_EVENT_DATA = false;
 
 // for feColorMatrix
 const IDENTITY_COLOR_MATRIX = [
