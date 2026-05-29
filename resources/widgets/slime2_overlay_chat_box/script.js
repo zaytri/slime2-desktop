@@ -801,13 +801,13 @@ function buildTwitchEmoteImageUrl(id, options = {}) {
 /** Builds BetterTTV emote image URL given the emote ID and animated value */
 const BASE_BTTV_EMOTE_URL = 'https://cdn.betterttv.net/emote';
 function buildBttvEmoteImageUrl(id, animated, options = {}) {
-	// static = boolean
+	// staticEmote = boolean
 	// size = '1x' | '2x' | '3x'
-	const { static = false, size = '3x' } = options;
+	const { staticEmote = false, size = '3x' } = options;
 	const urlParts = [BASE_BTTV_EMOTE_URL, id];
 
-	// static only works if the emote was animated
-	if (animated && static) urlParts.push('static');
+	// staticEmote only works if the emote was animated
+	if (animated && staticEmote) urlParts.push('static');
 
 	urlParts.push(size);
 	return urlParts.join('/');
