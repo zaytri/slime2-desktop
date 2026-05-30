@@ -82,4 +82,4 @@ jobs:
           releaseDraft: true
           prerelease: ${{ github.ref_name != 'release/live' }}
           args: ${{ matrix.args }}
-          assetNamePattern: 'slime2-v[version]${{ env.SLIME2_FILE_SUFFIX }}[ext]'
+          assetNamePattern: 'Slime2-v[version]${{ env.SLIME2_FILE_SUFFIX }}[ext]'
