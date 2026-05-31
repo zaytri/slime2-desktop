@@ -82,5 +82,7 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: ${{ github.ref_name != 'release/live' }}
-          args: ${{ format('{0}{1}', matrix.args, case(github.ref_name == 'release/debug', ' --debug', '')) }}
+          includeRelease: ${{ github.ref_name != 'release/debug' }}
+          includeDebug: ${{ github.ref_name == 'release/debug' }}
+          args: ${{ matrix.args }}
           assetNamePattern: 'Slime2-v[version]${{ env.SLIME2_FILE_SUFFIX }}[ext]'
