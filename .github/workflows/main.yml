@@ -7,6 +7,7 @@ on:
       - release/test
       - release/beta
       - release/live
+      - release/debug
 
 concurrency:
   group: ${{ github.ref_name }}
@@ -72,14 +73,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
           # the action replaces \_\_VERSION\_\_ with the app version.
-          SLIME2_APP_VERSION: v__VERSION__${{ case(github.ref_name == 'release/live', '', github.ref_name == 'release/beta', '-beta', format('-test-{0}', github.sha)) }}
+          SLIME2_APP_VERSION: v__VERSION__${{ case(github.ref_name == 'release/live', '', github.ref_name == 'release/beta', '-beta', github.ref_name == 'release/debug', '-debug', format('-test-{0}', github.sha)) }}
 
-          SLIME2_FILE_SUFFIX: ${{ case(github.ref_name == 'release/live', '' ,github.ref_name == 'release/beta', '-beta', '-test') }}_${{ format('{0}-{1}', runner.os, matrix.output_arch || runner.arch) }}
+          SLIME2_FILE_SUFFIX: ${{ case(github.ref_name == 'release/live', '' ,github.ref_name == 'release/beta', '-beta', github.ref_name == 'release/debug', '-debug', '-test') }}_${{ format('{0}-{1}', runner.os, matrix.output_arch || runner.arch) }}
         with:
           tagName: '${{ env.SLIME2_APP_VERSION}}'
           releaseName: 'Slime2 ${{ env.SLIME2_APP_VERSION }}'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: ${{ github.ref_name != 'release/live' }}
-          args: ${{ matrix.args }}
+          args: ${{ format('{0}{1}', matrix.args, case(github.ref_name == 'release/debug', ' --debug', '')) }}
           assetNamePattern: 'Slime2-v[version]${{ env.SLIME2_FILE_SUFFIX }}[ext]'
