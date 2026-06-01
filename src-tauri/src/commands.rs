@@ -223,7 +223,7 @@ pub async fn install_custom_widget(
 	let new_widget_id = generate_widget_id();
 	let source_path = Path::new(zip_path);
 
-	let mut archive = match file::unzip(source_path) {
+	let archive = match file::unzip(source_path) {
 		Ok(archive) => archive,
 		Err(error) => {
 			return Err(format!("Failed to open zip: {}", error));
@@ -231,8 +231,17 @@ pub async fn install_custom_widget(
 	};
 
 	// check if zip contains meta.json
-	if let Err(error) = archive.by_name("config\\meta.json") {
-		return Err(format!("Zip file is missing config/meta.json! {}", error));
+	if let Err(_) =
+		file::extract_file_from_zip(source_path, "config\\meta.json")
+	{
+		if let Err(error) =
+			file::extract_file_from_zip(source_path, "config/meta.json")
+		{
+			return Err(format!(
+				"Zip file is missing config/meta.json! {}",
+				error
+			));
+		}
 	}
 
 	// extract zip into slime2
@@ -498,28 +507,18 @@ pub async fn save_temp_widget_core_icon(
 pub async fn extract_widget_details(zip_path: &str) -> Result<String, String> {
 	let source_path = Path::new(zip_path);
 
-	let mut archive = match file::unzip(source_path) {
-		Ok(archive) => archive,
-		Err(error) => {
-			return Err(format!("Failed to open zip: {}", error));
+	// if zip was created in windows, uses \ for separator, otherwise / in unix
+	match file::extract_file_from_zip(source_path, "config\\meta.json") {
+		Ok(file_contents) => return Ok(file_contents),
+		Err(_) => {
+			match file::extract_file_from_zip(source_path, "config/meta.json") {
+				Ok(file_contents) => return Ok(file_contents),
+				Err(error) => {
+					return Err(format!("File meta.json not found! {}", error));
+				}
+			};
 		}
 	};
-
-	// necessary for OS-friendly path
-	let meta_path = Path::new("config").join("meta.json");
-
-	// check if meta.json exists
-	let Ok(mut file) = archive.by_name(meta_path.to_str().unwrap()) else {
-		return Err(String::from("File meta.json not found!"));
-	};
-
-	// read meta.json into a string
-	let mut meta_contents = String::new();
-	if let Err(error) = file.read_to_string(&mut meta_contents) {
-		return Err(format!("Error reading meta.json: {}", error));
-	}
-
-	Ok(meta_contents)
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
