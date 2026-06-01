@@ -26,6 +26,10 @@ fn get_log_file_name() -> String {
 
 #[tokio::main]
 async fn main() {
+	// related to this issue https://github.com/tauri-apps/tauri/issues/10749
+	#[cfg(target_os = "linux")]
+	std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+
 	let connections = server::websocket::WebsocketConnections::default();
 
 	let app_launch_time = match time::OffsetDateTime::now_local() {
