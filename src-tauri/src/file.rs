@@ -43,6 +43,7 @@ pub fn save_json(json_string: &str, mut file_path: PathBuf) -> io::Result<()> {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 struct WidgetMetaForTileMeta {
 	name: String,
+	version: String,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -65,10 +66,8 @@ pub fn load_widget_meta(core_path: PathBuf) -> io::Result<TileMeta> {
 
 	let meta = serde_json::from_str::<WidgetMetaForTileMeta>(&json_string)?;
 
-	let name = meta.name;
-
 	return Ok(TileMeta {
-		name,
+		name: format!("{} v{}", meta.name, meta.version),
 		icon: String::from("icon/icon.png"),
 		color: String::from("green"),
 	});
