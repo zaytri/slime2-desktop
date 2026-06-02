@@ -68,7 +68,7 @@ export default function AboutDialog() {
 						<div className='flex flex-col'>
 							{[
 								['Logo Designer', 'Bri', 'https://sidequestdesigns.com/'],
-								['Icon Artist', 'Anje', 'https://linktr.ee/shenanjegans'],
+								['Icon Artist', 'Anje', 'https://ko-fi.com/shenanjegans'],
 							].map(([role, name, link]) => {
 								return (
 									<p key={name} className='text-3.5'>
