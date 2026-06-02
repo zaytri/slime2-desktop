@@ -183,8 +183,21 @@ function handleReward(data) {
 		},
 		alertId => {
 			const getValue = createGetValueFunction(alertId, type);
-			const rewardNameCondition = getValue('condition') ?? '';
-			return rewardNameCondition === title;
+			const condition = getValue('condition') ?? '';
+			const nameCondition = getValue('name') ?? '';
+			/** @type {string[]} */
+			const wordsCondition = getValue('words') ?? [];
+
+			switch (condition) {
+				case 'exactly':
+					return title === nameCondition;
+				case 'contains':
+					return wordsCondition.some(word => {
+						return title.toLowerCase().includes(word.toLowerCase());
+					});
+				case 'any':
+					return true;
+			}
 		},
 	);
 }
@@ -210,8 +223,21 @@ function handlePowerUp(data) {
 		},
 		alertId => {
 			const getValue = createGetValueFunction(alertId, type);
-			const powerUpNameCondition = getValue('condition') ?? '';
-			return powerUpNameCondition === title;
+			const condition = getValue('condition') ?? '';
+			const nameCondition = getValue('name') ?? '';
+			/** @type {string[]} */
+			const wordsCondition = getValue('words') ?? [];
+
+			switch (condition) {
+				case 'exactly':
+					return title === nameCondition;
+				case 'contains':
+					return wordsCondition.some(word => {
+						return title.toLowerCase().includes(word.toLowerCase());
+					});
+				case 'any':
+					return true;
+			}
 		},
 	);
 }

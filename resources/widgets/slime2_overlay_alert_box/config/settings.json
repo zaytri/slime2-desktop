@@ -177,6 +177,22 @@
 								"value": "rollIn"
 							},
 							{
+								"label": "Slide In Down",
+								"value": "slideInDown"
+							},
+							{
+								"label": "Slide In Left",
+								"value": "slideInLeft"
+							},
+							{
+								"label": "Slide In Right",
+								"value": "slideInRight"
+							},
+							{
+								"label": "Slide In Up",
+								"value": "slideInUp"
+							},
+							{
 								"label": "Zoom In",
 								"value": "zoomIn"
 							},
@@ -275,6 +291,22 @@
 							{
 								"label": "Roll Out",
 								"value": "rollOut"
+							},
+							{
+								"label": "Slide Out Down",
+								"value": "slideOutDown"
+							},
+							{
+								"label": "Slide Out Left",
+								"value": "slideOutLeft"
+							},
+							{
+								"label": "Slide Out Right",
+								"value": "slideOutRight"
+							},
+							{
+								"label": "Slide Out Up",
+								"value": "slideOutUp"
 							},
 							{
 								"label": "Zoom Out",
@@ -664,6 +696,22 @@
 								"value": "rollIn"
 							},
 							{
+								"label": "Slide In Down",
+								"value": "slideInDown"
+							},
+							{
+								"label": "Slide In Left",
+								"value": "slideInLeft"
+							},
+							{
+								"label": "Slide In Right",
+								"value": "slideInRight"
+							},
+							{
+								"label": "Slide In Up",
+								"value": "slideInUp"
+							},
+							{
 								"label": "Zoom In",
 								"value": "zoomIn"
 							},
@@ -762,6 +810,22 @@
 							{
 								"label": "Roll Out",
 								"value": "rollOut"
+							},
+							{
+								"label": "Slide Out Down",
+								"value": "slideOutDown"
+							},
+							{
+								"label": "Slide Out Left",
+								"value": "slideOutLeft"
+							},
+							{
+								"label": "Slide Out Right",
+								"value": "slideOutRight"
+							},
+							{
+								"label": "Slide Out Up",
+								"value": "slideOutUp"
 							},
 							{
 								"label": "Zoom Out",
@@ -950,9 +1014,41 @@
 						"defaultValue": true
 					},
 					"reward-condition": {
+						"type": "dropdown-input",
+						"label": "Condition",
+						"halfSpan": true,
+						"options": [
+							{
+								"label": "Reward name is exactly",
+								"value": "exactly"
+							},
+							{
+								"label": "Reward name contains",
+								"value": "contains"
+							},
+							{
+								"label": "Any Channel Point Reward",
+								"value": "any"
+							}
+						]
+					},
+					"reward-name": {
 						"type": "text-input",
-						"label": "Condition: Reward Name",
+						"label": "Name",
+						"condition": {
+							"reward-condition": "exactly"
+						},
+						"halfSpan": true,
 						"placeholder": "My Channel Point Reward"
+					},
+					"reward-words": {
+						"type": "multi-text-input",
+						"label": "Word(s)",
+						"condition": {
+							"reward-condition": "contains"
+						},
+						"halfSpan": true,
+						"placeholder": "Word"
 					},
 					"reward-text": {
 						"type": "text-area-input",
@@ -1116,6 +1212,22 @@
 								"value": "rollIn"
 							},
 							{
+								"label": "Slide In Down",
+								"value": "slideInDown"
+							},
+							{
+								"label": "Slide In Left",
+								"value": "slideInLeft"
+							},
+							{
+								"label": "Slide In Right",
+								"value": "slideInRight"
+							},
+							{
+								"label": "Slide In Up",
+								"value": "slideInUp"
+							},
+							{
 								"label": "Zoom In",
 								"value": "zoomIn"
 							},
@@ -1214,6 +1326,22 @@
 							{
 								"label": "Roll Out",
 								"value": "rollOut"
+							},
+							{
+								"label": "Slide Out Down",
+								"value": "slideOutDown"
+							},
+							{
+								"label": "Slide Out Left",
+								"value": "slideOutLeft"
+							},
+							{
+								"label": "Slide Out Right",
+								"value": "slideOutRight"
+							},
+							{
+								"label": "Slide Out Up",
+								"value": "slideOutUp"
 							},
 							{
 								"label": "Zoom Out",
@@ -1402,9 +1530,41 @@
 						"defaultValue": true
 					},
 					"power-up-condition": {
+						"type": "dropdown-input",
+						"label": "Condition",
+						"halfSpan": true,
+						"options": [
+							{
+								"label": "Custom Power-Up name is exactly",
+								"value": "exactly"
+							},
+							{
+								"label": "Custom Power-Up name contains",
+								"value": "contains"
+							},
+							{
+								"label": "Any Custom Power-Up",
+								"value": "any"
+							}
+						]
+					},
+					"power-up-name": {
 						"type": "text-input",
-						"label": "Condition: Power-Up Name",
+						"label": "Name",
+						"condition": {
+							"power-up-condition": "exactly"
+						},
+						"halfSpan": true,
 						"placeholder": "My Power-Up"
+					},
+					"power-up-words": {
+						"type": "multi-text-input",
+						"label": "Word(s)",
+						"condition": {
+							"power-up-condition": "contains"
+						},
+						"halfSpan": true,
+						"placeholder": "Word"
 					},
 					"power-up-text": {
 						"type": "text-input",
@@ -1568,6 +1728,22 @@
 								"value": "rollIn"
 							},
 							{
+								"label": "Slide In Down",
+								"value": "slideInDown"
+							},
+							{
+								"label": "Slide In Left",
+								"value": "slideInLeft"
+							},
+							{
+								"label": "Slide In Right",
+								"value": "slideInRight"
+							},
+							{
+								"label": "Slide In Up",
+								"value": "slideInUp"
+							},
+							{
 								"label": "Zoom In",
 								"value": "zoomIn"
 							},
@@ -1666,6 +1842,22 @@
 							{
 								"label": "Roll Out",
 								"value": "rollOut"
+							},
+							{
+								"label": "Slide Out Down",
+								"value": "slideOutDown"
+							},
+							{
+								"label": "Slide Out Left",
+								"value": "slideOutLeft"
+							},
+							{
+								"label": "Slide Out Right",
+								"value": "slideOutRight"
+							},
+							{
+								"label": "Slide Out Up",
+								"value": "slideOutUp"
 							},
 							{
 								"label": "Zoom Out",
@@ -2040,6 +2232,22 @@
 								"value": "rollIn"
 							},
 							{
+								"label": "Slide In Down",
+								"value": "slideInDown"
+							},
+							{
+								"label": "Slide In Left",
+								"value": "slideInLeft"
+							},
+							{
+								"label": "Slide In Right",
+								"value": "slideInRight"
+							},
+							{
+								"label": "Slide In Up",
+								"value": "slideInUp"
+							},
+							{
 								"label": "Zoom In",
 								"value": "zoomIn"
 							},
@@ -2138,6 +2346,22 @@
 							{
 								"label": "Roll Out",
 								"value": "rollOut"
+							},
+							{
+								"label": "Slide Out Down",
+								"value": "slideOutDown"
+							},
+							{
+								"label": "Slide Out Left",
+								"value": "slideOutLeft"
+							},
+							{
+								"label": "Slide Out Right",
+								"value": "slideOutRight"
+							},
+							{
+								"label": "Slide Out Up",
+								"value": "slideOutUp"
 							},
 							{
 								"label": "Zoom Out",
@@ -2541,6 +2765,22 @@
 								"value": "rollIn"
 							},
 							{
+								"label": "Slide In Down",
+								"value": "slideInDown"
+							},
+							{
+								"label": "Slide In Left",
+								"value": "slideInLeft"
+							},
+							{
+								"label": "Slide In Right",
+								"value": "slideInRight"
+							},
+							{
+								"label": "Slide In Up",
+								"value": "slideInUp"
+							},
+							{
 								"label": "Zoom In",
 								"value": "zoomIn"
 							},
@@ -2639,6 +2879,22 @@
 							{
 								"label": "Roll Out",
 								"value": "rollOut"
+							},
+							{
+								"label": "Slide Out Down",
+								"value": "slideOutDown"
+							},
+							{
+								"label": "Slide Out Left",
+								"value": "slideOutLeft"
+							},
+							{
+								"label": "Slide Out Right",
+								"value": "slideOutRight"
+							},
+							{
+								"label": "Slide Out Up",
+								"value": "slideOutUp"
 							},
 							{
 								"label": "Zoom Out",
@@ -3020,6 +3276,22 @@
 								"value": "rollIn"
 							},
 							{
+								"label": "Slide In Down",
+								"value": "slideInDown"
+							},
+							{
+								"label": "Slide In Left",
+								"value": "slideInLeft"
+							},
+							{
+								"label": "Slide In Right",
+								"value": "slideInRight"
+							},
+							{
+								"label": "Slide In Up",
+								"value": "slideInUp"
+							},
+							{
 								"label": "Zoom In",
 								"value": "zoomIn"
 							},
@@ -3118,6 +3390,22 @@
 							{
 								"label": "Roll Out",
 								"value": "rollOut"
+							},
+							{
+								"label": "Slide Out Down",
+								"value": "slideOutDown"
+							},
+							{
+								"label": "Slide Out Left",
+								"value": "slideOutLeft"
+							},
+							{
+								"label": "Slide Out Right",
+								"value": "slideOutRight"
+							},
+							{
+								"label": "Slide Out Up",
+								"value": "slideOutUp"
 							},
 							{
 								"label": "Zoom Out",

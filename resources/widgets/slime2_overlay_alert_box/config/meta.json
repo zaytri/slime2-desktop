@@ -1,7 +1,7 @@
 {
 	"name": "Slime2 Alert Box",
 	"creator": "Slime2",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"website": "https://slime2.stream/",
 	"support": "https://forums.slime2.stream/",
 	"type": ["overlay"],
@@ -13,9 +13,6 @@
 	],
 	"import": {
 		"js": ["script.js"],
-		"css": [
-			"styles.css",
-			"https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-		]
+		"css": ["animate.css", "styles.css"]
 	}
 }
