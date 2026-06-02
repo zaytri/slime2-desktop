@@ -231,17 +231,12 @@ pub async fn install_custom_widget(
 	};
 
 	// check if zip contains meta.json
-	if let Err(_) =
-		file::extract_file_from_zip(source_path, "config\\meta.json")
-	{
-		if let Err(error) =
-			file::extract_file_from_zip(source_path, "config/meta.json")
-		{
-			return Err(format!(
-				"Zip file is missing config/meta.json! {}",
-				error
-			));
-		}
+	let has_meta =
+	    archive.by_name("config/meta.json").is_ok()
+	    || archive.by_name("config\\meta.json").is_ok();
+	
+	if !has_meta {
+	    return Err("Zip file is missing config/meta.json!".to_string());
 	}
 
 	// extract zip into slime2
