@@ -1,6 +1,6 @@
 {
-	"name": "slime2-widget-server",
-	"version": "0.0.1",
+	"name": "slime2-overlay-server",
+	"version": "1.0.0",
 	"description": "Widget Overlay Server for Slime2",
 	"private": true,
 	"type": "module",
