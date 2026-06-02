@@ -61,8 +61,20 @@ export default function useWidgetRegistration() {
 			},
 		);
 
+		// re-register on core change
+		function widgetCoreChangeListener(
+			event: CustomEventInit<{ widgetId: string }>,
+		) {
+			if (!event.detail?.widgetId) return;
+			const { widgetId } = event.detail;
+			registerWidget(widgetId);
+		}
+
+		addEventListener('widget-core-change', widgetCoreChangeListener);
+
 		return () => {
 			removeEventListener('bot-registration', botRegistrationListener);
+			removeEventListener('widget-core-change', widgetCoreChangeListener);
 
 			unlistenPromise.then(unlisten => {
 				if (unlisten) unlisten();
