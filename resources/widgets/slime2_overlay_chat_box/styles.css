@@ -34,49 +34,44 @@
 	display: flex;
 	gap: 8px;
 
-	/* default is the same values as #widget.vertical.to-top.left */
+	/* default is the same values as #widget.arrangement_vertical.vertical_to-top.vertical_left */
 	flex-direction: column;
 	justify-content: end;
 	align-items: flex-start;
+}
 
-	&.arrangement_vertical {
-		&.vertical_to-top {
-			flex-direction: column;
-			justify-content: end;
-		}
-		&.vertical_to-bottom {
-			flex-direction: column-reverse;
-			justify-content: start;
-		}
-		&.vertical_left {
-			align-items: flex-start;
-		}
-		&.vertical_right {
-			align-items: flex-end;
-		}
-	}
+#widget.use-shadow {
+	filter: url(#shadow-filter);
+}
 
-	&.arrangement_horizontal {
-		flex-direction: row; /* default fallback */
-		&.horizontal_to-left {
-			flex-direction: row;
-			justify-content: end;
-		}
-		&.horizontal_to-right {
-			flex-direction: row-reverse;
-			justify-content: start;
-		}
-		&.horizontal_top {
-			align-items: flex-start;
-		}
-		&.horizontal_bottom {
-			align-items: flex-end;
-		}
-	}
+#widget.arrangement_vertical.vertical_to-top {
+	flex-direction: column;
+	justify-content: end;
+}
+#widget.arrangement_vertical.vertical_to-bottom {
+	flex-direction: column-reverse;
+	justify-content: start;
+}
+#widget.arrangement_vertical.vertical_left {
+	align-items: flex-start;
+}
+#widget.arrangement_vertical.vertical_right {
+	align-items: flex-end;
+}
 
-	&.use-shadow {
-		filter: url(#shadow-filter);
-	}
+#widget.arrangement_horizontal.horizontal_to-left {
+	flex-direction: row;
+	justify-content: end;
+}
+#widget.arrangement_horizontal.horizontal_to-right {
+	flex-direction: row-reverse;
+	justify-content: start;
+}
+#widget.arrangement_horizontal.horizontal_top {
+	align-items: flex-start;
+}
+#widget.arrangement_horizontal.horizontal_bottom {
+	align-items: flex-end;
 }
 
 #shadow-svg {
@@ -91,76 +86,114 @@
 	flex-shrink: 0;
 	max-width: min(var(--max-width), 100%);
 	overflow: hidden;
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
 
 	animation: none;
 	animation-duration: 400ms;
 	animation-fill-mode: forwards;
 	--smooth: smooth-none;
+}
 
-	.animation-smooth.arrangement_horizontal & {
-		--smooth: smooth-y, smooth-x;
-	}
-	.animation-smooth.arrangement_vertical & {
-		--smooth: smooth-y;
-	}
+.message.enter {
+	opacity: 1;
+	position: static;
+}
 
-	&.enter {
-		.animation-enter_none & {
-			animation-name: none;
-		}
+.animation-smooth.arrangement_horizontal .message {
+	--smooth: smooth-y, smooth-x;
+}
+.animation-smooth.arrangement_vertical .message {
+	--smooth: smooth-y;
+}
 
-		.animation-enter_fade-in & {
-			animation-name: var(--smooth), fade-in;
-		}
+.animation-enter_none .message.enter {
+	animation-name: none;
+}
 
-		.animation-enter_fade-in-left & {
-			animation-name: var(--smooth), fade-in, move-from-left;
-		}
+.animation-enter_fade-in .message.enter {
+	animation-name: var(--smooth), fade-in;
+}
 
-		.animation-enter_fade-in-right & {
-			animation-name: var(--smooth), fade-in, move-from-right;
-		}
+.animation-enter_fade-in-left .message.enter {
+	animation-name: var(--smooth), fade-in, move-from-left;
+}
 
-		.animation-enter_fade-in-up & {
-			animation-name: var(--smooth), fade-in, move-from-bottom;
-		}
+.animation-enter_fade-in-right .message.enter {
+	animation-name: var(--smooth), fade-in, move-from-right;
+}
 
-		.animation-enter_fade-in-down & {
-			animation-name: var(--smooth), fade-in, move-from-top;
-		}
-	}
+.animation-enter_fade-in-up .message.enter {
+	animation-name: var(--smooth), fade-in, move-from-bottom;
+}
 
-	&.exit {
-		.animation-exit_none & {
-			animation-name: none;
-			display: none;
-		}
+.animation-enter_fade-in-down .message.enter {
+	animation-name: var(--smooth), fade-in, move-from-top;
+}
 
-		.animation-exit_fade-out & {
-			animation-name: var(--smooth), fade-out;
-		}
+.animation-enter_slide-in-left .message.enter {
+	animation-name: var(--smooth), move-from-left;
+}
 
-		.animation-exit_fade-out-left & {
-			animation-name: var(--smooth), fade-out, move-to-left;
-		}
+.animation-enter_slide-in-right .message.enter {
+	animation-name: var(--smooth), move-from-right;
+}
 
-		.animation-exit_fade-out-right & {
-			animation-name: var(--smooth), fade-out, move-to-right;
-		}
+.animation-enter_slide-in-up .message.enter {
+	animation-name: var(--smooth), move-from-bottom;
+}
 
-		.animation-exit_fade-out-up & {
-			animation-name: var(--smooth), fade-out, move-to-top;
-		}
+.animation-enter_slide-in-down .message.enter {
+	animation-name: var(--smooth), move-from-top;
+}
 
-		.animation-exit_fade-out-down & {
-			animation-name: var(--smooth), fade-out, move-to-bottom;
-		}
-	}
+.animation-exit_none .message.exit {
+	animation-name: none;
+	display: none;
+}
+
+.animation-exit_fade-out .message.exit {
+	animation-name: var(--smooth), fade-out;
+}
+
+.animation-exit_fade-out-left .message.exit {
+	animation-name: var(--smooth), fade-out, move-to-left;
+}
+
+.animation-exit_fade-out-right .message.exit {
+	animation-name: var(--smooth), fade-out, move-to-right;
+}
+
+.animation-exit_fade-out-up .message.exit {
+	animation-name: var(--smooth), fade-out, move-to-top;
+}
+
+.animation-exit_fade-out-down .message.exit {
+	animation-name: var(--smooth), fade-out, move-to-bottom;
+}
+
+.animation-exit_slide-out-left .message.exit {
+	animation-name: var(--smooth), move-to-left;
+}
+
+.animation-exit_slide-out-right .message.exit {
+	animation-name: var(--smooth), move-to-right;
+}
+
+.animation-exit_slide-out-up .message.exit {
+	animation-name: var(--smooth), move-to-top;
+}
+
+.animation-exit_slide-out-down .message.exit {
+	animation-name: var(--smooth), move-to-bottom;
 }
 
 .message-clamp {
 	/* necessary for emotes to not be clipped */
-	padding: 4px;
+	padding-top: 0.25em;
+	padding-bottom: 0.2em;
 
 	/* all necessary for line clamp to work */
 	overflow: hidden;
@@ -174,22 +207,22 @@
 	display: inline;
 	color: var(--font-color);
 	font-weight: bolder;
+}
 
-	.username-color_custom & {
-		color: var(--custom-username-color, var(--font-color));
-	}
+.username-color_custom .user {
+	color: var(--custom-username-color, var(--font-color));
+}
 
-	.username-color_twitch & {
-		color: var(--twitch-username-color, var(--font-color));
-	}
+.username-color_twitch .user {
+	color: var(--twitch-username-color, var(--font-color));
+}
 
-	.username-color_twitch-light & {
-		color: var(--twitch-light-username-color, var(--font-color));
-	}
+.username-color_twitch-light .user {
+	color: var(--twitch-light-username-color, var(--font-color));
+}
 
-	.username-color_twitch-dark & {
-		color: var(--twitch-dark-username-color, var(--font-color));
-	}
+.username-color_twitch-dark .user {
+	color: var(--twitch-dark-username-color, var(--font-color));
 }
 
 .name {
@@ -211,7 +244,7 @@
 }
 
 .badge {
-	--badge-size: calc(1em + 4px);
+	--badge-size: 1.25em;
 	height: var(--badge-size);
 	width: var(--badge-size);
 	min-height: var(--badge-size);
@@ -342,6 +375,7 @@
 @property --line-clamp {
 	syntax: '<integer>';
 	inherits: true;
+	initial-value: 1;
 }
 
 @keyframes smooth-y {
@@ -351,7 +385,7 @@
 	}
 
 	to {
-		max-height: var(--message-height);
+		max-height: var(--max-message-height);
 	}
 }
 
@@ -361,7 +395,12 @@
 		max-width: 0;
 	}
 
+	50% {
+		--line-clamp: 1;
+		max-height: 1.5em;
+	}
+
 	to {
-		max-width: min(var(--message-width), var(--max-width));
+		max-width: min(var(--max-message-width), var(--max-width));
 	}
 }

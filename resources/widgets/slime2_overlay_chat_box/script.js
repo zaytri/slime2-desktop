@@ -359,6 +359,27 @@ async function handleChatMessage(data, eventDate) {
 		}
 	});
 
+	// wait for all images to load
+	await Promise.allSettled(
+		[...messageTemplateClone.querySelectorAll('img').values()].map(
+			async imageElement => {
+				return new Promise(resolve => {
+					if (imageElement.complete) {
+						resolve();
+						return;
+					}
+
+					function onLoad() {
+						imageElement.removeEventListener('load', onLoad);
+						resolve();
+					}
+
+					imageElement.addEventListener('load', onLoad);
+				});
+			},
+		),
+	);
+
 	setTimeout(
 		() => {
 			const widgetBody = document.getElementById('widget');
@@ -424,6 +445,10 @@ async function handleChatMessage(data, eventDate) {
 	);
 }
 
+/**
+ * @param {DocumentFragment} messageTemplateClone
+ * @param {string} messageId
+ */
 function displayMessage(messageTemplateClone, messageId) {
 	/** @type {HTMLDivElement} */
 	const widgetBody = document.getElementById('widget');
@@ -432,6 +457,8 @@ function displayMessage(messageTemplateClone, messageId) {
 		const entry = entries.pop();
 		if (!entry) return;
 
+		observer.disconnect();
+
 		const { inlineSize: width, blockSize: height } = entry.borderBoxSize[0];
 		const newMessageElement = entry.target;
 
@@ -439,8 +466,8 @@ function displayMessage(messageTemplateClone, messageId) {
 
 		newMessageElement.classList.add('enter');
 		[
-			['message-width', `${width}px`],
-			['message-height', `${height}px`],
+			['max-message-width', `${Math.ceil(width) + 50}px`],
+			['max-message-height', `${Math.ceil(height) + 50}px`],
 		].forEach(([cssVarName, value]) => {
 			newMessageElement.style.setProperty(`--${cssVarName}`, value);
 		});
@@ -476,8 +503,6 @@ function displayMessage(messageTemplateClone, messageId) {
 				}
 			}
 		});
-
-		observer.disconnect();
 	});
 
 	// append clone
@@ -608,8 +633,8 @@ function buildTextFragment(textFragment) {
 			const src = buildBttvEmoteImageUrl(id, animated);
 			parsedFragments.push({ type: 'emote', text: part, src });
 		} else if (thirdPartyEmote.type === 'ffz') {
-			const { urls } = thirdPartyEmote.data;
-			const src = buildFfzEmoteImageUrl(urls);
+			const { urls, animated: animatedUrls } = thirdPartyEmote.data;
+			const src = buildFfzEmoteImageUrl(urls, animatedUrls);
 			parsedFragments.push({ type: 'emote', text: part, src });
 		} else {
 			parsedFragments.push({ type: 'text', text: part });
@@ -655,8 +680,8 @@ function buildEmoteFragment(emoteFragment) {
 		const { id, animated } = thirdPartyEmote.data;
 		src = buildBttvEmoteImageUrl(id, animated);
 	} else if (thirdPartyEmote.type === 'ffz') {
-		const { urls } = thirdPartyEmote.data;
-		src = buildFfzEmoteImageUrl(urls);
+		const { urls, animated: animatedUrls } = thirdPartyEmote.data;
+		const src = buildFfzEmoteImageUrl(urls, animatedUrls);
 	}
 
 	return buildParsedEmoteFragment({ type: 'emote', text, src });
@@ -814,9 +839,16 @@ function buildBttvEmoteImageUrl(id, animated, options = {}) {
 }
 
 /** Builds FrankerFaceZ emote image URL given the possible URLs */
-function buildFfzEmoteImageUrl(urls) {
+function buildFfzEmoteImageUrl(urls, animatedUrls) {
 	// urls['1'] is guaranteed, the others are not
-	return urls['4'] || urls['2'] || urls['1'];
+	return (
+		animatedUrls?.['4'] ||
+		animatedUrls?.['2'] ||
+		animatedUrls?.['1'] ||
+		urls['4'] ||
+		urls['2'] ||
+		urls['1']
+	);
 }
 
 /**

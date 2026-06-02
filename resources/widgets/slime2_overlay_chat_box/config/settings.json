@@ -372,6 +372,22 @@
 					{
 						"label": "Fade In Down",
 						"value": "fade-in-down"
+					},
+					{
+						"label": "Slide In Left",
+						"value": "slide-in-left"
+					},
+					{
+						"label": "Slide In Right",
+						"value": "slide-in-right"
+					},
+					{
+						"label": "Slide In Up",
+						"value": "slide-in-up"
+					},
+					{
+						"label": "Slide In Down",
+						"value": "slide-in-down"
 					}
 				]
 			},
