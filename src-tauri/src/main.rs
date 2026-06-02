@@ -28,7 +28,9 @@ fn get_log_file_name() -> String {
 async fn main() {
 	// related to this issue https://github.com/tauri-apps/tauri/issues/10749
 	#[cfg(target_os = "linux")]
-	std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+	unsafe {
+		std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1")
+	};
 
 	let connections = server::websocket::WebsocketConnections::default();
 
