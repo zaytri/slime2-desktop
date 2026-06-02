@@ -31,6 +31,12 @@ export default function WidgetBotLogs({ onBack }: WidgetBotLogsProps) {
 	const [lastClicked, setLastClicked] = useState<string | null>(null);
 	const logReverse = structuredClone(botLog).reverse();
 
+	// automatically scroll to bottom upon opening bot logs
+	useEffect(() => {
+		const scrollContainer = document.getElementById(SCROLL_ID);
+		scrollContainer?.scrollTo(0, scrollContainer.scrollHeight);
+	}, []);
+
 	return (
 		<div className='flex w-full flex-1 p-4'>
 			<div className='flex flex-1 flex-col gap-4 overflow-hidden dark-container p-6 pt-4'>
