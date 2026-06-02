@@ -165,7 +165,7 @@ async function handleChatMessage(data, eventDate) {
 		const reply = (getValue('reply') ?? '').trim();
 		if (!reply) {
 			// ignore command if it has no reply
-			break;
+			continue;
 		}
 
 		const aliases = getValue('aliases') ?? [];
@@ -174,19 +174,19 @@ async function handleChatMessage(data, eventDate) {
 
 		if (!hasCommand(message.text, [command, ...aliases], keywords)) {
 			// message doesn't contain any command words
-			break;
+			continue;
 		}
 
 		const globalCooldown = getValue('global-cooldown') ?? 0;
 		if (onCooldown(eventDate, commandId, 'global', globalCooldown)) {
 			// global cooldown active
-			breka;
+			continue;
 		}
 
 		const userCooldown = getValue('user-cooldown') ?? 5;
 		if (onCooldown(eventDate, commandId, chatter_user_id, userCooldown)) {
 			// user cooldown active
-			break;
+			continue;
 		}
 
 		// check allowed roles
@@ -207,7 +207,7 @@ async function handleChatMessage(data, eventDate) {
 			// user did not pass badge roles
 
 			if (!allowedRoles.includes('follower')) {
-				break;
+				continue;
 			}
 
 			if (userFollowDateString === undefined) {
@@ -218,7 +218,7 @@ async function handleChatMessage(data, eventDate) {
 			const minFollowHours = getValue('follow-age') ?? 0;
 			if (!followAgeCheck(userFollowDateString, eventDate, minFollowHours)) {
 				// user did not pass follow age check
-				break;
+				continue;
 			}
 		}
 
