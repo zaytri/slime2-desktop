@@ -3,7 +3,7 @@ use serde_json::Number;
 use std::{
 	collections::HashMap,
 	fs::{self, File},
-	io::{self, Read},
+	io,
 	path::{Path, PathBuf},
 	time::{SystemTime, UNIX_EPOCH},
 };
@@ -313,22 +313,6 @@ pub fn generate_widget_config(
 	)?;
 
 	Ok(())
-}
-
-pub fn extract_file_from_zip(
-	source_path: &Path,
-	file_name: &str,
-) -> io::Result<String> {
-	let mut archive = unzip(source_path)?;
-	let mut file_contents = String::new();
-	let Ok(mut file) = archive.by_name(file_name) else {
-		return Err(io::Error::new(
-			io::ErrorKind::NotFound,
-			format!("{} not found in ZIP!", file_name),
-		));
-	};
-	file.read_to_string(&mut file_contents)?;
-	return Ok(file_contents);
 }
 
 // get path to overlay_server folder (built by src-overlay)
