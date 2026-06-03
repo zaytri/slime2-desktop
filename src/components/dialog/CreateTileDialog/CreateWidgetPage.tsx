@@ -7,6 +7,7 @@ import {
 	type DefaultWidget,
 	type DefaultWidgetId,
 } from '@/helpers/defaultWidgets';
+import { openZip } from '@/helpers/openFile';
 import ArrowDownTraySvg from '@@/svg/ArrowDownTraySvg';
 import type { CreateTileContext, CreateTilePages } from '.';
 import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
@@ -15,6 +16,7 @@ const { overlayWidgets, botWidgets, templateWidgets } = groupDefaultWidgets();
 
 export default function CreateWidgetPage() {
 	const { setPage } = usePage<CreateTilePages>();
+	const { setZipPath } = usePageContext<CreateTileContext>();
 	const { settings } = useSettings();
 
 	return (
@@ -26,11 +28,15 @@ export default function CreateWidgetPage() {
 
 				<DialogConfirmButton
 					icon={<ArrowDownTraySvg className='size-4.5' />}
-					onClick={() => {
+					onClick={async () => {
+						const zipPath = await openZip();
+						if (!zipPath) return;
+
+						setZipPath(zipPath);
 						setPage('custom');
 					}}
 				>
-					Import Custom Widget
+					Import Custom Widget ZIP
 				</DialogConfirmButton>
 			</div>
 

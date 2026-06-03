@@ -19,7 +19,10 @@ type CreateTileDialogProps = {
 
 export type CreateTilePages = 'start' | 'folder' | 'widgets' | 'custom';
 
-export type CreateTileContext = CreateTileDialogProps;
+export type CreateTileContext = CreateTileDialogProps & {
+	zipPath: string | null;
+	setZipPath: (path: string | null) => void;
+};
 
 export default function CreateTileDialog({
 	folderId,
@@ -31,6 +34,7 @@ export default function CreateTileDialog({
 		folderId === 'main' ? 'start' : 'widgets',
 	);
 	const { setTitle, setOnBack } = useDialog();
+	const [zipPath, setZipPath] = useState<string | null>(null);
 
 	useEffect(() => {
 		switch (page) {
@@ -69,6 +73,8 @@ export default function CreateTileDialog({
 					onCreateDefaultWidget={onCreateDefaultWidget}
 					onCreateFolder={onCreateFolder}
 					onCreateCustomWidget={onCreateCustomWidget}
+					zipPath={zipPath}
+					setZipPath={setZipPath}
 				>
 					<PageProvider<CreateTilePages> page={page} setPage={setPage}>
 						<CreatePage />
