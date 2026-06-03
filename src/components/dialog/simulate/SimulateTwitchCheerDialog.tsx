@@ -80,8 +80,7 @@ export default function SimulateTwitchCheerDialog({
 						onChange={setBits}
 						step={1}
 						min={1}
-						// change to 100,000 when Twitch fixes the Cheermotes API
-						max={99999}
+						max={100000}
 					/>
 				</section>
 			</div>

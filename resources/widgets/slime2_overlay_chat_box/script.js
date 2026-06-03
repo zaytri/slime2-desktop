@@ -235,6 +235,15 @@ async function widgetAccountsListener(event) {
 			cheermoteTiers.set(tier.min_bits, tier);
 		});
 
+		// fallback for cheermotes that don't have a 100,000 tier
+		// applies the 10,000 tier but with the 100,000 color
+		if (!cheermoteTiers.has(100 * 1000)) {
+			cheermoteTiers.set(100 * 1000, {
+				...cheermoteTiers.get(10 * 1000),
+				color: '#f3a71a',
+			});
+		}
+
 		// lowercase is important because the prefix that is sent
 		// in a cheermote message fragment is lowercase
 		Twitch.cheermotes.set(cheermote.prefix.toLowerCase(), {
