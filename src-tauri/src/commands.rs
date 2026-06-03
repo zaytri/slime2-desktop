@@ -231,8 +231,8 @@ pub async fn install_custom_widget(
 	};
 
 	// check if zip contains meta.json
-	let has_meta = archive.by_name("config/meta.json").is_ok()
-		|| archive.by_name("config\\meta.json").is_ok();
+	let has_meta = archive.by_name("config\\meta.json").is_ok()
+		|| archive.by_name("config/meta.json").is_ok();
 
 	if !has_meta {
 		return Err(String::from("Zip file is missing config/meta.json!"));
@@ -501,18 +501,27 @@ pub async fn save_temp_widget_core_icon(
 pub async fn extract_widget_details(zip_path: &str) -> Result<String, String> {
 	let source_path = Path::new(zip_path);
 
-	// if zip was created in windows, uses \ for separator, otherwise / in unix
-	match file::extract_file_from_zip(source_path, "config\\meta.json") {
-		Ok(file_contents) => return Ok(file_contents),
-		Err(_) => {
-			match file::extract_file_from_zip(source_path, "config/meta.json") {
-				Ok(file_contents) => return Ok(file_contents),
-				Err(error) => {
-					return Err(format!("File meta.json not found! {}", error));
-				}
-			};
+	let mut archive = match file::unzip(source_path) {
+		Ok(archive) => archive,
+		Err(error) => {
+			return Err(format!("Failed to open zip: {}", error));
 		}
 	};
+
+	let mut zip_file_meta =
+		if let Ok(file) = archive.by_name("config\\meta.json") {
+			file
+		} else if let Ok(file) = archive.by_name("config/meta.json") {
+			file
+		} else {
+			return Err(String::from("File meta.json not found!"));
+		};
+
+	let mut file_contents = String::new();
+	if let Err(error) = zip_file_meta.read_to_string(&mut file_contents) {
+		return Err(format!("Error reading meta.json: {}", error));
+	}
+	Ok(file_contents)
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
