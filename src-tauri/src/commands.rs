@@ -223,7 +223,7 @@ pub async fn install_custom_widget(
 	let new_widget_id = generate_widget_id();
 	let source_path = Path::new(zip_path);
 
-	let archive = match file::unzip(source_path) {
+	let mut archive = match file::unzip(source_path) {
 		Ok(archive) => archive,
 		Err(error) => {
 			return Err(format!("Failed to open zip: {}", error));
@@ -231,12 +231,11 @@ pub async fn install_custom_widget(
 	};
 
 	// check if zip contains meta.json
-	let has_meta =
-	    archive.by_name("config/meta.json").is_ok()
-	    || archive.by_name("config\\meta.json").is_ok();
-	
+	let has_meta = archive.by_name("config/meta.json").is_ok()
+		|| archive.by_name("config\\meta.json").is_ok();
+
 	if !has_meta {
-	    return Err("Zip file is missing config/meta.json!".to_string());
+		return Err(String::from("Zip file is missing config/meta.json!"));
 	}
 
 	// extract zip into slime2
