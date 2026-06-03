@@ -235,7 +235,9 @@ async function widgetAccountsListener(event) {
 			cheermoteTiers.set(tier.min_bits, tier);
 		});
 
-		Twitch.cheermotes.set(cheermote.prefix, {
+		// lowercase is important because the prefix that is sent
+		// in a cheermote message fragment is lowercase
+		Twitch.cheermotes.set(cheermote.prefix.toLowerCase(), {
 			...cheermote,
 			tiers: cheermoteTiers,
 		});

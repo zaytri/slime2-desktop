@@ -43,6 +43,7 @@ export default function useTwitchMockCheer() {
 				Random.integer(5000, 9999),
 				Random.integer(10000, 99999),
 				// change to 100,000 when Twitch fixes the Cheermotes API
+				// https://github.com/twitchdev/issues/issues/1163#issuecomment-4595389781
 				99999,
 			]);
 
@@ -101,7 +102,7 @@ async function sendMockCheer(
 			{
 				type: 'cheermote',
 				text: cheermoteText,
-				cheermote: { prefix, bits, tier },
+				cheermote: { prefix: prefix.toLowerCase(), bits, tier },
 			},
 			{
 				type: 'text',
