@@ -36,12 +36,12 @@ export default function MainTabsWrapper() {
 }
 
 function MainTabsHooksWrapper({ children }: Props.WithChildren) {
+	useSystemFontsQuery();
 	useWidgetRegistration();
 	useWidgetRequest();
 	useWidgetCoreChange();
 	useTwitchWebsocket();
 	useTwitchBot();
-	useSystemFontsQuery();
 
 	return children;
 }

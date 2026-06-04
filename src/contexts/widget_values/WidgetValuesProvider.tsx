@@ -56,7 +56,7 @@ export default function WidgetValuesProvider({
 
 	// send and save on every widgetValue change after load
 	useEffect(() => {
-		if (!loading) {
+		if (!loading && Object.keys(settings).length > 0) {
 			sendWidgetValues(id, settings, widgetValues);
 			saveWidgetValues(id, widgetValues);
 		}
