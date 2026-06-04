@@ -20,22 +20,6 @@ export default function WidgetMetasProvider({ children }: Props.WithChildren) {
 	);
 
 	useEffect(() => {
-		// update widget meta on core change
-		function widgetCoreChangeListener(
-			event: CustomEventInit<{ widgetId: string }>,
-		) {
-			if (!event.detail?.widgetId) return;
-			const { widgetId } = event.detail;
-			getWidgetMeta(widgetId);
-		}
-
-		addEventListener('widget-core-change', widgetCoreChangeListener);
-		return () => {
-			removeEventListener('widget-core-change', widgetCoreChangeListener);
-		};
-	}, []);
-
-	useEffect(() => {
 		async function loadWidgetMetas() {
 			const loadPromises: Promise<void>[] = [];
 

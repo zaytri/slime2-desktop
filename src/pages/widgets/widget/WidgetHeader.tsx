@@ -10,13 +10,16 @@ import useWidgetValues from '@/contexts/widget_values/useWidgetValues';
 import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValuesDispatch';
 import useWidgetsPanel from '@/contexts/widgets_panel/useWidgetsPanel';
 import { getTileIconSrc } from '@/helpers/media';
+import { refetchQuery } from '@/helpers/queryClient';
 import { createOverlayUrl } from '@/helpers/serverUrl';
 import useEditTile from '@/hooks/useEditTile';
 import CopyPasteWidgetDataDialog from '@@/dialog/CopyPasteWidgetDataDialog';
 import ExportZipDialog from '@@/dialog/ExportZipDialog';
 import GenericDeleteDialog from '@@/dialog/GenericDeleteDialog';
 import OverlayURLDialog from '@@/dialog/OverlayURLDialog';
+import { loadWidgetMeta } from '@@/json/widgetMeta';
 import ArrowLeftRightSvg from '@@/svg/ArrowLeftRightSvg';
+import ArrowsCirclingSvg from '@@/svg/ArrowsCirclingSvg';
 import ArrowUpTraySvg from '@@/svg/ArrowUpTraySvg';
 import BookSvg from '@@/svg/BookSvg';
 import ChainLinkSvg from '@@/svg/ChainLinkSvg';
@@ -61,7 +64,7 @@ function DevToolsButton() {
 	const { settings } = useSettings();
 	const { setDevPage } = useWidgetDevPage();
 	const { replace } = useWidgetValuesDispatch();
-	const { widgetMeta } = useWidgetMeta(widgetId);
+	const { widgetMeta, setWidgetMeta } = useWidgetMeta(widgetId);
 
 	if (!settings.devMode) return;
 
@@ -114,6 +117,20 @@ function DevToolsButton() {
 				>
 					<PencilSvg className='size-4.5' />
 					<p>Widget Editor</p>
+				</MenuItem>
+
+				<MenuItem
+					className='dark-menu-item'
+					onClick={async () => {
+						const [newMeta] = await Promise.all([
+							loadWidgetMeta(widgetId),
+							refetchQuery(['widgetSettings', widgetId]),
+						]);
+						setWidgetMeta(newMeta);
+					}}
+				>
+					<ArrowsCirclingSvg className='size-4.5' />
+					<p>Reload Core</p>
 				</MenuItem>
 
 				<MenuItem
