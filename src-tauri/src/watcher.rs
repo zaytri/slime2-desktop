@@ -38,46 +38,72 @@ pub async fn async_watch(watch_path: PathBuf) -> notify::Result<()> {
 	while let Some(result) = ub_receiver.recv().await {
 		match result {
 			Ok(events) => {
-				events.iter().for_each(|event| {
-					if event.kind.is_create()
-						|| event.kind.is_modify()
-						|| event.kind.is_remove()
-					{
-						event.paths.iter().for_each(|event_path| {
-							if let Ok(widget_path) =
-								event_path.strip_prefix(&watch_path)
-							{
-								let mut path_iterator = widget_path.iter();
-								if let Some(tile_id) = path_iterator.next() {
-									if let Some(inner_folder) =
-										path_iterator.next()
-									{
-										if inner_folder == OsStr::new("core") {
-											if let Some(tile_id_str) =
-												tile_id.to_str()
-											{
-												if tile_id_str
-													.starts_with("widget_")
-												{
-													if let Err(error) =
-														app_handle.emit(
-															"widget-core-watch",
-															tile_id_str,
-														) {
-														log::error!(
-															"Error emitting widget-core-watch event: {}",
-															error
-														);
-													}
-												}
-											}
-										}
-									}
-								}
-							};
-						});
+				for event in events.iter() {
+					if event.kind.is_access() || event.kind.is_other() {
+						// ignore these events
+						continue;
 					}
-				});
+
+					for event_path in event.paths.iter() {
+						if event_path.is_dir() {
+							continue;
+						}
+
+						let widget_path =
+							match event_path.strip_prefix(&watch_path) {
+								Ok(path) => path,
+								Err(_) => continue,
+							};
+						let mut path_iterator = widget_path.iter();
+
+						let tile_id = match path_iterator.next() {
+							Some(os_name) => match os_name.to_str() {
+								Some(name) => name,
+								None => continue,
+							},
+							None => continue,
+						};
+						if !tile_id.starts_with("widget_") {
+							continue;
+						}
+
+						let inner_folder = match path_iterator.next() {
+							Some(name) => name,
+							None => continue,
+						};
+						if inner_folder != OsStr::new("core") {
+							continue;
+						}
+
+						log::debug!(
+							"Widget Core {:?}: {:?}",
+							event.kind,
+							event
+								.paths
+								.iter()
+								.map(|path| {
+									let base_path = path
+										.strip_prefix(&watch_path)
+										.unwrap_or(path);
+									base_path
+										.strip_prefix(tile_id)
+										.unwrap_or(base_path)
+								})
+								.collect::<Vec<_>>()
+						);
+
+						if let Err(error) =
+							app_handle.emit("widget-core-watch", tile_id)
+						{
+							log::error!(
+								"Error emitting widget-core-watch event: {}",
+								error
+							);
+						}
+
+						break;
+					}
+				}
 			}
 			Err(errors) => log::error!("Notify Watch Error! {:?}", errors),
 		}
