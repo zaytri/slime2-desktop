@@ -171,6 +171,11 @@ function WidgetTags({ widgetId }: WidgetTagsProps) {
 			{widgetMeta.type.includes('overlay') && (
 				<WidgetTypeTag type='overlay' mini={mini} />
 			)}
+			<Tag
+				label={`v${widgetMeta.version}`}
+				icon={null}
+				className='border-slate-700 bg-slate-600'
+			/>
 		</div>
 	);
 }
@@ -190,10 +195,12 @@ function FolderTags({ folderId }: FolderTagsProps) {
 				className='border-amber-800 bg-amber-700'
 			/>
 			<Tag
-				label={`Widget${widgetCount !== 1 ? 's' : ''}`}
-				icon={
-					<p className='-mt-1 -mb-1.5 text-4.5 font-extrabold'>{widgetCount}</p>
+				label={
+					widgetCount === 0
+						? 'Empty'
+						: `${widgetCount} Widget${widgetCount !== 1 ? 's' : ''}`
 				}
+				icon={null}
 				className='border-slate-700 bg-slate-600'
 			/>
 		</div>
