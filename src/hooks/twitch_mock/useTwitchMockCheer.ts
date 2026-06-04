@@ -92,7 +92,8 @@ async function sendMockCheer(
 		tier = 100;
 	}
 
-	const prefix = 'Cheer';
+	// 5% chance of DoodleCheer
+	const prefix = Random.chance(5) ? 'DoodleCheer' : 'Cheer';
 	const cheermoteText = `${prefix}${bits}`;
 	const message: Twitch.Message = {
 		text: `${cheermoteText} ${text}`,
