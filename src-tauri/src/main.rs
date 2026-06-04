@@ -118,17 +118,30 @@ async fn main() {
 					));
 				})
 				.targets([
-					#[cfg(debug_assertions)] // stdout only on dev/debug
+					// send to stdout
+					#[cfg(debug_assertions)] // only on dev/debug
 					Target::new(TargetKind::Stdout).filter(|metadata| {
 						// only log info, debug, and trace from slime2 rust to stdout
 						metadata.target().starts_with("slime2")
 							&& (metadata.level() > log::LevelFilter::Warn)
 					}),
-					#[cfg(debug_assertions)] // stderr only on dev/debug
+					// send to stderr
+					#[cfg(debug_assertions)] // only on dev/debug
 					Target::new(TargetKind::Stderr).filter(|metadata| {
 						// only log warn and error to stderr
 						metadata.level() <= log::LevelFilter::Warn
 					}),
+					// send to webview console
+					#[cfg(debug_assertions)] // only on dev/debug
+					Target::new(TargetKind::Webview).format(
+						|callback, message, _record| {
+							callback.finish(format_args!(
+								":SLIME2RUSTLOGGER:{}",
+								message
+							));
+						},
+					),
+					// send to log file
 					Target::new(TargetKind::LogDir {
 						file_name: Some(get_log_file_name()),
 					}),

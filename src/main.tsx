@@ -1,5 +1,12 @@
 import { QueryClientProvider } from '@tanstack/react-query';
-import { debug, error, info, trace, warn } from '@tauri-apps/plugin-log';
+import {
+	attachConsole,
+	debug,
+	error,
+	info,
+	trace,
+	warn,
+} from '@tauri-apps/plugin-log';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import AccountsProvider from './contexts/accounts/AccountsProvider';
@@ -16,6 +23,9 @@ import { queryClient } from './helpers/queryClient';
 import MainTabs from './pages/MainTabs';
 import './styles.css';
 
+attachConsole();
+const FROM_LOGGER_PREFIX = ':SLIME2RUSTLOGGER:';
+
 // Override console messages to additionally send to logger plugin
 function forwardConsole(
 	fnName: 'log' | 'debug' | 'info' | 'warn' | 'error',
@@ -23,14 +33,23 @@ function forwardConsole(
 ) {
 	const original = console[fnName];
 	console[fnName] = (...data: any[]) => {
-		original(...data);
-		logger(
-			data
-				.map(item => {
-					return typeof item === 'string' ? item : JSON.stringify(item);
-				})
-				.join(' '),
-		);
+		const [firstData, ...rest] = data;
+		if (
+			typeof firstData === 'string' &&
+			firstData.startsWith(FROM_LOGGER_PREFIX)
+		) {
+			if (firstData.includes('[web:console]')) return;
+			original(firstData.substring(FROM_LOGGER_PREFIX.length), ...rest);
+		} else {
+			original(...data);
+			logger(
+				data
+					.map(item => {
+						return typeof item === 'string' ? item : JSON.stringify(item);
+					})
+					.join(' '),
+			);
+		}
 	};
 }
 
