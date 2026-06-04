@@ -1,15 +1,23 @@
 import { sendWidgetCoreChange } from '@/helpers/widgetMessage';
 import { listen } from '@tauri-apps/api/event';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function useWidgetCoreChange() {
+	const lastCoreChangeTimesRef = useRef(new Map<string, number>());
+
 	useEffect(() => {
 		const unlistenPromise = listen<string>('widget-core-watch', event => {
-			console.debug(
-				'Widget core change received for widget ID:',
-				event.payload,
-			);
-			sendWidgetCoreChange(event.payload);
+			const widgetId = event.payload;
+			const timeNow = Date.now();
+			const timeSinceLastCoreChange =
+				timeNow - (lastCoreChangeTimesRef.current.get(widgetId) ?? 0);
+
+			// send at most once every 5 seconds per widget
+			if (timeSinceLastCoreChange > 5000) {
+				lastCoreChangeTimesRef.current.set(widgetId, timeNow);
+				console.debug('Sending widget core change for widget ID:', widgetId);
+				sendWidgetCoreChange(widgetId);
+			}
 		});
 
 		return () => {
