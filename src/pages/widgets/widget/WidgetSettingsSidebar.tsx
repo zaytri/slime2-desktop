@@ -26,74 +26,76 @@ export default function WidgetSettingsSidebar({
 				Settings
 			</h2>
 
-			<div className='mt-3 flex-1 overflow-y-auto'>
-				<div className='flex flex-1 flex-col gap-1 text-white'>
-					{accountsId && (
+			<div className='mt-3 flex flex-1 overflow-hidden rounded-r-2'>
+				<div className='flex-1 overflow-y-auto pr-1'>
+					<div className='flex flex-1 flex-col gap-1 text-white'>
+						{accountsId && (
+							<SidebarCategory
+								label={
+									<>
+										<UserSvg className='size-5 drop-shadow-[0_2px_#0008]' />
+										<p>Accounts</p>
+									</>
+								}
+								onClick={() => {
+									onClickCategory(accountsId);
+								}}
+								active={accountsId === topScrollId}
+							/>
+						)}
+
+						{Object.entries(settings).map(([categoryId, category]) => {
+							return (
+								<SidebarCategory
+									key={categoryId}
+									label={i18nStringTransform(category.label)}
+									onClick={() => {
+										onClickCategory(categoryId);
+									}}
+									active={categoryId === topScrollId}
+								>
+									<ul className='flex flex-col pl-2'>
+										{Object.entries(category.settings).map(
+											([sectionId, section]) => {
+												if (
+													section.type !== 'section' &&
+													section.type !== 'multi-section'
+												)
+													return null;
+
+												return (
+													<SidebarSubcategory
+														key={sectionId}
+														onClick={() => {
+															onClickSection(
+																sectionId,
+																section.type === 'multi-section',
+															);
+														}}
+													>
+														{i18nStringTransform(section.label)}
+													</SidebarSubcategory>
+												);
+											},
+										)}
+									</ul>
+								</SidebarCategory>
+							);
+						})}
+
 						<SidebarCategory
 							label={
 								<>
-									<UserSvg className='size-5 drop-shadow-[0_2px_#0008]' />
-									<p>Accounts</p>
+									<BookSvg className='size-5 drop-shadow-[0_2px_#0008]' />
+									<p>About</p>
 								</>
 							}
 							onClick={() => {
-								onClickCategory(accountsId);
+								onClickCategory(aboutId);
 							}}
-							active={accountsId === topScrollId}
+							active={aboutId === topScrollId}
 						/>
-					)}
-
-					{Object.entries(settings).map(([categoryId, category]) => {
-						return (
-							<SidebarCategory
-								key={categoryId}
-								label={i18nStringTransform(category.label)}
-								onClick={() => {
-									onClickCategory(categoryId);
-								}}
-								active={categoryId === topScrollId}
-							>
-								<ul className='flex flex-col pl-2'>
-									{Object.entries(category.settings).map(
-										([sectionId, section]) => {
-											if (
-												section.type !== 'section' &&
-												section.type !== 'multi-section'
-											)
-												return null;
-
-											return (
-												<SidebarSubcategory
-													key={sectionId}
-													onClick={() => {
-														onClickSection(
-															sectionId,
-															section.type === 'multi-section',
-														);
-													}}
-												>
-													{i18nStringTransform(section.label)}
-												</SidebarSubcategory>
-											);
-										},
-									)}
-								</ul>
-							</SidebarCategory>
-						);
-					})}
-
-					<SidebarCategory
-						label={
-							<>
-								<BookSvg className='size-5 drop-shadow-[0_2px_#0008]' />
-								<p>About</p>
-							</>
-						}
-						onClick={() => {
-							onClickCategory(aboutId);
-						}}
-						active={aboutId === topScrollId}
-					/>
+					</div>
 				</div>
 			</div>
 		</aside>
