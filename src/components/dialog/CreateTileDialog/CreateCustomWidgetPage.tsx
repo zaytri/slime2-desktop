@@ -12,7 +12,7 @@ import {
 	type WidgetMeta,
 } from '@@/json/widgetMeta';
 import ArrowDownTraySvg from '@@/svg/ArrowDownTraySvg';
-import PencilSvg from '@@/svg/PencilSvg';
+import ArrowsCirclingSvg from '@@/svg/ArrowsCirclingSvg';
 import { useEffect, useState } from 'react';
 import type { CreateTileContext } from '.';
 import DialogConfirmButton from '../DialogButton/DialogConfirmButton';
@@ -68,7 +68,7 @@ export default function CreateCustomWidgetPage() {
 				>
 					<div className='absolute inset-0 bottom-1/2 bg-linear-to-b from-white/30 to-white/20'></div>
 					<div className='relative flex flex-1 items-center justify-center gap-3 drop-shadow-[0_1px_3px_#FFFB]'>
-						<PencilSvg className='h-5' />
+						<ArrowsCirclingSvg className='h-5' />
 						<p>Change Widget ZIP</p>
 					</div>
 				</button>
