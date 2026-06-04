@@ -45,7 +45,7 @@ pub async fn async_watch(watch_path: PathBuf) -> notify::Result<()> {
 					}
 
 					for event_path in event.paths.iter() {
-						if event_path.is_dir() {
+						if !event_path.is_file() {
 							continue;
 						}
 
@@ -76,8 +76,9 @@ pub async fn async_watch(watch_path: PathBuf) -> notify::Result<()> {
 						}
 
 						log::debug!(
-							"Widget Core {:?}: {:?}",
+							"Widget Core {:?}: {} {:?}",
 							event.kind,
+							tile_id,
 							event
 								.paths
 								.iter()
