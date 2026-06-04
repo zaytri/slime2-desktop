@@ -102,7 +102,7 @@ const twitchAuth = {
 		const existingPromise = validationPromises.get(accountId);
 		if (existingPromise) return existingPromise;
 
-		const promise = new Promise<Tokens>(async resolve => {
+		async function validateToken(): Promise<Tokens> {
 			// throws if tokens don't exist
 			let tokens = await getTokens(accountId);
 
@@ -137,14 +137,15 @@ const twitchAuth = {
 				}
 			}
 
-			resolve(tokens);
-
 			// remove from validation promises map 5 seconds after resolve
 			setTimeout(() => {
 				validationPromises.delete(accountId);
 			}, 5 * 1000);
-		});
 
+			return tokens;
+		}
+
+		const promise = validateToken();
 		validationPromises.set(accountId, promise);
 		return promise;
 	},
