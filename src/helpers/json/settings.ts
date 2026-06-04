@@ -9,6 +9,7 @@ import { queueSaveJson } from './queueSaveJson';
 export const DEFAULT_SETTINGS: Settings = {
 	devMode: false,
 	disableAnimations: false,
+	logWidgetEvents: false,
 };
 
 // functions
@@ -39,6 +40,7 @@ const OptionalSettings = z.partial(
 	z.object({
 		devMode: z.boolean(),
 		disableAnimations: z.boolean(),
+		logWidgetEvents: z.boolean(),
 	}),
 );
 

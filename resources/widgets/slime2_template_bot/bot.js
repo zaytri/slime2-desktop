@@ -4,9 +4,6 @@
 // ***************************************************************************
 const RequestResolveRejectMap = new Map();
 
-// set to true to automatically log event data
-const LOG_EVENT_DATA = true;
-
 const Widget = {
 	readAccount: { id: '', serviceId: '' },
 	botAccount: { id: '', serviceId: '' },
@@ -39,23 +36,17 @@ function messageListener(message) {
 }
 
 function widgetButtonClickListener(event) {
-	logEventData(event.type, event.data);
-
 	if (event.data.id === 'button-id') {
 	}
 }
 
 function widgetValuesListener(event) {
-	logEventData(event.type, event.data);
-
 	Widget.values = new Map(Object.entries(event.data));
 
 	const text = Widget.values.get('example-text-input') ?? '';
 }
 
 function widgetAccountsListener(event) {
-	logEventData(event.type, event.data);
-
 	const accounts = event.data?.accounts ?? [];
 
 	Widget.readAccount = accounts[0] ?? Widget.readAccount;
@@ -63,8 +54,6 @@ function widgetAccountsListener(event) {
 }
 
 function twitchEventListener(event) {
-	logEventData(`${event.type} - ${event.data.type}`, event.data);
-
 	const { type, data, mock } = event.data;
 
 	// ignore mock events
@@ -137,8 +126,6 @@ function twitchEventListener(event) {
 
 // used to resolve requests that use the `sendRequest` function
 function responseListener(event) {
-	logEventData(`${event.type} - ${event.data.type}`, event.data);
-
 	const { type, response, request_id } = event.data;
 
 	// find and resolve the related promise
@@ -214,18 +201,6 @@ async function sendRequest(accountId, type, payload) {
 			payload,
 		});
 	});
-}
-
-/**
- * Log given type and data, if `LOG_EVENT_DATA = true`
- *
- * @param {string} type
- * @param {any} data
- */
-function logEventData(type, data) {
-	if (!LOG_EVENT_DATA) return;
-
-	console.info(type, data);
 }
 
 // Console Message Override

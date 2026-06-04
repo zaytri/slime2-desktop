@@ -1,13 +1,15 @@
 import { useBotsLogDispatch } from '@/contexts/bot_logs/useBotLogsDispatch';
+import { useSettings } from '@/contexts/settings/useSettings';
 import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
 import { cacheBust, createTilesUrl } from '@/helpers/serverUrl';
 import logZodError from '@/helpers/zodError';
 import { useEffect, useRef } from 'react';
-import { z } from 'zod/mini';
+import { z, type JSONType } from 'zod/mini';
 
 export default function useTwitchBot() {
 	const { addBotLog } = useBotsLogDispatch();
 	const widgetMetas = useWidgetMetas();
+	const { settings } = useSettings();
 	const twitchBots = useRef(new Map<string, Worker>());
 
 	function disconnectBot(widgetId: string) {
@@ -119,18 +121,24 @@ export default function useTwitchBot() {
 		function widgetMessageListener(
 			event: CustomEvent<{
 				widgetId: string;
-				data: unknown;
+				data: Record<string, JSONType>;
 			}>,
 		) {
 			if (!event.detail) return;
 			const { widgetId, data } = event.detail;
+			const type =
+				event.type === 'widget-response'
+					? 'slime2:response'
+					: `slime2:${event.type}`;
+			const newData = { widget_id: widgetId, ...data };
+
+			if (settings.devMode && settings.logWidgetEvents) {
+				addBotLog(widgetId, [type, 'message.data.data:', newData], 'info');
+			}
+
 			twitchBots.current.get(widgetId)?.postMessage({
-				widgetId,
-				type:
-					event.type === 'widget-response'
-						? 'slime2:response'
-						: `slime2:${event.type}`,
-				data,
+				type,
+				data: newData,
 			});
 		}
 
@@ -155,7 +163,7 @@ export default function useTwitchBot() {
 
 			removeEventListener('widget-delete', widgetDeleteListener);
 		};
-	}, []);
+	}, [settings]);
 }
 
 const LogData = z.object({

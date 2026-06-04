@@ -19,13 +19,14 @@ const ResponseEventData = z.object({
 type ResponseEventData = z.infer<typeof ResponseEventData>;
 
 export default function useSlime2Websocket() {
-	const { widgetId } = useLoaderData({ from: '/$' });
-	globalThis.slime2.widgetId = widgetId;
-
 	const registeredRef = useRef(false);
 	const resolveRejectMapRef = useRef(
 		new Map<string, [(value: any) => void, (reason?: any) => void]>(),
 	);
+	const logEventsRef = useRef(false);
+
+	const { widgetId } = useLoaderData({ from: '/$' });
+	globalThis.slime2.widgetId = widgetId;
 
 	useEffect(() => {
 		if (registeredRef.current) return;
@@ -103,11 +104,34 @@ export default function useSlime2Websocket() {
 					}
 				} else if (type === 'widget-core-change') {
 					location.reload();
+				} else if (type === 'log-events') {
+					logEventsRef.current = !!data?.logEvents;
 				} else {
+					const newType = `slime2:${type}`;
+					const newData = { widget_id: widgetId, ...data };
+
+					if (logEventsRef.current) {
+						console.info(
+							`%c${newType}`,
+							[
+								['display', 'block'],
+								['padding', '2px 8px'],
+								['border-radius', '4px'],
+								['background-color', '#d8fa99'],
+								['color', '#0d542b'],
+								['font-weight', 'bold'],
+								['font-size', '14px'],
+								['border', '2px solid #0d542b'],
+							]
+								.map(([property, value]) => `${property}: ${value};`)
+								.join(' '),
+							'event.detail:',
+							newData,
+						);
+					}
+
 					// for any other type, create events for the widget to listen to
-					const customEvent = new CustomEvent(`slime2:${type}`, {
-						detail: { ...data, widgetId },
-					});
+					const customEvent = new CustomEvent(newType, { detail: newData });
 					dispatchEvent(customEvent);
 				}
 			} catch (error) {

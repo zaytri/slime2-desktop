@@ -1,9 +1,14 @@
 import useAccounts from '@/contexts/accounts/useAccounts';
+import { useSettings } from '@/contexts/settings/useSettings';
 import useWidgetMetas from '@/contexts/widget_metas/useWidgetMetas';
 import type { Account } from '@/helpers/json/accounts';
 import { loadWidgetSettings } from '@/helpers/json/widgetSettings';
 import { loadWidgetValues } from '@/helpers/json/widgetValues';
-import { sendWidgetAccounts, sendWidgetValues } from '@/helpers/widgetMessage';
+import {
+	sendLogEvents,
+	sendWidgetAccounts,
+	sendWidgetValues,
+} from '@/helpers/widgetMessage';
 import logZodError from '@/helpers/zodError';
 import { loadTileMeta } from '@@/json/tileMeta';
 import { loadWidgetMeta } from '@@/json/widgetMeta';
@@ -12,6 +17,8 @@ import { useEffect, useState } from 'react';
 import { z } from 'zod/mini';
 
 export default function useWidgetRegistration() {
+	const { settings } = useSettings();
+	const logWidgetEvents = settings.devMode && settings.logWidgetEvents;
 	const accounts = useAccounts();
 	const widgetMetas = useWidgetMetas();
 	const [registeredWidgets, setRegisteredWidgets] = useState(new Set<string>());
@@ -25,6 +32,10 @@ export default function useWidgetRegistration() {
 				loadWidgetMeta(widgetId),
 				loadTileMeta(widgetId),
 			]);
+
+			if (logWidgetEvents) {
+				sendLogEvents(widgetId, logWidgetEvents);
+			}
 
 			console.info(
 				`${tileMeta.name}${widgetMeta.name !== tileMeta.name ? ` (${widgetMeta.name})` : ''}: Widget connected.`,
@@ -67,7 +78,13 @@ export default function useWidgetRegistration() {
 				if (unlisten) unlisten();
 			});
 		};
-	}, []);
+	}, [logWidgetEvents]);
+
+	useEffect(() => {
+		registeredWidgets.forEach(widgetId => {
+			sendLogEvents(widgetId, logWidgetEvents);
+		});
+	}, [settings.devMode, logWidgetEvents, registeredWidgets]);
 
 	useEffect(() => {
 		async function sendAllAccountData() {

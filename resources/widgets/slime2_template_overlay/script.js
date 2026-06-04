@@ -3,9 +3,6 @@
 /* Globals *******************************************************************/
 const slime2 = window.slime2;
 
-// set to true to automatically console log event data
-const LOG_EVENT_DATA = true;
-
 const Widget = {
 	readAccount: { id: '' },
 	values: new Map(),
@@ -19,31 +16,23 @@ addEventListener('slime2:twitch-event', twitchEventListener);
 addEventListener('slime2:widget-button-click', widgetButtonClickListener);
 
 function widgetButtonClickListener(event) {
-	logEventData(event.type, event.detail);
-
 	if (event.detail.id === 'button-id') {
 	}
 }
 
 function widgetValuesListener(event) {
-	logEventData(event.type, event.detail);
-
 	Widget.values = new Map(Object.entries(event.detail));
 
 	const text = Widget.values.get('example-text-input') ?? '';
 }
 
 function widgetAccountsListener(event) {
-	logEventData(event.type, event.detail);
-
 	const accounts = event.detail?.accounts ?? [];
 
 	Widget.readAccount = accounts[0] ?? Widget.readAccount;
 }
 
 function twitchEventListener(event) {
-	logEventData(`${event.type} - ${event.detail.type}`, event.detail);
-
 	const { type, data } = event.detail;
 
 	// https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
@@ -112,25 +101,3 @@ function twitchEventListener(event) {
 }
 
 /* Helpers *******************************************************************/
-
-/** Formatted console log given type and data, if `LOG_EVENT_DATA = true` */
-function logEventData(type, data) {
-	if (!LOG_EVENT_DATA) return;
-
-	console.log(
-		`%c${type}`,
-		[
-			['display', 'block'],
-			['padding', '2px 8px'],
-			['border-radius', '4px'],
-			['background-color', '#d8fa99'],
-			['color', '#0d542b'],
-			['font-weight', 'bold'],
-			['font-size', '14px'],
-			['border', '2px solid #0d542b'],
-		]
-			.map(([property, value]) => `${property}: ${value};`)
-			.join(' '),
-		data,
-	);
-}

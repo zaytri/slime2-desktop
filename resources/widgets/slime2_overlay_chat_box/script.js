@@ -4,9 +4,6 @@
 // ***************************************************************************
 const slime2 = window.slime2;
 
-// set to true to automatically console log event data
-const LOG_EVENT_DATA = false;
-
 const EPOCH_DATE = new Date(0);
 
 // for feColorMatrix
@@ -46,8 +43,6 @@ addEventListener('slime2:widget-accounts', widgetAccountsListener);
 addEventListener('slime2:twitch-event', twitchEventListener);
 
 function widgetValuesListener(event) {
-	logEventData(event.type, event.detail);
-
 	Widget.values = new Map(Object.entries(event.detail));
 
 	const widgetElement = document.getElementById('widget');
@@ -168,8 +163,6 @@ function widgetValuesListener(event) {
 }
 
 async function widgetAccountsListener(event) {
-	logEventData(event.type, event.detail);
-
 	const accounts = event.detail?.accounts ?? [];
 	const newReadAccount = accounts[0];
 
@@ -254,8 +247,6 @@ async function widgetAccountsListener(event) {
 }
 
 function twitchEventListener(event) {
-	logEventData(`${event.type} - ${event.detail.type}`, event.detail);
-
 	const eventDate = new Date(event.detail.timestamp);
 	const { type, data } = event.detail;
 
@@ -931,28 +922,6 @@ function accessibleTextColor(textColor, backgroundColor) {
 	}
 
 	return new Color(newColor).toString({ format: 'hex' });
-}
-
-/** Formatted console log given type and data, if `LOG_EVENT_DATA = true` */
-function logEventData(type, data) {
-	if (!LOG_EVENT_DATA) return;
-
-	console.log(
-		`%c${type}`,
-		[
-			['display', 'block'],
-			['padding', '2px 8px'],
-			['border-radius', '4px'],
-			['background-color', '#d8fa99'],
-			['color', '#0d542b'],
-			['font-weight', 'bold'],
-			['font-size', '14px'],
-			['border', '2px solid #0d542b'],
-		]
-			.map(([property, value]) => `${property}: ${value};`)
-			.join(' '),
-		data,
-	);
 }
 
 /**

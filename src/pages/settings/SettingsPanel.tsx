@@ -64,6 +64,17 @@ export default function SettingsPanel() {
 						}}
 						description='Enables extra features for widget developers'
 					/>
+
+					{settings.devMode && (
+						<ToggleField
+							label='Log All Widget Events'
+							value={settings.logWidgetEvents}
+							onChange={value => {
+								setSettings({ ...settings, logWidgetEvents: value });
+							}}
+							description='Automatically logs every event sent to widgets. Sent to console for overlays, sent to bot logs for bots.'
+						/>
+					)}
 				</div>
 			</div>
 		</div>

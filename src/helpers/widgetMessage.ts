@@ -13,7 +13,7 @@ export async function sendWidgetValues(
 		widgetId,
 		'widget-values',
 		mergeDefaultValues(widgetId, settings, values),
-		true,
+		{ dispatchToBot: true },
 	);
 }
 
@@ -39,7 +39,7 @@ export async function sendTwitchEvent(
 			mock,
 			data,
 		},
-		true,
+		{ dispatchToBot: true },
 	);
 }
 
@@ -70,7 +70,7 @@ export async function sendWidgetAccounts(widgetId: string, data: unknown) {
 		widgetId,
 		'widget-accounts',
 		{ accounts: data },
-		true,
+		{ dispatchToBot: true },
 	);
 }
 
@@ -88,12 +88,17 @@ export async function sendWidgetResponse(
 			request_id: requestId,
 			response: data,
 		},
-		true,
+		{ dispatchToBot: true },
 	);
 }
 
 export async function sendWidgetCoreChange(widgetId: string) {
-	return sendWidgetMessage(widgetId, 'widget-core-change', { widgetId }, true);
+	return sendWidgetMessage(
+		widgetId,
+		'widget-core-change',
+		{ widgetId },
+		{ dispatchToBot: true },
+	);
 }
 
 export async function sendWidgetButtonClick(
@@ -104,15 +109,19 @@ export async function sendWidgetButtonClick(
 		widgetId,
 		'widget-button-click',
 		{ id: buttonId },
-		true,
+		{ dispatchToBot: true },
 	);
+}
+
+export async function sendLogEvents(widgetId: string, logEvents: boolean) {
+	return sendWidgetMessage(widgetId, 'log-events', { logEvents });
 }
 
 async function sendWidgetMessage(
 	widgetId: string,
 	type: string,
 	data: Record<string, unknown>,
-	dispatchToBot: boolean = false,
+	{ dispatchToBot = false } = {},
 ) {
 	if (dispatchToBot) {
 		dispatchEvent(
