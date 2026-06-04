@@ -84,7 +84,7 @@ async fn main() {
 					// slime2 rust logs
 					metadata.target().starts_with("slime2")
 					// slime2 js console messages
-						|| metadata.target().starts_with("webview:console")
+						|| metadata.target().starts_with("webview")
 				})
 				.level(if cfg!(debug_assertions) {
 					// log everything in dev and debug
@@ -109,7 +109,7 @@ async fn main() {
 							}
 						},
 						record.level(),
-						if record.target().starts_with("webview:console") {
+						if record.target().starts_with("webview") {
 							String::from("web:console")
 						} else {
 							format!("rust:{}", record.target())
