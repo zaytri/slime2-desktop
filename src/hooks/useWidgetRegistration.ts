@@ -38,7 +38,7 @@ export default function useWidgetRegistration() {
 			}
 
 			console.info(
-				`${tileMeta.name}${widgetMeta.name !== tileMeta.name ? ` (${widgetMeta.name})` : ''}: Widget connected.`,
+				`${tileMeta.name}${widgetMeta.name !== tileMeta.name ? ` (${widgetMeta.name} v${widgetMeta.version})` : ''}: Widget connected`,
 			);
 
 			await sendWidgetValues(widgetId, settings, values);

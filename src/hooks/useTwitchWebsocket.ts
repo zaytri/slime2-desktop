@@ -51,7 +51,8 @@ export default function useTwitchWebsocket() {
 		if (!account) return;
 
 		console.info(
-			`${account.displayName}: Account registered to read Twitch events.`,
+			'Account registered to read Twitch events:',
+			account.displayName,
 		);
 
 		twitchWebsockets.current.set(account.id, 'connecting');
@@ -88,6 +89,10 @@ export default function useTwitchWebsocket() {
 			if (keepAliveTimeoutSeconds) {
 				connectionLostTimer = setTimeout(() => {
 					// connection has been lost, disconnect and create a new connection
+					console.warn(
+						'Account lost connection to Twitch Websocket, reconnecting:',
+						account?.displayName,
+					);
 					disconnectTwitchWebsocket();
 					if (account) {
 						connectTwitchWebsocket(account.id);
@@ -101,6 +106,10 @@ export default function useTwitchWebsocket() {
 		// disconnect and set account to need reauthorization
 		const reauthorizationNeeded = () => {
 			const account = getAccount(twitchReadAccountId);
+			console.error(
+				'Twitch account requires reauthorization:',
+				account?.displayName,
+			);
 			clearConnectionLostTimer();
 			disconnectTwitchWebsocket();
 			if (account) {
@@ -115,6 +124,12 @@ export default function useTwitchWebsocket() {
 
 			const twitchMessage: Twitch.WebsocketMessage.Any = JSON.parse(
 				message.data,
+			);
+			console.debug(
+				'[Twitch Websocket]',
+				twitchMessage.metadata.message_type,
+				'[Account]',
+				account.displayName,
 			);
 
 			switch (twitchMessage.metadata.message_type) {
@@ -141,10 +156,17 @@ export default function useTwitchWebsocket() {
 					for (const params of createEventSubParamsList(account.serviceId)) {
 						// stop creating subscriptions if websocket is closed
 						if (websocket.readyState !== WebSocket.OPEN) {
+							console.debug('Websocket closed, stopping EventSub creation.');
 							break;
 						}
 
 						try {
+							console.debug(
+								'Creating EventSub:',
+								params.type,
+								params.version,
+								params.condition,
+							);
 							await twitchApi.createEventSub(account, sessionId, params);
 						} catch (error) {
 							console.error(params.type, error);
@@ -168,6 +190,10 @@ export default function useTwitchWebsocket() {
 					startConnectionLostTimer();
 					const notificationMessage =
 						twitchMessage as Twitch.WebsocketMessage.Notification;
+					console.debug(
+						notificationMessage.metadata.subscription_type,
+						notificationMessage.payload.event,
+					);
 
 					const relatedWidgets: string[] = [];
 					const widgetMetas = getWidgetMetas();
@@ -180,6 +206,11 @@ export default function useTwitchWebsocket() {
 									account.default)
 							) {
 								relatedWidgets.push(widgetId);
+								console.debug(
+									'Sent to Widget:',
+									widgetMeta.name,
+									widgetMeta.version,
+								);
 
 								const { subscription_type, message_timestamp: timestamp } =
 									notificationMessage.metadata;
@@ -395,6 +426,9 @@ async function removeExistingEventSubs(accountId: string) {
 		cursor = nextResponse.data.pagination.cursor;
 	}
 
+	console.debug('Existing EventSubs found:', eventSubs);
+	console.debug('Removing existing EventSubs...');
+
 	for (const eventSub of eventSubs) {
 		// need to do this one at a time to prevent rate limiting
 		// it's very quick regardless
@@ -402,4 +436,6 @@ async function removeExistingEventSubs(accountId: string) {
 			console.error(error);
 		});
 	}
+
+	console.debug('All existing EventSubs deleted.');
 }
