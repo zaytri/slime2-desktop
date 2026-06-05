@@ -2,7 +2,7 @@
 // Websocket commmands found under server/websocket/ws_commands.rs
 
 use crate::{
-	file, get_log_file_name,
+	AppState, file, get_log_file_name,
 	secret::{delete_secret, get_secret, set_secret},
 	server,
 };
@@ -16,7 +16,7 @@ use std::{
 	io::{Read, Write},
 	path::{Path, PathBuf},
 };
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Manager, State};
 use tauri_plugin_opener::OpenerExt;
 use walkdir::WalkDir;
 use zip::write::SimpleFileOptions;
@@ -573,40 +573,50 @@ pub async fn load_system_fonts() -> Vec<FontData> {
 }
 
 #[tauri::command]
-pub async fn get_secret_key(key: &str) -> Result<String, String> {
-	return match get_secret(key) {
+pub async fn get_secret_key(
+	state: State<'_, AppState>,
+	key: &str,
+) -> Result<String, String> {
+	return match get_secret(state, key) {
 		Ok(entry) => Ok(entry),
 		Err(error) => {
-			return Err(format!(
-				"Error getting secret key ({}): {}",
-				key, error
-			));
+			let error_message =
+				format!("Error getting secret key ({}): {}", key, error);
+			log::error!("{}", error_message);
+			return Err(error_message);
 		}
 	};
 }
 
 #[tauri::command]
-pub async fn set_secret_key(key: &str, value: &str) -> Result<(), String> {
-	return match set_secret(key, value) {
+pub async fn set_secret_key(
+	state: State<'_, AppState>,
+	key: &str,
+	value: &str,
+) -> Result<(), String> {
+	return match set_secret(state, key, value) {
 		Ok(()) => Ok(()),
 		Err(error) => {
-			return Err(format!(
-				"Error setting secret key ({}): {}",
-				key, error
-			));
+			let error_message =
+				format!("Error setting secret key ({}): {}", key, error);
+			log::error!("{}", error_message);
+			return Err(error_message);
 		}
 	};
 }
 
 #[tauri::command]
-pub async fn delete_secret_key(key: &str) -> Result<(), String> {
-	return match delete_secret(key) {
+pub async fn delete_secret_key(
+	state: State<'_, AppState>,
+	key: &str,
+) -> Result<(), String> {
+	return match delete_secret(state, key) {
 		Ok(()) => Ok(()),
 		Err(error) => {
-			return Err(format!(
-				"Error deleting secret key ({}): {}",
-				key, error
-			));
+			let error_message =
+				format!("Error deleting secret key ({}): {}", key, error);
+			log::error!("{}", error_message);
+			return Err(error_message);
 		}
 	};
 }

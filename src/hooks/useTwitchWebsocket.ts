@@ -139,7 +139,13 @@ export default function useTwitchWebsocket() {
 						// ensure that the API tokens are ready to use
 						// by checking whether or not this throws an error
 						await twitchAuth.getValidTokens(account.id);
-					} catch {
+					} catch (error) {
+						console.error(
+							'Twitch reauthorization needed for account:',
+							account.displayName,
+							'Error:',
+							error,
+						);
 						// unable to get valid tokens
 						// set account to need reauthorization
 						reauthorizationNeeded();

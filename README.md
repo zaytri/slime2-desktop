@@ -13,5 +13,6 @@ Here is what you need to run the app in development mode:
 4. `cd ../src-overlay` to enter the overlay server folder, and run `npm install` to install the overlay server's Node dependencies.
 5. `cd ..` to return to the project root.
 6. `npm start` to start development mode.
+   - Sometimes this fails and it shows being unable to delete something as part of the pre-start cleanup; usually you can just run it again and it'll work. Also make sure you don't already have the app running.
 
 If you're using VS Code, it will auto suggest useful extends from [extensions.json](.vscode/extensions.json) and [settings.json](.vscode/settings.json) in the `.vscode` folder.

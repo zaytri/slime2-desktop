@@ -19,7 +19,7 @@ export default function AuthTypePage() {
 						setPage('service');
 					}}
 				>
-					<BookSvg className='h-4.5' />
+					<BookSvg className='w-4' />
 					<p>Read Account</p>
 				</AuthTypeButton>
 				<AuthTypeButton
@@ -29,7 +29,7 @@ export default function AuthTypePage() {
 						setPage('service');
 					}}
 				>
-					<ChatBubbleSvg className='h-4.5' />
+					<ChatBubbleSvg className='size-4' />
 					<p>Bot Account</p>
 				</AuthTypeButton>
 			</div>

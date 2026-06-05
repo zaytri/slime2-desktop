@@ -6,6 +6,7 @@ import { usePage } from '@/contexts/pages/usePage';
 import { usePageContext } from '@/contexts/pages/usePageContext';
 import {
 	type Account,
+	deleteTokens,
 	generateAccountId,
 	setTokens,
 } from '@/helpers/json/accounts';
@@ -52,27 +53,59 @@ export default function TwitchAuthPage() {
 	useEffect(() => {
 		if (!dcf) return;
 
-		const activationLoop = setInterval(() => {
-			twitchAuth
-				.obtainDCFTokens(type, dcf.device_code)
-				.then(async response => {
-					clearInterval(activationLoop);
+		const activationLoop = setInterval(async () => {
+			try {
+				const activationResponse = await twitchAuth.obtainDCFTokens(
+					type,
+					dcf.device_code,
+				);
+				clearInterval(activationLoop);
 
-					// successful response, user has authorized
-					setActivating(false);
-					setFetchingUser(true);
+				// successful response, user has authorized
+				setActivating(false);
+				setFetchingUser(true);
 
-					const { access_token, refresh_token, scope } = response.data;
+				console.debug(
+					'Twitch activation successful:',
+					activationResponse.data,
+					'\nValidating tokens...',
+				);
+
+				try {
+					const { access_token, refresh_token, scope } =
+						activationResponse.data;
 					const validationResponse =
 						await twitchAuth.validateAccessToken(access_token);
-					const { user_id } = validationResponse.data;
 
+					console.debug(
+						'Twitch access token validated:',
+						validationResponse.data,
+						'\nSaving tokens...',
+					);
+
+					const { user_id } = validationResponse.data;
 					const accountId = generateAccountId(SERVICE, type, user_id);
-					await setTokens(accountId, access_token, refresh_token);
+
+					try {
+						await deleteTokens(accountId);
+					} catch (error) {
+						console.error(error);
+					}
+
+					const tokens = await setTokens(
+						accountId,
+						access_token,
+						refresh_token,
+					);
+
+					console.debug('Twitch tokens saved:', tokens, '\nFetching User...');
 
 					const userResponse = await twitchApi.getUser(accountId, user_id);
 					const user = userResponse.data.data[0]!;
 					const existingAccount: Account | undefined = accounts[accountId];
+
+					console.debug('Twitch user fetched:', userResponse.data);
+					console.debug('Existing account:', existingAccount);
 
 					const account: Account = {
 						id: accountId,
@@ -91,10 +124,12 @@ export default function TwitchAuthPage() {
 					addAccount(account);
 					setAccountId(accountId);
 					setPage('success');
-				})
-				.catch(() => {
-					// user hasn't authorized yet, continue loop
-				});
+				} catch (error) {
+					console.error(error);
+				}
+			} catch {
+				// user hasn't authorized yet, continue loop
+			}
 		}, 2000); // check every 2 seconds
 
 		return () => {
