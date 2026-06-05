@@ -47,7 +47,7 @@ async fn main() {
 	#[cfg(target_os = "windows")]
 	{
 		// use windows credential manager for windows keyring
-		use window_native_keyring_store::Store;
+		use windows_native_keyring_store::Store;
 		set_default_store(Store::new().unwrap());
 	}
 
