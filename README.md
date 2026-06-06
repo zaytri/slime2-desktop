@@ -8,6 +8,9 @@ Here is what you need to run the app in development mode:
 
 1. Install the Tauri prerequisites: https://tauri.app/start/prerequisites/
    - Just need the system dependencies, Rust, and Node.js; this is not built for mobile so skip the mobile configuration.
+   - For Linux, will also need to install GStreamer.
+     - Fedora/Ubuntu/Debian instructions: https://gstreamer.freedesktop.org/documentation/installing/on-linux.html?gi-language=c
+     - Arch Linux instructions: https://wiki.archlinux.org/title/GStreamer (install all of the common package set)
 2. Run `npm install` to install the base Node dependencies.
 3. `cd src-tauri` to enter the backend folder, and run `cargo update` to install the Rust dependencies.
 4. `cd ../src-overlay` to enter the overlay server folder, and run `npm install` to install the overlay server's Node dependencies.

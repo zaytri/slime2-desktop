@@ -14,7 +14,7 @@
 		},
 		"category": "utility",
 		"shortDescription": "Local Stream Widget Manager",
-		"longDescription": "Manages stream widgets running locally on your computer",
+		"longDescription": "Manage and customize local stream widgets!",
 		"icon": [
 			"icons/32x32.png",
 			"icons/128x128.png",
@@ -22,13 +22,17 @@
 			"icons/icon.icns",
 			"icons/icon.ico"
 		],
-		"targets": "all"
+		"targets": ["appimage", "deb", "rpm", "msi", "dmg"],
+		"linux": {
+			"appimage": {
+				"bundleMediaFramework": true
+			}
+		}
 	},
 	"productName": "Slime2",
 	"mainBinaryName": "Slime2",
 	"version": "../package.json",
 	"identifier": "stream.slime2.desktop",
-	"plugins": {},
 	"app": {
 		"windows": [
 			{

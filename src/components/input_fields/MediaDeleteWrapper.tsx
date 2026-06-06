@@ -78,7 +78,7 @@ export default function MediaDeleteWrapper({
 				}}
 			>
 				<span className='sr-only'>Delete {capitalType}</span>
-				<XSvg className='h-3.5 drop-shadow-[0_1px_#0008]' />
+				<XSvg className='size-3.5 drop-shadow-[0_1px_#0008]' />
 			</Button>
 
 			<div className='pointer-events-none absolute inset-0 rounded-1 bg-rose-400 opacity-0 peer-data-over:opacity-15'></div>
