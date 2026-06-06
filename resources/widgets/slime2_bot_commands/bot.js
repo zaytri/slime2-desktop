@@ -151,6 +151,12 @@ async function handleChatMessage(data, eventDate) {
 			return getMultiSectionValue(commandId, settingId);
 		}
 
+		let enabled = getValue('enabled') ?? true;
+		if (!enabled) {
+			// ignore command if disabled
+			continue;
+		}
+
 		let reply = (getValue('reply') ?? '').trim();
 		if (!reply) {
 			// ignore command if it has no reply
@@ -327,7 +333,8 @@ async function getTwitchFollowDate(userId) {
 // ***************************************************************************
 
 /**
- * If the message contains the provided prefixes or keywords, returns the end index of the command, otherwise returns `null`.
+ * If the message contains the provided prefixes or keywords, returns the end
+ * index of the command, otherwise returns `null`.
  *
  * @param {string} messageText
  * @param {string[]} prefixes
