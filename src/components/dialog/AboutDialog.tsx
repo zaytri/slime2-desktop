@@ -36,7 +36,7 @@ export default function AboutDialog() {
 						<div className='flex flex-col'>
 							{[
 								['Website', 'https://slime2.stream/'],
-								['Forums', 'https://forums.slime2.stream/'],
+								['Forums', 'https://slime2.forumotion.com/'],
 								['Source', 'https://github.com/zaytri/slime2-desktop'],
 							].map(([label, link]) => {
 								return (
