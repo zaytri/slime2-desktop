@@ -4,7 +4,7 @@ import WidgetSettingParentProvider from '@/contexts/widget_setting_parent/Widget
 import useWidgetValues from '@/contexts/widget_values/useWidgetValues';
 import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValuesDispatch';
 import { swapItems } from '@/helpers/array';
-import { i18nStringTransform } from '@/helpers/i18n';
+import { i18nStringTransform, i18nUndefined } from '@/helpers/i18n';
 import type { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { widgetSettingsScrollContainerId } from '@/helpers/scroll';
 import useAutoScrollDisclosureOpen from '@/hooks/useAutoScrollDisclosureOpen';
@@ -219,6 +219,19 @@ function Previews({ settings, previews = [], subsectionId }: PreviewsProps) {
 					return null;
 				}
 
+				const displayValue =
+					setting.type === 'dropdown-input' || setting.type === 'select-input'
+						? i18nUndefined(
+								setting.options.find(option => {
+									return option.value === value;
+								})?.label,
+							)
+						: value;
+
+				if (displayValue === undefined) {
+					return null;
+				}
+
 				const conditions = Object.entries(setting.condition ?? {});
 				const conditionsMet =
 					conditions.length === 0 ||
@@ -273,16 +286,17 @@ function Previews({ settings, previews = [], subsectionId }: PreviewsProps) {
 						className='flex rounded-1 bg-zinc-700 outline -outline-offset-1 outline-zinc-800'
 					>
 						<p className='px-1.5 font-semibold text-white'>{label}</p>
-						{typeof value === 'boolean' ? (
+						{typeof displayValue === 'boolean' ? (
 							<div className='flex items-center justify-center bg-white px-2'>
-								{value ? (
+								{displayValue ? (
 									<CheckSvg className='size-4 text-lime-600' />
 								) : (
 									<XSvg className='size-4 text-rose-600' />
 								)}
+								<span className='sr-only'>{displayValue ? 'Yes' : 'No'}</span>
 							</div>
 						) : (
-							<p className='bg-white px-2 text-zinc-700'>{value}</p>
+							<p className='bg-white px-2 text-zinc-700'>{displayValue}</p>
 						)}
 					</div>
 				);
