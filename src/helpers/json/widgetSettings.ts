@@ -378,6 +378,7 @@ const SectionSetting = z.object({
 const MultiSectionSetting = z.object({
 	type: z.literal('multi-section'),
 	...BaseSetting.def.shape,
+	previews: z.optional(z.array(z.string())),
 	settings: z.record(z.string(), NonGroupSetting),
 });
 

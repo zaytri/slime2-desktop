@@ -29,6 +29,7 @@ import TriangleDownSvg from '../svg/TriangleDownSvg';
 type SettingMultiSubsectionProps = {
 	id: string;
 	parentName: string;
+	renderPreviews: React.ReactNode;
 	onDelete: VoidFunction;
 	onDuplicate: (sourceName: string) => void;
 	onMoveUp?: VoidFunction;
@@ -38,6 +39,7 @@ type SettingMultiSubsectionProps = {
 export default function SettingMultiSubsection({
 	id,
 	parentName,
+	renderPreviews,
 	onDelete,
 	onDuplicate,
 	onMoveUp,
@@ -68,16 +70,19 @@ export default function SettingMultiSubsection({
 			<div className='flex items-center gap-2'>
 				<DisclosureButton
 					id={`${id}.button`}
-					className='group/sub z-10 flex flex-1 items-center gap-2 rounded-2 border border-white bg-zinc-100 bg-linear-to-b from-zinc-100 to-zinc-200/50 px-4 py-2 outline-2 outline-offset-0! outline-zinc-400/50 data-open:rounded-b-0 data-open:bg-none over:bg-lime-200 over:bg-none over:text-green-900 over:outline-4 over:outline-lime-600'
+					className='group/sub z-10 flex flex-1 flex-col gap-1 rounded-2 border border-white bg-zinc-100 bg-linear-to-b from-zinc-100 to-zinc-200/50 px-4 py-2 outline-2 outline-offset-0! outline-zinc-400/50 data-open:rounded-b-0 data-open:bg-none over:bg-lime-200 over:bg-none over:text-green-900 over:outline-4 over:outline-lime-600'
 					ref={disclosureButtonRef}
 				>
-					<h4 className='flex-1 text-left font-fredoka text-5 font-medium'>
-						{value}
-					</h4>
+					<div className='flex items-center gap-2'>
+						<h4 className='flex-1 text-left font-fredoka text-5 font-medium'>
+							{value}
+						</h4>
 
-					<div className='flex items-center justify-center rounded-1 p-1 group-data-open/sub:rotate-180 group-data-over/sub:bg-lime-600 group-data-over/sub:text-lime-200 group-data-over/sub:outline-none'>
-						<TriangleDownSvg className='size-4' />
+						<div className='flex items-center justify-center rounded-1 p-1 group-data-open/sub:rotate-180 group-data-over/sub:bg-lime-600 group-data-over/sub:text-lime-200 group-data-over/sub:outline-none'>
+							<TriangleDownSvg className='size-4' />
+						</div>
 					</div>
+					{renderPreviews}
 				</DisclosureButton>
 
 				<div className='flex'>

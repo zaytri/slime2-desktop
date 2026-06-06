@@ -1,17 +1,20 @@
 import { i18nStringTransform } from '@/helpers/i18n';
 import type { WidgetSetting } from '@@/json/widgetSettings';
 import clsx from 'clsx';
-import SettingHeader from './SettingHeader';
 import SettingEditorMenu from './menu/SettingEditorMenu';
+import SettingHeader from './SettingHeader';
+import SettingProperty from './SettingProperty';
 
 type SectionEditorProps = {
 	id: string;
 	index: number;
 	categoryId: string;
-	setting: DistributivePick<
-		WidgetSetting.AnySection,
-		'label' | 'condition' | 'searchTags' | 'type'
-	>;
+	setting:
+		| Pick<WidgetSetting.Section, 'label' | 'condition' | 'searchTags' | 'type'>
+		| Pick<
+				WidgetSetting.MultiSection,
+				'label' | 'condition' | 'searchTags' | 'type' | 'previews'
+		  >;
 };
 
 export default function SectionEditor({
@@ -43,6 +46,19 @@ export default function SectionEditor({
 					setting.type === 'multi-section' && 'border-blue-950',
 				)}
 			>
+				{setting.type === 'multi-section' &&
+					setting.previews &&
+					setting.previews.length > 0 && (
+						<div className='mr-9.25'>
+							<SettingProperty
+								className='border-r-8 border-blue-950! bg-blue-900!'
+								valueClassName='bg-sky-50!'
+								label='Previews'
+							>
+								{JSON.stringify(setting.previews)}
+							</SettingProperty>
+						</div>
+					)}
 				{children}
 			</div>
 		</div>

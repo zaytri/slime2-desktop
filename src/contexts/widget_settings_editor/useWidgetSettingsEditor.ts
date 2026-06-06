@@ -94,11 +94,37 @@ export default function useWidgetSettingsEditor() {
 		}
 	};
 
+	const getPreviewIds = (categoryId: string, multiSectionId: string) => {
+		const group = getSetting(multiSectionId, categoryId);
+		if (group && group.type === 'multi-section') {
+			return Object.entries(group.settings)
+				.filter(([_settingId, setting]) => {
+					return (
+						setting.type === 'text-input' ||
+						setting.type === 'text-area-input' ||
+						setting.type === 'toggle-input' ||
+						setting.type === 'number-input' ||
+						setting.type === 'slider-input' ||
+						setting.type === 'color-input' ||
+						setting.type === 'font-input' ||
+						setting.type === 'dropdown-input' ||
+						setting.type === 'select-input'
+					);
+				})
+				.map(([settingId]) => {
+					return settingId;
+				});
+		} else {
+			return [];
+		}
+	};
+
 	return {
 		settings: context,
 		getCategory,
 		getSetting,
 		getConditionIds,
+		getPreviewIds,
 		idExists,
 		categoryOptions,
 		groupOptions,

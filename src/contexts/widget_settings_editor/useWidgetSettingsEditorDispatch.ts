@@ -61,6 +61,7 @@ export function useWidgetSettingsEditorDispatch() {
 		sectionType: WidgetSetting.AnySection['type'],
 		condition: WidgetSetting.Condition,
 		searchTags: WidgetSetting.SearchTags,
+		previews: WidgetSetting.MultiSection['previews'],
 		categoryId: string,
 	) => {
 		dispatch({
@@ -72,6 +73,7 @@ export function useWidgetSettingsEditorDispatch() {
 			condition,
 			searchTags,
 			categoryId,
+			previews,
 		});
 	};
 
@@ -174,6 +176,7 @@ export type WidgetSettingsEditorAction =
 			condition: WidgetSetting.Condition;
 			searchTags: WidgetSetting.SearchTags;
 			sectionType: WidgetSetting.AnySection['type'];
+			previews: WidgetSetting.MultiSection['previews'];
 			categoryId: string;
 	  }
 	| {
@@ -455,6 +458,7 @@ export function widgetSettingsEditorReducer(
 					label,
 					condition,
 					searchTags,
+					previews,
 					categoryId,
 				} = action;
 
@@ -477,6 +481,13 @@ export function widgetSettingsEditorReducer(
 										condition,
 										searchTags,
 										type: sectionType,
+										previews:
+											sectionType === 'multi-section' ? previews : undefined,
+										// ensures that settings are at the bottom in the json
+										settings:
+											'settings' in copiedSetting
+												? copiedSetting.settings
+												: undefined,
 									},
 								}
 							: { [settingId]: copiedSetting }),

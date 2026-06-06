@@ -25,7 +25,7 @@ export default function EditSettingMenuItem({
 	sectionId,
 }: EditSettingMenuItemProps) {
 	const { openDialog } = useDialog();
-	const { getCategory, getSetting, idExists, getConditionIds } =
+	const { getCategory, getSetting, idExists, getConditionIds, getPreviewIds } =
 		useWidgetSettingsEditor();
 	const { editCategory, editSection, editSetting } =
 		useWidgetSettingsEditorDispatch();
@@ -66,12 +66,21 @@ export default function EditSettingMenuItem({
 							condition={section.condition}
 							searchTags={section.searchTags}
 							idExists={idExists}
+							previews={
+								section.type === 'multi-section' ? section.previews : undefined
+							}
+							previewIds={
+								section.type === 'multi-section'
+									? getPreviewIds(categoryId, id)
+									: undefined
+							}
 							onSave={(
 								newId,
 								newLabel,
 								newType,
 								newCondition,
 								newSearchTags,
+								newPreviews,
 							) => {
 								editSection(
 									newId,
@@ -80,6 +89,7 @@ export default function EditSettingMenuItem({
 									newType,
 									newCondition,
 									newSearchTags,
+									newPreviews,
 									categoryId,
 								);
 							}}

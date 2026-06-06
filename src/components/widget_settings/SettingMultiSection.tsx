@@ -1,12 +1,16 @@
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { getWidgetValueChildKey } from '@/contexts/widget_setting_parent/useWidgetValueKey';
 import WidgetSettingParentProvider from '@/contexts/widget_setting_parent/WidgetSettingParentProvider';
+import useWidgetValues from '@/contexts/widget_values/useWidgetValues';
 import { useWidgetValuesDispatch } from '@/contexts/widget_values/useWidgetValuesDispatch';
 import { swapItems } from '@/helpers/array';
+import { i18nStringTransform } from '@/helpers/i18n';
 import type { WidgetSetting } from '@/helpers/json/widgetSettings';
 import { widgetSettingsScrollContainerId } from '@/helpers/scroll';
 import useAutoScrollDisclosureOpen from '@/hooks/useAutoScrollDisclosureOpen';
 import NameMultiSubsectionDialog from '@@/dialog/NameMultiSubsectionDialog';
+import CheckSvg from '@@/svg/CheckSvg';
+import XSvg from '@@/svg/XSvg';
 import {
 	Disclosure,
 	DisclosureButton,
@@ -23,6 +27,7 @@ type SettingMultiSectionProps = {
 	id: string;
 	label: string;
 	settings: WidgetSetting.MultiSection['settings'];
+	previews: WidgetSetting.MultiSection['previews'];
 	values: string[];
 	onChange: (values: string[]) => void;
 };
@@ -33,6 +38,7 @@ export default function SettingMultiSection({
 	values,
 	onChange,
 	settings,
+	previews,
 }: SettingMultiSectionProps) {
 	const { openDialog } = useDialog();
 	const { setValue: set, duplicate } = useWidgetValuesDispatch();
@@ -120,6 +126,13 @@ export default function SettingMultiSection({
 							<SettingMultiSubsection
 								id={subsectionId}
 								parentName={label}
+								renderPreviews={
+									<Previews
+										settings={settings}
+										subsectionId={subsectionId}
+										previews={previews}
+									/>
+								}
 								onMoveUp={
 									canSwapUp
 										? () => {
@@ -167,5 +180,113 @@ export default function SettingMultiSection({
 				})}
 			</DisclosurePanel>
 		</Disclosure>
+	);
+}
+
+type PreviewsProps = {
+	subsectionId: string;
+	settings: WidgetSetting.MultiSection['settings'];
+	previews: WidgetSetting.MultiSection['previews'];
+};
+
+function Previews({ settings, previews = [], subsectionId }: PreviewsProps) {
+	const values = useWidgetValues();
+
+	return (
+		<div className='flex flex-wrap gap-2 empty:hidden'>
+			{Object.entries(settings).map(([id, setting]) => {
+				const value =
+					values[getWidgetValueChildKey(subsectionId, id)] ??
+					('defaultValue' in setting ? setting.defaultValue : undefined);
+				if (
+					!previews.includes(id) ||
+					value === undefined ||
+					value === null ||
+					(typeof value === 'string' && value.trim() === '') ||
+					Array.isArray(value) ||
+					!(
+						setting.type === 'text-input' ||
+						setting.type === 'text-area-input' ||
+						setting.type === 'toggle-input' ||
+						setting.type === 'number-input' ||
+						setting.type === 'slider-input' ||
+						setting.type === 'color-input' ||
+						setting.type === 'font-input' ||
+						setting.type === 'dropdown-input' ||
+						setting.type === 'select-input'
+					)
+				) {
+					return null;
+				}
+
+				const conditions = Object.entries(setting.condition ?? {});
+				const conditionsMet =
+					conditions.length === 0 ||
+					conditions.some(condition => {
+						// settings within multisubsections can only be dependent
+						// on other settings within that same multisubsection
+						const [conditionId, conditionValues] = condition;
+
+						const conditionArray = Array.isArray(conditionValues)
+							? conditionValues
+							: [conditionValues];
+						return conditionArray.some(conditionValue => {
+							const trueConditionId = getWidgetValueChildKey(
+								subsectionId,
+								conditionId,
+							);
+
+							const dependentSetting = settings[conditionId];
+							let dependentDefaultValue =
+								dependentSetting && 'defaultValue' in dependentSetting
+									? dependentSetting.defaultValue
+									: undefined;
+
+							if (
+								dependentSetting &&
+								'options' in dependentSetting &&
+								!dependentDefaultValue
+							) {
+								if (dependentSetting.type === 'multi-select-input') {
+									dependentDefaultValue = [];
+								} else {
+									dependentDefaultValue = dependentSetting.options[0]?.value;
+								}
+							}
+
+							const dependentValue =
+								values[trueConditionId] ?? dependentDefaultValue;
+
+							return Array.isArray(dependentValue)
+								? dependentValue.includes(conditionValue)
+								: dependentValue === conditionValue;
+						});
+					});
+
+				if (!conditionsMet) return null;
+
+				const label = i18nStringTransform(setting.label);
+
+				return (
+					<div
+						key={id}
+						className='flex rounded-1 bg-zinc-700 outline -outline-offset-1 outline-zinc-800'
+					>
+						<p className='px-1.5 font-semibold text-white'>{label}</p>
+						{typeof value === 'boolean' ? (
+							<div className='flex items-center justify-center bg-white px-2'>
+								{value ? (
+									<CheckSvg className='size-4 text-lime-600' />
+								) : (
+									<XSvg className='size-4 text-rose-600' />
+								)}
+							</div>
+						) : (
+							<p className='bg-white px-2 text-zinc-700'>{value}</p>
+						)}
+					</div>
+				);
+			})}
+		</div>
 	);
 }

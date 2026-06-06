@@ -433,6 +433,7 @@ export default function WidgetSetting({
 					values={z.catch(z.array(z.string()), []).parse(widgetValue)}
 					onChange={setWidgetValue}
 					settings={setting.settings}
+					previews={setting.previews}
 				/>
 			);
 		}
