@@ -151,7 +151,7 @@ async function handleChatMessage(data, eventDate) {
 			return getMultiSectionValue(commandId, settingId);
 		}
 
-		const reply = (getValue('reply') ?? '').trim();
+		let reply = (getValue('reply') ?? '').trim();
 		if (!reply) {
 			// ignore command if it has no reply
 			continue;
@@ -160,9 +160,39 @@ async function handleChatMessage(data, eventDate) {
 		const aliases = getValue('aliases') ?? [];
 		const command = getValue('command') ?? '';
 		const keywords = getValue('keywords') ?? [];
+		const endIndex = findEndIndex(
+			message.text,
+			[command, ...aliases],
+			keywords,
+		);
 
-		if (!hasCommand(message.text, [command, ...aliases], keywords)) {
+		if (endIndex === null) {
 			// message doesn't contain any command words
+			continue;
+		}
+
+		let argumentError = false;
+		const messageArguments = message.text
+			.substring(endIndex)
+			.split(' ')
+			.filter(word => {
+				return word.trim() !== '';
+			});
+		const args = message.text.substring(endIndex).split(' ');
+		for (let i = 1; i < 10; i++) {
+			const pattern = `{${i}}`;
+			if (reply.includes(pattern)) {
+				const messageArgument = messageArguments[i - 1];
+				if (!messageArgument) {
+					// argument specified in reply but missing in message
+					argumentError = true;
+					break;
+				}
+				reply = reply.replaceAll(pattern, messageArgument);
+			}
+		}
+
+		if (argumentError) {
 			continue;
 		}
 
@@ -297,14 +327,14 @@ async function getTwitchFollowDate(userId) {
 // ***************************************************************************
 
 /**
- * Returns `true` if the message contains the provided prefixes or keywords.
+ * If the message contains the provided prefixes or keywords, returns the end index of the command, otherwise returns `null`.
  *
- * @param {string} message
+ * @param {string} messageText
  * @param {string[]} prefixes
  * @param {string[]} keywords
- * @returns {boolean}
+ * @returns {null | number}
  */
-function hasCommand(messageText, prefixes, keywords) {
+function findEndIndex(messageText, prefixes, keywords) {
 	const prefixRegexPart = stringsToRegexOr(prefixes);
 	const keywordRegexPart = stringsToRegexOr(keywords);
 
@@ -327,8 +357,10 @@ function hasCommand(messageText, prefixes, keywords) {
 
 	// case insensitive regex for checking both prefixes and keywords
 	const regex = new RegExp(regexParts.join('|'), 'i');
+	const match = messageText.match(regex);
 
-	return regex.test(messageText);
+	if (!match) return null;
+	return (match.index || 0) + match[0].length;
 }
 
 /**

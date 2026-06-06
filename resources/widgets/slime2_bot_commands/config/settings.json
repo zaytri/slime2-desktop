@@ -12,7 +12,13 @@
 			"commands-list": {
 				"type": "multi-section",
 				"label": "Commands List",
+				"previews": ["enabled", "command"],
 				"settings": {
+					"enabled": {
+						"type": "toggle-input",
+						"label": "Enabled?",
+						"defaultValue": true
+					},
 					"command": {
 						"type": "text-input",
 						"label": "Command",
@@ -23,7 +29,7 @@
 						"type": "text-area-input",
 						"label": "Reply",
 						"placeholder": "Bot message",
-						"description": "The bot's reply to the above command."
+						"description": "The bot's reply to the above command.\nArguments are specified in the format {#}. # is a number from 1-9, indicating which word after the command to copy.\nIf a specified argument doesn't exist in the user's message, the bot won't respond."
 					},
 					"allowed-roles": {
 						"type": "multi-select-input",
@@ -71,35 +77,35 @@
 					"user-cooldown": {
 						"type": "number-input",
 						"label": "User Cooldown (seconds)",
+						"halfSpan": true,
 						"defaultValue": 5,
 						"min": 0,
 						"step": 1,
-						"description": "Time before this command can be used again by the same user.",
-						"halfSpan": true
+						"description": "Time before this command can be used again by the same user."
 					},
 					"global-cooldown": {
 						"type": "number-input",
 						"label": "Global Cooldown (seconds)",
+						"halfSpan": true,
 						"defaultValue": 0,
 						"min": 0,
 						"step": 1,
-						"description": "Time before any user can use this command again.",
-						"halfSpan": true
+						"description": "Time before any user can use this command again."
 					},
 					"aliases": {
 						"type": "multi-text-input",
 						"label": "Aliases",
 						"condition": {},
+						"halfSpan": true,
 						"placeholder": "!hi",
-						"description": "Also replies if the message starts with these alternatives.",
-						"halfSpan": true
+						"description": "Also replies if the message starts with these alternatives."
 					},
 					"keywords": {
 						"type": "multi-text-input",
 						"label": "Keywords",
+						"halfSpan": true,
 						"placeholder": "hello",
-						"description": "Also replies if these words appear anywhere in the message.",
-						"halfSpan": true
+						"description": "Also replies if these words appear anywhere in the message."
 					}
 				}
 			}
