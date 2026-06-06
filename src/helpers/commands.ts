@@ -125,3 +125,7 @@ export async function loadSystemFonts(): Promise<FontData[]> {
 export async function revealLogFile(): Promise<void> {
 	return invoke('reveal_log_file');
 }
+
+export async function openUrl(url: string): Promise<void> {
+	return invoke('open_url', { url });
+}

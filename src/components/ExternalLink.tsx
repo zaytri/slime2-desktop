@@ -1,4 +1,4 @@
-import { openUrl } from '@tauri-apps/plugin-opener';
+import { openUrl } from '@/helpers/commands';
 
 type ExternalLinkProps = {
 	href: string;

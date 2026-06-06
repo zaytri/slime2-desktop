@@ -36,6 +36,7 @@ time = { version = "0.3", features = ["formatting", "local-offset"] }
 tokio = { version = "1", features = ["full"] }
 walkdir = "2"
 warp = { version = "0.4", features = ["server", "websocket"] }
+webbrowser = { version = "1", features = ["hardened", "disable-wsl"] }
 zip = "8"
 
 # platform specific stores for keyring-core

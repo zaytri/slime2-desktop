@@ -639,6 +639,12 @@ pub async fn reveal_log_file(app_handle: AppHandle) -> Result<(), String> {
 	};
 }
 
+#[tauri::command]
+pub async fn open_url(url: &str) -> Result<(), String> {
+	webbrowser::open(url)
+		.map_err(|error| format!("Error opening URL: {}", error))
+}
+
 fn generate_widget_id() -> String {
 	format!("widget_{}_{}", nanoid!(), Local::now().format("%Y%m%d"))
 }
