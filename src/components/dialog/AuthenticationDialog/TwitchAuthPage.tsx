@@ -6,7 +6,6 @@ import { usePage } from '@/contexts/pages/usePage';
 import { usePageContext } from '@/contexts/pages/usePageContext';
 import {
 	type Account,
-	deleteTokens,
 	generateAccountId,
 	setTokens,
 } from '@/helpers/json/accounts';
@@ -85,12 +84,6 @@ export default function TwitchAuthPage() {
 
 					const { user_id } = validationResponse.data;
 					const accountId = generateAccountId(SERVICE, type, user_id);
-
-					try {
-						await deleteTokens(accountId);
-					} catch (error) {
-						console.error(error);
-					}
 
 					const tokens = await setTokens(
 						accountId,

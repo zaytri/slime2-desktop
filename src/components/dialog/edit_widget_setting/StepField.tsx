@@ -19,6 +19,7 @@ export default function StepField({ value, onChange }: StepFieldProps) {
 					disabled={value === 'any'}
 					label='Step (Interval)'
 					value={value === 'any' || value === undefined ? null : value}
+					step='any'
 					onChange={onChange}
 				/>
 
