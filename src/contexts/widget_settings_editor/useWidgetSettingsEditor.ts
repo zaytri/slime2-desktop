@@ -108,7 +108,9 @@ export default function useWidgetSettingsEditor() {
 						setting.type === 'color-input' ||
 						setting.type === 'font-input' ||
 						setting.type === 'dropdown-input' ||
-						setting.type === 'select-input'
+						setting.type === 'select-input' ||
+						setting.type === 'multi-text-input' ||
+						setting.type === 'multi-select-input'
 					);
 				})
 				.map(([settingId]) => {

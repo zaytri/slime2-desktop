@@ -203,7 +203,6 @@ function Previews({ settings, previews = [], subsectionId }: PreviewsProps) {
 					value === undefined ||
 					value === null ||
 					(typeof value === 'string' && value.trim() === '') ||
-					Array.isArray(value) ||
 					!(
 						setting.type === 'text-input' ||
 						setting.type === 'text-area-input' ||
@@ -213,7 +212,9 @@ function Previews({ settings, previews = [], subsectionId }: PreviewsProps) {
 						setting.type === 'color-input' ||
 						setting.type === 'font-input' ||
 						setting.type === 'dropdown-input' ||
-						setting.type === 'select-input'
+						setting.type === 'select-input' ||
+						setting.type === 'multi-text-input' ||
+						setting.type === 'multi-select-input'
 					)
 				) {
 					return null;
@@ -226,7 +227,19 @@ function Previews({ settings, previews = [], subsectionId }: PreviewsProps) {
 									return option.value === value;
 								})?.label,
 							)
-						: value;
+						: setting.type === 'multi-select-input'
+							? Array.isArray(value)
+								? value.reduce((displayValues: string[], optionValue) => {
+										const label = i18nUndefined(
+											setting.options.find(option => {
+												return option.value === optionValue;
+											})?.label,
+										);
+										if (label) displayValues.push(label);
+										return displayValues;
+									}, [])
+								: undefined
+							: value;
 
 				if (displayValue === undefined) {
 					return null;
@@ -296,7 +309,9 @@ function Previews({ settings, previews = [], subsectionId }: PreviewsProps) {
 								<span className='sr-only'>{displayValue ? 'Yes' : 'No'}</span>
 							</div>
 						) : (
-							<p className='bg-white px-2 text-zinc-700'>{displayValue}</p>
+							<p className='bg-white px-2 text-zinc-700'>
+								{Array.isArray(value) ? value.join(', ') : value}
+							</p>
 						)}
 					</div>
 				);
