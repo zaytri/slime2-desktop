@@ -9,10 +9,11 @@
 			"follow": {
 				"type": "multi-section",
 				"label": "Follow",
+				"previews": ["follow-enabled"],
 				"settings": {
 					"follow-enabled": {
 						"type": "toggle-input",
-						"label": "Alert Enabled?",
+						"label": "Enabled?",
 						"defaultValue": true
 					},
 					"follow-text": {
@@ -488,10 +489,16 @@
 			"raid": {
 				"type": "multi-section",
 				"label": "Raid",
+				"previews": [
+					"raid-enabled",
+					"raid-condition",
+					"raid-amount",
+					"raid-users"
+				],
 				"settings": {
 					"raid-enabled": {
 						"type": "toggle-input",
-						"label": "Alert Enabled?",
+						"label": "Enabled?",
 						"defaultValue": true
 					},
 					"raid-condition": {
@@ -1007,10 +1014,16 @@
 			"reward": {
 				"type": "multi-section",
 				"label": "Channel Point Reward",
+				"previews": [
+					"reward-enabled",
+					"reward-condition",
+					"reward-name",
+					"reward-words"
+				],
 				"settings": {
 					"reward-enabled": {
 						"type": "toggle-input",
-						"label": "Alert Enabled?",
+						"label": "Enabled?",
 						"defaultValue": true
 					},
 					"reward-condition": {
@@ -1523,10 +1536,16 @@
 			"power-up": {
 				"type": "multi-section",
 				"label": "Power-Up",
+				"previews": [
+					"power-up-enabled",
+					"power-up-condition",
+					"power-up-name",
+					"power-up-words"
+				],
 				"settings": {
 					"power-up-enabled": {
 						"type": "toggle-input",
-						"label": "Alert Enabled?",
+						"label": "Enabled?",
 						"defaultValue": true
 					},
 					"power-up-condition": {
@@ -2039,10 +2058,11 @@
 			"cheer": {
 				"type": "multi-section",
 				"label": "Cheer",
+				"previews": ["cheer-enabled", "cheer-condition", "cheer-amount"],
 				"settings": {
 					"cheer-enabled": {
 						"type": "toggle-input",
-						"label": "Alert Enabled?",
+						"label": "Enabled?",
 						"defaultValue": true
 					},
 					"cheer-condition": {
@@ -2107,6 +2127,7 @@
 					"cheer-visual": {
 						"type": "dropdown-input",
 						"label": "Alert Visual",
+						"halfSpan": true,
 						"defaultValue": "none",
 						"options": [
 							{
@@ -2121,8 +2142,7 @@
 								"label": "Video",
 								"value": "video"
 							}
-						],
-						"halfSpan": true
+						]
 					},
 					"cheer-sound": {
 						"type": "multi-audio-input",
@@ -2543,10 +2563,11 @@
 			"sub": {
 				"type": "multi-section",
 				"label": "Subscription",
+				"previews": ["sub-enabled", "sub-condition", "sub-amount", "sub-tier"],
 				"settings": {
 					"sub-enabled": {
 						"type": "toggle-input",
-						"label": "Alert Enabled?",
+						"label": "Enabled?",
 						"defaultValue": true
 					},
 					"sub-condition": {
@@ -3076,10 +3097,15 @@
 			"gift-sub": {
 				"type": "multi-section",
 				"label": "Gift Subscription",
+				"previews": [
+					"gift-sub-enabled",
+					"gift-sub-condition",
+					"gift-sub-amount"
+				],
 				"settings": {
 					"gift-sub-enabled": {
 						"type": "toggle-input",
-						"label": "Alert Enabled?",
+						"label": "Enabled?",
 						"defaultValue": true
 					},
 					"gift-sub-condition": {
