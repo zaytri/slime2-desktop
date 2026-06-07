@@ -104,20 +104,30 @@
 						"halfSpan": true,
 						"defaultValue": "white"
 					},
-					"max-lines": {
-						"type": "slider-input",
-						"label": "Max Lines",
-						"defaultValue": 4,
-						"min": 1,
-						"max": 10,
-						"step": 1
-					},
 					"max-width": {
 						"type": "number-input",
 						"label": "Max Message Width (px)",
 						"defaultValue": 500,
 						"min": 0,
 						"max": 10000,
+						"step": 1
+					},
+					"max-lines": {
+						"type": "slider-input",
+						"label": "Max Lines",
+						"halfSpan": true,
+						"defaultValue": 4,
+						"min": 1,
+						"max": 10,
+						"step": 1
+					},
+					"gap": {
+						"type": "slider-input",
+						"label": "Space Between Messages (px)",
+						"halfSpan": true,
+						"defaultValue": 8,
+						"min": 0,
+						"max": 32,
 						"step": 1
 					}
 				}
@@ -188,6 +198,58 @@
 							"use-shadow": true
 						},
 						"defaultValue": "black"
+					}
+				}
+			},
+			"background-section": {
+				"type": "section",
+				"label": "Background",
+				"settings": {
+					"background-color": {
+						"type": "color-input",
+						"label": "Background Color",
+						"halfSpan": true
+					},
+					"border-color": {
+						"type": "color-input",
+						"label": "Border Color",
+						"halfSpan": true
+					},
+					"border-width": {
+						"type": "slider-input",
+						"label": "Border Width (px)",
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 10,
+						"step": 1
+					},
+					"border-radius": {
+						"type": "slider-input",
+						"label": "Border Radius (px)",
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 20,
+						"step": 1
+					},
+					"padding-horizontal": {
+						"type": "slider-input",
+						"label": "Padding Horizontal (px)",
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 20,
+						"step": 1
+					},
+					"padding-vertical": {
+						"type": "slider-input",
+						"label": "Padding Vertical (px)",
+						"halfSpan": true,
+						"defaultValue": 0,
+						"min": 0,
+						"max": 20,
+						"step": 1
 					}
 				}
 			},
@@ -296,6 +358,18 @@
 						"type": "toggle-input",
 						"label": "Hide Badges?",
 						"defaultValue": false
+					},
+					"badge-size": {
+						"type": "slider-input",
+						"label": "Badge Size Multiplier",
+						"condition": {
+							"hide-badges": [false]
+						},
+						"defaultValue": 1.25,
+						"min": 1,
+						"max": 4,
+						"step": 0.05,
+						"description": "Multiplier dependent on the text size."
 					}
 				}
 			},
@@ -329,6 +403,52 @@
 								"value": "hidden"
 							}
 						]
+					}
+				}
+			},
+			"emotes-section": {
+				"type": "section",
+				"label": "Emotes",
+				"settings": {
+					"use-static-emotes": {
+						"type": "toggle-input",
+						"label": "Static Emotes",
+						"halfSpan": true,
+						"defaultValue": false,
+						"description": "If enabled, emotes won't be animated."
+					},
+					"use-dynamic-emote-sizing": {
+						"type": "toggle-input",
+						"label": "Dynamic Emote Sizing?",
+						"halfSpan": true,
+						"defaultValue": true,
+						"description": "When enabled, emotes are larger when the message only contains emotes or is using Gigantify an Emote."
+					},
+					"multi-emote-size": {
+						"type": "slider-input",
+						"label": "Multiple Emotes Size Multiplier",
+						"condition": {
+							"use-dynamic-emote-sizing": [true]
+						},
+						"halfSpan": true,
+						"defaultValue": 1.5,
+						"min": 1,
+						"max": 4,
+						"step": 0.05,
+						"description": "When a message only contains multiple emotes."
+					},
+					"single-emote-size": {
+						"type": "slider-input",
+						"label": "Single Emote Size Multiplier",
+						"condition": {
+							"use-dynamic-emote-sizing": [true]
+						},
+						"halfSpan": true,
+						"defaultValue": 2,
+						"min": 1,
+						"max": 4,
+						"step": 0.05,
+						"description": "When a message contains only one emote, or is using Gigantify an Emote."
 					}
 				}
 			}
@@ -491,7 +611,7 @@
 					},
 					"follow-age": {
 						"type": "number-input",
-						"label": "Minimum follow age (hours)",
+						"label": "Minimum Follow Age (hours)",
 						"condition": {
 							"follower-only": true
 						},

@@ -87,6 +87,7 @@ function widgetValuesListener(event) {
 		['line-clamp', Widget.values.get('max-lines') ?? 4],
 		['message-color', Widget.values.get('message-color') ?? 'white'],
 		['username-color', Widget.values.get('custom-username-color') ?? 'white'],
+		['gap', `${Widget.values.get('gap') ?? 8}px`],
 	].forEach(([cssVarName, value]) => {
 		setCustomCSS(cssVarName, value);
 	});
@@ -123,6 +124,19 @@ function widgetValuesListener(event) {
 		document.getElementById(id).setAttribute(attributeName, value);
 	});
 
+	// background settings
+
+	[
+		['bg-color', Widget.values.get('background-color') ?? 'transparent'],
+		['border-color', Widget.values.get('border-color') ?? 'transparent'],
+		['border-width', `${Widget.values.get('border-width') ?? 0}px`],
+		['border-radius', `${Widget.values.get('border-radius') ?? 0}px`],
+		['p-horizontal', `${Widget.values.get('padding-horizontal') ?? 0}px`],
+		['p-vertical', `${Widget.values.get('padding-vertical') ?? 0}px`],
+	].forEach(([cssVarName, value]) => {
+		setCustomCSS(cssVarName, value);
+	});
+
 	// position settings
 
 	removeClassesWithPrefix('arrangement', 'vertical', 'horizontal');
@@ -136,10 +150,12 @@ function widgetValuesListener(event) {
 
 	// badge settings
 
-	setCustomCSS(
-		'badge-display',
-		Widget.values.get('hide-badges') ? 'none' : 'inline',
-	);
+	[
+		['badge-display', Widget.values.get('hide-badges') ? 'none' : 'inline'],
+		['badge-size', Widget.values.get('badge-size') ?? 1.25],
+	].forEach(([cssVarName, value]) => {
+		setCustomCSS(cssVarName, value);
+	});
 
 	// pronoun settings
 
@@ -151,6 +167,24 @@ function widgetValuesListener(event) {
 		'pronoun-transform',
 		Widget.values.get('pronouns-display') ?? 'lowercase',
 	);
+
+	// emote settings
+	[
+		['use-static-emotes', Widget.values.get('use-static-emotes') ?? false],
+		[
+			'use-dynamic-emote-sizing',
+			Widget.values.get('use-dynamic-emote-sizing') ?? true,
+		],
+	].forEach(([className, value]) => {
+		toggleClass(className, value);
+	});
+
+	[
+		['multi-emote-size', Widget.values.get('multi-emote-size') ?? 2],
+		['single-emote-size', Widget.values.get('single-emote-size') ?? 4],
+	].forEach(([cssVarName, value]) => {
+		setCustomCSS(cssVarName, value);
+	});
 
 	// animation settings
 
@@ -350,6 +384,7 @@ async function handleChatMessage(data, eventDate) {
 		);
 
 	// build text half of message
+	/** @type {HTMLSpanElement} */
 	const contentElement = messageTemplateClone.querySelector('.content');
 	message.fragments.forEach(fragment => {
 		const node = buildMessageFragment(fragment);
@@ -360,6 +395,36 @@ async function handleChatMessage(data, eventDate) {
 			contentElement.append(node);
 		}
 	});
+
+	// handle gigantify emote
+	if (message_type === 'power_ups_gigantified_emote') {
+		contentElement.lastElementChild.classList.add('emote-gigantic');
+	} else {
+		// handle dynamic emote sizing
+		let emoteCount = 0;
+		let emoteOnly = true;
+		for (const child of contentElement.children) {
+			if (child.textContent.trim()) {
+				emoteOnly = false;
+				break;
+			}
+			// check both emote and animated to not double count with the static emote
+			if (
+				child.classList.contains('emote') &&
+				child.classList.contains('animated')
+			) {
+				emoteCount++;
+			}
+		}
+
+		if (emoteOnly) {
+			if (emoteCount > 1) {
+				contentElement.classList.add('emote-multi');
+			} else {
+				contentElement.classList.add('emote-single');
+			}
+		}
+	}
 
 	// wait for all images to load
 	await Promise.allSettled(
@@ -632,12 +697,28 @@ function buildTextFragment(textFragment) {
 
 		if (thirdPartyEmote.type === 'bttv') {
 			const { id, animated } = thirdPartyEmote.data;
-			const src = buildBttvEmoteImageUrl(id, animated);
-			parsedFragments.push({ type: 'emote', text: part, src });
+			const srcAnimated = buildBttvEmoteImageUrl(id, animated);
+			const srcStatic = buildBttvEmoteImageUrl(id, animated, {
+				useStatic: true,
+			});
+			parsedFragments.push({
+				type: 'emote',
+				text: part,
+				srcAnimated,
+				srcStatic,
+			});
 		} else if (thirdPartyEmote.type === 'ffz') {
 			const { urls, animated: animatedUrls } = thirdPartyEmote.data;
-			const src = buildFfzEmoteImageUrl(urls, animatedUrls);
-			parsedFragments.push({ type: 'emote', text: part, src });
+			const srcAnimated = buildFfzEmoteImageUrl(urls, animatedUrls);
+			const srcStatic = buildFfzEmoteImageUrl(urls, animatedUrls, {
+				useStatic: true,
+			});
+			parsedFragments.push({
+				type: 'emote',
+				text: part,
+				srcAnimated,
+				srcStatic,
+			});
 		} else {
 			parsedFragments.push({ type: 'text', text: part });
 		}
@@ -673,27 +754,36 @@ function buildMentionFragment(mentionFragment) {
 function buildEmoteFragment(emoteFragment) {
 	const { text, emote } = emoteFragment;
 
-	let src = buildTwitchEmoteImageUrl(emote.id);
+	let srcAnimated = buildTwitchEmoteImageUrl(emote.id);
+	let srcStatic = buildTwitchEmoteImageUrl(emote.id, { format: 'static' });
 
 	const thirdPartyEmote = Twitch.thirdPartyEmotes.get(text) ?? {};
 
 	// allow third party emotes to override twitch emotes
 	if (thirdPartyEmote.type === 'bttv') {
 		const { id, animated } = thirdPartyEmote.data;
-		src = buildBttvEmoteImageUrl(id, animated);
+		srcAnimated = buildBttvEmoteImageUrl(id, animated);
+		srcStatic = buildBttvEmoteImageUrl(id, animated, { useStatic: true });
 	} else if (thirdPartyEmote.type === 'ffz') {
 		const { urls, animated: animatedUrls } = thirdPartyEmote.data;
-		const src = buildFfzEmoteImageUrl(urls, animatedUrls);
+		srcAnimated = buildFfzEmoteImageUrl(urls, animatedUrls);
+		srcStatic = buildFfzEmoteImageUrl(urls, animatedUrls, { useStatic: true });
 	}
 
-	return buildParsedEmoteFragment({ type: 'emote', text, src });
+	return buildParsedEmoteFragment({
+		type: 'emote',
+		text,
+		srcAnimated,
+		srcStatic,
+	});
 }
 
 function buildParsedEmoteFragment(parsedEmoteFragment) {
-	const { src } = parsedEmoteFragment;
+	const { srcAnimated, srcStatic } = parsedEmoteFragment;
 
 	const emoteClone = cloneTemplate('emote-fragment-template');
-	emoteClone.querySelector('.emote').src = src;
+	emoteClone.querySelector('.emote.animated').src = srcAnimated;
+	emoteClone.querySelector('.emote.static').src = srcStatic;
 
 	return emoteClone;
 }
@@ -708,8 +798,10 @@ function buildCheermoteFragment(cheermoteFragment) {
 		?.tiers.get(cheermote.tier);
 
 	if (tier) {
-		cheermoteClone.querySelector('.cheermote').src =
+		cheermoteClone.querySelector('.cheermote.animated').src =
 			tier.images.dark.animated['4'];
+		cheermoteClone.querySelector('.cheermote.static').src =
+			tier.images.dark.static['4'];
 		cheermoteClone.querySelector('.cheer-amount').textContent = cheermote.bits;
 		cheermoteClone
 			.querySelector('.cheer-amount')
@@ -815,42 +907,83 @@ async function checkFollowAge(userId, eventDate) {
 	return userFollowTime > minFollowTime;
 }
 
-/** Builds Twitch emote image URL given the emote ID. */
 const BASE_TWITCH_EMOTE_URL = 'https://static-cdn.jtvnw.net/emoticons/v2';
-function buildTwitchEmoteImageUrl(id, options = {}) {
-	// format = 'default' | 'static' | 'animated'
-	// theme_mode = 'dark' | 'light'
-	// size = '1.0' | '2.0' | '3.0'
-	const { format = 'default', theme_mode = 'dark', size = '3.0' } = options;
+/**
+ * Builds Twitch emote image URL given the emote ID.
+ *
+ * @param {string} id - Emote ID
+ * @param {Object} [options] - Format options
+ * @param {'default' | 'static' | 'animated'} [options.format]
+ * @param {'dark' | 'light'} [options.theme_mode]
+ * @param {'1.0' | '2.0' | '3.0'} [options.size]
+ */
+function buildTwitchEmoteImageUrl(
+	id,
+	{ format = 'default', theme_mode = 'dark', size = '3.0' } = {},
+) {
 	return [BASE_TWITCH_EMOTE_URL, id, format, theme_mode, size].join('/');
 }
 
-/** Builds BetterTTV emote image URL given the emote ID and animated value */
 const BASE_BTTV_EMOTE_URL = 'https://cdn.betterttv.net/emote';
-function buildBttvEmoteImageUrl(id, animated, options = {}) {
-	// staticEmote = boolean
-	// size = '1x' | '2x' | '3x'
-	const { staticEmote = false, size = '3x' } = options;
+/**
+ * Builds BetterTTV emote image URL given the emote ID and animated value
+ *
+ * @param {string} id - Emote ID
+ * @param {boolean} hasAnimatedVariant - If the emote has an animated variant
+ * @param {Object} [options] - Format options
+ * @param {boolean} [options.useStatic]
+ * @param {'1x' | '2x' | '3x'} [options.size]
+ */
+function buildBttvEmoteImageUrl(
+	id,
+	hasAnimatedVariant,
+	{ useStatic = false, size = '3x' } = {},
+) {
 	const urlParts = [BASE_BTTV_EMOTE_URL, id];
 
-	// staticEmote only works if the emote was animated
-	if (animated && staticEmote) urlParts.push('static');
+	// static only works if the emote was animated
+	if (hasAnimatedVariant && useStatic) urlParts.push('static');
 
 	urlParts.push(size);
 	return urlParts.join('/');
 }
 
-/** Builds FrankerFaceZ emote image URL given the possible URLs */
-function buildFfzEmoteImageUrl(urls, animatedUrls) {
+/**
+ * Builds FrankerFaceZ emote image URL given the possible URLs
+ *
+ * @param {{ '1': string; '2': string | null; '4': string | null }} urls
+ * @param {{ '1': string; '2': string | null; '4': string | null }} [animatedUrls]
+ * @param {Object} [options] - Format options
+ * @param {boolean} [options.useStatic]
+ * @param {'1' | '2' | '4'} [options.size]
+ */
+function buildFfzEmoteImageUrl(
+	urls,
+	animatedUrls,
+	{ useStatic = false, size = '4' } = {},
+) {
 	// urls['1'] is guaranteed, the others are not
-	return (
-		animatedUrls?.['4'] ||
-		animatedUrls?.['2'] ||
-		animatedUrls?.['1'] ||
-		urls['4'] ||
-		urls['2'] ||
-		urls['1']
-	);
+	let url = urls['1'];
+
+	if (!useStatic) {
+		url = animatedUrls?.['1'] || url;
+	}
+
+	if (size !== '1') {
+		url = urls['2'] || url;
+		if (!useStatic) {
+			url = animatedUrls?.['2'] || url;
+		}
+
+		if (size === '4') {
+			url = urls['4'];
+			if (!useStatic) {
+				url = animatedUrls?.['4'] || url;
+			}
+		}
+	}
+
+	return url;
 }
 
 /**

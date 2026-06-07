@@ -12,6 +12,16 @@
 	--badge-display: var(--custom-badge-display, inline);
 	--pronoun-display: var(--custom-pronoun-display, inline);
 	--pronoun-transform: var(--custom-pronoun-transform, lowercase);
+	--gap: var(--custom-gap, 8px);
+	--multi-emote-size: var(--custom-multi-emote-size, 2);
+	--single-emote-size: var(--custom-single-emote-size, 4);
+	--bg-color: var(--custom-bg-color, transparent);
+	--border-color: var(--custom-border-color, transparent);
+	--border-width: var(--custom-border-width, 0px);
+	--border-radius: var(--custom-border-radius, 0px);
+	--p-horizontal: var(--custom-p-horizontal, 0px);
+	--p-vertical: var(--custom-p-vertical, 0px);
+	--badge-size: var(--custom-badge-size, 1.25);
 
 	font-family:
 		var(--custom-font-name), 'Inter', Nunito, Helvetica, Arial, sans-serif;
@@ -32,16 +42,12 @@
 	overflow: hidden;
 
 	display: flex;
-	gap: 8px;
+	gap: var(--gap);
 
 	/* default is the same values as #widget.arrangement_vertical.vertical_to-top.vertical_left */
 	flex-direction: column;
 	justify-content: end;
 	align-items: flex-start;
-}
-
-#widget.use-shadow {
-	filter: url(#shadow-filter);
 }
 
 #widget.arrangement_vertical.vertical_to-top {
@@ -85,11 +91,15 @@
 .message {
 	flex-shrink: 0;
 	max-width: min(var(--max-width), 100%);
-	overflow: hidden;
 	opacity: 0;
+	overflow: hidden;
 	position: absolute;
 	top: 0;
 	left: 0;
+	padding: var(--p-vertical) var(--p-horizontal);
+	border-radius: var(--border-radius);
+	border: var(--border-width) solid var(--border-color);
+	background-color: var(--bg-color);
 
 	animation: none;
 	animation-duration: 400ms;
@@ -99,7 +109,11 @@
 
 .message.enter {
 	opacity: 1;
-	position: static;
+	position: relative;
+}
+
+.use-shadow .message {
+	filter: url(#shadow-filter);
 }
 
 .animation-smooth.arrangement_horizontal .message {
@@ -244,14 +258,16 @@
 }
 
 .badge {
-	--badge-size: 1.25em;
-	height: var(--badge-size);
-	width: var(--badge-size);
-	min-height: var(--badge-size);
-	min-width: var(--badge-size);
+	--size: calc(1em * var(--badge-size));
+	height: var(--size);
+	width: var(--size);
+	min-height: min(var(--size), 72px);
+	min-width: min(var(--size), 72px);
 	margin-right: 3px;
 	display: inline;
 	vertical-align: text-top;
+	max-height: 72px;
+	max-width: 72px;
 }
 
 .pronouns {
@@ -287,6 +303,30 @@
 	vertical-align: middle;
 	margin-top: -0.25em;
 	margin-bottom: -0.2em;
+}
+
+#widget:not(.use-static-emotes) .emote.static {
+	display: none !important;
+}
+
+#widget.use-static-emotes .emote.animated {
+	display: none !important;
+}
+
+.use-dynamic-emote-sizing .emote-multi .emote {
+	height: calc(2em * var(--multi-emote-size));
+}
+
+.use-dynamic-emote-sizing.arrangement_horizontal .emote-multi .emote {
+	vertical-align: top;
+}
+
+.use-dynamic-emote-sizing .emote-single .emote,
+.use-dynamic-emote-sizing .emote.emote-gigantic {
+	height: calc(2em * var(--single-emote-size));
+	display: block;
+	margin: 0;
+	margin-top: 0.25em;
 }
 
 /**************
