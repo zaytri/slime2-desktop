@@ -294,10 +294,11 @@ function twitchEventListener(event) {
 		case 'channel.chat.clear_user_messages':
 			return handleChatClearUserMessages(data, eventDate);
 		case 'channel.chat.notification':
-			if (data.notice_type === 'announcement') {
-				// treat announcements as regular chat messages
+			if (data.message && data.message.text) {
+				// treat notifications with user input as regular chat messages
 				return handleChatMessage(data, eventDate);
 			}
+
 			break;
 	}
 }
@@ -912,7 +913,7 @@ const BASE_TWITCH_EMOTE_URL = 'https://static-cdn.jtvnw.net/emoticons/v2';
  * Builds Twitch emote image URL given the emote ID.
  *
  * @param {string} id - Emote ID
- * @param {Object} [options] - Format options
+ * @param {Object} [options={}] - Format options. Default is `{}`
  * @param {'default' | 'static' | 'animated'} [options.format]
  * @param {'dark' | 'light'} [options.theme_mode]
  * @param {'1.0' | '2.0' | '3.0'} [options.size]
