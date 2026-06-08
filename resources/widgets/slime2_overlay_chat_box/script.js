@@ -397,9 +397,9 @@ async function handleChatMessage(data, eventDate) {
 		}
 	});
 
-	// handle gigantify emote
 	if (message_type === 'power_ups_gigantified_emote') {
-		contentElement.lastElementChild.classList.add('emote-gigantic');
+		// handle gigantify emote
+		contentElement.classList.add('emote-gigantic');
 	} else {
 		// handle dynamic emote sizing
 		let emoteCount = 0;

@@ -322,7 +322,8 @@
 }
 
 .use-dynamic-emote-sizing .emote-single .emote,
-.use-dynamic-emote-sizing .emote.emote-gigantic {
+.use-dynamic-emote-sizing .emote-gigantic .emote:nth-last-child(2),
+.use-dynamic-emote-sizing .emote-gigantic .emote:last-child {
 	height: calc(2em * var(--single-emote-size));
 	display: block;
 	margin: 0;
