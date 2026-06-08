@@ -1,5 +1,7 @@
 # Slime2 - https://slime2.stream/
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V14PTBF)
+
 ## Setup
 
 Slime2 is a desktop app for Linux, Windows, and macOS built using Tauri, Vite, React, and TypeScript.
