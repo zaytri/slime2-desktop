@@ -62,17 +62,6 @@ export default function PasteWidgetDataPage() {
 						This will <strong>permanently replace</strong> this widget's data.
 					</p>
 				</Description>
-
-				<Description
-					as='div'
-					className='flex gap-1 rounded-2 border-2 border-amber-800 bg-yellow-100 p-2 text-3.5 text-amber-900'
-				>
-					<strong className=''>Note 2:</strong>
-					<p>
-						Any local media (images, video, audio) used will be broken and need
-						replacement.
-					</p>
-				</Description>
 			</Field>
 
 			<div className='flex justify-end gap-4'>
