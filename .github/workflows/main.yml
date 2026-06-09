@@ -42,8 +42,17 @@ jobs:
       - name: Install Linux Dependencies
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev xdg-utils patchelf
+          sudo apt-get update;
+          sudo apt-get install -y libappindicator3-dev librsvg2-dev xdg-utils patchelf;
+
+          webkit_version='2.50.*';
+          sudo apt install -y \
+            libwebkit2gtk-4.1-0="$webkit_version" \
+            libwebkit2gtk-4.1-dev="$webkit_version" \
+            libjavascriptcoregtk-4.1-0="$webkit_version" \
+            libjavascriptcoregtk-4.1-dev="$webkit_version" \
+            gir1.2-javascriptcoregtk-4.1="$webkit_version" \
+            gir1.2-webkit2-4.1="$webkit_version";
 
       - name: Setup Node
         uses: actions/setup-node@v6
