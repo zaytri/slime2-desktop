@@ -30,12 +30,14 @@ export default function ChangeWidgetCoreIconDialog({
 							className='relative flex rounded-2 border border-white bg-zinc-200 bg-linear-to-b from-zinc-200 to-zinc-300 px-2 py-2 font-fredoka text-4.5 font-medium text-zinc-700 outline-2 outline-offset-0! outline-zinc-400 over:bg-lime-200 over:bg-none over:text-lime-800 over:outline-4 over:outline-lime-600'
 							ref={imageDialogButtonRef}
 							onClick={async () => {
-								const filePath = await openImage([
-									{
-										name: 'PNG Image',
-										extensions: ['png'],
-									},
-								]);
+								const filePath = await openImage({
+									filters: [
+										{
+											name: 'PNG Image',
+											extensions: ['png'],
+										},
+									],
+								});
 
 								if (!filePath) return;
 

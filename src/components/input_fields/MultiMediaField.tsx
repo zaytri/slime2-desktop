@@ -89,7 +89,7 @@ export default function MultiMediaField({
 					{values.map((value, index) => {
 						return (
 							<MediaDeleteWrapper
-								key={value}
+								key={`${value}_${index}`}
 								type={type}
 								volume={type !== 'image' ? volumes[index] : undefined}
 								onChangeVolume={

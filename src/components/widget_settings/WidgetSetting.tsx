@@ -8,8 +8,9 @@ import { saveTempWidgetFile } from '@/helpers/commands';
 import { i18nStringTransform } from '@/helpers/i18n';
 import type { WidgetSetting as WidgetSettingType } from '@/helpers/json/widgetSettings';
 import {
-	createWidgetMediaLocalValue,
+	createWidgetMediaGalleryValue,
 	getWidgetMediaSrc,
+	MEDIA_GALLERY_PREFIX,
 } from '@/helpers/media';
 import { DEFAULT_VOLUME, type WidgetValue } from '@@/json/widgetValues';
 import { z } from 'zod/mini';
@@ -76,12 +77,13 @@ export default function WidgetSetting({
 		if (
 			newValue === '' ||
 			newValue.startsWith('https://') ||
-			newValue.startsWith('http://')
+			newValue.startsWith('http://') ||
+			newValue.startsWith(MEDIA_GALLERY_PREFIX)
 		) {
 			return newValue;
 		} else {
-			const fileName = await saveTempWidgetFile(newValue, widgetId);
-			return createWidgetMediaLocalValue(fileName);
+			const fileName = await saveTempWidgetFile(newValue);
+			return createWidgetMediaGalleryValue(fileName);
 		}
 	}
 

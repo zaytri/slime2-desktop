@@ -80,11 +80,15 @@ export async function saveTempTileIcon(
 	return invoke('save_temp_tile_icon', { fileName, tileId });
 }
 
-export async function saveTempWidgetFile(
-	fileName: string,
+export async function saveTempWidgetFile(fileName: string): Promise<string> {
+	return invoke('save_temp_widget_file', { fileName });
+}
+
+export async function moveLegacyMediaToGallery(
 	widgetId: string,
+	fileName: string,
 ): Promise<string> {
-	return invoke('save_temp_widget_file', { fileName, widgetId });
+	return invoke('move_legacy_media_to_gallery', { widgetId, fileName });
 }
 
 export async function saveTempWidgetCoreIcon(

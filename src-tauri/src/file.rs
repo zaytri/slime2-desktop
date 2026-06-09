@@ -181,22 +181,82 @@ pub fn copy_file_to_folder(
 	Ok(file_name.to_string())
 }
 
-pub fn copy_file_timestamped(
+fn safe_destination_path(
+	source_file: &Path,
+	destination_folder: PathBuf,
+) -> io::Result<PathBuf> {
+	let destination_path =
+		destination_folder.join(read_file_name(source_file)?);
+
+	if !destination_path.exists() {
+		return Ok(destination_path);
+	}
+
+	let file_stem = destination_path
+		.file_stem()
+		.expect("File to copy has no file name!")
+		.to_str()
+		.expect("Failed to convert OsStr to str!");
+	let extension_option = destination_path.extension().clone();
+
+	// file already exists, attempt to append (#) to it
+
+	// destination file already exists, append (#) to the name
+	for index in 1..10 {
+		let file_name = format!("{} ({})", file_stem, index);
+		let mut numbered_destination_path = destination_folder.join(file_name);
+
+		if let Some(extension) = extension_option {
+			numbered_destination_path.set_extension(extension);
+		}
+
+		if !numbered_destination_path.exists() {
+			log::debug!(
+				"File already exists, returning numbered path {:?}",
+				numbered_destination_path
+			);
+			// doesn't exist, safe to copy now
+			return Ok(numbered_destination_path);
+		}
+	}
+
+	// somehow all file name iterations of (1) - (10) exist, append timestamp
+	let timestamp = SystemTime::now()
+		.duration_since(UNIX_EPOCH)
+		.map_or(0, |time| time.as_secs());
+	let file_name = format!("{} ({})", file_stem, timestamp);
+	let mut timestamped_destination_path = destination_folder.join(file_name);
+
+	if let Some(extension) = extension_option {
+		timestamped_destination_path.set_extension(extension);
+	}
+
+	log::debug!(
+		"File already exists, numbers exhausted, returning timestamped path {:?}",
+		timestamped_destination_path
+	);
+
+	// if it somehow still exists, don't care, just going to overwrite
+	Ok(timestamped_destination_path)
+}
+
+/** Copies a file, appending (#) if the destination file already exists */
+pub fn copy_file_safe(
 	source_file: &Path,
 	destination_folder: PathBuf,
 ) -> io::Result<String> {
 	fs::create_dir_all(&destination_folder)?;
+	let destination_path =
+		safe_destination_path(source_file, destination_folder)?;
 
-	let timestamp = match SystemTime::now().duration_since(UNIX_EPOCH) {
-		Ok(time) => time.as_millis(),
-		Err(_error) => 0,
-	};
+	fs::copy(source_file, &destination_path)?;
 
-	let file_name = format!("{}_{}", timestamp, read_file_name(source_file)?);
-
-	fs::copy(source_file, destination_folder.join(&file_name))?;
-
-	Ok(file_name.to_string())
+	Ok(destination_path
+		.file_name()
+		.expect("Somehow destination file has no file name?")
+		.to_str()
+		.expect("Failed to convert OsStr to str!")
+		.to_string())
 }
 
 pub fn unzip(path: &Path) -> io::Result<ZipArchive<File>> {
@@ -297,7 +357,7 @@ pub fn generate_widget_config(
 		Err(_error) => {
 			// on error, fallback to default widget icon
 			let default_icon_path =
-				assets_path(app).join(default_widget_image_name());
+				resource_assets_path(app).join(default_widget_image_name());
 
 			copy_file_to_folder(&default_icon_path, destination_folder_path)
 		}
@@ -353,7 +413,14 @@ pub fn temp_files_path(app: &AppHandle) -> PathBuf {
 		.expect("Failed to resolve [app_data]/temp!")
 }
 
-pub fn assets_path(app: &AppHandle) -> PathBuf {
+// get path to media folder
+pub fn media_files_path(app: &AppHandle) -> PathBuf {
+	app.path()
+		.resolve("media", BaseDirectory::AppData)
+		.expect("Failed to resolve [app_data]/media!")
+}
+
+pub fn resource_assets_path(app: &AppHandle) -> PathBuf {
 	app.path()
 		.resolve("assets", BaseDirectory::Resource)
 		.expect("Failed to resolve [resource]/assets!")

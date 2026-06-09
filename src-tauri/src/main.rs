@@ -233,6 +233,7 @@ async fn main() {
 					file::overlay_server_path(&app_handle),
 					file::tiles_path(&app_handle),
 					file::temp_files_path(&app_handle),
+					file::media_files_path(&app_handle),
 				),
 			)?;
 
@@ -263,6 +264,7 @@ async fn main() {
 			commands::save_temp_widget_core_icon,
 			commands::reveal_log_file,
 			commands::open_url,
+			commands::move_legacy_media_to_gallery,
 		])
 		.run(tauri::generate_context!())
 		.expect("Error while running Tauri app!");

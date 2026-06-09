@@ -1,6 +1,12 @@
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { tempCopy } from '@/helpers/commands';
-import { getTempFileSrc } from '@/helpers/media';
+import {
+	createWidgetMediaGalleryValue,
+	getTempFileSrc,
+	getWidgetMediaGallerySrc,
+	MEDIA_GALLERY_PREFIX,
+	mediaFolderPath,
+} from '@/helpers/media';
 import {
 	getMediaFormats,
 	type MediaType,
@@ -63,23 +69,32 @@ export default function MediaSelectDialog({
 								ref={imageDialogButtonRef}
 								onClick={async () => {
 									let filePath = null;
+									let defaultPath = await mediaFolderPath();
 									switch (type) {
 										case 'image':
-											filePath = await openImage();
+											filePath = await openImage({ defaultPath });
 											break;
 										case 'video':
-											filePath = await openVideo();
+											filePath = await openVideo({ defaultPath });
 											break;
 										case 'audio':
-											filePath = await openAudio();
+											filePath = await openAudio({ defaultPath });
 											break;
 									}
 									if (!filePath) return;
 
-									// create new temp copy
-									const fileName = await tempCopy(filePath);
-
-									setValue(fileName);
+									if (filePath.startsWith(defaultPath)) {
+										// already in media folder, copy not necessary
+										const galleryFileName = createWidgetMediaGalleryValue(
+											// add 1 to handle the separator
+											filePath.substring(defaultPath.length + 1),
+										);
+										setValue(galleryFileName);
+									} else {
+										// create new temp copy
+										const fileName = await tempCopy(filePath);
+										setValue(fileName);
+									}
 								}}
 							>
 								<div className='absolute inset-0 bottom-1/2 bg-linear-to-b from-white/30 to-white/20'></div>
@@ -123,7 +138,13 @@ export default function MediaSelectDialog({
 					>
 						<MediaPreview
 							type={type}
-							src={urlMode ? mediaPath : getTempFileSrc(mediaPath)}
+							src={
+								urlMode
+									? mediaPath
+									: mediaPath.startsWith(MEDIA_GALLERY_PREFIX)
+										? getWidgetMediaGallerySrc(mediaPath)
+										: getTempFileSrc(mediaPath)
+							}
 							className={clsx(
 								'max-h-80 max-w-80',
 								type !== 'audio' && 'min-h-24',

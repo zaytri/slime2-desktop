@@ -4,7 +4,8 @@ pub mod websocket;
 
 pub fn setup(
 	connections: websocket::WebsocketConnections,
-	(overlay_server_path, tiles_path, temp_files_path): (
+	(overlay_server_path, tiles_path, temp_files_path, media_files_path): (
+		PathBuf,
 		PathBuf,
 		PathBuf,
 		PathBuf,
@@ -22,6 +23,9 @@ pub fn setup(
 	// used to preview media files in the temp folder for file input
 	let preview_route =
 		warp::path("preview").and(warp::fs::dir(temp_files_path));
+
+	// for all media files saved by widgets using media inputs
+	let media_route = warp::path("media").and(warp::fs::dir(media_files_path));
 
 	let websocket_route = warp::path("websocket")
 		.and(warp::ws())
@@ -42,6 +46,7 @@ pub fn setup(
 			.or(tiles_route)
 			.or(websocket_route)
 			.or(preview_route)
+			.or(media_route)
 			// allow any origin for all so that widget server can access it
 			.with(warp::cors().allow_any_origin());
 
@@ -55,6 +60,7 @@ pub fn setup(
 			.or(overlay_server_route)
 			.or(tiles_route)
 			.or(preview_route)
+			.or(media_route)
 			// allow any origin just for the websocket route
 			// this allows external applications to use it
 			.or(websocket_route.with(warp::cors().allow_any_origin()));

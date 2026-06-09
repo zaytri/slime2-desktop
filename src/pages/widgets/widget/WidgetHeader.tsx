@@ -34,7 +34,7 @@ import {
 	MenuItem,
 	MenuProvider,
 } from '@ariakit/react';
-import { appDataDir } from '@tauri-apps/api/path';
+import { appDataDir, resolve } from '@tauri-apps/api/path';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
 
 export default function WidgetHeader() {
@@ -81,13 +81,13 @@ function DevToolsButton() {
 					className='dark-menu-item'
 					onClick={async () => {
 						const baseDirectory = await appDataDir();
-						const widgetDirectory = [
+						const widgetDirectory = await resolve(
 							baseDirectory,
 							'tiles',
 							widgetId,
 							// opens folder by revealing this subfolder
 							'core',
-						].join('\\');
+						);
 						try {
 							await revealItemInDir(widgetDirectory);
 						} catch (error) {

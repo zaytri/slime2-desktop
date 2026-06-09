@@ -1,4 +1,10 @@
-import { cacheBust, createPreviewUrl, createTilesUrl } from './serverUrl';
+import { appDataDir, resolve } from '@tauri-apps/api/path';
+import {
+	cacheBust,
+	createMediaUrl,
+	createPreviewUrl,
+	createTilesUrl,
+} from './serverUrl';
 
 export function getTileIconSrc(id: string, fileName: string) {
 	return createTilesUrl(id, `config/${fileName}`);
@@ -16,21 +22,27 @@ export function getWidgetMediaCoreSrc(id: string, filePath: string) {
 	return createTilesUrl(id, `core/${filePath}`);
 }
 
-export function getWidgetMediaCustomSrc(id: string, customFileName: string) {
-	const [_local, fileName] = customFileName.split(':');
-	return createTilesUrl(id, `config/assets/${fileName}`);
+export function getWidgetMediaGallerySrc(customFileName: string) {
+	const [_gallery, fileName] = customFileName.split(':');
+	return createMediaUrl(fileName ?? '');
 }
 
-const LOCAL_MEDIA_PREFIX = 'local:';
+export const LEGACY_LOCAL_MEDIA_PREFIX = 'local:';
+export const MEDIA_GALLERY_PREFIX = 'gallery:';
 
-export function createWidgetMediaLocalValue(fileName: string) {
-	return `${LOCAL_MEDIA_PREFIX}${fileName}`;
+export function createWidgetMediaGalleryValue(fileName: string) {
+	return `${MEDIA_GALLERY_PREFIX}${fileName}`;
 }
 
 export function getWidgetMediaSrc(widgetId: string, src: string) {
 	return src === '' || src.startsWith('https://') || src.startsWith('http://')
 		? src
-		: src.startsWith(LOCAL_MEDIA_PREFIX)
-			? getWidgetMediaCustomSrc(widgetId, src)
+		: src.startsWith(MEDIA_GALLERY_PREFIX)
+			? getWidgetMediaGallerySrc(src)
 			: getWidgetMediaCoreSrc(widgetId, src);
+}
+
+export async function mediaFolderPath() {
+	const appDataDirPath = await appDataDir();
+	return resolve(appDataDirPath, 'media');
 }

@@ -128,7 +128,8 @@ pub async fn create_widget_folder(
 		.join("config");
 
 	let icon_file_name = match file::copy_file_to_folder(
-		&file::assets_path(&app_handle).join(file::default_folder_image_name()),
+		&file::resource_assets_path(&app_handle)
+			.join(file::default_folder_image_name()),
 		new_folder_config_path.join("icon"),
 	) {
 		Ok(file_name) => file_name,
@@ -451,17 +452,38 @@ pub async fn save_temp_tile_icon(
 #[tauri::command]
 pub async fn save_temp_widget_file(
 	file_name: &str,
-	widget_id: &str,
 	app_handle: AppHandle,
 ) -> Result<String, String> {
-	return match file::copy_file_timestamped(
+	return match file::copy_file_safe(
 		file::temp_files_path(&app_handle).join(file_name).as_path(),
+		file::media_files_path(&app_handle),
+	) {
+		Ok(file_name) => Ok(file_name),
+		Err(error) => {
+			return Err(format!(
+				"Failed to copy widget asset from temp folder! {}",
+				error
+			));
+		}
+	};
+}
+
+#[tauri::command]
+pub async fn move_legacy_media_to_gallery(
+	widget_id: &str,
+	file_name: &str,
+	app_handle: AppHandle,
+) -> Result<String, String> {
+	return match file::copy_file_safe(
 		file::tiles_path(&app_handle)
 			.join(widget_id)
 			.join("config")
-			.join("assets"),
+			.join("assets")
+			.join(file_name)
+			.as_path(),
+		file::media_files_path(&app_handle),
 	) {
-		Ok(timestamped_file_name) => Ok(timestamped_file_name),
+		Ok(file_name) => Ok(file_name),
 		Err(error) => {
 			return Err(format!(
 				"Failed to copy widget asset from temp folder! {}",
