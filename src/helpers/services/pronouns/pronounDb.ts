@@ -1,3 +1,4 @@
+import { getAppVersion } from '@/helpers/appVersion';
 import axios from 'axios';
 
 const pronounDbAxios = axios.create({
@@ -6,6 +7,8 @@ const pronounDbAxios = axios.create({
 
 const pronounDbApi = {
 	async getLookup(platform: 'twitch', userId: string) {
+		const appVersion = await getAppVersion();
+
 		const users = await pronounDbAxios
 			.get<
 				Record<
@@ -16,12 +19,18 @@ const pronounDbApi = {
 					}
 				>
 			>('/lookup', {
+				headers: {
+					// as requested by PronounDB API https://pronoundb.org/wiki/api-docs
+					'X-PronounDB-Source': `Slime2/${appVersion} (https://slime2.stream/)`,
+				},
 				params: {
 					platform,
 					ids: userId,
 				},
 			})
-			.then(response => response.data)
+			.then(response => {
+				return response.data;
+			})
 			.catch(() => null);
 
 		if (!users) return null;
