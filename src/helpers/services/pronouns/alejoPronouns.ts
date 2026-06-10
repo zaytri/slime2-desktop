@@ -28,7 +28,7 @@ const alejoPronounsApi = {
 			? primary.singular
 				? [primary.subject]
 				: [primary.subject, primary.object]
-			: [primary.subject, secondary.object];
+			: [primary.subject, secondary.subject];
 
 		return pronouns.map(pronoun => pronoun.toLowerCase());
 	},
