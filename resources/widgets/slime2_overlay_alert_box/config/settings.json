@@ -1043,7 +1043,8 @@
 								"label": "Any Channel Point Reward",
 								"value": "any"
 							}
-						]
+						],
+						"defaultValue": "exactly"
 					},
 					"reward-name": {
 						"type": "text-input",
@@ -1565,7 +1566,8 @@
 								"label": "Any Custom Power-Up",
 								"value": "any"
 							}
-						]
+						],
+						"defaultValue": "exactly"
 					},
 					"power-up-name": {
 						"type": "text-input",
