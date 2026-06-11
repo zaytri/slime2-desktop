@@ -8,6 +8,7 @@
 		"zignd.html-css-class-completion",
 		"tamasfe.even-better-toml",
 		"aaron-bond.better-comments",
-		"yoavbls.pretty-ts-errors"
+		"yoavbls.pretty-ts-errors",
+		"unifiedjs.vscode-mdx"
 	]
 }

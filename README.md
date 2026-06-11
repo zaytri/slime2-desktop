@@ -21,3 +21,14 @@ Here is what you need to run the app in development mode:
    - Sometimes this fails and it shows being unable to delete something as part of the pre-start cleanup; usually you can just run it again and it'll work. Also make sure you don't already have the app running.
 
 If you're using VS Code, it will auto suggest useful extends from [extensions.json](.vscode/extensions.json) and [settings.json](.vscode/settings.json) in the `.vscode` folder.
+
+## Dev Docs Setup
+
+The Slime2 Dev Docs are built using Docusaurus, a static-site generator utilizing React.
+
+Here's what you need to do to run that:
+
+1. Install Node.js https://nodejs.org/en/download/
+2. `cd docs`
+3. `npm install`
+4. `npm start`
