@@ -457,6 +457,17 @@ export default function EditWidgetSettingDialog({
 							}
 						}
 
+						if (
+							'options' in copiedData &&
+							copiedData.defaultValue === undefined
+						) {
+							if (copiedData.type === 'multi-select-input') {
+								copiedData.defaultValue = [];
+							} else if (copiedData.options.length > 0) {
+								copiedData.defaultValue = copiedData.options[0]?.value;
+							}
+						}
+
 						// trim placeholder, remove if empty
 						if (
 							'placeholder' in copiedData &&
