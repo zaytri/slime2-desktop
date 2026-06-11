@@ -22,7 +22,7 @@ export async function loadWidgetValues(id: string): Promise<WidgetValues> {
 			const widgetValues = WidgetValuesZ.parse(json);
 
 			// retroactively move all legacy media to shared media folder
-			await Promise.all(
+			await Promise.allSettled(
 				Object.entries(widgetValues).map(async ([key, value]) => {
 					if (
 						typeof value === 'string' &&
@@ -30,11 +30,16 @@ export async function loadWidgetValues(id: string): Promise<WidgetValues> {
 					) {
 						// move legacy media to shared media folder
 						const [_local, fileName] = value.split(':');
-						const newFileName = await moveLegacyMediaToGallery(
-							id,
-							fileName ?? '',
-						);
-						widgetValues[key] = createWidgetMediaGalleryValue(newFileName);
+						try {
+							const newFileName = await moveLegacyMediaToGallery(
+								id,
+								fileName ?? '',
+							);
+							widgetValues[key] = createWidgetMediaGalleryValue(newFileName);
+						} catch (error) {
+							console.error(`Media file (${value}) migration error! ${error}`);
+							widgetValues[key] = createWidgetMediaGalleryValue(fileName ?? '');
+						}
 					} else if (Array.isArray(value)) {
 						const newArrayValue = await Promise.all(
 							value.map(async item => {
@@ -44,11 +49,18 @@ export async function loadWidgetValues(id: string): Promise<WidgetValues> {
 								) {
 									// move legacy media to shared media folder
 									const [_local, fileName] = item.split(':');
-									const newFileName = await moveLegacyMediaToGallery(
-										id,
-										fileName ?? '',
-									);
-									return createWidgetMediaGalleryValue(newFileName);
+									try {
+										const newFileName = await moveLegacyMediaToGallery(
+											id,
+											fileName ?? '',
+										);
+										return createWidgetMediaGalleryValue(newFileName);
+									} catch (error) {
+										console.error(
+											`Media file (${item}) migration error! ${error}`,
+										);
+										return createWidgetMediaGalleryValue(fileName ?? '');
+									}
 								} else {
 									return item;
 								}

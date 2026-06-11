@@ -461,8 +461,8 @@ pub async fn save_temp_widget_file(
 		Ok(file_name) => Ok(file_name),
 		Err(error) => {
 			return Err(format!(
-				"Failed to copy widget asset from temp folder! {}",
-				error
+				"Failed to copy widget asset ({}) from temp folder! {}",
+				file_name, error
 			));
 		}
 	};
@@ -486,8 +486,8 @@ pub async fn move_legacy_media_to_gallery(
 		Ok(file_name) => Ok(file_name),
 		Err(error) => {
 			return Err(format!(
-				"Failed to copy widget asset from temp folder! {}",
-				error
+				"Failed to migrate widget media ({}) from original folder! {}",
+				file_name, error
 			));
 		}
 	};
