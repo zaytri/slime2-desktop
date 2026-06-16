@@ -540,6 +540,22 @@
 					{
 						"label": "Fade Out Down",
 						"value": "fade-out-down"
+					},
+					{
+						"label": "Slide Out Left",
+						"value": "slide-out-left"
+					},
+					{
+						"label": "Slide Out Right",
+						"value": "slide-out-right"
+					},
+					{
+						"label": "Slide Out Up",
+						"value": "slide-out-up"
+					},
+					{
+						"label": "Slide Out Down",
+						"value": "slide-out-down"
 					}
 				]
 			}
