@@ -87,10 +87,24 @@ function widgetValuesListener(event) {
 		['line-clamp', Widget.values.get('max-lines') ?? 4],
 		['message-color', Widget.values.get('message-color') ?? 'white'],
 		['username-color', Widget.values.get('custom-username-color') ?? 'white'],
+		[
+			'username-font-name',
+			`"${Widget.values.get('custom-username-font-name') ?? 'Inter'}"`,
+		],
+		[
+			'username-font-weight',
+			Widget.values.get('custom-username-font-weight') ?? 'bold',
+		],
+		[
+			'username-font-size',
+			`${Widget.values.get('custom-username-font-size') ?? 14}px`,
+		],
 		['gap', `${Widget.values.get('gap') ?? 8}px`],
 	].forEach(([cssVarName, value]) => {
 		setCustomCSS(cssVarName, value);
 	});
+
+	toggleClass('customize-user', Widget.values.get('customize-user') ?? false);
 
 	removeClassesWithPrefix('username-color');
 	addClass(`username-color_${Widget.values.get('username-color')}`);

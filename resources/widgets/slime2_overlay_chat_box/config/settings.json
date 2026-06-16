@@ -59,7 +59,77 @@
 					"font-size": {
 						"type": "slider-input",
 						"label": "Font Size (px)",
+						"defaultValue": 14,
+						"min": 1,
+						"max": 72,
+						"step": 1
+					},
+					"customize-user": {
+						"type": "toggle-input",
+						"label": "Customize Username Font Separately?",
+						"defaultValue": false
+					},
+					"custom-username-font-name": {
+						"type": "font-input",
+						"label": "Username Font",
+						"condition": {
+							"customize-user": [true]
+						},
+						"halfSpan": true
+					},
+					"custom-username-font-weight": {
+						"type": "dropdown-input",
+						"label": "Username Font Weight",
+						"condition": {
+							"customize-user": [true]
+						},
 						"halfSpan": true,
+						"defaultValue": 700,
+						"options": [
+							{
+								"label": "Thin",
+								"value": 100
+							},
+							{
+								"label": "Extra-Light",
+								"value": 200
+							},
+							{
+								"label": "Light",
+								"value": 300
+							},
+							{
+								"label": "Normal",
+								"value": 400
+							},
+							{
+								"label": "Medium",
+								"value": 500
+							},
+							{
+								"label": "Semi-Bold",
+								"value": 600
+							},
+							{
+								"label": "Bold",
+								"value": 700
+							},
+							{
+								"label": "Extra-Bold",
+								"value": 800
+							},
+							{
+								"label": "Heavy",
+								"value": 900
+							}
+						]
+					},
+					"custom-username-font-size": {
+						"type": "slider-input",
+						"label": "Username Font Size (px)",
+						"condition": {
+							"customize-user": [true]
+						},
 						"defaultValue": 14,
 						"min": 1,
 						"max": 72,
@@ -101,7 +171,6 @@
 						"condition": {
 							"username-color": "custom"
 						},
-						"halfSpan": true,
 						"defaultValue": "white"
 					},
 					"max-width": {
@@ -369,7 +438,7 @@
 						"min": 1,
 						"max": 4,
 						"step": 0.05,
-						"description": "Multiplier dependent on the text size."
+						"description": "Multiplier dependent on the username font size."
 					}
 				}
 			},

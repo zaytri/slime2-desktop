@@ -22,6 +22,8 @@
 	--p-horizontal: var(--custom-p-horizontal, 0px);
 	--p-vertical: var(--custom-p-vertical, 0px);
 	--badge-size: var(--custom-badge-size, 1.25);
+	--username-font-weight: var(--custom-username-font-weight, bold);
+	--username-font-size: var(--custom-username-font-size, 14px);
 
 	font-family:
 		var(--custom-font-name), 'Inter', Nunito, Helvetica, Arial, sans-serif;
@@ -221,6 +223,14 @@
 	display: inline;
 	color: var(--font-color);
 	font-weight: bolder;
+}
+
+.customize-user .user {
+	font-family:
+		var(--custom-username-font-name), 'Inter', Nunito, Helvetica, Arial,
+		sans-serif;
+	font-size: var(--username-font-size);
+	font-weight: var(--username-font-weight);
 }
 
 .username-color_custom .user {
