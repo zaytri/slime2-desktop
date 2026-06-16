@@ -268,7 +268,8 @@ function mergeValue(
 	} else if (
 		setting.type !== 'button' &&
 		setting.type !== 'text-display' &&
-		setting.type !== 'image-display'
+		setting.type !== 'image-display' &&
+		setting.type !== 'heading'
 	) {
 		values[settingId] = values[settingId] ?? setting.defaultValue ?? null;
 		if (

@@ -159,9 +159,11 @@ export default function EditWidgetSettingDialog({
 							if (
 								newData.type !== 'button' &&
 								newData.type !== 'text-display' &&
+								newData.type !== 'heading' &&
 								newData.type !== 'image-display' &&
 								defaultClone.type !== 'button' &&
 								defaultClone.type !== 'text-display' &&
+								defaultClone.type !== 'heading' &&
 								defaultClone.type !== 'image-display'
 							) {
 								defaultClone.description =
@@ -254,6 +256,7 @@ export default function EditWidgetSettingDialog({
 
 					{newData.type !== 'button' &&
 						newData.type !== 'text-display' &&
+						newData.type !== 'heading' &&
 						newData.type !== 'image-display' &&
 						newData.type !== 'image-input' &&
 						newData.type !== 'audio-input' &&
@@ -384,7 +387,8 @@ export default function EditWidgetSettingDialog({
 
 					{newData.type !== 'button' &&
 						newData.type !== 'text-display' &&
-						newData.type !== 'image-display' && (
+						newData.type !== 'image-display' &&
+						newData.type !== 'heading' && (
 							<div className='col-span-2 shrink-0'>
 								<TextAreaField
 									label='Description'
