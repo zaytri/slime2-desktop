@@ -267,6 +267,13 @@
 							"use-shadow": true
 						},
 						"defaultValue": "black"
+					},
+					"shadow-background-note": {
+						"type": "text-display",
+						"label": "Note: Since the shadow is a filter on the entire message, if you set a message background below, the shadow will be applied to the message background instead of the message contents.",
+						"condition": {
+							"use-shadow": [true]
+						}
 					}
 				}
 			},
