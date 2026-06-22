@@ -3,6 +3,7 @@ import { useBotsLogDispatch } from '@/contexts/bot_logs/useBotLogsDispatch';
 import bttvApi from '@/helpers/services/emotes/betterTTV';
 import ffzApi from '@/helpers/services/emotes/frankerFaceZ';
 import { getPronouns } from '@/helpers/services/pronouns';
+import { getSystemProxiedMessage } from '@/helpers/services/pluralmind';
 import twitchApi from '@/helpers/services/twitch/twitchApi';
 import { getTwitchFollowDate } from '@/helpers/services/twitch/twitchFollowDate';
 import { capitalizeWord } from '@/helpers/string';
@@ -81,6 +82,12 @@ export default function useWidgetRequest() {
 						const { platform, user_id, username } = request.payload;
 						const pronouns = await getPronouns(platform, user_id, username);
 						respond(pronouns);
+						break;
+					}
+					case 'get-system-proxied-message': {
+						const { platform, user_id, message } = request.payload;
+						const spm = await getSystemProxiedMessage(platform, user_id, message);
+						respond(spm);
 						break;
 					}
 					case 'get-twitch-follow-date': {
@@ -232,6 +239,15 @@ const PronounsRequestZ = z.object({
 	}),
 });
 
+const SystemProxiedMessageRequestZ = z.object({
+	request_type: z.literal('get-system-proxied-message'),
+	payload: z.object({
+		platform: z.literal('twitch'),
+		user_id: z.string(),
+		message: z.string(),
+	}),
+});
+
 const PlatformRequestZ = z.object({
 	request_type: z.literal(['get-betterttv-user', 'get-frankerfacez-room']),
 	payload: z.object({
@@ -269,6 +285,7 @@ const WidgetRequestZ = z.intersection(
 	}),
 	z.discriminatedUnion('request_type', [
 		PronounsRequestZ,
+		SystemProxiedMessageRequestZ,
 		FollowDateRequestZ,
 		AccountRequestZ,
 		PlatformRequestZ,

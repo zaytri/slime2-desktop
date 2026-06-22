@@ -36,6 +36,7 @@
 		"linkify-react": "^4.3.1",
 		"linkifyjs": "^4.3.1",
 		"nanoid": "^5.1.5",
+		"pluralmind": "^1.1.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"tailwindcss": "^4.2.2",
