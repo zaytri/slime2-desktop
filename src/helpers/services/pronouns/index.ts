@@ -40,7 +40,7 @@ export async function getPronouns(
 	return pronouns;
 }
 
-const MOCK_PRONOUNS = [
+export const MOCK_PRONOUNS = [
 	['ae', 'aer'],
 	['any'],
 	['e', 'em'],

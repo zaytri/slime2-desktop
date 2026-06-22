@@ -187,6 +187,19 @@ function widgetValuesListener(event) {
 		Widget.values.get('pronouns-display') ?? 'lowercase',
 	);
 
+	// plurality settings
+
+	const usePlurality = Widget.values.get('plurality-support') ?? false;
+	toggleClass(
+		'plurality-show-usernames',
+		usePlurality && (Widget.values.get('plurality-show-usernames') ?? false)
+	);
+
+	const targetPluralityData = usePlurality ? 'data-plurality-name' : 'data-no-plurality-name';
+	widgetElement.querySelectorAll(`.name[${targetPluralityData}]`).forEach(nameElement => {
+		nameElement.textContent = nameElement.getAttribute(targetPluralityData);
+	});
+
 	// emote settings
 	[
 		['use-static-emotes', Widget.values.get('use-static-emotes') ?? false],
@@ -336,7 +349,6 @@ async function handleChatMessage(data, eventDate) {
 		chatter_user_login,
 		chatter_user_id,
 		message_id,
-		color,
 		badges,
 		message_type,
 	} = data;
@@ -394,12 +406,21 @@ async function handleChatMessage(data, eventDate) {
 		}
 	}
 
-	// get user's pronouns
-	const pronouns = await getPronouns(
-		'twitch',
-		chatter_user_id,
-		chatter_user_login,
-	);
+	// get user's pronouns and system information
+	const firstTextFragmentIdx = message.fragments.findIndex(fragment => fragment.type === 'text');
+	const usePlurality = Widget.values.get('plurality-support');
+	let [pronouns, proxiedMessage] = await Promise.all([
+		getPronouns(
+			'twitch',
+			chatter_user_id,
+			chatter_user_login,
+		),
+		getSystemProxiedMessage(
+			'twitch',
+			chatter_user_id,
+			message.fragments[firstTextFragmentIdx]?.text || '',
+		),
+	]);
 
 	const messageTemplateClone = cloneTemplate('message-template');
 	const messageElement = messageTemplateClone.querySelector('.message');
@@ -409,6 +430,8 @@ async function handleChatMessage(data, eventDate) {
 	messageElement.setAttribute('data-user-id', chatter_user_id);
 
 	// apply username color
+	let color = data.color;
+	if (usePlurality && proxiedMessage?.color) color = proxiedMessage.color;
 	if (color) {
 		messageElement.style.setProperty('--twitch-username-color', color);
 		messageElement.style.setProperty(
@@ -425,12 +448,13 @@ async function handleChatMessage(data, eventDate) {
 	messageTemplateClone
 		.querySelector('.user')
 		.appendChild(
-			buildUser(chatter_user_name, chatter_user_login, pronouns, badges),
+			buildUser(chatter_user_name, chatter_user_login, pronouns, proxiedMessage, badges),
 		);
 
 	// build text half of message
 	/** @type {HTMLSpanElement} */
 	const contentElement = messageTemplateClone.querySelector('.content');
+	if (usePlurality && proxiedMessage) message.fragments[firstTextFragmentIdx].text = proxiedMessage.body;
 	message.fragments.forEach(fragment => {
 		const node = buildMessageFragment(fragment);
 		if (Array.isArray(node)) {
@@ -671,8 +695,9 @@ function handleChatClearUserMessages(data, eventDate) {
 // Element Builders
 // ***************************************************************************
 
-function buildUser(displayName, username, pronouns, badges) {
+function buildUser(displayName, username, pronouns, proxiedMessage, badges) {
 	const userClone = cloneTemplate('user-template');
+	const nameElement = userClone.querySelector('.name');
 
 	let name = displayName;
 
@@ -681,8 +706,17 @@ function buildUser(displayName, username, pronouns, badges) {
 		name = `${name} (${username})`; // localized display name
 	}
 
-	userClone.querySelector('.name').textContent = name;
-	userClone.querySelector('.name').setAttribute('data-content', name);
+	if (proxiedMessage) {
+		nameElement.setAttribute('data-no-plurality-name', name);
+		nameElement.setAttribute('data-plurality-name', proxiedMessage.member.name);
+		if (Widget.values.get('plurality-support')) {
+			name = proxiedMessage.member.name;
+			if (proxiedMessage.pronouns) pronouns = proxiedMessage.pronouns.split('/');
+		}
+	}
+
+	nameElement.textContent = name;
+	nameElement.setAttribute('data-content', name);
 
 	if (pronouns) {
 		userClone.querySelector('.pronouns').textContent =
@@ -865,6 +899,15 @@ async function getPronouns(platform, userId, username) {
 		platform,
 		user_id: userId,
 		username,
+	});
+}
+
+/** Returns proxy information for the message, or null if this isn't a message sent by a system member */
+async function getSystemProxiedMessage(platform, userId, message) {
+	return slime2.request(Widget.readAccount.id, 'get-system-proxied-message', {
+		platform,
+		user_id: userId,
+		message,
 	});
 }
 

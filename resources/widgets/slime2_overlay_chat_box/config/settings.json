@@ -488,6 +488,30 @@
 					}
 				}
 			},
+			"plurality-section": {
+				"type": "section",
+				"label": "Plurality",
+				"settings": {
+					"plurality-text": {
+						"type": "text-display",
+						"label": "User system and member information is sourced from https://pluralmind.chat/\nNot sure what plurality is? Consider checking out https://morethanone.info/"
+					},
+					"plurality-support": {
+						"type": "toggle-input",
+						"label": "Plurality Support?",
+						"halfSpan": true,
+						"defaultValue": true,
+						"description": "Uses a member's name, pronouns and color when a proxied message is detected."
+					},
+					"plurality-show-usernames": {
+						"type": "toggle-input",
+						"label": "Keep Original Usernames?",
+						"halfSpan": true,
+						"defaultValue": false,
+						"description": "Shows the member's Twitch username in parentheses after their name."
+					}
+				}
+			},
 			"emotes-section": {
 				"type": "section",
 				"label": "Emotes",

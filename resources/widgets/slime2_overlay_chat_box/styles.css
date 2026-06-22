@@ -263,6 +263,10 @@
 	position: relative;
 }
 
+.plurality-show-usernames .name[data-no-plurality-name]::after {
+	content: " (" attr(data-no-plurality-name) ")";
+}
+
 .user::after {
 	content: ': ';
 	display: inline;
