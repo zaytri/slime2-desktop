@@ -234,17 +234,35 @@ function handlePowerUp(data) {
 	);
 }
 
-function handleCheer(data) {
+async function handleCheer(data) {
 	const type = 'cheer';
 	const { user_id, user_login, user_name, message, bits } = data;
+
+	let displayName = user_name;
+	let displayMessage = message;
+	if (Widget.values.get('plurality-support')) {
+		const proxiedMessage = await getSystemProxiedMessage(
+			'twitch',
+			user_id,
+			message
+		);
+
+		if (proxiedMessage) {
+			displayName = proxiedMessage.member.name;
+			if (Widget.values.get('plurality-show-usernames')) {
+				displayName += ` (${user_name})`;
+			}
+			displayMessage = proxiedMessage.body;
+		}
+	}
 
 	handleAlerts(
 		user_id,
 		type,
 		{
-			'{username}': { value: user_name, accent: true },
+			'{username}': { value: displayName, accent: true },
 			'{amount}': { value: bits, accent: true },
-			'{message}': { value: message },
+			'{message}': { value: displayMessage },
 		},
 		alertId => {
 			const getValue = createGetValueFunction(alertId, type);
@@ -832,4 +850,13 @@ function stringsToRegexOr(stringArray) {
  */
 function escapeRegExp(string) {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Returns proxy information for the message, or null if this isn't a message sent by a system member */
+async function getSystemProxiedMessage(platform, userId, message) {
+	return slime2.request(Widget.readAccount.id, 'get-system-proxied-message', {
+		platform,
+		user_id: userId,
+		message,
+	});
 }

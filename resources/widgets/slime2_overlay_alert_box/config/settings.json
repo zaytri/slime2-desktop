@@ -3745,6 +3745,30 @@
 				"type": "multi-text-input",
 				"label": "Hide alerts that contain these words:",
 				"placeholder": "Bad Word"
+			},
+			"plurality-section": {
+				"type": "section",
+				"label": "Plurality",
+				"settings": {
+					"plurality-text": {
+						"type": "text-display",
+						"label": "User system and member information is sourced from https://pluralmind.chat/\nNot sure what plurality is? Consider checking out https://morethanone.info/"
+					},
+					"plurality-support": {
+						"type": "toggle-input",
+						"label": "Plurality Support?",
+						"halfSpan": true,
+						"defaultValue": true,
+						"description": "Uses a member's name when a proxied alert is detected."
+					},
+					"plurality-show-usernames": {
+						"type": "toggle-input",
+						"label": "Keep Original Usernames?",
+						"halfSpan": true,
+						"defaultValue": false,
+						"description": "Shows the member's Twitch username in parentheses after their name."
+					}
+				}
 			}
 		}
 	}
