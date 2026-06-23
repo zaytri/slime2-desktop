@@ -132,14 +132,12 @@ export default function useTwitchBot() {
 					: `slime2:${event.type}`;
 			const newData = { widget_id: widgetId, ...data };
 
-			if (settings.devMode && settings.logWidgetEvents) {
-				addBotLog(widgetId, [type, 'message.data.data:', newData], 'info');
-			}
+			twitchBots.current.get(widgetId)?.postMessage({ type, data: newData });
 
-			twitchBots.current.get(widgetId)?.postMessage({
-				type,
-				data: newData,
-			});
+			if (settings.devMode && settings.logWidgetEvents) {
+				//? this causes delays for some reason so it's being disabled for now
+				// addBotLog(widgetId, [type, 'message.data.data:', newData], 'info');
+			}
 		}
 
 		directMessageTypes.forEach(type => {
