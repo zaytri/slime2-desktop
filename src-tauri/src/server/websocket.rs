@@ -1,6 +1,6 @@
 use futures::{SinkExt, StreamExt, TryFutureExt, stream::SplitSink};
 use std::{
-	collections::{HashMap, HashSet},
+	collections::HashSet,
 	sync::{
 		Arc,
 		atomic::{AtomicUsize, Ordering},
@@ -11,23 +11,23 @@ use warp::filters::ws::{Message, WebSocket};
 
 mod ws_commands;
 
-static NEXT_CONNECTION_ID: AtomicUsize = AtomicUsize::new(1);
+static NEXT_CONNECTION_ID: AtomicUsize = AtomicUsize::new(0);
 
-pub type WebsocketConnections =
-	Arc<RwLock<HashMap<usize, WebsocketConnection>>>;
+pub type WebsocketConnections = Arc<RwLock<Vec<Arc<WebsocketConnection>>>>;
 
 pub struct WebsocketConnection {
+	id: usize,
 	sender: mpsc::UnboundedSender<Message>,
 	channels: HashSet<String>,
 }
 
 impl WebsocketConnection {
 	fn new(
+		id: usize,
 		mut websocket_sender: SplitSink<WebSocket, Message>,
 		channels: HashSet<String>,
 	) -> WebsocketConnection {
-		// use an unbounded channel to handle buffering and flushing of messages to the websocket
-		// don't know if this is even necessary but might as well have it
+		// use an unbounded channel for infinite message capacity
 		let (ub_sender, mut ub_receiver) = mpsc::unbounded_channel();
 
 		// when a message is sent to the unbounded receiver, send it to the websocket
@@ -38,11 +38,12 @@ impl WebsocketConnection {
 					.unwrap_or_else(|error| {
 						log::error!("Websocket Send Error: {}", error)
 					})
-					.await
+					.await;
 			}
 		});
 
 		WebsocketConnection {
+			id,
 			sender: ub_sender,
 			channels,
 		}
@@ -64,16 +65,12 @@ impl WebsocketConnection {
 pub async fn connect(websocket: WebSocket, connections: WebsocketConnections) {
 	// use a counter to assign a new unique ID for this connection
 	let connection_id = NEXT_CONNECTION_ID.fetch_add(1, Ordering::Relaxed);
-	if cfg!(dev) {
-		log::info!("New Websocket Connection (ID: {})", connection_id)
-	}
+	log::debug!("New Websocket Connection (ID: {})", connection_id);
 
 	if let Err(error) =
 		message_handler(websocket, &connections, connection_id).await
 	{
-		if cfg!(dev) {
-			log::error!("Websocket Message Handler Error: {}", error);
-		}
+		log::error!("Websocket Message Handler Error: {}", error);
 	}
 
 	disconnect(connection_id, &connections).await;
@@ -208,10 +205,20 @@ async fn message_handler(
 }
 
 async fn disconnect(connection_id: usize, connections: &WebsocketConnections) {
-	// stream closed, remove from connections list
-	connections.write().await.remove(&connection_id);
+	// get write guard of connections
+	let mut connections_write_guard = connections.write().await;
 
-	if cfg!(dev) {
-		log::info!("Disconnected Websocket (ID: {})", connection_id)
-	}
+	// stream closed, remove from connections list
+	if let Some(index) = connections_write_guard
+		.iter()
+		.position(|connection| connection.id == connection_id)
+	{
+		// swap_remove used for performance since order doesn't matter
+		connections_write_guard.swap_remove(index);
+	};
+
+	// release write guard
+	drop(connections_write_guard);
+
+	log::info!("Disconnected Websocket (ID: {})", connection_id)
 }

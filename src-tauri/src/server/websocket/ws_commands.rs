@@ -77,9 +77,9 @@ pub async fn register(
 	};
 
 	// register connection, can now send websocket messages to this connection
-	connections.write().await.insert(
-		connection_id,
-		WebsocketConnection::new(websocket_sender, channels),
+	connections.write().await.push(
+		WebsocketConnection::new(connection_id, websocket_sender, channels)
+			.into(),
 	);
 
 	Ok(())

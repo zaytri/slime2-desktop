@@ -15,6 +15,7 @@ use std::{
 	fs::{self, File},
 	io::{Read, Write},
 	path::{Path, PathBuf},
+	sync::Arc,
 };
 use tauri::{AppHandle, Manager, State};
 use tauri_plugin_opener::OpenerExt;
@@ -50,10 +51,26 @@ pub async fn send_websocket_message(
 	channel: &str,
 	state: tauri::State<'_, server::websocket::WebsocketConnections>,
 ) -> Result<(), String> {
+	let mut cloned_connections: Vec<
+		Arc<server::websocket::WebsocketConnection>,
+	> = Vec::new();
+
+	// get read guard of connections
+	let connections_read_guard = state.read().await;
+
+	// quick clone by reference of contained connections to minimize lock blocking
+	connections_read_guard.iter().for_each(|connection| {
+		cloned_connections.push(connection.clone());
+	});
+
+	// release read guard
+	drop(connections_read_guard);
+
 	// send message to all connections
-	for (_connection_id, connection) in state.read().await.iter() {
-		connection.send(message, channel);
-	}
+	cloned_connections
+		.iter()
+		.for_each(|connection| connection.send(message, channel));
+
 	Ok(())
 }
 
