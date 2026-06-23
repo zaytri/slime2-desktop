@@ -3765,7 +3765,7 @@
 						"type": "toggle-input",
 						"label": "Keep Original Usernames?",
 						"halfSpan": true,
-						"defaultValue": false,
+						"defaultValue": true,
 						"description": "Shows the member's Twitch username in parentheses after their name."
 					}
 				}
