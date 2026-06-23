@@ -1,7 +1,7 @@
 use notify::{RecommendedWatcher, RecursiveMode};
 use notify_debouncer_full::{DebouncedEvent, Debouncer, RecommendedCache};
 use std::{ffi::OsStr, path::PathBuf, time::Duration};
-use tauri::Emitter;
+use tauri::{Emitter, EventTarget};
 use tokio::sync::mpsc::{UnboundedReceiver, unbounded_channel};
 
 use crate::get_app_handle;
@@ -93,9 +93,11 @@ pub async fn async_watch(watch_path: PathBuf) -> notify::Result<()> {
 								.collect::<Vec<_>>()
 						);
 
-						if let Err(error) =
-							app_handle.emit("widget-core-watch", tile_id)
-						{
+						if let Err(error) = app_handle.emit_to(
+							EventTarget::webview_window("main"),
+							"widget-core-watch",
+							tile_id,
+						) {
 							log::error!(
 								"Error emitting widget-core-watch event: {}",
 								error

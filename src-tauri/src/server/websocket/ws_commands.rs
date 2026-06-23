@@ -7,7 +7,7 @@ use super::{WebsocketConnection, WebsocketConnections};
 use futures::stream::SplitSink;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
-use tauri::Emitter;
+use tauri::{Emitter, EventTarget};
 use warp::filters::ws::{Message, WebSocket};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -64,7 +64,8 @@ pub async fn register(
 	// add widget id as a channel for widget-specific data
 	channels.insert(format!("widget_{}", register_data.id));
 
-	if let Err(error) = get_app_handle().emit(
+	if let Err(error) = get_app_handle().emit_to(
+		EventTarget::webview_window("main"),
 		"websocket-registration",
 		RegisterPayload {
 			id: register_data.id,
@@ -90,8 +91,11 @@ pub fn request(command_data: CommandData) -> Result<(), String> {
 		return Err(String::from("Request command is incorrectly formatted!"));
 	};
 
-	if let Err(error) = get_app_handle().emit("websocket-request", request_data)
-	{
+	if let Err(error) = get_app_handle().emit_to(
+		EventTarget::webview_window("main"),
+		"websocket-request",
+		request_data.clone(),
+	) {
 		return Err(format!(
 			"Error emitting websocket-request event: {}",
 			error

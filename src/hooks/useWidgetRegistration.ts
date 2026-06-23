@@ -12,7 +12,7 @@ import {
 import logZodError from '@/helpers/zodError';
 import { loadTileMeta } from '@@/json/tileMeta';
 import { loadWidgetMeta } from '@@/json/widgetMeta';
-import { listen } from '@tauri-apps/api/event';
+import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { useEffect, useState } from 'react';
 import { z } from 'zod/mini';
 
@@ -42,9 +42,7 @@ export default function useWidgetRegistration() {
 			);
 
 			await sendWidgetValues(widgetId, settings, values);
-			setRegisteredWidgets(state => {
-				return new Set([...state.values(), widgetId]);
-			});
+			setRegisteredWidgets(new Set([...registeredWidgets.values(), widgetId]));
 		}
 
 		// registration from bot
@@ -58,18 +56,19 @@ export default function useWidgetRegistration() {
 		addEventListener('bot-registration', botRegistrationListener);
 
 		// registration from overlay
-		const unlistenPromise = listen<WidgetRegistration>(
-			'websocket-registration',
-			async event => {
-				try {
-					// just in case payload isn't formatted correctly
-					const { id: widgetId } = WidgetRegistration.parse(event.payload);
-					registerWidget(widgetId);
-				} catch (error) {
-					logZodError(error, event.payload);
-				}
-			},
-		);
+		const unlistenPromise =
+			getCurrentWebviewWindow().listen<WidgetRegistration>(
+				'websocket-registration',
+				async event => {
+					try {
+						// just in case payload isn't formatted correctly
+						const { id: widgetId } = WidgetRegistration.parse(event.payload);
+						registerWidget(widgetId);
+					} catch (error) {
+						logZodError(error, event.payload);
+					}
+				},
+			);
 
 		return () => {
 			removeEventListener('bot-registration', botRegistrationListener);
@@ -78,7 +77,7 @@ export default function useWidgetRegistration() {
 				if (unlisten) unlisten();
 			});
 		};
-	}, [logWidgetEvents]);
+	}, [logWidgetEvents, registeredWidgets]);
 
 	useEffect(() => {
 		registeredWidgets.forEach(widgetId => {

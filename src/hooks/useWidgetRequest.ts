@@ -16,8 +16,8 @@ import {
 	WidgetValuesZ,
 	type WidgetValues,
 } from '@@/json/widgetValues';
-import { listen } from '@tauri-apps/api/event';
-import { useEffect } from 'react';
+import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
+import { useEffect, useRef } from 'react';
 import { z } from 'zod/mini';
 
 const COMBINED_REQUEST_EVENT_TYPE = 'widget-request';
@@ -36,16 +36,15 @@ export default function useWidgetRequest() {
 
 		addEventListener('bot-request', botRequestListener);
 
-		const unlistenPromise = listen<z.infer<typeof WidgetRequestZ>>(
-			'websocket-request',
-			event => {
+		const unlistenPromise = getCurrentWebviewWindow().listen<
+			z.infer<typeof WidgetRequestZ>
+		>('websocket-request', event => {
 				dispatchEvent(
 					new CustomEvent(COMBINED_REQUEST_EVENT_TYPE, {
 						detail: event.payload,
 					}),
 				);
-			},
-		);
+		});
 
 		return () => {
 			removeEventListener('bot-request', botRequestListener);
