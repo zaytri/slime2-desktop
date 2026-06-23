@@ -831,7 +831,7 @@ function buildCheermoteFragment(cheermoteFragment) {
 
 /** Returns array of pronouns to show, or `null` if they haven't set any */
 async function getPronouns(platform, userId, username) {
-	return slime2.request(Widget.readAccount.id, 'get-pronouns', {
+	return slime2.request('get-pronouns', {
 		platform,
 		user_id: userId,
 		username,
@@ -840,7 +840,8 @@ async function getPronouns(platform, userId, username) {
 
 /** Returns ISO string of follow date, or `null` if they aren't following. */
 async function getTwitchFollowDate(userId) {
-	return slime2.request(Widget.readAccount.id, 'get-twitch-follow-date', {
+	return slime2.request('get-twitch-follow-date', {
+		account_id: Widget.readAccount.id,
 		user_id: userId,
 	});
 }
@@ -851,7 +852,9 @@ async function getTwitchFollowDate(userId) {
  * https://dev.twitch.tv/docs/api/reference/#get-cheermotes
  */
 async function getTwitchCheermotes() {
-	return slime2.request(Widget.readAccount.id, 'get-twitch-cheermotes');
+	return slime2.request('get-twitch-cheermotes', {
+		account_id: Widget.readAccount.id,
+	});
 }
 
 /**
@@ -860,7 +863,9 @@ async function getTwitchCheermotes() {
  * https://dev.twitch.tv/docs/api/reference/#get-global-chat-badges
  */
 async function getTwitchGlobalBadges() {
-	return slime2.request(Widget.readAccount.id, 'get-twitch-global-badges');
+	return slime2.request('get-twitch-global-badges', {
+		account_id: Widget.readAccount.id,
+	});
 }
 
 /**
@@ -869,10 +874,9 @@ async function getTwitchGlobalBadges() {
  * https://dev.twitch.tv/docs/api/reference/#get-channel-chat-badges
  */
 async function getTwitchChannelChatBadges() {
-	return slime2.request(
-		Widget.readAccount.id,
-		'get-twitch-channel-chat-badges',
-	);
+	return slime2.request('get-twitch-channel-chat-badges', {
+		account_id: Widget.readAccount.id,
+	});
 }
 
 /**
@@ -881,7 +885,8 @@ async function getTwitchChannelChatBadges() {
  * https://betterttv.com/developers/api#user
  */
 async function getBttvUser() {
-	return slime2.request(Widget.readAccount.id, 'get-betterttv-user', {
+	return slime2.request('get-betterttv-user', {
+		account_id: Widget.readAccount.id,
 		platform: 'twitch',
 	});
 }
@@ -892,7 +897,8 @@ async function getBttvUser() {
  * https://api.frankerfacez.com/docs/#/Rooms
  */
 async function getFfzRoom() {
-	return slime2.request(Widget.readAccount.id, 'get-frankerfacez-room', {
+	return slime2.request('get-frankerfacez-room', {
+		account_id: Widget.readAccount.id,
 		platform: 'twitch',
 	});
 }

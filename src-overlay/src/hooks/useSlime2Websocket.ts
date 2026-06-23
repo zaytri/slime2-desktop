@@ -23,7 +23,7 @@ export default function useSlime2Websocket() {
 	const resolveRejectMapRef = useRef(
 		new Map<string, [(value: any) => void, (reason?: any) => void]>(),
 	);
-	const logEventsRef = useRef(false);
+	const devLogEventsRef = useRef(false);
 
 	const { widgetId } = useLoaderData({ from: '/$' });
 	globalThis.slime2.widgetId = widgetId;
@@ -35,11 +35,25 @@ export default function useSlime2Websocket() {
 
 		// allow widget to make requests to slime2 using the slime2 var
 		globalThis.slime2.request = async (
-			accountId: string,
-			type: string,
-			payload: unknown = {},
+			requestType_or_legacyAccountId: string,
+			payload_or_legacyRequestType?: string | Record<string, unknown>,
+			legacyPayload?: Record<string, unknown>,
 		) => {
-			const requestId = `${type}_${nanoid()}_${Date.now()}`;
+			const [requestType, payload] =
+				typeof payload_or_legacyRequestType === 'string'
+					? [
+							payload_or_legacyRequestType ?? '',
+							{
+								account_id: requestType_or_legacyAccountId,
+								...(legacyPayload ?? {}),
+							},
+						]
+					: [
+							requestType_or_legacyAccountId,
+							payload_or_legacyRequestType ?? {},
+						];
+
+			const requestId = `${requestType}_${nanoid()}_${Date.now()}`;
 
 			return new Promise((resolve, reject) => {
 				resolveRejectMapRef.current.set(requestId, [resolve, reject]);
@@ -47,10 +61,9 @@ export default function useSlime2Websocket() {
 					JSON.stringify({
 						type: 'request',
 						data: {
-							account_id: accountId,
 							widget_id: widgetId,
 							request_id: requestId,
-							request_type: type,
+							request_type: requestType,
 							payload,
 						},
 					}),
@@ -105,12 +118,12 @@ export default function useSlime2Websocket() {
 				} else if (type === 'widget-core-change') {
 					location.reload();
 				} else if (type === 'log-events') {
-					logEventsRef.current = !!data?.logEvents;
+					devLogEventsRef.current = !!data?.logEvents;
 				} else {
 					const newType = `slime2:${type}`;
 					const newData = { widget_id: widgetId, ...data };
 
-					if (logEventsRef.current) {
+					if (devLogEventsRef.current) {
 						console.info(
 							`%c${newType}`,
 							[

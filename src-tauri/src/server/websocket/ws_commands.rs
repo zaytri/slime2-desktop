@@ -31,7 +31,6 @@ pub struct RegisterData {
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct RequestData {
-	account_id: String,
 	widget_id: String,
 	request_id: String,
 	request_type: String,

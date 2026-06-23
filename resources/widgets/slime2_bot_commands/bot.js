@@ -2,7 +2,8 @@
 
 // Globals
 // ***************************************************************************
-const RequestResolveRejectMap = new Map();
+/** @type {Map<String, [(value: any) => void, (reason?: any) => void]>} */
+const RequestMap = new Map();
 
 const EPOCH_DATE = new Date(0);
 
@@ -91,7 +92,7 @@ function responseListener(event) {
 	const { type, response, request_id } = event.data;
 
 	// find and resolve the related promise
-	const resolveReject = RequestResolveRejectMap.get(request_id);
+	const resolveReject = RequestMap.get(request_id);
 	if (!resolveReject) return;
 
 	const [resolve, reject] = resolveReject;
@@ -102,7 +103,7 @@ function responseListener(event) {
 	}
 
 	// delete the related resolver
-	RequestResolveRejectMap.delete(request_id);
+	RequestMap.delete(request_id);
 }
 
 // Twitch Event Handlers
@@ -310,7 +311,8 @@ async function sendChatMessage(
 	message,
 	parentMessageId, // optional
 ) {
-	return sendRequest(Widget.botAccount.id, 'post-twitch-chat-message', {
+	return sendRequest('post-twitch-chat-message', {
+		account_id: Widget.botAccount.id,
 		broadcaster_id: Widget.readAccount.serviceId,
 		message,
 		reply_parent_message_id: parentMessageId,
@@ -324,7 +326,8 @@ async function sendChatMessage(
  * @returns {Promise<null | string>}
  */
 async function getTwitchFollowDate(userId) {
-	return sendRequest(Widget.readAccount.id, 'get-twitch-follow-date', {
+	return sendRequest('get-twitch-follow-date', {
+		account_id: Widget.readAccount.id,
 		user_id: userId,
 	});
 }
@@ -472,6 +475,25 @@ function getMultiSectionValue(subsectionId, settingId) {
 }
 
 /**
+ * Sends a request to Slime2, resolved by `'slime2:response'` event listener
+ *
+ * @param {string} type - Request type
+ * @param {any} payload - Request data
+ */
+async function sendRequest(type, payload) {
+	const requestId = `${type}_${Date.now()}`;
+
+	return new Promise((resolve, reject) => {
+		RequestMap.set(requestId, [resolve, reject]);
+		send('slime2:request', {
+			request_id: requestId,
+			request_type: type,
+			payload,
+		});
+	});
+}
+
+/**
  * Sends data back to Slime2
  *
  * @param {string} type
@@ -479,27 +501,6 @@ function getMultiSectionValue(subsectionId, settingId) {
  */
 function send(type, data) {
 	postMessage({ type, data });
-}
-
-/**
- * Sends a request to Slime2, resolved by `'slime2:response'` event listener
- *
- * @param {string} accountId - Account used for the request
- * @param {string} type - Request type
- * @param {any} payload - Request data
- */
-async function sendRequest(accountId, type, payload) {
-	const requestId = `${type}_${Date.now()}`;
-
-	return new Promise((resolve, reject) => {
-		RequestResolveRejectMap.set(requestId, [resolve, reject]);
-		send('slime2:request', {
-			account_id: accountId,
-			request_id: requestId,
-			request_type: type,
-			payload,
-		});
-	});
 }
 
 /**

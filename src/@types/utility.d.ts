@@ -23,3 +23,5 @@ type NonUndefined<Type> = Type extends undefined ? never : Type;
 
 type IfAllPropertiesOptional<Type, BranchTrue, BranchFalse> =
 	Partial<Record<string, unknown>> extends Type ? BranchTrue : BranchFalse;
+
+type AsyncEventListener = (event: Event) => Promise<void>;

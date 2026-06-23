@@ -26,6 +26,17 @@ export default function useWidgetRequest() {
 	const accounts = useAccounts();
 	const { addBotLog } = useBotsLogDispatch();
 
+	// necessary to get the updated account data within functions
+	const accountsRef = useRef(accounts);
+
+	useEffect(() => {
+		accountsRef.current = accounts;
+	}, [accounts]);
+
+	function getAccount(accountId: string): Account | undefined {
+		return accountsRef.current[accountId];
+	}
+
 	// take in the requests from the bots/overlays and push them into new event
 	useEffect(() => {
 		function botRequestListener(event: CustomEventInit<WidgetRequest>) {
@@ -39,11 +50,11 @@ export default function useWidgetRequest() {
 		const unlistenPromise = getCurrentWebviewWindow().listen<
 			z.infer<typeof WidgetRequestZ>
 		>('websocket-request', event => {
-				dispatchEvent(
-					new CustomEvent(COMBINED_REQUEST_EVENT_TYPE, {
-						detail: event.payload,
-					}),
-				);
+			dispatchEvent(
+				new CustomEvent(COMBINED_REQUEST_EVENT_TYPE, {
+					detail: event.payload,
+				}),
+			);
 		});
 
 		return () => {
@@ -59,20 +70,38 @@ export default function useWidgetRequest() {
 		async function requestListener(event: CustomEventInit<WidgetRequest>) {
 			try {
 				const request = WidgetRequestZ.parse(event.detail);
-				const { widget_id, request_id, request_type, account_id } = request;
-				const account = accounts[account_id];
-				if (!account)
-					throw new Error(`Slime2 account with ID ${account_id} not found!`);
+				const { widget_id, request_id, request_type } = request;
 
-				function respond(response: unknown) {
+				async function respond(response: unknown) {
 					sendWidgetResponse(widget_id, request_type, request_id, response);
 				}
 
-				function accountError(
-					service: Account['service'],
-					type: Account['type'],
-				) {
-					return `Account Error: Only ${capitalizeWord(service)} ${capitalizeWord(type)} accounts can request [${request.request_type}]!`;
+				function getValidAccount(
+					accountId: string,
+					condition?: {
+						service: Account['service'];
+						type: Account['type'];
+					},
+				): Account {
+					const account = getAccount(accountId);
+
+					if (!account) {
+						throw new Error(`Slime2 account with ID ${accountId} not found!`);
+					}
+
+					if (
+						condition &&
+						!(
+							account.type === condition.type &&
+							account.service === condition.service
+						)
+					) {
+						throw new Error(
+							`Account Error: Only ${capitalizeWord(condition.type)} ${capitalizeWord(condition.service)} accounts can request [${request.request_type}]!`,
+						);
+					}
+
+					return account;
 				}
 
 				switch (request.request_type) {
@@ -83,36 +112,47 @@ export default function useWidgetRequest() {
 						break;
 					}
 					case 'get-twitch-follow-date': {
-						if (account.type !== 'read' || account.service !== 'twitch') {
-							throw new Error(accountError('twitch', 'read'));
-						}
+						const { user_id, account_id } = request.payload;
+						const account = getValidAccount(account_id, {
+							service: 'twitch',
+							type: 'read',
+						});
 
-						const { user_id } = request.payload;
 						const followDate = await getTwitchFollowDate(account, user_id);
+
 						respond(followDate);
 						break;
 					}
 					case 'get-twitch-cheermotes': {
+						const { account_id } = request.payload;
+						const account = getValidAccount(account_id, {
+							service: 'twitch',
+							type: 'read',
+						});
+
 						const cheermotes = await twitchApi.getCheermotes(
 							account.id,
 							account.serviceId,
 						);
-						if (account.type !== 'read' || account.service !== 'twitch') {
-							throw new Error(accountError('twitch', 'read'));
-						}
 
 						respond(cheermotes.data.data);
 						break;
 					}
 					case 'get-twitch-global-badges': {
+						const { account_id } = request.payload;
+						const account = getValidAccount(account_id);
+
 						const globalBadges = await twitchApi.getGlobalBadges(account.id);
+
 						respond(globalBadges.data.data);
 						break;
 					}
 					case 'get-twitch-channel-chat-badges': {
-						if (account.type !== 'read' || account.service !== 'twitch') {
-							throw new Error(accountError('twitch', 'read'));
-						}
+						const { account_id } = request.payload;
+						const account = getValidAccount(account_id, {
+							service: 'twitch',
+							type: 'read',
+						});
 
 						const channelBadges = await twitchApi.getChannelChatBadges(
 							account.id,
@@ -122,9 +162,11 @@ export default function useWidgetRequest() {
 						break;
 					}
 					case 'post-twitch-chat-message': {
-						if (account.type !== 'bot' || account.service !== 'twitch') {
-							throw new Error(accountError('twitch', 'bot'));
-						}
+						const { account_id } = request.payload;
+						const account = getValidAccount(account_id, {
+							service: 'twitch',
+							type: 'bot',
+						});
 
 						const { broadcaster_id, message, reply_parent_message_id } =
 							request.payload;
@@ -141,13 +183,15 @@ export default function useWidgetRequest() {
 						break;
 					}
 					case 'get-betterttv-user': {
-						const { platform } = request.payload;
+						const { platform, account_id } = request.payload;
+						const account = getValidAccount(account_id);
 						const bttv = await bttvApi.getUser(platform, account.serviceId);
 						respond(bttv);
 						break;
 					}
 					case 'get-frankerfacez-room': {
-						const { platform } = request.payload;
+						const { platform, account_id } = request.payload;
+						const account = getValidAccount(account_id);
 						const ffz = await ffzApi.getRoom(platform, account.serviceId);
 						respond(ffz);
 						break;
@@ -218,6 +262,7 @@ export default function useWidgetRequest() {
 const FollowDateRequestZ = z.object({
 	request_type: z.literal('get-twitch-follow-date'),
 	payload: z.object({
+		account_id: z.string(),
 		user_id: z.string(),
 	}),
 });
@@ -234,6 +279,7 @@ const PronounsRequestZ = z.object({
 const PlatformRequestZ = z.object({
 	request_type: z.literal(['get-betterttv-user', 'get-frankerfacez-room']),
 	payload: z.object({
+		account_id: z.string(),
 		platform: z.literal('twitch'),
 	}),
 });
@@ -244,11 +290,15 @@ const AccountRequestZ = z.object({
 		'get-twitch-global-badges',
 		'get-twitch-channel-chat-badges',
 	]),
+	payload: z.object({
+		account_id: z.string(),
+	}),
 });
 
 const ChatMessageRequestZ = z.object({
 	request_type: z.literal('post-twitch-chat-message'),
 	payload: z.object({
+		account_id: z.string(),
 		broadcaster_id: z.string(),
 		message: z.string(),
 		reply_parent_message_id: z.string(),
@@ -264,7 +314,6 @@ const WidgetRequestZ = z.intersection(
 	z.object({
 		request_id: z.string(),
 		widget_id: z.string(),
-		account_id: z.string(),
 	}),
 	z.discriminatedUnion('request_type', [
 		PronounsRequestZ,
