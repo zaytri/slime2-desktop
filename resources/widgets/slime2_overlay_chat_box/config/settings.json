@@ -534,12 +534,12 @@
 					},
 					"single-emote-new-line": {
 						"type": "toggle-input",
-						"defaultValue": true,
-						"description": "Single and Gigantify emotes are shown on a new line, rather than on the same line as the rest of the message",
 						"label": "Display single emotes on a new line?",
 						"condition": {
 							"use-dynamic-emote-sizing": [true]
-						}
+						},
+						"defaultValue": true,
+						"description": "Single and Gigantify emotes are shown on a new line, rather than on the same line as the rest of the message"
 					}
 				}
 			}
@@ -704,15 +704,45 @@
 				"type": "section",
 				"label": "User Filters",
 				"settings": {
+					"user-filter-type": {
+						"type": "select-input",
+						"label": "Filter Type",
+						"defaultValue": "deny",
+						"options": [
+							{
+								"label": "Deny",
+								"value": "deny"
+							},
+							{
+								"label": "Allow",
+								"value": "allow"
+							}
+						]
+					},
+					"allow-users": {
+						"type": "multi-text-input",
+						"description": "Only show messages from these users, and no one else",
+						"condition": {
+							"user-filter-type": ["allow"]
+						},
+						"label": "Allow Users",
+						"placeholder": "Name"
+					},
 					"hide-users": {
 						"type": "multi-text-input",
 						"label": "Hide Users",
+						"condition": {
+							"user-filter-type": ["deny"]
+						},
 						"defaultValue": ["Sery_Bot"],
 						"placeholder": "Name"
 					},
 					"follower-only": {
 						"type": "toggle-input",
 						"label": "Follower Only Mode",
+						"condition": {
+							"user-filter-type": ["deny"]
+						},
 						"halfSpan": true,
 						"defaultValue": false
 					},

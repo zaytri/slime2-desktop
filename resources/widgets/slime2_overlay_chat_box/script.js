@@ -341,14 +341,19 @@ async function handleChatMessage(data, eventDate) {
 		message_type,
 	} = data;
 
-	// filter out users that match Hide Users
-	for (const hideName of Widget.values.get('hide-users') ?? []) {
-		if (
-			chatter_user_name.toLowerCase() === hideName.toLowerCase() ||
-			chatter_user_login.toLowerCase() === hideName.toLowerCase()
-		) {
-			return;
-		}
+	const userFilterType = Widget.values.get('user-filter-type') ?? 'deny';
+
+	// filter out users that don't match Allow Users
+	if (
+		userFilterType === 'allow' &&
+		!(Widget.values.get('allow-users') ?? []).some(allowName => {
+			return (
+				chatter_user_name.toLowerCase() === allowName.toLowerCase() ||
+				chatter_user_login.toLowerCase() === allowName.toLowerCase()
+			);
+		})
+	) {
+		return;
 	}
 
 	// filter out messages that start with these prefixes
@@ -370,8 +375,24 @@ async function handleChatMessage(data, eventDate) {
 		return;
 	}
 
-	// filter out users who fail the follow age check
-	if (!(await checkFollowAge(chatter_user_id, eventDate))) return;
+	if (userFilterType === 'deny') {
+		// filter out users that match Hide Users
+		if (
+			(Widget.values.get('hide-users') ?? []).some(hideName => {
+				return (
+					chatter_user_name.toLowerCase() === hideName.toLowerCase() ||
+					chatter_user_login.toLowerCase() === hideName.toLowerCase()
+				);
+			})
+		) {
+			return;
+		}
+
+		// filter out users who fail the follow age check
+		if (!(await checkFollowAge(chatter_user_id, eventDate))) {
+			return;
+		}
+	}
 
 	// get user's pronouns
 	const pronouns = await getPronouns(
