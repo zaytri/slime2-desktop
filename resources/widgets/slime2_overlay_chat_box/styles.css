@@ -8,6 +8,7 @@
 	--font-size: var(--custom-font-size, 14px);
 	--message-color: var(--custom-message-color, white);
 	--line-clamp: var(--custom-line-clamp, 4);
+	--min-line-clamp: 1;
 	--max-width: var(--custom-max-width, 500px);
 	--badge-display: var(--custom-badge-display, inline);
 	--pronoun-display: var(--custom-pronoun-display, inline);
@@ -332,13 +333,26 @@
 	vertical-align: top;
 }
 
-.use-dynamic-emote-sizing .emote-single .emote,
-.use-dynamic-emote-sizing .emote-gigantic .emote:nth-last-child(2),
-.use-dynamic-emote-sizing .emote-gigantic .emote:last-child {
+.use-dynamic-emote-sizing
+	:is(
+		.emote-single .emote,
+		.emote-gigantic .emote:nth-last-child(-n + 2),
+		/* -n + 2 = last 2 children, selecting both animated and static */
+	) {
 	height: calc(2em * var(--single-emote-size));
+}
+
+.use-dynamic-emote-sizing.single-emote-new-line
+	:is(.emote-single .emote, .emote-gigantic .emote:nth-last-child(-n + 2), ) {
 	display: block;
 	margin: 0;
 	margin-top: 0.25em;
+}
+
+.use-dynamic-emote-sizing.single-emote-new-line
+	.message:has(.emote-single, .emote-gigantic) {
+	--line-clamp: calc(var(--custom-line-clamp, 4) + 1);
+	--min-line-clamp: 2;
 }
 
 /**************
@@ -439,7 +453,7 @@
 
 @keyframes smooth-y {
 	from {
-		--line-clamp: 1;
+		--line-clamp: var(--min-line-clamp);
 		max-height: 0.1px;
 	}
 
@@ -450,12 +464,12 @@
 
 @keyframes smooth-x {
 	from {
-		--line-clamp: 1;
+		--line-clamp: var(--min-line-clamp);
 		max-width: 0.1px;
 	}
 
 	50% {
-		--line-clamp: 1;
+		--line-clamp: var(--min-line-clamp);
 		max-height: 1.5em;
 	}
 

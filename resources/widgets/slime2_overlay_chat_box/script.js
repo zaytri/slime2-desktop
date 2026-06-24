@@ -189,6 +189,10 @@ function widgetValuesListener(event) {
 			'use-dynamic-emote-sizing',
 			Widget.values.get('use-dynamic-emote-sizing') ?? true,
 		],
+		[
+			'single-emote-new-line',
+			Widget.values.get('single-emote-new-line') ?? true,
+		],
 	].forEach(([className, value]) => {
 		toggleClass(className, value);
 	});

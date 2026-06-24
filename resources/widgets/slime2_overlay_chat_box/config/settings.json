@@ -525,6 +525,15 @@
 						"max": 4,
 						"step": 0.05,
 						"description": "When a message contains only one emote, or is using Gigantify an Emote."
+					},
+					"single-emote-new-line": {
+						"type": "toggle-input",
+						"defaultValue": true,
+						"description": "Single and Gigantify emotes are shown on a new line, rather than on the same line as the rest of the message",
+						"label": "Display single emotes on a new line?",
+						"condition": {
+							"use-dynamic-emote-sizing": [true]
+						}
 					}
 				}
 			}
