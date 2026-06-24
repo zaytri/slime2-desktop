@@ -227,6 +227,14 @@
 	font-weight: bolder;
 }
 
+.message-below-user .user {
+	display: block;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	margin-bottom: 0.25em;
+}
+
 .customize-user .user {
 	font-family:
 		var(--custom-username-font-name), 'Inter', Nunito, Helvetica, Arial,
@@ -315,6 +323,7 @@
 	vertical-align: middle;
 	margin-top: -0.25em;
 	margin-bottom: -0.2em;
+	object-fit: contain;
 }
 
 #widget:not(.use-static-emotes) .emote.static {
@@ -343,12 +352,13 @@
 }
 
 .use-dynamic-emote-sizing.single-emote-new-line
-	:is(.emote-single .emote, .emote-gigantic .emote:nth-last-child(-n + 2), ) {
+	:is(.emote-single .emote, .emote-gigantic .emote:nth-last-child(-n + 2)) {
 	display: block;
 	margin: 0;
 	margin-top: 0.25em;
 }
 
+/* Fixes clipping when single/gigantify emote is used */
 .use-dynamic-emote-sizing.single-emote-new-line
 	.message:has(.emote-single, .emote-gigantic) {
 	--line-clamp: calc(var(--custom-line-clamp, 4) + 1);

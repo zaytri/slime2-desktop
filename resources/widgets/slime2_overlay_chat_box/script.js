@@ -104,7 +104,12 @@ function widgetValuesListener(event) {
 		setCustomCSS(cssVarName, value);
 	});
 
-	toggleClass('customize-user', Widget.values.get('customize-user') ?? false);
+	[
+		['customize-user', Widget.values.get('customize-user') ?? false],
+		['message-below-user', Widget.values.get('message-below-user') ?? false],
+	].forEach(([className, value]) => {
+		toggleClass(className, value);
+	});
 
 	removeClassesWithPrefix('username-color');
 	addClass(`username-color_${Widget.values.get('username-color')}`);

@@ -173,6 +173,12 @@
 						},
 						"defaultValue": "white"
 					},
+					"message-below-user": {
+						"type": "toggle-input",
+						"label": "Display message below user?",
+						"defaultValue": false,
+						"description": "Message text will be shown underneath user info, instead of on the same line."
+					},
 					"max-width": {
 						"type": "number-input",
 						"label": "Max Message Width (px)",
