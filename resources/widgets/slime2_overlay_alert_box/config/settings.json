@@ -101,15 +101,15 @@
 					},
 					"follow-sound-fade-in": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade In?",
 						"halfSpan": true,
-						"label": "Use Sound Fade In?"
+						"defaultValue": true
 					},
 					"follow-sound-fade-out": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade Out?",
 						"halfSpan": true,
-						"label": "Use Sound Fade Out?"
+						"defaultValue": true
 					},
 					"follow-enter": {
 						"type": "dropdown-input",
@@ -342,6 +342,10 @@
 								"value": "zoomOutUp"
 							}
 						]
+					},
+					"follow-heading-text-styles": {
+						"type": "heading",
+						"label": "Text Styles"
 					},
 					"follow-font": {
 						"type": "font-input",
@@ -638,15 +642,15 @@
 					},
 					"raid-sound-fade-in": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade In?",
 						"halfSpan": true,
-						"label": "Use Sound Fade In?"
+						"defaultValue": true
 					},
 					"raid-sound-fade-out": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade Out?",
 						"halfSpan": true,
-						"label": "Use Sound Fade Out?"
+						"defaultValue": true
 					},
 					"raid-enter": {
 						"type": "dropdown-input",
@@ -879,6 +883,10 @@
 								"value": "zoomOutUp"
 							}
 						]
+					},
+					"raid-heading-text-styles": {
+						"type": "heading",
+						"label": "Text Styles"
 					},
 					"raid-font": {
 						"type": "font-input",
@@ -1173,15 +1181,15 @@
 					},
 					"reward-sound-fade-in": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade In?",
 						"halfSpan": true,
-						"label": "Use Sound Fade In?"
+						"defaultValue": true
 					},
 					"reward-sound-fade-out": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade Out?",
 						"halfSpan": true,
-						"label": "Use Sound Fade Out?"
+						"defaultValue": true
 					},
 					"reward-enter": {
 						"type": "dropdown-input",
@@ -1414,6 +1422,10 @@
 								"value": "zoomOutUp"
 							}
 						]
+					},
+					"reward-heading-text-styles": {
+						"type": "heading",
+						"label": "Text Styles"
 					},
 					"reward-font": {
 						"type": "font-input",
@@ -1708,15 +1720,15 @@
 					},
 					"power-up-sound-fade-in": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade In?",
 						"halfSpan": true,
-						"label": "Use Sound Fade In?"
+						"defaultValue": true
 					},
 					"power-up-sound-fade-out": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade Out?",
 						"halfSpan": true,
-						"label": "Use Sound Fade Out?"
+						"defaultValue": true
 					},
 					"power-up-enter": {
 						"type": "dropdown-input",
@@ -1949,6 +1961,10 @@
 								"value": "zoomOutUp"
 							}
 						]
+					},
+					"power-up-heading-text-styles": {
+						"type": "heading",
+						"label": "Text Styles"
 					},
 					"power-up-font": {
 						"type": "font-input",
@@ -2225,15 +2241,15 @@
 					},
 					"cheer-sound-fade-in": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade In?",
 						"halfSpan": true,
-						"label": "Use Sound Fade In?"
+						"defaultValue": true
 					},
 					"cheer-sound-fade-out": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade Out?",
 						"halfSpan": true,
-						"label": "Use Sound Fade Out?"
+						"defaultValue": true
 					},
 					"cheer-enter": {
 						"type": "dropdown-input",
@@ -2466,6 +2482,10 @@
 								"value": "zoomOutUp"
 							}
 						]
+					},
+					"cheer-heading-text-styles": {
+						"type": "heading",
+						"label": "Text Styles"
 					},
 					"cheer-font": {
 						"type": "font-input",
@@ -2771,15 +2791,15 @@
 					},
 					"sub-sound-fade-in": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade In?",
 						"halfSpan": true,
-						"label": "Use Sound Fade In?"
+						"defaultValue": true
 					},
 					"sub-sound-fade-out": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade Out?",
 						"halfSpan": true,
-						"label": "Use Sound Fade Out?"
+						"defaultValue": true
 					},
 					"sub-enter": {
 						"type": "dropdown-input",
@@ -3012,6 +3032,10 @@
 								"value": "zoomOutUp"
 							}
 						]
+					},
+					"sub-heading-text-styles": {
+						"type": "heading",
+						"label": "Text Styles"
 					},
 					"sub-font": {
 						"type": "font-input",
@@ -3299,15 +3323,15 @@
 					},
 					"gift-sub-sound-fade-in": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade In?",
 						"halfSpan": true,
-						"label": "Use Sound Fade In?"
+						"defaultValue": true
 					},
 					"gift-sub-sound-fade-out": {
 						"type": "toggle-input",
-						"defaultValue": true,
+						"label": "Use Sound Fade Out?",
 						"halfSpan": true,
-						"label": "Use Sound Fade Out?"
+						"defaultValue": true
 					},
 					"gift-sub-enter": {
 						"type": "dropdown-input",
@@ -3540,6 +3564,10 @@
 								"value": "zoomOutUp"
 							}
 						]
+					},
+					"gift-sub-heading-text-styles": {
+						"type": "heading",
+						"label": "Text Styles"
 					},
 					"gift-sub-font": {
 						"type": "font-input",
