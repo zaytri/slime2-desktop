@@ -430,10 +430,17 @@
 	initial-value: 1;
 }
 
+/**
+ * Starting max of 0.1px (or anything higher than 0) instead of 0 is IMPORTANT
+ * Otherwise with some font settings, messages won't appear in OBS
+ * Works fine in a regular browser though, just OBS where they don't render
+ * I have no idea why this fixes it, or why 0 breaks it
+ */
+
 @keyframes smooth-y {
 	from {
 		--line-clamp: 1;
-		max-height: 0;
+		max-height: 0.1px;
 	}
 
 	to {
@@ -444,7 +451,7 @@
 @keyframes smooth-x {
 	from {
 		--line-clamp: 1;
-		max-width: 0;
+		max-width: 0.1px;
 	}
 
 	50% {
