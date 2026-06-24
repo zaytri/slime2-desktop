@@ -904,7 +904,7 @@ async function getPronouns(platform, userId, username) {
 
 /** Returns proxy information for the message, or null if this isn't a message sent by a system member */
 async function getSystemProxiedMessage(platform, userId, message) {
-	return slime2.request(Widget.readAccount.id, 'get-system-proxied-message', {
+	return slime2.request('get-system-proxied-message', {
 		platform,
 		user_id: userId,
 		message,
