@@ -189,16 +189,14 @@ function widgetValuesListener(event) {
 
 	// plurality settings
 
-	const usePlurality = Widget.values.get('plurality-support') ?? false;
+	toggleClass(
+		'plurality',
+		Widget.values.get('plurality-support') ?? true,
+	);
 	toggleClass(
 		'plurality-show-usernames',
-		usePlurality && (Widget.values.get('plurality-show-usernames') ?? false)
+		Widget.values.get('plurality-show-usernames') ?? false,
 	);
-
-	const targetPluralityData = usePlurality ? 'data-plurality-name' : 'data-no-plurality-name';
-	widgetElement.querySelectorAll(`.name[${targetPluralityData}]`).forEach(nameElement => {
-		nameElement.textContent = nameElement.getAttribute(targetPluralityData);
-	});
 
 	// emote settings
 	[
@@ -349,6 +347,7 @@ async function handleChatMessage(data, eventDate) {
 		chatter_user_login,
 		chatter_user_id,
 		message_id,
+		color,
 		badges,
 		message_type,
 	} = data;
@@ -407,8 +406,7 @@ async function handleChatMessage(data, eventDate) {
 	}
 
 	// get user's pronouns and system information
-	const firstTextFragmentIdx = message.fragments.findIndex(fragment => fragment.type === 'text');
-	const usePlurality = Widget.values.get('plurality-support');
+	const firstTextFragment = message.fragments.find(fragment => fragment.type === 'text');
 	let [pronouns, proxiedMessage] = await Promise.all([
 		getPronouns(
 			'twitch',
@@ -418,7 +416,7 @@ async function handleChatMessage(data, eventDate) {
 		getSystemProxiedMessage(
 			'twitch',
 			chatter_user_id,
-			message.fragments[firstTextFragmentIdx]?.text || '',
+			firstTextFragment?.text || '',
 		),
 	]);
 
@@ -429,9 +427,14 @@ async function handleChatMessage(data, eventDate) {
 	messageElement.setAttribute('data-message-id', message_id);
 	messageElement.setAttribute('data-user-id', chatter_user_id);
 
+	// flag if this is a proxied message, and add its metadata to the text
+	// fragment so it can create both versions later
+	if (proxiedMessage) {
+		messageElement.classList.add('proxied-message');
+		firstTextFragment.proxiedMessage = proxiedMessage;
+	}
+
 	// apply username color
-	let color = data.color;
-	if (usePlurality && proxiedMessage?.color) color = proxiedMessage.color;
 	if (color) {
 		messageElement.style.setProperty('--twitch-username-color', color);
 		messageElement.style.setProperty(
@@ -443,18 +446,28 @@ async function handleChatMessage(data, eventDate) {
 			darkTextColor(color),
 		);
 	}
+	if (proxiedMessage?.color) {
+		messageElement.style.setProperty('--proxied-username-color', proxiedMessage.color);
+		messageElement.style.setProperty(
+			'--proxied-light-username-color',
+			lightTextColor(proxiedMessage.color),
+		);
+		messageElement.style.setProperty(
+			'--proxied-dark-username-color',
+			darkTextColor(proxiedMessage.color),
+		);
+	}
 
 	// build user half of message
 	messageTemplateClone
 		.querySelector('.user')
-		.appendChild(
-			buildUser(chatter_user_name, chatter_user_login, pronouns, proxiedMessage, badges),
+		.append(
+			...buildUser(chatter_user_name, chatter_user_login, pronouns, proxiedMessage, badges),
 		);
 
 	// build text half of message
 	/** @type {HTMLSpanElement} */
 	const contentElement = messageTemplateClone.querySelector('.content');
-	if (usePlurality && proxiedMessage) message.fragments[firstTextFragmentIdx].text = proxiedMessage.body;
 	message.fragments.forEach(fragment => {
 		const node = buildMessageFragment(fragment);
 		if (Array.isArray(node)) {
@@ -697,7 +710,6 @@ function handleChatClearUserMessages(data, eventDate) {
 
 function buildUser(displayName, username, pronouns, proxiedMessage, badges) {
 	const userClone = cloneTemplate('user-template');
-	const nameElement = userClone.querySelector('.name');
 
 	let name = displayName;
 
@@ -706,17 +718,8 @@ function buildUser(displayName, username, pronouns, proxiedMessage, badges) {
 		name = `${name} (${username})`; // localized display name
 	}
 
-	if (proxiedMessage) {
-		nameElement.setAttribute('data-no-plurality-name', name);
-		nameElement.setAttribute('data-plurality-name', proxiedMessage.member.name);
-		if (Widget.values.get('plurality-support')) {
-			name = proxiedMessage.member.name;
-			if (proxiedMessage.pronouns) pronouns = proxiedMessage.pronouns.split('/');
-		}
-	}
-
-	nameElement.textContent = name;
-	nameElement.setAttribute('data-content', name);
+	userClone.querySelector('.name').textContent = name;
+	userClone.querySelector('.name').setAttribute('data-content', name);
 
 	if (pronouns) {
 		userClone.querySelector('.pronouns').textContent =
@@ -728,7 +731,22 @@ function buildUser(displayName, username, pronouns, proxiedMessage, badges) {
 		userClone.querySelector('.badges').append(badgeClone),
 	);
 
-	return userClone;
+	const userClones = [userClone];
+
+	if (proxiedMessage) {
+		const proxiedClone = cloneTemplate('proxied-user-template');
+
+		proxiedClone.querySelector('.member').textContent = proxiedMessage.member.name;
+		proxiedClone.querySelector('.username').textContent = ` (${name})`;
+
+		const effectivePronouns = proxiedMessage.pronouns?.split('/') ?? pronouns;
+		if (effectivePronouns) proxiedClone.querySelector('.pronouns').textContent =
+			` (${effectivePronouns.join('/')})`;
+
+		userClones.push(proxiedClone);
+	}
+
+	return userClones;
 }
 
 function buildBadges(badges) {
@@ -764,7 +782,14 @@ function buildMessageFragment(fragment) {
 }
 
 function buildTextFragment(textFragment) {
-	const { text } = textFragment;
+	const { text, extraClass, proxiedMessage } = textFragment;
+
+	if (proxiedMessage) {
+		return [
+			...buildTextFragment({ text, extraClass: 'original-text' }),
+			...buildTextFragment({ text: proxiedMessage.body, extraClass: 'proxied-text' }),
+		];
+	}
 
 	const parsedFragments = [];
 
@@ -804,11 +829,16 @@ function buildTextFragment(textFragment) {
 	});
 
 	return parsedFragments.map(fragment => {
-		if (fragment.type === 'emote') {
-			return buildParsedEmoteFragment(fragment);
-		} else {
-			return buildParsedTextFragment(fragment);
+		const fragmentClone = (
+			fragment.type === 'emote' ? buildParsedEmoteFragment(fragment) :
+			buildParsedTextFragment(fragment)
+		);
+		if (extraClass) {
+			Array.from(fragmentClone.children).forEach(node => {
+				node.classList.add(extraClass);
+			});
 		}
+		return fragmentClone;
 	});
 }
 
