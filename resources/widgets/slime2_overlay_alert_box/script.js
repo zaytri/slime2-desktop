@@ -240,7 +240,7 @@ async function handleCheer(data) {
 
 	let displayName = user_name;
 	let displayMessage = message;
-	if (Widget.values.get('plurality-support')) {
+	if (Widget.values.get('plurality-support') ?? true) {
 		const proxiedMessage = await getSystemProxiedMessage(
 			'twitch',
 			user_id,
@@ -249,7 +249,7 @@ async function handleCheer(data) {
 
 		if (proxiedMessage) {
 			displayName = proxiedMessage.member.name;
-			if (Widget.values.get('plurality-show-usernames')) {
+			if (Widget.values.get('plurality-show-usernames') ?? true) {
 				displayName += ` (${user_name})`;
 			}
 			displayMessage = proxiedMessage.body;

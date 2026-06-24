@@ -264,10 +264,6 @@
 	position: relative;
 }
 
-.plurality-show-usernames .name[data-no-plurality-name]::after {
-	content: " (" attr(data-no-plurality-name) ")";
-}
-
 .user::after {
 	content: ': ';
 	display: inline;
@@ -367,6 +363,39 @@
 	.message:has(.emote-single, .emote-gigantic) {
 	--line-clamp: calc(var(--custom-line-clamp, 4) + 1);
 	--min-line-clamp: 2;
+}
+
+/*************
+ * Plurality *
+ *************/
+
+.name.proxied, .pronouns.proxied, .proxied-text {
+	display: none;
+}
+
+.plurality .proxied-message .name.proxied.member,
+.plurality .proxied-message .pronouns.proxied,
+.plurality .proxied-message .proxied-text,
+.plurality.plurality-show-usernames .proxied-message .name.proxied.username {
+	display: inline;
+}
+
+.plurality .proxied-message .name:not(.proxied),
+.plurality .proxied-message .pronouns:not(.proxied),
+.plurality .proxied-message .original-text {
+	display: none;
+}
+
+.plurality.username-color_twitch .proxied-message .user {
+	color: var(--proxied-username-color, var(--twitch-username-color, var(--font-color)));
+}
+
+.plurality.username-color_twitch-light .proxied-message .user {
+	color: var(--proxied-light-username-color, var(--twitch-light-username-color, var(--font-color)));
+}
+
+.plurality.username-color_twitch-dark .proxied-message .user {
+	color: var(--proxied-dark-username-color, var(--twitch-dark-username-color, var(--font-color)));
 }
 
 /**************
