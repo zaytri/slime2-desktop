@@ -31,9 +31,8 @@ pub fn setup(
 		.and(warp::ws())
 		.and(warp::any().map(move || connections.clone()))
 		.map(
-			|websocket: warp::ws::Ws,
-			 connections: websocket::WebsocketConnections| {
-				websocket.on_upgrade(|websocket| {
+			|ws: warp::ws::Ws, connections: websocket::WebsocketConnections| {
+				ws.on_upgrade(|websocket| {
 					websocket::connect(websocket, connections)
 				})
 			},

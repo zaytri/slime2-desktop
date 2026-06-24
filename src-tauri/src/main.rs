@@ -126,7 +126,7 @@ async fn main() {
 						match tauri_plugin_log::TimezoneStrategy::UseLocal
 							.get_now()
 							.format(format_description!(
-								"[[[year]-[month]-[day] [hour]:[minute]:[second]] "
+								"[[[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]] "
 							)) {
 							Ok(log_timestamp) => log_timestamp,
 							Err(error) => {
@@ -179,6 +179,7 @@ async fn main() {
 		.plugin(tauri_plugin_clipboard_manager::init())
 		.plugin(tauri_plugin_opener::init())
 		.manage(connections.clone())
+		.manage(AppState::default())
 		.setup(|app: &mut tauri::App| {
 			log::info!("Welcome to Slime2!");
 
@@ -208,8 +209,6 @@ async fn main() {
 					std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1")
 				};
 			}
-
-			app.manage(AppState::default());
 
 			let app_handle = app.app_handle().clone();
 

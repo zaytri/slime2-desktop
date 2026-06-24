@@ -46,6 +46,10 @@ export const SETTINGS_DATA: SettingsData = Object.freeze({
 		label: 'Text Display',
 		defaultData: { type: 'text-display' },
 	},
+	heading: {
+		label: 'Heading',
+		defaultData: { type: 'heading' },
+	},
 	'image-display': {
 		label: 'Image Display',
 		defaultData: { type: 'image-display', alt: '', src: '' },
@@ -122,7 +126,7 @@ export const SECTION_SETTING_GROUPED_OPTIONS: GroupedOptions<
 				'multi-video-input',
 			],
 		],
-		['Other', ['text-display', 'button']],
+		['Other', ['heading', 'text-display', 'button']],
 	] satisfies [string, WidgetSetting.NonGroup['type'][]][]
 ).map(([groupLabel, types]) => {
 	return {
@@ -201,6 +205,11 @@ const ButtonSetting = z.object({
 
 const TextDisplaySetting = z.object({
 	type: z.literal('text-display'),
+	...BaseNonGroupSetting.def.shape,
+});
+
+const HeadingDisplaySetting = z.object({
+	type: z.literal('heading'),
 	...BaseNonGroupSetting.def.shape,
 });
 
@@ -349,6 +358,7 @@ const FontInputSetting = z.object({
 const NonGroupSetting = z.discriminatedUnion('type', [
 	ButtonSetting,
 	TextDisplaySetting,
+	HeadingDisplaySetting,
 	ImageDisplaySetting,
 	TextInputSetting,
 	TextAreaInputSetting,

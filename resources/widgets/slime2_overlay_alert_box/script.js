@@ -372,7 +372,7 @@ function handleClearUser(data) {
 	if (Widget.alertUserId === target_user_id) {
 		// user of current alert has been banned/timed out,
 		// immediately hide alert
-		hideAlert(true);
+		hideAlert({ immediate: true });
 	}
 }
 
@@ -381,7 +381,7 @@ function handleChatMessageDelete(data) {
 	if (Widget.alertUserId === target_user_id) {
 		// user of current alert has had a message deleted,
 		// immediately hide alert
-		hideAlert(true);
+		hideAlert({ immediate: true });
 	}
 }
 
@@ -452,7 +452,7 @@ function queueAlert(playAlertFunction) {
  */
 function playAlert(userId, type, alertId, messageParts) {
 	if (Widget.usersCleared.has(userId)) {
-		hideAlert(true);
+		hideAlert({ immediate: true });
 	}
 
 	Widget.alertUserId = userId;
@@ -502,10 +502,10 @@ function playAlert(userId, type, alertId, messageParts) {
 	);
 
 	// visual and sound settings
-
 	const sounds = getValue('sound') ?? [];
 	const soundVolumes = getValue('sound.volume') ?? [];
 	const soundIndex = sounds.length > 0 ? randomIndex(sounds) : undefined;
+	const useSoundFadeIn = getValue('sound-fade-in') ?? true;
 
 	const videos = getValue('video') ?? [];
 	const videoVolumes = getValue('video.volume') ?? [];
@@ -525,7 +525,11 @@ function playAlert(userId, type, alertId, messageParts) {
 		audioElement.volume = 0;
 		audioElement.play();
 		audioElement.onloadstart = () => {
-			smoothVolumeChange(audioElement, volume);
+			if (useSoundFadeIn) {
+				smoothVolumeChange(audioElement, volume);
+			} else {
+				audioElement.volume = volume;
+			}
 		};
 	}
 
@@ -561,7 +565,11 @@ function playAlert(userId, type, alertId, messageParts) {
 			videoElement.play();
 			videoElement.onloadstart = () => {
 				if (volume) {
-					smoothVolumeChange(videoElement, volume);
+					if (useSoundFadeIn) {
+						smoothVolumeChange(videoElement, volume);
+					} else {
+						videoElement.volume = volume;
+					}
 				}
 			};
 		}
@@ -622,14 +630,14 @@ function playAlert(userId, type, alertId, messageParts) {
 
 	Widget.alertTimeout = setTimeout(
 		() => {
-			hideAlert();
+			hideAlert({ useSoundFadeOut: getValue('sound-fade-out') ?? true });
 		},
 		// alert duration handling
 		(getValue('duration') || 0) * 1000,
 	);
 }
 
-async function hideAlert(immediate = false) {
+async function hideAlert({ immediate = false, useSoundFadeOut = true } = {}) {
 	clearTimeout(Widget.alertTimeout);
 	const alertElement = getAlertElement();
 	const audioElement = getAudioElement();
@@ -645,9 +653,11 @@ async function hideAlert(immediate = false) {
 		);
 
 		// fade volume to 0
-		[audioElement, videoElement].forEach(mediaElement => {
-			smoothVolumeChange(mediaElement, 0);
-		});
+		if (useSoundFadeOut) {
+			[audioElement, videoElement].forEach(mediaElement => {
+				smoothVolumeChange(mediaElement, 0);
+			});
+		}
 
 		await animationsFinished(getAlertElement());
 	}

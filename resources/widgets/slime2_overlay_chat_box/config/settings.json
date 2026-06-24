@@ -59,7 +59,77 @@
 					"font-size": {
 						"type": "slider-input",
 						"label": "Font Size (px)",
+						"defaultValue": 14,
+						"min": 1,
+						"max": 72,
+						"step": 1
+					},
+					"customize-user": {
+						"type": "toggle-input",
+						"label": "Customize Username Font Separately?",
+						"defaultValue": false
+					},
+					"custom-username-font-name": {
+						"type": "font-input",
+						"label": "Username Font",
+						"condition": {
+							"customize-user": [true]
+						},
+						"halfSpan": true
+					},
+					"custom-username-font-weight": {
+						"type": "dropdown-input",
+						"label": "Username Font Weight",
+						"condition": {
+							"customize-user": [true]
+						},
 						"halfSpan": true,
+						"defaultValue": 700,
+						"options": [
+							{
+								"label": "Thin",
+								"value": 100
+							},
+							{
+								"label": "Extra-Light",
+								"value": 200
+							},
+							{
+								"label": "Light",
+								"value": 300
+							},
+							{
+								"label": "Normal",
+								"value": 400
+							},
+							{
+								"label": "Medium",
+								"value": 500
+							},
+							{
+								"label": "Semi-Bold",
+								"value": 600
+							},
+							{
+								"label": "Bold",
+								"value": 700
+							},
+							{
+								"label": "Extra-Bold",
+								"value": 800
+							},
+							{
+								"label": "Heavy",
+								"value": 900
+							}
+						]
+					},
+					"custom-username-font-size": {
+						"type": "slider-input",
+						"label": "Username Font Size (px)",
+						"condition": {
+							"customize-user": [true]
+						},
 						"defaultValue": 14,
 						"min": 1,
 						"max": 72,
@@ -101,8 +171,13 @@
 						"condition": {
 							"username-color": "custom"
 						},
-						"halfSpan": true,
 						"defaultValue": "white"
+					},
+					"message-below-user": {
+						"type": "toggle-input",
+						"label": "Display message below user?",
+						"defaultValue": false,
+						"description": "Message text will be shown underneath user info, instead of on the same line."
 					},
 					"max-width": {
 						"type": "number-input",
@@ -198,6 +273,13 @@
 							"use-shadow": true
 						},
 						"defaultValue": "black"
+					},
+					"shadow-background-note": {
+						"type": "text-display",
+						"label": "Note: Since the shadow is a filter on the entire message, if you set a message background below, the shadow will be applied to the message background instead of the message contents.",
+						"condition": {
+							"use-shadow": [true]
+						}
 					}
 				}
 			},
@@ -369,7 +451,7 @@
 						"min": 1,
 						"max": 4,
 						"step": 0.05,
-						"description": "Multiplier dependent on the text size."
+						"description": "Multiplier dependent on the username font size."
 					}
 				}
 			},
@@ -473,6 +555,15 @@
 						"max": 4,
 						"step": 0.05,
 						"description": "When a message contains only one emote, or is using Gigantify an Emote."
+					},
+					"single-emote-new-line": {
+						"type": "toggle-input",
+						"label": "Display single emotes on a new line?",
+						"condition": {
+							"use-dynamic-emote-sizing": [true]
+						},
+						"defaultValue": true,
+						"description": "Single and Gigantify emotes are shown on a new line, rather than on the same line as the rest of the message"
 					}
 				}
 			}
@@ -564,6 +655,22 @@
 					{
 						"label": "Fade Out Down",
 						"value": "fade-out-down"
+					},
+					{
+						"label": "Slide Out Left",
+						"value": "slide-out-left"
+					},
+					{
+						"label": "Slide Out Right",
+						"value": "slide-out-right"
+					},
+					{
+						"label": "Slide Out Up",
+						"value": "slide-out-up"
+					},
+					{
+						"label": "Slide Out Down",
+						"value": "slide-out-down"
 					}
 				]
 			}
@@ -621,15 +728,45 @@
 				"type": "section",
 				"label": "User Filters",
 				"settings": {
+					"user-filter-type": {
+						"type": "select-input",
+						"label": "Filter Type",
+						"defaultValue": "deny",
+						"options": [
+							{
+								"label": "Deny",
+								"value": "deny"
+							},
+							{
+								"label": "Allow",
+								"value": "allow"
+							}
+						]
+					},
+					"allow-users": {
+						"type": "multi-text-input",
+						"description": "Only show messages from these users, and no one else",
+						"condition": {
+							"user-filter-type": ["allow"]
+						},
+						"label": "Allow Users",
+						"placeholder": "Name"
+					},
 					"hide-users": {
 						"type": "multi-text-input",
 						"label": "Hide Users",
+						"condition": {
+							"user-filter-type": ["deny"]
+						},
 						"defaultValue": ["Sery_Bot"],
 						"placeholder": "Name"
 					},
 					"follower-only": {
 						"type": "toggle-input",
 						"label": "Follower Only Mode",
+						"condition": {
+							"user-filter-type": ["deny"]
+						},
 						"halfSpan": true,
 						"defaultValue": false
 					},

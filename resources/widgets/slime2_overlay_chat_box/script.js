@@ -87,9 +87,28 @@ function widgetValuesListener(event) {
 		['line-clamp', Widget.values.get('max-lines') ?? 4],
 		['message-color', Widget.values.get('message-color') ?? 'white'],
 		['username-color', Widget.values.get('custom-username-color') ?? 'white'],
+		[
+			'username-font-name',
+			`"${Widget.values.get('custom-username-font-name') ?? 'Inter'}"`,
+		],
+		[
+			'username-font-weight',
+			Widget.values.get('custom-username-font-weight') ?? 'bold',
+		],
+		[
+			'username-font-size',
+			`${Widget.values.get('custom-username-font-size') ?? 14}px`,
+		],
 		['gap', `${Widget.values.get('gap') ?? 8}px`],
 	].forEach(([cssVarName, value]) => {
 		setCustomCSS(cssVarName, value);
+	});
+
+	[
+		['customize-user', Widget.values.get('customize-user') ?? false],
+		['message-below-user', Widget.values.get('message-below-user') ?? false],
+	].forEach(([className, value]) => {
+		toggleClass(className, value);
 	});
 
 	removeClassesWithPrefix('username-color');
@@ -187,6 +206,10 @@ function widgetValuesListener(event) {
 		[
 			'use-dynamic-emote-sizing',
 			Widget.values.get('use-dynamic-emote-sizing') ?? true,
+		],
+		[
+			'single-emote-new-line',
+			Widget.values.get('single-emote-new-line') ?? true,
 		],
 	].forEach(([className, value]) => {
 		toggleClass(className, value);
@@ -330,14 +353,19 @@ async function handleChatMessage(data, eventDate) {
 		message_type,
 	} = data;
 
-	// filter out users that match Hide Users
-	for (const hideName of Widget.values.get('hide-users') ?? []) {
-		if (
-			chatter_user_name.toLowerCase() === hideName.toLowerCase() ||
-			chatter_user_login.toLowerCase() === hideName.toLowerCase()
-		) {
-			return;
-		}
+	const userFilterType = Widget.values.get('user-filter-type') ?? 'deny';
+
+	// filter out users that don't match Allow Users
+	if (
+		userFilterType === 'allow' &&
+		!(Widget.values.get('allow-users') ?? []).some(allowName => {
+			return (
+				chatter_user_name.toLowerCase() === allowName.toLowerCase() ||
+				chatter_user_login.toLowerCase() === allowName.toLowerCase()
+			);
+		})
+	) {
+		return;
 	}
 
 	// filter out messages that start with these prefixes
@@ -359,8 +387,24 @@ async function handleChatMessage(data, eventDate) {
 		return;
 	}
 
-	// filter out users who fail the follow age check
-	if (!(await checkFollowAge(chatter_user_id, eventDate))) return;
+	if (userFilterType === 'deny') {
+		// filter out users that match Hide Users
+		if (
+			(Widget.values.get('hide-users') ?? []).some(hideName => {
+				return (
+					chatter_user_name.toLowerCase() === hideName.toLowerCase() ||
+					chatter_user_login.toLowerCase() === hideName.toLowerCase()
+				);
+			})
+		) {
+			return;
+		}
+
+		// filter out users who fail the follow age check
+		if (!(await checkFollowAge(chatter_user_id, eventDate))) {
+			return;
+		}
+	}
 
 	// get user's pronouns and system information
 	const firstTextFragmentIdx = message.fragments.findIndex(fragment => fragment.type === 'text');
@@ -851,7 +895,7 @@ function buildCheermoteFragment(cheermoteFragment) {
 
 /** Returns array of pronouns to show, or `null` if they haven't set any */
 async function getPronouns(platform, userId, username) {
-	return slime2.request(Widget.readAccount.id, 'get-pronouns', {
+	return slime2.request('get-pronouns', {
 		platform,
 		user_id: userId,
 		username,
@@ -869,7 +913,8 @@ async function getSystemProxiedMessage(platform, userId, message) {
 
 /** Returns ISO string of follow date, or `null` if they aren't following. */
 async function getTwitchFollowDate(userId) {
-	return slime2.request(Widget.readAccount.id, 'get-twitch-follow-date', {
+	return slime2.request('get-twitch-follow-date', {
+		account_id: Widget.readAccount.id,
 		user_id: userId,
 	});
 }
@@ -880,7 +925,9 @@ async function getTwitchFollowDate(userId) {
  * https://dev.twitch.tv/docs/api/reference/#get-cheermotes
  */
 async function getTwitchCheermotes() {
-	return slime2.request(Widget.readAccount.id, 'get-twitch-cheermotes');
+	return slime2.request('get-twitch-cheermotes', {
+		account_id: Widget.readAccount.id,
+	});
 }
 
 /**
@@ -889,7 +936,9 @@ async function getTwitchCheermotes() {
  * https://dev.twitch.tv/docs/api/reference/#get-global-chat-badges
  */
 async function getTwitchGlobalBadges() {
-	return slime2.request(Widget.readAccount.id, 'get-twitch-global-badges');
+	return slime2.request('get-twitch-global-badges', {
+		account_id: Widget.readAccount.id,
+	});
 }
 
 /**
@@ -898,10 +947,9 @@ async function getTwitchGlobalBadges() {
  * https://dev.twitch.tv/docs/api/reference/#get-channel-chat-badges
  */
 async function getTwitchChannelChatBadges() {
-	return slime2.request(
-		Widget.readAccount.id,
-		'get-twitch-channel-chat-badges',
-	);
+	return slime2.request('get-twitch-channel-chat-badges', {
+		account_id: Widget.readAccount.id,
+	});
 }
 
 /**
@@ -910,7 +958,8 @@ async function getTwitchChannelChatBadges() {
  * https://betterttv.com/developers/api#user
  */
 async function getBttvUser() {
-	return slime2.request(Widget.readAccount.id, 'get-betterttv-user', {
+	return slime2.request('get-betterttv-user', {
+		account_id: Widget.readAccount.id,
 		platform: 'twitch',
 	});
 }
@@ -921,7 +970,8 @@ async function getBttvUser() {
  * https://api.frankerfacez.com/docs/#/Rooms
  */
 async function getFfzRoom() {
-	return slime2.request(Widget.readAccount.id, 'get-frankerfacez-room', {
+	return slime2.request('get-frankerfacez-room', {
+		account_id: Widget.readAccount.id,
 		platform: 'twitch',
 	});
 }

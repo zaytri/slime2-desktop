@@ -21,7 +21,7 @@ export default function TileHeader({
 
 			{iconSrc && <HeaderIcon src={iconSrc} />}
 
-			<h1 className='line-clamp-1 flex-1 font-mochiy text-5 text-white text-shadow-[0_2px_black]'>
+			<h1 className='line-clamp-1 flex-1 font-mochiy text-5 break-all text-white text-shadow-[0_2px_black]'>
 				{name}
 			</h1>
 
