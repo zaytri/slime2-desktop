@@ -405,8 +405,12 @@ async function handleChatMessage(data, eventDate) {
 		}
 	}
 
+	// grab the first non-mention fragment
+	let proxyFragment = message.fragments[0];
+	if (proxyFragment.type === 'mention') proxyFragment = message.fragments[1];
+	if (proxyFragment?.type !== 'text') proxyFragment = null;
+
 	// get user's pronouns and system information
-	const firstTextFragment = message.fragments.find(fragment => fragment.type === 'text');
 	let [pronouns, proxiedMessage] = await Promise.all([
 		getPronouns(
 			'twitch',
@@ -416,7 +420,7 @@ async function handleChatMessage(data, eventDate) {
 		getSystemProxiedMessage(
 			'twitch',
 			chatter_user_id,
-			firstTextFragment?.text || '',
+			proxyFragment?.text || '',
 		),
 	]);
 
@@ -431,7 +435,7 @@ async function handleChatMessage(data, eventDate) {
 	// fragment so it can create both versions later
 	if (proxiedMessage) {
 		messageElement.classList.add('proxied-message');
-		firstTextFragment.proxiedMessage = proxiedMessage;
+		proxyFragment.proxiedMessage = proxiedMessage;
 	}
 
 	// apply username color
