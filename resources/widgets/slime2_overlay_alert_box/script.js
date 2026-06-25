@@ -154,7 +154,7 @@ function handleRaid(data) {
 	);
 }
 
-function handleReward(data) {
+async function handleReward(data) {
 	const type = 'reward';
 	const {
 		user_id,
@@ -164,14 +164,20 @@ function handleReward(data) {
 		reward: { title, cost },
 	} = data;
 
+	const proxiedData = user_input
+		? await parseSystemProxy(user_id, user_name, user_input)
+		: null;
+	const usernameValue = proxiedData?.proxiedDisplayName ?? user_name;
+	const messageValue = proxiedData?.proxiedMessage ?? user_input;
+
 	handleAlerts(
 		user_id,
 		type,
 		{
-			'{username}': { value: user_name, accent: true },
+			'{username}': { value: usernameValue, accent: true },
 			'{reward}': { value: title, accent: true },
 			'{amount}': { value: cost, accent: true },
-			'{message}': { value: user_input },
+			'{message}': { value: messageValue },
 		},
 		alertId => {
 			const getValue = createGetValueFunction(alertId, type);
@@ -194,7 +200,7 @@ function handleReward(data) {
 	);
 }
 
-function handlePowerUp(data) {
+async function handlePowerUp(data) {
 	const type = 'power-up';
 	const {
 		user_id,
@@ -204,14 +210,20 @@ function handlePowerUp(data) {
 		custom_power_up: { title, bits },
 	} = data;
 
+	const proxiedData = user_input
+		? await parseSystemProxy(user_id, user_name, user_input)
+		: null;
+	const usernameValue = proxiedData?.proxiedDisplayName ?? user_name;
+	const messageValue = proxiedData?.proxiedMessage ?? user_input;
+
 	handleAlerts(
 		user_id,
 		type,
 		{
-			'{username}': { value: user_name, accent: true },
+			'{username}': { value: usernameValue, accent: true },
 			'{power_up}': { value: title, accent: true },
 			'{amount}': { value: bits, accent: true },
-			'{message}': { value: user_input },
+			'{message}': { value: messageValue },
 		},
 		alertId => {
 			const getValue = createGetValueFunction(alertId, type);
@@ -238,31 +250,17 @@ async function handleCheer(data) {
 	const type = 'cheer';
 	const { user_id, user_login, user_name, message, bits } = data;
 
-	let displayName = user_name;
-	let displayMessage = message;
-	if (Widget.values.get('plurality-support') ?? true) {
-		const proxiedMessage = await getSystemProxiedMessage(
-			'twitch',
-			user_id,
-			message
-		);
-
-		if (proxiedMessage) {
-			displayName = proxiedMessage.member.name;
-			if (Widget.values.get('plurality-show-usernames') ?? true) {
-				displayName += ` (${user_name})`;
-			}
-			displayMessage = proxiedMessage.body;
-		}
-	}
+	const proxiedData = await parseSystemProxy(user_id, user_name, message);
+	const usernameValue = proxiedData?.proxiedDisplayName ?? user_name;
+	const messageValue = proxiedData?.proxiedMessage ?? message;
 
 	handleAlerts(
 		user_id,
 		type,
 		{
-			'{username}': { value: displayName, accent: true },
+			'{username}': { value: usernameValue, accent: true },
 			'{amount}': { value: bits, accent: true },
-			'{message}': { value: displayMessage },
+			'{message}': { value: messageValue },
 		},
 		alertId => {
 			const getValue = createGetValueFunction(alertId, type);
@@ -280,7 +278,7 @@ async function handleCheer(data) {
 	);
 }
 
-function handleSub(data) {
+async function handleSub(data) {
 	const type = 'sub';
 	const {
 		user_id,
@@ -295,18 +293,24 @@ function handleSub(data) {
 	// don't handle gift subs here
 	if (is_gift) return;
 
+	const proxiedData = message
+		? await parseSystemProxy(user_id, user_name, message.text)
+		: null;
+	const usernameValue = proxiedData?.proxiedDisplayName ?? user_name;
+	const messageValue = proxiedData?.proxiedMessage ?? message?.text;
+
 	handleAlerts(
 		user_id,
 		type,
 		{
-			'{username}': { value: user_name, accent: true },
+			'{username}': { value: usernameValue, accent: true },
 			'{sub_tier}': {
 				value:
 					tier === '3000' ? 'Tier 3' : tier === '2000' ? 'Tier 2' : 'Tier 1',
 				accent: true,
 			},
 			'{amount}': { value: cumulative_months ?? 1, accent: true },
-			'{message}': { value: message?.text },
+			'{message}': { value: messageValue },
 		},
 		alertId => {
 			const getValue = createGetValueFunction(alertId, type);
@@ -685,8 +689,53 @@ async function hideAlert({ immediate = false, useSoundFadeOut = true } = {}) {
 	}
 }
 
+// Requests
+// ***************************************************************************
+
+/**
+ * Returns proxy information for the message, or `null` if this isn't a message
+ * sent by a system member
+ *
+ * @param {'twitch'} platform
+ * @param {string} userId
+ * @param {string} message
+ * @returns https://docs.pluralmind.chat/api/interfaces/ProxiedMessage.html
+ */
+async function getSystemProxiedMessage(platform, userId, message) {
+	return slime2.request('get-system-proxied-message', {
+		platform,
+		user_id: userId,
+		message,
+	});
+}
+
 // Helpers
 // ***************************************************************************
+
+async function parseSystemProxy(userId, displayName, message) {
+	const pluralitySupport = Widget.values.get('plurality-support') ?? true;
+	const pluralityShowUsernames =
+		Widget.values.get('plurality-show-usernames') ?? true;
+
+	if (!pluralitySupport) {
+		return null;
+	}
+
+	const systemProxiedMessage = await getSystemProxiedMessage(
+		'twitch',
+		userId,
+		message,
+	);
+
+	if (!systemProxiedMessage) {
+		return null;
+	}
+
+	return {
+		proxiedDisplayName: `${systemProxiedMessage.member.name}${pluralityShowUsernames ? `(${displayName})` : ''}`,
+		proxiedMessage: systemProxiedMessage.body,
+	};
+}
 
 /** @returns {HTMLDivElement} */
 function getAlertElement() {
@@ -850,13 +899,4 @@ function stringsToRegexOr(stringArray) {
  */
 function escapeRegExp(string) {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-/** Returns proxy information for the message, or null if this isn't a message sent by a system member */
-async function getSystemProxiedMessage(platform, userId, message) {
-	return slime2.request('get-system-proxied-message', {
-		platform,
-		user_id: userId,
-		message,
-	});
 }

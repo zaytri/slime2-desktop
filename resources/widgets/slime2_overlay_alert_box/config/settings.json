@@ -1,6 +1,6 @@
 {
-	"alerts-category": {
-		"label": "Alerts",
+	"twitch-alerts": {
+		"label": "Twitch Alerts",
 		"settings": {
 			"alert-description": {
 				"type": "text-display",
@@ -3752,7 +3752,7 @@
 				"settings": {
 					"plurality-text": {
 						"type": "text-display",
-						"label": "User system and member information is sourced from https://pluralmind.chat/\nNot sure what plurality is? Consider checking out https://morethanone.info/"
+						"label": "User system and member information is sourced from https://pluralmind.chat/\nNot sure what plurality is? Consider checking out https://morethanone.info/\nCurrently only compatible with alerts related to chat messages, such as Cheers, Resubs, etc."
 					},
 					"plurality-support": {
 						"type": "toggle-input",
