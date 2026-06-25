@@ -372,16 +372,22 @@
 	display: none;
 }
 
-.plurality .proxied-message .name.proxied.member,
-.plurality .proxied-message .pronouns.proxied,
-.plurality .proxied-message .proxied-text,
-.plurality.plurality-show-usernames .proxied-message .name.proxied.username {
+.plurality.plurality-show-usernames .proxied-message .name.proxied.username,
+.plurality .proxied-message
+	:is(
+		.name.proxied.member,
+		.pronouns.proxied,
+		.proxied-text
+	) {
 	display: inline;
 }
 
-.plurality .proxied-message .name:not(.proxied),
-.plurality .proxied-message .pronouns:not(.proxied),
-.plurality .proxied-message .original-text {
+.plurality .proxied-message
+	:is(
+		.name:not(.proxied),
+		.pronouns:not(.proxied),
+		.original-text
+	) {
 	display: none;
 }
 
