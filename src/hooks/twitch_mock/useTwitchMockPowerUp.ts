@@ -109,7 +109,7 @@ async function sendMockPowerUp(
 		sendMockTwitchEvent(
 			widgetId,
 			'channel.custom_power_up_redemption.add',
-			'beta',
+			'1',
 			timestamp,
 			powerUpEvent,
 		),

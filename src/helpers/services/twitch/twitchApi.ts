@@ -239,15 +239,11 @@ export function createEventSubParamsList(
 			] as Twitch.EventSub.Type[]
 		).map(type => createEventSubParams(type, '2', defaultCondition)),
 
-		// custom power-ups
-		createEventSubParams(
-			'channel.custom_power_up_redemption.add',
-			'beta',
-			defaultCondition,
-		),
-
 		...(
 			[
+				// custom power-ups
+				'channel.custom_power_up_redemption.add',
+
 				// bits
 				'channel.bits.use',
 				'channel.cheer',
