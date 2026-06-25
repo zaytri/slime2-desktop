@@ -239,8 +239,15 @@ export function createEventSubParamsList(
 			] as Twitch.EventSub.Type[]
 		).map(type => createEventSubParams(type, '2', defaultCondition)),
 
+		// channel
+		createEventSubParams('channel.update', '2', defaultCondition),
+
 		...(
 			[
+				// stream
+				'stream.online',
+				'stream.offline',
+
 				// custom power-ups
 				'channel.custom_power_up_redemption.add',
 
@@ -277,6 +284,11 @@ export function createEventSubParamsList(
 				'channel.goal.begin',
 				'channel.goal.progress',
 				'channel.goal.end',
+
+				// shared chat
+				'channel.shared_chat.begin',
+				'channel.shared_chat.update',
+				'channel.shared_chat.end',
 			] as Twitch.EventSub.Type[]
 		).map(type => createEventSubParams(type, '1', defaultCondition)),
 	];

@@ -840,7 +840,19 @@ namespace Twitch {
 			// goal
 			| 'channel.goal.begin'
 			| 'channel.goal.progress'
-			| 'channel.goal.end';
+			| 'channel.goal.end'
+
+			// shared chat
+			| 'channel.shared_chat.begin'
+			| 'channel.shared_chat.update'
+			| 'channel.shared_chat.end'
+
+			// channel
+			| 'channel.update'
+
+			// stream
+			| 'stream.online'
+			| 'stream.offline';
 	}
 
 	type Message = {
