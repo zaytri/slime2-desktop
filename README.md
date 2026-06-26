@@ -20,4 +20,6 @@ Here is what you need to run the app in development mode:
 6. `npm start` to start development mode.
    - Sometimes this fails and it shows being unable to delete something as part of the pre-start cleanup; usually you can just run it again and it'll work. Also make sure you don't already have the app running.
 
-If you're using VS Code, it will auto suggest useful extends from [extensions.json](.vscode/extensions.json) and [settings.json](.vscode/settings.json) in the `.vscode` folder.
+> When updating built-in widgets in `/resources/widgets`, you will need to close the app and run `npm start` again, since it only sets the `resources` folder upon initialization. Also, the widgets won't auto update, you will need to install a fresh version of the updated widget on a new tile.
+
+> If you're using VS Code, it will auto suggest useful extends from [extensions.json](.vscode/extensions.json) and [settings.json](.vscode/settings.json) in the `.vscode` folder.
