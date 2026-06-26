@@ -213,7 +213,7 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 							case 'empty':
 							default:
 								openDialog(
-									'Create New...',
+									'New Tile',
 									<CreateTileDialog
 										folderId={tile.folderId}
 										onCreateFolder={async folderName => {
@@ -233,10 +233,6 @@ function TileWrapper({ tile, icon, color, setNewTileId }: TileWrapperProps) {
 											});
 										}}
 										onCreateCustomWidget={async zipPath => {
-											// TODO use this
-											// const zipPath = await openZip();
-											// if (!zipPath) return;
-
 											const id = await installCustomWidget(zipPath);
 											addTile({
 												id,

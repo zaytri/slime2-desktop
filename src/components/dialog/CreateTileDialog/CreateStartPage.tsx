@@ -18,7 +18,7 @@ export default function CreateStartPage() {
 						setPage('widgets');
 					}}
 				>
-					New Widget
+					Install New Widget
 				</DialogConfirmButton>
 
 				<DialogConfirmButton
@@ -28,7 +28,7 @@ export default function CreateStartPage() {
 						setPage('folder');
 					}}
 				>
-					New Folder
+					Create New Folder
 				</DialogConfirmButton>
 			</div>
 

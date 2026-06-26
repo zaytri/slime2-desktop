@@ -45,7 +45,7 @@ export default function CreateTileDialog({
 				});
 				break;
 			case 'widgets':
-				setTitle('Create New Widget');
+				setTitle('Install New Widget');
 				if (folderId === 'main') {
 					setOnBack(() => {
 						setPage('start');
@@ -53,14 +53,14 @@ export default function CreateTileDialog({
 				}
 				break;
 			case 'custom':
-				setTitle('Import Custom Widget');
+				setTitle('Install Custom Widget');
 				setOnBack(() => {
 					setPage('widgets');
 				});
 				break;
 			case 'start':
 			default:
-				setTitle('Create New...');
+				setTitle('New Tile');
 				setOnBack(undefined);
 		}
 	}, [page]);
