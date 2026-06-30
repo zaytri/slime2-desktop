@@ -17,6 +17,7 @@ jobs:
   publish-tauri:
     permissions:
       contents: write
+
     strategy:
       fail-fast: false
       matrix:
@@ -36,8 +37,13 @@ jobs:
             args: ''
 
     runs-on: ${{ matrix.platform }}
+
+    outputs:
+      version: ${{ steps.tauri-build.outputs.appVersion }}
+
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@v7
 
       - name: Install Linux Dependencies
         if: runner.os == 'Linux'
@@ -68,7 +74,9 @@ jobs:
       - name: Tauri Info
         run: npm run tauri info
 
-      - uses: tauri-apps/tauri-action@v0
+      - name: Build Binaries
+        id: tauri-build
+        uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -77,7 +85,7 @@ jobs:
 
           SLIME2_FILE_SUFFIX: ${{ case(github.ref_name == 'release/live', '' ,github.ref_name == 'release/beta', '-beta', github.ref_name == 'release/debug', '-debug', '-test') }}_${{ format('{0}-{1}', runner.os, matrix.output_arch || runner.arch) }}
         with:
-          tagName: '${{ env.SLIME2_APP_VERSION}}'
+          tagName: ${{ env.SLIME2_APP_VERSION}}
           releaseName: 'Slime2 ${{ env.SLIME2_APP_VERSION }}'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
@@ -86,3 +94,18 @@ jobs:
           includeDebug: ${{ github.ref_name == 'release/debug' }}
           args: ${{ matrix.args }}
           assetNamePattern: 'Slime2-v[version]${{ env.SLIME2_FILE_SUFFIX }}[ext]'
+
+  publish-pkgbuild:
+    needs: publish-tauri
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: package
+        uses: heyhusen/archlinux-package-action@v3.0.1
+        with:
+          path: pkgbuild
+          pkgver: ${{ needs.publish-tauri.outputs.version }}
+          pkgrel: 1
+          updpkgsums: true

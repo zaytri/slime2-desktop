@@ -1,0 +1,7 @@
+Note: This is only for Arch Linux systems!
+
+1. Extract the contents of this ZIP file into a new folder.
+2. Navigate to the new folder in a terminal.
+3. Run this command:
+    makepkg -sci
+4. Slime2 should now be installed, along with all necessary dependencies!

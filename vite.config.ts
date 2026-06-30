@@ -26,8 +26,13 @@ export default defineConfig(async () => ({
 		port: 57142,
 		strictPort: true,
 		watch: {
-			// 3. tell vite to ignore watching src-tauri, src-overlay, and resources
-			ignored: ['**/src-tauri/**', '**/src-overlay/**', '**/resources/**'],
+			// 3. tell vite to ignore watching these folders for hot reloading
+			ignored: [
+				'**/src-tauri/**',
+				'**/src-overlay/**',
+				'**/resources/**',
+				'**/pkgbuild/**',
+			],
 		},
 	},
 }));
