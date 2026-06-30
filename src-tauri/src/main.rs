@@ -103,6 +103,7 @@ async fn main() {
 				}
 			}
 		}))
+		.plugin(tauri_plugin_window_state::Builder::new().build())
 		.plugin(
 			tauri_plugin_log::Builder::new()
 				// only log from slime2, not other rust crates

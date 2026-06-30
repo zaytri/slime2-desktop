@@ -1,0 +1,6 @@
+{
+	"identifier": "window-state",
+	"description": "This capability allows saving window positions and sizes and restoring them when the app is opened",
+	"windows": ["main"],
+	"permissions": ["window-state:default"]
+}

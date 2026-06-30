@@ -54,7 +54,8 @@
 				"event",
 				"version",
 				"opener",
-				"log"
+				"log",
+				"window-state"
 			],
 			"csp": {
 				"default-src": ["'self'", "http://localhost:*"],
