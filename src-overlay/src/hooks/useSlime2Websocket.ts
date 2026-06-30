@@ -1,6 +1,6 @@
 import { useLoaderData } from '@tanstack/react-router';
 import { nanoid } from 'nanoid';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { z } from 'zod/mini';
 import { WEBSOCKET_BASE_URL } from '../helpers/serverUrl';
 import logZodError from '../helpers/zodError';
@@ -19,19 +19,48 @@ const ResponseEventData = z.object({
 type ResponseEventData = z.infer<typeof ResponseEventData>;
 
 export default function useSlime2Websocket() {
-	const registeredRef = useRef(false);
-	const resolveRejectMapRef = useRef(
+	const websocketRef = useRef<WebSocket>(null);
+	const requestMapRef = useRef(
 		new Map<string, [(value: any) => void, (reason?: any) => void]>(),
 	);
 	const devLogEventsRef = useRef(false);
+	const reconnectTimerRef = useRef<number>(null);
+	const connectAttemptRef = useRef(0);
 
 	const { widgetId } = useLoaderData({ from: '/$' });
 	globalThis.slime2.widgetId = widgetId;
 
-	useEffect(() => {
-		if (registeredRef.current) return;
+	const connect = useCallback(() => {
+		if (websocketRef.current?.readyState === WebSocket.OPEN) {
+			// websocket already open
+			return;
+		}
 
 		const websocket = new WebSocket(WEBSOCKET_BASE_URL);
+		websocketRef.current = websocket;
+
+		async function waitForWebsocketOpen() {
+			return new Promise<void>((resolve, reject) => {
+				if (websocket.readyState !== websocket.OPEN) {
+					websocket.addEventListener(
+						'open',
+						() => {
+							resolve();
+						},
+						{ once: true },
+					);
+					websocket.addEventListener(
+						'close',
+						() => {
+							reject('Websocket closed while waiting for request');
+						},
+						{ once: true },
+					);
+				} else {
+					resolve();
+				}
+			});
+		}
 
 		// allow widget to make requests to slime2 using the slime2 var
 		globalThis.slime2.request = async (
@@ -55,39 +84,43 @@ export default function useSlime2Websocket() {
 
 			const requestId = `${requestType}_${nanoid()}_${Date.now()}`;
 
-			return new Promise((resolve, reject) => {
-				resolveRejectMapRef.current.set(requestId, [resolve, reject]);
-				websocket.send(
-					JSON.stringify({
-						type: 'request',
-						data: {
-							widget_id: widgetId,
-							request_id: requestId,
-							request_type: requestType,
-							payload,
-						},
-					}),
-				);
+			return new Promise(async (resolve, reject) => {
+				try {
+					await waitForWebsocketOpen();
+				} catch {
+					resolve(null);
+				}
+				requestMapRef.current.set(requestId, [resolve, reject]);
+				const message = JSON.stringify({
+					type: 'request',
+					data: {
+						widget_id: widgetId,
+						request_id: requestId,
+						request_type: requestType,
+						payload,
+					},
+				});
+				websocket.send(message);
 			});
 		};
 
 		// send registration message to slime2 upon open connection
-		const openListener = () => {
-			websocket.send(
-				JSON.stringify({
-					type: 'register',
-					data: {
-						id: widgetId,
-						channels: [],
-					},
-				}),
-			);
+		websocket.onopen = () => {
+			connectAttemptRef.current = 0;
+			console.info('Connected to Slime2!');
 
-			registeredRef.current = true;
+			const message = JSON.stringify({
+				type: 'register',
+				data: {
+					id: widgetId,
+					channels: [],
+				},
+			});
+			websocket.send(message);
 		};
 
 		// listen to websocket messages from slime2 to widget
-		const messageListener = async (messageEvent: MessageEvent<any>) => {
+		websocket.onmessage = async (messageEvent: MessageEvent<any>) => {
 			try {
 				const { widgetId, type, data } = WebSocketEvent.parse(
 					JSON.parse(messageEvent.data),
@@ -99,7 +132,7 @@ export default function useSlime2Websocket() {
 						const { request_id, response } = ResponseEventData.parse(data);
 
 						// find and resolve the related promise
-						const resolveReject = resolveRejectMapRef.current.get(request_id);
+						const resolveReject = requestMapRef.current.get(request_id);
 						if (!resolveReject) return;
 
 						const [resolve, reject] = resolveReject;
@@ -111,7 +144,7 @@ export default function useSlime2Websocket() {
 						}
 
 						// delete the related resolver
-						resolveRejectMapRef.current.delete(request_id);
+						requestMapRef.current.delete(request_id);
 					} catch (error) {
 						logZodError(error);
 					}
@@ -148,17 +181,57 @@ export default function useSlime2Websocket() {
 					dispatchEvent(customEvent);
 				}
 			} catch (error) {
+				console.error('Websocket Message Error');
 				logZodError(error);
 			}
 		};
 
-		websocket.addEventListener('open', openListener);
-		websocket.addEventListener('message', messageListener);
-
-		return () => {
-			websocket.removeEventListener('open', openListener);
-			websocket.removeEventListener('message', messageListener);
+		websocket.onerror = () => {
 			websocket.close();
 		};
-	}, []);
+
+		websocket.onclose = () => {
+			reconnect();
+		};
+	}, [widgetId]);
+
+	const reconnect = useCallback(() => {
+		if (reconnectTimerRef.current !== null) {
+			// websocket already reconnecting
+			return;
+		}
+
+		// exponential delay, up to 30 seconds
+		const baseDelay = Math.min(500 * 2 ** connectAttemptRef.current, 30 * 1000);
+
+		// deviate delay from -500 to 500 milliseconds
+		const deviation = Math.random() * 1000 - 500;
+
+		const reconnectDelay = Math.max(0, Math.floor(baseDelay + deviation));
+
+		connectAttemptRef.current += 1;
+		console.info(
+			'Disconnected from Slime2! Reconnect attempt:',
+			connectAttemptRef.current,
+			'Reconnecting in',
+			reconnectDelay,
+			'milliseconds.',
+		);
+
+		reconnectTimerRef.current = setTimeout(() => {
+			connect();
+			reconnectTimerRef.current = null;
+		}, reconnectDelay);
+	}, [connect]);
+
+	useEffect(() => {
+		connect();
+
+		return () => {
+			clearTimeout(reconnectTimerRef.current ?? undefined);
+
+			websocketRef.current?.close(3000, 'Component Unmounted');
+			globalThis.slime2.request = async () => null;
+		};
+	}, [connect]);
 }
