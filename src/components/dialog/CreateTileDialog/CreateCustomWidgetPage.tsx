@@ -8,7 +8,7 @@ import { openZip } from '@/helpers/openFile';
 import logZodError from '@/helpers/zodError';
 import {
 	getWidgetMetaServices,
-	WidgetMetaZ,
+	WidgetMetaSchema,
 	type WidgetMeta,
 } from '@@/json/widgetMeta';
 import ArrowDownTraySvg from '@@/svg/ArrowDownTraySvg';
@@ -34,7 +34,9 @@ export default function CreateCustomWidgetPage() {
 		try {
 			const extractedString = await extractWidgetDetails(zipPath);
 			try {
-				const extractedMeta = WidgetMetaZ.parse(JSON.parse(extractedString));
+				const extractedMeta = WidgetMetaSchema.parse(
+					JSON.parse(extractedString),
+				);
 				setWidgetMeta(extractedMeta);
 				setZipPath(zipPath);
 				setError(null);

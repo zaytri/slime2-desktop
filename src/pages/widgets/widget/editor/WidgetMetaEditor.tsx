@@ -30,6 +30,19 @@ export default function WidgetMetaEditor({
 					<section className='flex flex-col gap-3 rounded-2 border-2 border-zinc-300 bg-white p-3 outline outline-white'>
 						<TextField
 							compact
+							label='Unique ID'
+							placeholder='creator:widget-name'
+							value={meta.id}
+							onChange={newValue => {
+								onChange({
+									...meta,
+									id: newValue,
+								});
+							}}
+						/>
+
+						<TextField
+							compact
 							label='Name'
 							placeholder='My Widget'
 							value={meta.name}
