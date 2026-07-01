@@ -13,6 +13,9 @@ concurrency:
   group: ${{ github.ref_name }}
   cancel-in-progress: true
 
+env:
+  VERSION_SUFFIX: ${{ case(github.ref_name == 'release/live', '' ,github.ref_name == 'release/beta', '-beta', github.ref_name == 'release/debug', '-debug', '-test') }}
+
 jobs:
   publish-tauri:
     permissions:
@@ -37,9 +40,6 @@ jobs:
             args: ''
 
     runs-on: ${{ matrix.platform }}
-
-    outputs:
-      version: ${{ steps.tauri-build.outputs.appVersion }}
 
     steps:
       - name: Checkout
@@ -78,34 +78,57 @@ jobs:
         id: tauri-build
         uses: tauri-apps/tauri-action@v0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
           # the action replaces \_\_VERSION\_\_ with the app version.
-          SLIME2_APP_VERSION: v__VERSION__${{ case(github.ref_name == 'release/live', '', github.ref_name == 'release/beta', '-beta', github.ref_name == 'release/debug', '-debug', format('-test-{0}', github.sha)) }}
-
-          SLIME2_FILE_SUFFIX: ${{ case(github.ref_name == 'release/live', '' ,github.ref_name == 'release/beta', '-beta', github.ref_name == 'release/debug', '-debug', '-test') }}_${{ format('{0}-{1}', runner.os, matrix.output_arch || runner.arch) }}
+          APP_VERSION_FULL: __VERSION__${{ env.VERSION_SUFFIX }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILE_SUFFIX: ${{ format('{0}-{1}', runner.os, matrix.output_arch || runner.arch) }}
         with:
-          tagName: ${{ env.SLIME2_APP_VERSION}}
-          releaseName: 'Slime2 ${{ env.SLIME2_APP_VERSION }}'
+          tagName: 'v${{ env.APP_VERSION_FULL }}'
+          releaseName: 'Slime2 v${{ env.APP_VERSION_FULL }}'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: ${{ github.ref_name != 'release/live' }}
           includeRelease: ${{ github.ref_name != 'release/debug' }}
           includeDebug: ${{ github.ref_name == 'release/debug' }}
           args: ${{ matrix.args }}
-          assetNamePattern: 'Slime2-v[version]${{ env.SLIME2_FILE_SUFFIX }}[ext]'
+          assetNamePattern: 'Slime2-v[version]${{ env.VERSION_SUFFIX }}_${{ env.FILE_SUFFIX }}[ext]'
+
+    outputs:
+      app_version: ${{ steps.tauri-build.outputs.appVersion }}
+      release_id: ${{ steps.tauri-build.outputs.releaseId }}
+      arch_linux_file_name: 'Slime2-v${{ steps.tauri-build.outputs.appVersion }}${{ env.VERSION_SUFFIX }}_Arch-Linux.zip'
 
   publish-pkgbuild:
+    permissions:
+      contents: write
     needs: publish-tauri
+    env:
+      APP_VERSION: ${{ needs.publish-tauri.outputs.app_version }}
+      RELEASE_ID: ${{ needs.publish-tauri.outputs.release_id }}
+      FILE_NAME: ${{ needs.publish-tauri.outputs.arch_linux_file_name }}
+
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: package
+      - name: Update PKGBUILD
         uses: heyhusen/archlinux-package-action@v3.0.1
         with:
           path: pkgbuild
-          pkgver: ${{ needs.publish-tauri.outputs.version }}
+          pkgver: ${{ env.APP_VERSION }}
           pkgrel: 1
           updpkgsums: true
+
+      - name: Create Arch Linux ZIP
+        uses: thedoctor0/zip-release@0.7.6
+        with:
+          path: pkgbuild
+          type: 'zip'
+          filename: ${{ env.FILE_NAME }}
+
+      - name: Upload ZIP to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          release_id: ${{ env.RELEASE_ID }}
+          file: ${{ env.FILE_NAME }}
