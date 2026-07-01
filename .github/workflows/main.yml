@@ -126,9 +126,11 @@ jobs:
           path: pkgbuild
           type: 'zip'
           filename: ${{ env.FILE_NAME }}
+          custom: '--junk-paths'
 
       - name: Upload ZIP to Release
         uses: svenstaro/upload-release-action@v2
         with:
           release_id: ${{ env.RELEASE_ID }}
           file: ${{ env.FILE_NAME }}
+          draft: true
