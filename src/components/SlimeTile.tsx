@@ -25,6 +25,16 @@ export default function SlimeTile({
 					'h-3/4 rounded-slime bg-none transition-[border-radius,height] group-over:h-5/6',
 			)}
 		>
+			{/* shine */}
+			<div
+				className={clsx(
+					'absolute h-[8%] w-[14%] rounded-100% bg-white/50',
+					type === 'folder'
+						? 'top-[10%] left-[3%] -rotate-50'
+						: 'top-[18%] left-[18%] -rotate-35',
+				)}
+			></div>
+
 			{/* wave svg */}
 			<div
 				className={clsx(
