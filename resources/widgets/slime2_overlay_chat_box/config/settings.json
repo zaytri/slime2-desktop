@@ -508,7 +508,7 @@
 						"label": "Keep Original Usernames?",
 						"halfSpan": true,
 						"defaultValue": false,
-						"description": "Shows the member's Twitch username in parentheses after their name."
+						"description": "Shows the user's Twitch username in parentheses after their member name."
 					}
 				}
 			},
@@ -520,7 +520,7 @@
 						"type": "toggle-input",
 						"label": "Show original usernames for users with localized display names?",
 						"defaultValue": false,
-						"description": "Localized Display Names: https://blog.twitch.tv/en/2016/08/22/localized-display-names-e00ee8d3250a/"
+						"description": "Shows the user's Twitch username in parenthesis after their localized display name.\nLocalized Display Names: https://blog.twitch.tv/en/2016/08/22/localized-display-names-e00ee8d3250a/"
 					}
 				}
 			},
