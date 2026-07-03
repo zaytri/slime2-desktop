@@ -60,6 +60,7 @@ export default function WidgetEditor({ settings, onBack }: WidgetEditorProps) {
 		} else {
 			setSaving(true);
 			setWidgetMeta({
+				id: newWidgetMeta.id.trim() || widgetMeta!.id,
 				name: newWidgetMeta.name.trim() || widgetMeta!.name,
 				creator: newWidgetMeta.creator.trim() || widgetMeta!.creator,
 				version: newWidgetMeta.version.trim() || widgetMeta!.version,
