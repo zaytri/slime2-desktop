@@ -2,11 +2,14 @@ import type { Member, ProxiedMessage, System } from 'pluralmind';
 import * as pluralmind from 'pluralmind';
 
 import Random from '@/helpers/random';
+import { randomMockUser } from '../mock';
 import { MOCK_PRONOUNS } from './pronouns';
 
 pluralmind.updateConfig({
 	cacheDuration: 5 * 60 * 1000, // 5 minutes
 });
+
+const MOCK_PROXY_PREFIX = 'm';
 
 export async function getSystemProxiedMessage(
 	platform: 'twitch',
@@ -16,19 +19,21 @@ export async function getSystemProxiedMessage(
 	if (platform !== 'twitch' || !message) return null;
 
 	if (userId.startsWith('mock_')) {
-		return Random.chance(10) ? makeMockMessage(message) : null;
+		const fullProxyPrefix = `${MOCK_PROXY_PREFIX}: `;
+		return message.startsWith(fullProxyPrefix)
+			? mockProxiedMessage(message.substring(fullProxyPrefix.length))
+			: null;
 	}
 
 	const system = await pluralmind.getSystem(userId);
 	return pluralmind.getProxiedMessage(system, message) ?? null;
 }
 
-function makeMockMessage(message: string): ProxiedMessage {
-	const memberId = Random.integer(1, 1000);
+function mockProxiedMessage(body: string): ProxiedMessage {
 	const member: Member = {
-		id: memberId,
-		name: `MockMember${memberId}`,
-		proxies: ['t'],
+		id: Random.integer(1, 1000),
+		name: randomMockUser('Member'),
+		proxies: [MOCK_PROXY_PREFIX],
 		case_sensitive: false,
 		color: Random.boolean() ? Random.hexCode() : null,
 		pronouns: Random.boolean() ? Random.item(MOCK_PRONOUNS).join('/') : null,
@@ -47,6 +52,6 @@ function makeMockMessage(message: string): ProxiedMessage {
 		member,
 		color: member.color,
 		pronouns: member.pronouns,
-		body: message,
+		body,
 	};
 }
