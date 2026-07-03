@@ -512,6 +512,18 @@
 					}
 				}
 			},
+			"localized-section": {
+				"type": "section",
+				"label": "Localized Names",
+				"settings": {
+					"localized-show-usernames": {
+						"type": "toggle-input",
+						"label": "Show original usernames for users with localized display names?",
+						"defaultValue": false,
+						"description": "Localized Display Names: https://blog.twitch.tv/en/2016/08/22/localized-display-names-e00ee8d3250a/"
+					}
+				}
+			},
 			"emotes-section": {
 				"type": "section",
 				"label": "Emotes",

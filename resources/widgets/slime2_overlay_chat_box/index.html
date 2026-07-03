@@ -4,21 +4,17 @@
 <template id="message-template">
 	<div class="message">
 		<div class="message-clamp">
-			<span class="user"></span><span class="content"></span>
+			<span class="user"><span class="badges"></span></span
+			><span class="content"></span>
 		</div>
 	</div>
 </template>
 
-<!-- user template, inserted into the user class -->
+<!-- user label template, inserted into the user class -->
 <template id="user-template"
-	><span class="badges"></span><span class="name"></span
-	><span class="pronouns"></span
-></template>
-
-<!-- proxied user template, inserted into the user class -->
-<template id="proxied-user-template"
-	><span class="name proxied member"></span><span class="name proxied username"></span
-	><span class="pronouns proxied"></span
+	><span class="user-label"
+		><span class="display-name"></span><span class="username"></span
+		><span class="pronouns"></span></span
 ></template>
 
 <!-- badge template, inserted into the badges class -->
