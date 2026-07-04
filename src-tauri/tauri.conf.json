@@ -68,7 +68,8 @@
 					"https://api.pronouns.alejo.io",
 					"https://pronoundb.org",
 					"https://api.betterttv.net",
-					"https://api.frankerfacez.com"
+					"https://api.frankerfacez.com",
+					"https://pluralmind.chat"
 				],
 				"style-src": ["'self'", "https://fonts.googleapis.com"],
 				"font-src": ["https://fonts.gstatic.com"],
