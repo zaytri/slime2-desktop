@@ -879,7 +879,7 @@ function buildTextFragments(textFragment, { className = undefined } = {}) {
 	return parsedFragments.map(fragment => {
 		const fragmentClone =
 			fragment.type === 'emote'
-				? buildParsedEmoteFragment(fragment)
+				? buildParsedEmoteFragment(fragment, { className })
 				: buildParsedTextFragment(fragment, { className });
 		return fragmentClone;
 	});
