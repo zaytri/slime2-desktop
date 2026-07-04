@@ -313,10 +313,15 @@
 
 .text,
 .emote,
+.mention,
 .cheer-amount {
 	display: inline;
 	white-space: pre-wrap;
 	overflow-wrap: anywhere;
+}
+
+.mention {
+	font-weight: bolder;
 }
 
 .cheer-amount {
