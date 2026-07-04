@@ -125,7 +125,7 @@ function handleRaid(data) {
 		type,
 		{
 			'{username}': { value: from_broadcaster_user_name, accent: true },
-			'{amount}': { value: viewers, accent: true },
+			'{amount}': { value: viewers.toString(), accent: true },
 		},
 		alertId => {
 			const getValue = createGetValueFunction(alertId, type);
@@ -176,7 +176,7 @@ async function handleReward(data) {
 		{
 			'{username}': { value: usernameValue, accent: true },
 			'{reward}': { value: title, accent: true },
-			'{amount}': { value: cost, accent: true },
+			'{amount}': { value: cost.toString(), accent: true },
 			'{message}': { value: messageValue },
 		},
 		alertId => {
@@ -222,7 +222,7 @@ async function handlePowerUp(data) {
 		{
 			'{username}': { value: usernameValue, accent: true },
 			'{power_up}': { value: title, accent: true },
-			'{amount}': { value: bits, accent: true },
+			'{amount}': { value: bits.toString(), accent: true },
 			'{message}': { value: messageValue },
 		},
 		alertId => {
@@ -259,7 +259,7 @@ async function handleCheer(data) {
 		type,
 		{
 			'{username}': { value: usernameValue, accent: true },
-			'{amount}': { value: bits, accent: true },
+			'{amount}': { value: bits.toString(), accent: true },
 			'{message}': { value: messageValue },
 		},
 		alertId => {
@@ -309,7 +309,7 @@ async function handleSub(data) {
 					tier === '3000' ? 'Tier 3' : tier === '2000' ? 'Tier 2' : 'Tier 1',
 				accent: true,
 			},
-			'{amount}': { value: cumulative_months ?? 1, accent: true },
+			'{amount}': { value: (cumulative_months ?? 1).toString(), accent: true },
 			'{message}': { value: messageValue },
 		},
 		alertId => {
@@ -349,7 +349,7 @@ function handleSubGift(data) {
 					tier === '3000' ? 'Tier 3' : tier === '2000' ? 'Tier 2' : 'Tier 1',
 				accent: true,
 			},
-			'{amount}': { value: total, accent: true },
+			'{amount}': { value: total.toString(), accent: true },
 		},
 		alertId => {
 			const getValue = createGetValueFunction(alertId, type);
@@ -399,6 +399,20 @@ function handleChatMessageDelete(data) {
  * @param {(alertId: string) => boolean} [validateAlert]
  */
 function handleAlerts(userId, type, variables, validateAlert) {
+	/** @type {string[]} */
+	const hideWords = Widget.values.get('hide-words') ?? [];
+
+	// filter out alerts that contain these words
+	if (
+		hideWords.some(hideWord => {
+			return Object.values(variables).some(({ value }) => {
+				return value.toString().includes(hideWord);
+			});
+		})
+	) {
+		return;
+	}
+
 	/** @type {string[]} */
 	const alerts = Widget.values.get(type) ?? [];
 

@@ -1,11 +1,20 @@
 {
+	"notes": {
+		"label": "Notes",
+		"settings": {
+			"condition-note": {
+				"type": "text-display",
+				"label": "Alert conditions are checked from top to bottom, so order them from most specific to least specific."
+			},
+			"multiple-media-note": {
+				"type": "text-display",
+				"label": "If multiple images/videos/sounds are added to an alert, a random one is chosen each time the alert plays."
+			}
+		}
+	},
 	"twitch-alerts": {
 		"label": "Twitch Alerts",
 		"settings": {
-			"alert-description": {
-				"type": "text-display",
-				"label": "Alert conditions are checked from top to bottom, so you should order them from most specific to least specific. Additionally, if multiple images, videos, or sounds are added to an alert, a random one is chosen."
-			},
 			"follow": {
 				"type": "multi-section",
 				"label": "Follow",
@@ -3766,7 +3775,7 @@
 						"label": "Keep Original Usernames?",
 						"halfSpan": true,
 						"defaultValue": true,
-						"description": "Shows the member's Twitch username in parentheses after their name."
+						"description": "Shows the user's Twitch username in parentheses after their member name."
 					}
 				}
 			}
