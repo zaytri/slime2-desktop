@@ -86,8 +86,7 @@ jobs:
           tagName: 'v${{ env.APP_VERSION_FULL }}'
           releaseName: 'Slime2 v${{ env.APP_VERSION_FULL }}'
           releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: true
-          prerelease: ${{ github.ref_name != 'release/live' }}
+          prerelease: true
           includeRelease: ${{ github.ref_name != 'release/debug' }}
           includeDebug: ${{ github.ref_name == 'release/debug' }}
           args: ${{ matrix.args }}
