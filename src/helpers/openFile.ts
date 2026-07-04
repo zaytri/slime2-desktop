@@ -126,7 +126,7 @@ const DEFAULT_VIDEO_FILTER: DialogFilter = {
 	extensions: [...VIDEO_FORMATS.map(format => format.toLowerCase())],
 };
 
-export const AUDIO_FORMATS = ['MP3', 'WAV'];
+export const AUDIO_FORMATS = ['MP3', 'WAV', 'OGG', 'FLAC'];
 
 const DEFAULT_AUDIO_FILTER: DialogFilter = {
 	name: 'Audio Files',
