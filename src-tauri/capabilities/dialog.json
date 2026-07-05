@@ -1,6 +1,6 @@
 {
 	"identifier": "dialog",
-	"description": "This capability allows the dialogs used to open or save files",
+	"description": "This capability allows the dialogs used to open/save files and show messages.",
 	"windows": ["main"],
-	"permissions": ["dialog:allow-open", "dialog:allow-save"]
+	"permissions": ["dialog:default"]
 }

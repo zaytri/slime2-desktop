@@ -7,7 +7,9 @@ use std::{
 };
 
 use keyring_core::{Entry, set_default_store};
+use sysinfo::ProcessRefreshKind;
 use tauri::{AppHandle, Manager};
+use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_log::{Target, TargetKind};
 use time::macros::format_description;
 
@@ -183,6 +185,19 @@ async fn main() {
 		.manage(AppState::default())
 		.setup(|app: &mut tauri::App| {
 			log::info!("Welcome to Slime2!");
+
+			// check if OBS browser process is running
+			let system_info = sysinfo::System::new_with_specifics(sysinfo::RefreshKind::nothing().with_processes(ProcessRefreshKind::nothing()));
+			for _obs_browser_process in system_info.processes_by_name("obs-browser".as_ref()) {
+				app
+					.dialog()
+					.message("Slime2 has detected that OBS Browser Sources are already running.\nBrowser sources with Slime2 overlays will not work until you refresh them or restart OBS.\n\nIf you use the Autostarter plugin for OBS, you can set that up to automatically launch Slime2 when you launch OBS. To ensure that Slime2 opens before the browser sources load, you will need to disable \"Ask on launch\" in the Autostarter settings.")
+					.title("Warning: OBS Browser Detected")
+					.buttons(tauri_plugin_dialog::MessageDialogButtons::Ok)
+					.kind(tauri_plugin_dialog::MessageDialogKind::Warning)
+					.show(|_| {});
+				break;
+			}
 
 			// set up keyring on linux
 
