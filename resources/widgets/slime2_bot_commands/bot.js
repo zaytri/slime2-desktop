@@ -189,13 +189,19 @@ async function handleChatMessage(data, eventDate) {
 		for (let i = 1; i < 10; i++) {
 			const pattern = `{${i}}`;
 			if (reply.includes(pattern)) {
+				/** @type {string} */
 				const messageArgument = messageArguments[i - 1];
 				if (!messageArgument) {
 					// argument specified in reply but missing in message
 					argumentError = true;
 					break;
 				}
-				reply = reply.replaceAll(pattern, messageArgument);
+				reply = reply.replaceAll(
+					pattern,
+					messageArgument.startsWith('@') && messageArgument.length > 1
+						? messageArgument.substring(1)
+						: messageArgument,
+				);
 			}
 		}
 
