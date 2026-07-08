@@ -298,6 +298,7 @@ async function handleSub(data) {
 		: null;
 	const usernameValue = proxiedData?.proxiedDisplayName ?? user_name;
 	const messageValue = proxiedData?.proxiedMessage ?? message?.text;
+	const amountValue = cumulative_months || 1;
 
 	handleAlerts(
 		user_id,
@@ -309,7 +310,7 @@ async function handleSub(data) {
 					tier === '3000' ? 'Tier 3' : tier === '2000' ? 'Tier 2' : 'Tier 1',
 				accent: true,
 			},
-			'{amount}': { value: (cumulative_months ?? 1).toString(), accent: true },
+			'{amount}': { value: amountValue.toString(), accent: true },
 			'{message}': { value: messageValue },
 		},
 		alertId => {
@@ -323,9 +324,9 @@ async function handleSub(data) {
 				case 'tier':
 					return tier === tierCondition;
 				case 'at-least':
-					return amountCondition === 1 || cumulative_months >= amountCondition;
+					return amountValue >= amountCondition;
 				case 'exactly':
-					return amountCondition === 1 || cumulative_months === amountCondition;
+					return amountValue === amountCondition;
 			}
 			return false;
 		},
