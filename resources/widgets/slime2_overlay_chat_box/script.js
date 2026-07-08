@@ -535,11 +535,12 @@ async function handleChatMessage(data, eventDate) {
 		let emoteCount = 0;
 		let emoteOnly = true;
 		for (const child of contentElement.children) {
-			if (
-				// ignore original fragment in proxied message for emote counting
-				!child.classList.contains('fragment-original') &&
-				child.textContent.trim()
-			) {
+			// ignore original fragment in proxied message for emote counting
+			if (child.classList.contains('fragment-original')) {
+				continue;
+			}
+
+			if (child.textContent.trim()) {
 				emoteOnly = false;
 				break;
 			}

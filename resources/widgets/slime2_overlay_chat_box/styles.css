@@ -381,8 +381,7 @@
  * Plurality *
  *************/
 
-.user-label-proxied,
-.fragment-proxied {
+#widget:not(.use-plurality) :is(.user-label-proxied, .fragment-proxied) {
 	display: none;
 }
 
