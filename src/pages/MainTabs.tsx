@@ -14,6 +14,7 @@ import { TileColor } from '@/helpers/tileColors';
 import { useSystemFontsQuery } from '@/hooks/useSystemFontsQuery';
 import useTwitchBot from '@/hooks/useTwitchBot';
 import useTwitchWebsocket from '@/hooks/useTwitchWebsocket';
+import { useUnsuspender } from '@/hooks/useUnsuspender';
 import useWidgetCoreChange from '@/hooks/useWidgetCoreChange';
 import useWidgetRegistration from '@/hooks/useWidgetRegistration';
 import useWidgetRequest from '@/hooks/useWidgetRequest';
@@ -36,6 +37,7 @@ export default function MainTabsWrapper() {
 }
 
 function MainTabsHooksWrapper({ children }: Props.WithChildren) {
+	useUnsuspender();
 	useSystemFontsQuery();
 	useWidgetRegistration();
 	useWidgetRequest();
