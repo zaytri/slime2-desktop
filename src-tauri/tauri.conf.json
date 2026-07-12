@@ -43,7 +43,8 @@
 				"minHeight": 700,
 				"center": true,
 				"acceptFirstMouse": true,
-				"backgroundThrottling": "disabled"
+				"backgroundThrottling": "disabled",
+				"generalAutofillEnabled": false
 			}
 		],
 		"security": {
