@@ -18,6 +18,7 @@ import SettingsProvider from './contexts/settings/SettingsProvider';
 import TileLocationsProvider from './contexts/tile_locations/TileLocationsProvider';
 import TileMetasProvider from './contexts/tile_metas/TileMetasProvider';
 import TileSwapProvider from './contexts/tile_swap/TileSwapProvider';
+import UpdateProvider from './contexts/update/UpdateProvider';
 import WidgetMetasProvider from './contexts/widget_metas/WidgetMetasProvider';
 import { queryClient } from './helpers/queryClient';
 import MainTabs from './pages/MainTabs';
@@ -62,27 +63,29 @@ forwardConsole('error', error);
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>
 		<QueryClientProvider client={queryClient}>
-			<SettingsProvider>
-				<FolderIdProvider>
-					<TileLocationsProvider>
-						<TileMetasProvider>
-							<WidgetMetasProvider>
-								<AccountsProvider>
-									<EventsLogProvider>
-										<TileSwapProvider>
-											<BotLogsProvider>
-												<DialogProvider>
-													<MainTabs />
-												</DialogProvider>
-											</BotLogsProvider>
-										</TileSwapProvider>
-									</EventsLogProvider>
-								</AccountsProvider>
-							</WidgetMetasProvider>
-						</TileMetasProvider>
-					</TileLocationsProvider>
-				</FolderIdProvider>
-			</SettingsProvider>
+			<UpdateProvider>
+				<SettingsProvider>
+					<FolderIdProvider>
+						<TileLocationsProvider>
+							<TileMetasProvider>
+								<WidgetMetasProvider>
+									<AccountsProvider>
+										<EventsLogProvider>
+											<TileSwapProvider>
+												<BotLogsProvider>
+													<DialogProvider>
+														<MainTabs />
+													</DialogProvider>
+												</BotLogsProvider>
+											</TileSwapProvider>
+										</EventsLogProvider>
+									</AccountsProvider>
+								</WidgetMetasProvider>
+							</TileMetasProvider>
+						</TileLocationsProvider>
+					</FolderIdProvider>
+				</SettingsProvider>
+			</UpdateProvider>
 		</QueryClientProvider>
 	</React.StrictMode>,
 );

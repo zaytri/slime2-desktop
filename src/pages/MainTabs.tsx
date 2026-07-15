@@ -9,6 +9,7 @@ import { useFolderId } from '@/contexts/folder_id/useFolderId';
 import { useSettings } from '@/contexts/settings/useSettings';
 import { useTileMeta } from '@/contexts/tile_metas/useTileMeta';
 import useTileSwap from '@/contexts/tile_swap/useTileSwap';
+import useUpdate from '@/contexts/update/useUpdate';
 import WidgetsPanelProvider from '@/contexts/widgets_panel/WidgetsPanelProvider';
 import { TileColor } from '@/helpers/tileColors';
 import { useSystemFontsQuery } from '@/hooks/useSystemFontsQuery';
@@ -84,7 +85,7 @@ function MainTabs() {
 							className='bg-linear-to-b from-rose-300 to-pink-300 text-pink-950'
 						>
 							Accounts
-							<AccountsNotification />
+							<AccountsNotificationDot />
 						</StyledTab>
 						<StyledTab
 							disabled={movingTileMode}
@@ -93,6 +94,7 @@ function MainTabs() {
 							className='bg-linear-to-b from-cyan-300 to-sky-400 text-sky-950'
 						>
 							Settings
+							<SettingsNotificationDot />
 						</StyledTab>
 						<StyledTab
 							disabled={movingTileMode}
@@ -223,18 +225,32 @@ const StyledPanel = forwardRef<
 	);
 });
 
-function AccountsNotification() {
+function AccountsNotificationDot() {
 	const accounts = useAccounts();
+	const accountNeedsReauth = Object.values(accounts).some(account => {
+		return account.reauthorize;
+	});
 
-	if (
-		Object.values(accounts).some(account => {
-			return account.reauthorize;
-		})
-	) {
-		return (
-			<div className='absolute top-2 right-0 size-2.5 rounded-full bg-rose-600'></div>
-		);
+	if (accountNeedsReauth) {
+		return <NotificationDot className='bg-rose-600' />;
 	} else {
 		return null;
 	}
+}
+
+function SettingsNotificationDot() {
+	const update = useUpdate();
+	if (update) {
+		return <NotificationDot className='bg-violet-500' />;
+	} else {
+		return null;
+	}
+}
+
+function NotificationDot({ className }: Props.WithClassName) {
+	return (
+		<div
+			className={clsx('absolute top-2 right-0 size-3 rounded-full', className)}
+		></div>
+	);
 }

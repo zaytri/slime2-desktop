@@ -3,9 +3,12 @@ import ToggleField from '@/components/input_fields/ToggleField';
 import GearSvg from '@/components/svg/GearSvg';
 import { useDialog } from '@/contexts/dialog/useDialog';
 import { useSettings } from '@/contexts/settings/useSettings';
+import useUpdate from '@/contexts/update/useUpdate';
 import { revealLogFile } from '@/helpers/commands';
 import useAppVersionQuery from '@/hooks/useAppVersionQuery';
 import AboutDialog from '@@/dialog/AboutDialog';
+import UpdateDialog from '@@/dialog/UpdateDialog';
+import ArrowDownTraySvg from '@@/svg/ArrowDownTraySvg';
 import BookSvg from '@@/svg/BookSvg';
 import EyeSvg from '@@/svg/EyeSvg';
 
@@ -13,6 +16,7 @@ export default function SettingsPanel() {
 	const appVersionQuery = useAppVersionQuery();
 	const { settings, setSettings } = useSettings();
 	const { openDialog } = useDialog();
+	const update = useUpdate();
 
 	return (
 		<div className='flex flex-1 p-4'>
@@ -26,6 +30,25 @@ export default function SettingsPanel() {
 					{appVersionQuery.data && (
 						<p className='self-end font-bold'>Slime2 v{appVersionQuery.data}</p>
 					)}
+
+					<HeaderButton
+						label='Update Available!'
+						icon={ArrowDownTraySvg}
+						className='border-purple-300 bg-purple-300 from-purple-300 to-violet-400 text-violet-900 outline-2 outline-offset-2 outline-white over:outline-white'
+						onClick={() => {
+							openDialog(
+								'Update Available!',
+								<UpdateDialog
+									update={
+										update || {
+											version: '1.5.0',
+											currentVersion: '1.4.2',
+										}
+									}
+								/>,
+							);
+						}}
+					/>
 
 					<HeaderButton
 						label='About'
