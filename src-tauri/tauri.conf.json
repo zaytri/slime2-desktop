@@ -5,8 +5,13 @@
 		"frontendDist": "../dist",
 		"devUrl": "http://localhost:57142"
 	},
+	"productName": "Slime2",
+	"mainBinaryName": "Slime2",
+	"version": "../package.json",
+	"identifier": "stream.slime2.desktop",
 	"bundle": {
 		"active": true,
+		"createUpdaterArtifacts": true,
 		"resources": {
 			"../resources/overlay_server": "overlay_server/",
 			"../resources/widgets": "widgets/",
@@ -29,10 +34,6 @@
 			}
 		}
 	},
-	"productName": "Slime2",
-	"mainBinaryName": "Slime2",
-	"version": "../package.json",
-	"identifier": "stream.slime2.desktop",
 	"app": {
 		"windows": [
 			{
@@ -57,7 +58,9 @@
 				"version",
 				"opener",
 				"log",
-				"window-state"
+				"window-state",
+				"updater",
+				"process"
 			],
 			"csp": {
 				"default-src": ["'self'", "http://localhost:*"],
@@ -78,6 +81,17 @@
 				"img-src": ["'self'", "http://localhost:*", "https:", "data:"],
 				"worker-src": ["'self'", "http://localhost:*", "blob:"],
 				"script-src-elem": ["'self'", "http://localhost:*"]
+			}
+		}
+	},
+	"plugins": {
+		"updater": {
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQwQ0Y5OTM1MjdGQjU3RTMKUldUalYvc25OWm5QUVBlVzBmcnlpS0NmVEIrMnpVeURBcnFOUnpHVlJrYUUrM2p0MWZwSmlUWTkK",
+			"endpoints": [
+				"https://github.com/zaytri/slime2-desktop/releases/download/latest.json"
+			],
+			"windows": {
+				"installMode": "passive"
 			}
 		}
 	}

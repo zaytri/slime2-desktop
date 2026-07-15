@@ -98,13 +98,17 @@ async fn main() {
 		// tauri_plugin_single_instance MUST be the first plugin to work
 		.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
 			// https://v2.tauri.app/plugin/single-instance/#focusing-on-new-instance
-			// window label is "main", while the title is "Slime2"
+			// window label is "main" (default), while the title is "Slime2"
 			if let Some(window) = app.get_webview_window("main") {
 				if let Err(error) = window.set_focus() {
 					eprintln!("Failed to focus main window! {}", error);
 				}
 			}
 		}))
+		.plugin(tauri_plugin_updater::Builder::new().default_version_comparator(|current, update| {
+			update.version != current
+		}).build())
+		.plugin(tauri_plugin_process::init())
 		.plugin(tauri_plugin_window_state::Builder::new().build())
 		.plugin(
 			tauri_plugin_log::Builder::new()

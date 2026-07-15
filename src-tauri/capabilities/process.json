@@ -1,0 +1,6 @@
+{
+	"identifier": "process",
+	"description": "This capability enables the exit and restart commands.",
+	"windows": ["main"],
+	"permissions": ["process:default"]
+}

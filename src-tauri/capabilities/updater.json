@@ -1,0 +1,6 @@
+{
+	"identifier": "updater",
+	"description": "This capability allows the app to update itself.",
+	"windows": ["main"],
+	"permissions": ["updater:default"]
+}
