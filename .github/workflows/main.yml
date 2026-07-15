@@ -76,7 +76,7 @@ jobs:
 
       - name: Build Binaries
         id: tauri-build
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           # the action replaces \_\_VERSION\_\_ with the app version.
           APP_VERSION_FULL: __VERSION__${{ env.VERSION_SUFFIX }}
@@ -87,10 +87,8 @@ jobs:
           releaseName: 'Slime2 v${{ env.APP_VERSION_FULL }}'
           releaseBody: 'See the assets to download this version and install.'
           prerelease: true
-          includeRelease: ${{ github.ref_name != 'release/debug' }}
-          includeDebug: ${{ github.ref_name == 'release/debug' }}
-          args: ${{ matrix.args }}
-          assetNamePattern: 'Slime2-v[version]${{ env.VERSION_SUFFIX }}_${{ env.FILE_SUFFIX }}[ext]'
+          args: ${{ format('{0}{1}', matrix.args, case(github.ref_name == 'release/debug', ' --debug', ''))}}
+          releaseAssetNamePattern: 'Slime2-v[version]${{ env.VERSION_SUFFIX }}_${{ env.FILE_SUFFIX }}[ext]'
 
     outputs:
       app_version: ${{ steps.tauri-build.outputs.appVersion }}
