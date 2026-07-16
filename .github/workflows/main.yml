@@ -80,8 +80,10 @@ jobs:
         env:
           # the action replaces \_\_VERSION\_\_ with the app version.
           APP_VERSION_FULL: __VERSION__${{ env.VERSION_SUFFIX }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FILE_SUFFIX: ${{ format('{0}-{1}', runner.os, matrix.output_arch || runner.arch) }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: 'v${{ env.APP_VERSION_FULL }}'
           releaseName: 'Slime2 v${{ env.APP_VERSION_FULL }}'
