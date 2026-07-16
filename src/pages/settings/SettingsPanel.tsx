@@ -31,24 +31,19 @@ export default function SettingsPanel() {
 						<p className='self-end font-bold'>Slime2 v{appVersionQuery.data}</p>
 					)}
 
-					<HeaderButton
-						label='Update Available!'
-						icon={ArrowDownTraySvg}
-						className='border-purple-300 bg-purple-300 from-purple-300 to-violet-400 text-violet-900 outline-2 outline-offset-2 outline-white over:outline-white'
-						onClick={() => {
-							openDialog(
-								'Update Available!',
-								<UpdateDialog
-									update={
-										update || {
-											version: '1.5.0',
-											currentVersion: '1.4.2',
-										}
-									}
-								/>,
-							);
-						}}
-					/>
+					{update && (
+						<HeaderButton
+							label='Update Available!'
+							icon={ArrowDownTraySvg}
+							className='border-purple-300 bg-purple-300 from-purple-300 to-violet-400 text-violet-900 outline-2 outline-offset-2 outline-white over:outline-white'
+							onClick={() => {
+								openDialog(
+									'Update Available!',
+									<UpdateDialog update={update} />,
+								);
+							}}
+						/>
+					)}
 
 					<HeaderButton
 						label='About'
