@@ -417,26 +417,13 @@ async function handleChatMessage(data, eventDate) {
 		}
 	}
 
-	// get the index of the first non-mention fragment for proxied message
-	let proxiedFragmentIndex = 0;
-	if (message.fragments[0]?.type === 'mention') {
-		proxiedFragmentIndex = 1;
-	}
-
-	// if that fragment isn't a text fragment, can't be a proxied message
-	if (message.fragments[proxiedFragmentIndex]?.type !== 'text') {
-		proxiedFragmentIndex = null;
-	}
-
 	// get user's pronouns and system information
 	const [pronouns, proxiedMessage] = await Promise.all([
 		getPronouns('twitch', chatter_user_id, chatter_user_login),
 		getSystemProxiedMessage(
 			'twitch',
 			chatter_user_id,
-			proxiedFragmentIndex !== null
-				? message.fragments[proxiedFragmentIndex].text
-				: undefined,
+			message.fragments,
 		),
 	]);
 
@@ -505,22 +492,20 @@ async function handleChatMessage(data, eventDate) {
 	/** @type {HTMLSpanElement} */
 	const contentElement = messageTemplateClone.querySelector('.content');
 	message.fragments.forEach((fragment, index) => {
-		if (
-			proxiedMessage &&
-			proxiedFragmentIndex === index &&
-			fragment.type === 'text'
-		) {
-			// append proxied text fragment
-			contentElement.append(
-				...buildTextFragments(
-					{ type: 'text', text: proxiedMessage.body },
-					{ className: 'fragment-proxied' },
-				),
-			);
+		const pluralmindFragment = proxiedMessage?.changedFragments?.[index];
 
-			// append original text fragment
+		if (pluralmindFragment !== undefined) {
+			// Pluralmind has a different version of this fragment, add it
+			// as long as pluralmind didn't remove it entirely
+			if (pluralmindFragment !== null) {
+				contentElement.append(
+					...fragmentsWithClass(buildMessageFragments(pluralmindFragment), 'fragment-proxied')
+				);
+			}
+
+			// append original fragment
 			contentElement.append(
-				...buildTextFragments(fragment, { className: 'fragment-original' }),
+				...fragmentsWithClass(buildMessageFragments(fragment), 'fragment-original')
 			);
 		} else {
 			contentElement.append(...buildMessageFragments(fragment));
@@ -1018,7 +1003,7 @@ async function getPronouns(platform, userId, username) {
  *
  * @param {'twitch'} platform
  * @param {string} userId
- * @param {string} [message]
+ * @param {Object[]} [message]
  * @returns {Promise<Object | null>}
  *   https://docs.pluralmind.chat/api/interfaces/ProxiedMessage.html
  */
@@ -1231,6 +1216,23 @@ function cloneTemplate(id) {
 	}
 
 	return document.importNode(element.content, true);
+}
+
+/**
+ * Adds a class to all top-level children of cloned document fragments.
+ *
+ * @param {DocumentFragment[]} fragments
+ * @param {string} className
+ * @returns {DocumentFragment[]}
+ */
+function fragmentsWithClass(fragments, className) {
+	fragments.forEach(fragment => {
+		for (const child of fragment.children) {
+			child.classList.add(className);
+		}
+	});
+
+	return fragments;
 }
 
 /**

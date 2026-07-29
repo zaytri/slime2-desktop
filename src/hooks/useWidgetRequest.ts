@@ -288,7 +288,13 @@ const SystemProxiedMessageRequestZ = z.object({
 	payload: z.object({
 		platform: z.literal('twitch'),
 		user_id: z.string(),
-		message: z.string(),
+		message: z.union([
+			z.string(),
+			z.array(z.looseObject({
+				type: z.string(),
+				text: z.optional(z.string()),
+			})),
+		]),
 	}),
 });
 

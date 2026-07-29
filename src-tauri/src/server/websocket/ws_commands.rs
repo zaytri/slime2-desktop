@@ -34,7 +34,7 @@ pub struct RequestData {
 	widget_id: String,
 	request_id: String,
 	request_type: String,
-	payload: HashMap<String, String>,
+	payload: HashMap<String, serde_json::Value>,
 }
 
 #[derive(Clone, Serialize)]
