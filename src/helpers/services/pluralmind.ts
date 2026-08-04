@@ -10,7 +10,7 @@ pluralmind.updateConfig({
 	cacheDuration: 5 * 60 * 1000, // 5 minutes
 });
 
-const MOCK_PROXY_PREFIX = 'm:';
+export const MOCK_PROXY_PREFIX = 'm: ';
 
 export async function getSystemProxiedMessage(
 	platform: 'twitch',
@@ -34,7 +34,7 @@ function createMockSystem(): System {
 		name: randomMockUser('Member'),
 		proxies: [{ text: MOCK_PROXY_PREFIX, type: ProxyType.Prefix }],
 		case_sensitive: false,
-		require_space: true,
+		require_space: false,
 		color: Random.boolean() ? Random.hexCode() : null,
 		pronouns: Random.boolean() ? Random.item(MOCK_PRONOUNS).join('/') : null,
 	};

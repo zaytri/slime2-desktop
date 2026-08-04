@@ -6,6 +6,7 @@ import {
 	randomMockUser,
 } from '@/helpers/mock';
 import Random from '@/helpers/random';
+import { MOCK_PROXY_PREFIX } from '@/helpers/services/pluralmind';
 import { sendMockTwitchEvent } from '@/helpers/widgetMessage';
 import {
 	TWITCH_MOCK_ANNOUNCEMENT_COLORS,
@@ -24,7 +25,9 @@ export default function useTwitchMockChatMessage() {
 		type: Twitch.WebsocketEvent.ChatMessage['message_type'] | 'announcement',
 		text: string,
 		announcementColor: Twitch.ChatNoticeType.Announcement['color'],
+		plural: boolean,
 	) {
+		if (plural) text = `${MOCK_PROXY_PREFIX}${text}`;
 		const message: Twitch.Message = {
 			text,
 			fragments: [{ type: 'text', text }],
@@ -68,6 +71,12 @@ export default function useTwitchMockChatMessage() {
 			'announcement',
 		]);
 		const announcementColor = Random.item(TWITCH_MOCK_ANNOUNCEMENT_COLORS);
+
+		// 5% chance of plurality
+		if (Random.chance(5)) {
+			message.text = `${MOCK_PROXY_PREFIX}${message.text}`;
+			message.fragments = [{ type: 'text', text: MOCK_PROXY_PREFIX }, ...message.fragments];
+		}
 
 		widgetIds.forEach(widgetId => {
 			if (type === 'announcement') {
