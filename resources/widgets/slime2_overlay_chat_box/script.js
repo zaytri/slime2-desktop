@@ -818,10 +818,9 @@ function buildMessageFragments(fragment) {
 
 /**
  * @param {{ type: 'text'; text: string }} textFragment
- * @param {{ className?: string }} [options]
  * @returns {DocumentFragment[]}
  */
-function buildTextFragments(textFragment, { className = undefined } = {}) {
+function buildTextFragments(textFragment) {
 	const { text } = textFragment;
 
 	const parsedFragments = [];
@@ -865,28 +864,21 @@ function buildTextFragments(textFragment, { className = undefined } = {}) {
 	return parsedFragments.map(fragment => {
 		const fragmentClone =
 			fragment.type === 'emote'
-				? buildParsedEmoteFragment(fragment, { className })
-				: buildParsedTextFragment(fragment, { className });
+				? buildParsedEmoteFragment(fragment)
+				: buildParsedTextFragment(fragment);
 		return fragmentClone;
 	});
 }
 
 /**
  * @param {{ type: 'text'; text: string }} parsedTextFragment
- * @param {{ className?: string }} [options]
  * @returns {DocumentFragment}
  */
-function buildParsedTextFragment(
-	parsedTextFragment,
-	{ className = undefined } = {},
-) {
+function buildParsedTextFragment(parsedTextFragment) {
 	const { text } = parsedTextFragment;
 
 	const textClone = cloneTemplate('text-fragment-template');
 	textClone.querySelector('.text').textContent = text;
-	if (className) {
-		textClone.querySelector('.text').classList.add(className);
-	}
 
 	return textClone;
 }
@@ -934,23 +926,14 @@ function buildEmoteFragment(emoteFragment) {
  * 	srcAnimated: string;
  * 	srcStatic: string;
  * }} parsedEmoteFragment
- * @param {{ className?: string }} [options]
  * @returns {DocumentFragment}
  */
-function buildParsedEmoteFragment(
-	parsedEmoteFragment,
-	{ className = undefined } = {},
-) {
+function buildParsedEmoteFragment(parsedEmoteFragment) {
 	const { srcAnimated, srcStatic } = parsedEmoteFragment;
 
 	const emoteClone = cloneTemplate('emote-fragment-template');
 	emoteClone.querySelector('.emote.animated').src = srcAnimated;
 	emoteClone.querySelector('.emote.static').src = srcStatic;
-	if (className) {
-		emoteClone.querySelectorAll('.emote').forEach(emoteElement => {
-			emoteElement.classList.add(className);
-		});
-	}
 
 	return emoteClone;
 }
