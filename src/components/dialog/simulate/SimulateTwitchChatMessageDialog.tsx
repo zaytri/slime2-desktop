@@ -2,6 +2,7 @@ import ColorField from '@/components/input_fields/ColorField';
 import SelectField from '@/components/input_fields/SelectField';
 import TextAreaField from '@/components/input_fields/TextAreaField';
 import TextField from '@/components/input_fields/TextField';
+import ToggleField from '@/components/input_fields/ToggleField';
 import { twitchBadgeMap } from '@/hooks/twitch_mock/twitchMockData';
 import PaperAirplaneSvg from '@@/svg/PaperAirplaneSvg';
 import { useState } from 'react';
@@ -18,6 +19,7 @@ type SimulateTwitchChatMessageDialogProps = {
 		type: Twitch.WebsocketEvent.ChatMessage['message_type'] | 'announcement',
 		text: string,
 		announcementColor: Twitch.ChatNoticeType.Announcement['color'],
+		plural: boolean,
 	) => void;
 };
 
@@ -33,6 +35,7 @@ export default function SimulateTwitchChatMessageDialog({
 	const [message, setMessage] = useState('');
 	const [announcementColor, setAnnouncementColor] =
 		useState<Twitch.ChatNoticeType.Announcement['color']>('PRIMARY');
+	const [plural, setPlural] = useState(false);
 	const namePlaceholder = 'MockChatter';
 	const messagePlaceholder = 'Hello!';
 
@@ -108,6 +111,12 @@ export default function SimulateTwitchChatMessageDialog({
 							]}
 						/>
 					)}
+
+					<ToggleField
+						label='Plural message?'
+						value={plural}
+						onChange={setPlural}
+					/>
 				</section>
 			</div>
 			<div className='flex justify-end gap-4'>
@@ -125,6 +134,7 @@ export default function SimulateTwitchChatMessageDialog({
 							type,
 							trimmedMessage || messagePlaceholder,
 							announcementColor,
+							plural,
 						);
 					}}
 				>
