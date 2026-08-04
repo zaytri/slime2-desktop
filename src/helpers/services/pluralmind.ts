@@ -19,13 +19,13 @@ export async function getSystemProxiedMessage(
 ) {
 	if (platform !== 'twitch' || !message) return null;
 
-	if (userId.startsWith('mock_')) {
-		const system = createMockSystem();
+	try {
+		const system = userId.startsWith('mock_') ? createMockSystem() : await pluralmind.getSystem(userId);
 		return pluralmind.getProxiedMessage(system, message) ?? null;
+	} catch (e) {
+		console.error('Pluralmind error:', e);
+		return null;
 	}
-
-	const system = await pluralmind.getSystem(userId);
-	return pluralmind.getProxiedMessage(system, message) ?? null;
 }
 
 function createMockSystem(): System {
