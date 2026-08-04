@@ -396,7 +396,7 @@
 .use-plurality
 	.proxied-message
 	:is(.user-label:not(.user-label-proxied), .fragment-original) {
-	display: none;
+	display: none !important;
 }
 
 .use-plurality.username-color_twitch .proxied-message .user {
