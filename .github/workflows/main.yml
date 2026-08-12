@@ -91,6 +91,8 @@ jobs:
           prerelease: true
           args: ${{ format('{0}{1}', matrix.args, case(github.ref_name == 'release/debug', ' --debug', ''))}}
           releaseAssetNamePattern: 'Slime2-v[version]${{ env.VERSION_SUFFIX }}_${{ env.FILE_SUFFIX }}[ext]'
+          uploadUpdaterJson: ${{ runner.os != 'Linux' }}
+          uploadUpdaterSignatures: ${{ runner.os != 'Linux' }}
 
     outputs:
       app_version: ${{ steps.tauri-build.outputs.appVersion }}

@@ -27,7 +27,7 @@
 			"icons/icon.icns",
 			"icons/icon.ico"
 		],
-		"targets": ["appimage", "deb", "rpm", "msi", "dmg"],
+		"targets": ["deb", "rpm", "msi", "app"],
 		"linux": {
 			"appimage": {
 				"bundleMediaFramework": true
