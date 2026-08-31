@@ -426,6 +426,12 @@ pub fn resource_assets_path(app: &AppHandle) -> PathBuf {
 		.expect("Failed to resolve [resource]/assets!")
 }
 
+pub fn config_path(app: &AppHandle) -> PathBuf {
+	app.path()
+		.resolve("config", BaseDirectory::AppConfig)
+		.expect("Failed to resolve [app_config]/config!")
+}
+
 pub fn default_folder_image_name() -> String {
 	String::from("folder.png")
 }
