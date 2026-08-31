@@ -2,11 +2,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::{
-	collections::HashMap,
-	sync::{Arc, Mutex, OnceLock},
+	collections::HashMap, sync::{Arc, Mutex, OnceLock, RwLock},
 };
 
-use keyring_core::{Entry, set_default_store};
 use sysinfo::ProcessRefreshKind;
 use tauri::{AppHandle, Manager};
 use tauri_plugin_dialog::DialogExt;
@@ -18,6 +16,10 @@ mod file;
 mod secret;
 mod server;
 mod watcher;
+
+mod twitch;
+use twitch::websocket::connect
+mod account;
 
 // thanks to https://github.com/tauri-apps/tauri/discussions/6309#discussioncomment-10295527
 static APP_HANDLE: OnceLock<AppHandle> = OnceLock::new();
@@ -32,7 +34,8 @@ fn get_log_file_name() -> String {
 
 #[derive(Default)]
 struct AppState {
-	secret_entries: Mutex<HashMap<String, Arc<Entry>>>,
+	secret_entries: Mutex<HashMap<String, Arc<keyring::Entry>>>,
+	accounts: RwLock<HashMap<String, account::Account>>,
 }
 
 #[tokio::main]
@@ -42,22 +45,6 @@ async fn main() {
 		// blank screen fix for linux
 		// related to this issue https://github.com/tauri-apps/tauri/issues/10749
 		unsafe { std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1") };
-	}
-
-	// set up keyrings for windows and macos
-
-	#[cfg(target_os = "windows")]
-	{
-		// use windows credential manager for windows keyring
-		use windows_native_keyring_store::Store;
-		set_default_store(Store::new().unwrap());
-	}
-
-	#[cfg(target_os = "macos")]
-	{
-		// use keychain for macos keyring
-		use apple_native_keyring_store::keychain::Store;
-		set_default_store(Store::new().unwrap());
 	}
 
 	let connections = server::websocket::WebsocketConnections::default();
@@ -197,33 +184,6 @@ async fn main() {
 					.kind(tauri_plugin_dialog::MessageDialogKind::Warning)
 					.show(|_| {});
 				break;
-			}
-
-			// set up keyring on linux
-
-			#[cfg(target_os = "linux")]
-			{
-				// use sqlite (turso) for linux keyring
-				use db_keystore::{DbKeyStore, DbKeyStoreConfig};
-				set_default_store(
-					DbKeyStore::new(DbKeyStoreConfig {
-						path: app
-							.path()
-							.app_local_data_dir()
-							.expect("Failed to resolve [app_local_data]!")
-							.join("db")
-							.join("keystore")
-							.with_extension("db"),
-						vfs: Some(String::from("io_uring")),
-						..Default::default()
-					})
-					.unwrap(),
-				);
-
-				// related to this issue https://github.com/tauri-apps/tauri/issues/10749
-				unsafe {
-					std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1")
-				};
 			}
 
 			let app_handle = app.app_handle().clone();
