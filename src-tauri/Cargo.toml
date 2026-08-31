@@ -8,48 +8,39 @@ edition = "2024"
 publish = false
 
 [build-dependencies]
-tauri-build = { version = "2", features = [] }
+tauri-build = { version = "2.6.3", features = [] }
 
 [dependencies]
 # necessary for tauri
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-tauri = { version = "2", features = [] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+tauri = { version = "2.11.5", features = [] }
 
 # added for slime2
-chrono = "0.4"
-font-kit = { version = "0.14" }
-futures = "0.3"
-junk_file = "0.1"
-keyring-core = "1"
-log = "0.4"
-nanoid = "0.5"
-notify = "8"
-notify-debouncer-full = "0.7"
-sysinfo = "0.38.4"
-tauri-plugin-clipboard-manager = "2"
-tauri-plugin-dialog = "2"
-tauri-plugin-log = "2"
-tauri-plugin-opener = "2"
-tauri-plugin-shell = "2"
-tauri-plugin-single-instance = "2"
-tauri-plugin-window-state = "2"
-time = { version = "0.3", features = ["formatting", "local-offset"] }
-tokio = { version = "1", features = ["full"] }
-walkdir = "2"
-warp = { version = "0.4", features = ["server", "websocket"] }
-webbrowser = { version = "1", features = ["hardened", "disable-wsl"] }
-zip = "8"
-
-# platform specific stores for keyring-core
-[target.'cfg(target_os = "linux")'.dependencies]
-db-keystore = "0.4"
-
-[target.'cfg(target_os = "windows")'.dependencies]
-windows-native-keyring-store = "1"
-
-[target.'cfg(target_os = "macos")'.dependencies]
-apple-native-keyring-store = { version = "1", features = ["keychain"] }
+chrono = "0.4.45"
+font-kit = { version = "0.14.3" }
+futures = "0.3.34"
+junk_file = "0.1.1"
+keyring = "4.1.6"
+log = "0.4.33"
+nanoid = "0.5.0"
+notify = "8.2.0"
+notify-debouncer-full = "0.7.0"
+sysinfo = "0.39.6"
+tauri-plugin-clipboard-manager = "2.3.2"
+tauri-plugin-dialog = "2.7.2"
+tauri-plugin-log = "2.9.0"
+tauri-plugin-opener = "2.5.4"
+tauri-plugin-shell = "2.3.5"
+tauri-plugin-single-instance = "2.4.3"
+tauri-plugin-window-state = "2.4.1"
+time = { version = "0.3.55", features = ["formatting", "local-offset"] }
+tokio = { version = "1.53.1", features = ["full"] }
+tokio-tungstenite = "0.30.0"
+walkdir = "2.5.0"
+warp = { version = "0.4.3", features = ["server", "websocket"] }
+webbrowser = { version = "1.2.4", features = ["hardened", "disable-wsl"] }
+zip = "8.6.0"
 
 [features]
 #! This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
