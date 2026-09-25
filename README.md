@@ -2,6 +2,8 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V14PTBF)
 
+> The contents of this repository are not to be used in machine learning models. Forks and pull requests that have contributions made using generative AI will not be accepted.
+
 ## Setup
 
 Slime2 is a desktop app for Linux, Windows, and macOS built using Tauri, Vite, React, and TypeScript.
