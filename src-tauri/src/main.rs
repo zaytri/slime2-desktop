@@ -2,7 +2,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::{
-	collections::HashMap, sync::{Arc, Mutex, OnceLock, RwLock},
+	collections::HashMap,
+	sync::{Arc, Mutex, OnceLock, RwLock},
+	time::Instant,
 };
 
 use sysinfo::ProcessRefreshKind;
@@ -17,14 +19,16 @@ mod secret;
 mod server;
 mod watcher;
 
+mod db;
 mod twitch;
-use twitch::websocket::connect
-mod account;
 
 // thanks to https://github.com/tauri-apps/tauri/discussions/6309#discussioncomment-10295527
 static APP_HANDLE: OnceLock<AppHandle> = OnceLock::new();
 fn get_app_handle() -> &'static AppHandle {
 	APP_HANDLE.get().unwrap()
+}
+fn get_app_state() -> tauri::State<'static, AppState> {
+	get_app_handle().state::<AppState>()
 }
 
 static LOG_FILE_NAME: OnceLock<String> = OnceLock::new();
@@ -35,7 +39,14 @@ fn get_log_file_name() -> String {
 #[derive(Default)]
 struct AppState {
 	secret_entries: Mutex<HashMap<String, Arc<keyring::Entry>>>,
-	accounts: RwLock<HashMap<String, account::Account>>,
+	accounts: RwLock<HashMap<String, db::account::Account>>,
+	queue: JsonQueue,
+}
+
+#[derive(Default)]
+struct JsonQueue {
+	jsons: RwLock<HashMap<std::path::PathBuf, String>>,
+	cooldowns: RwLock<HashMap<std::path::PathBuf, Instant>>,
 }
 
 #[tokio::main]
@@ -201,6 +212,8 @@ async fn main() {
 			if let Err(error) = file::clean_tiles_folder(&app_handle) {
 				log::error!("Error cleaning tiles folder! {}", error);
 			}
+
+			db::setup(&app_handle);
 
 			server::setup(
 				connections,
