@@ -5,10 +5,13 @@ use std::{
 	fs::{self, File},
 	io,
 	path::{Path, PathBuf},
-	time::{SystemTime, UNIX_EPOCH},
+	sync::RwLock,
+	time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use tauri::{AppHandle, Manager, path::BaseDirectory};
 use zip::ZipArchive;
+
+use crate::{AppState, get_app_handle};
 
 // file_path must not include .json
 pub fn load_json(mut file_path: PathBuf) -> io::Result<String> {
@@ -22,9 +25,57 @@ pub fn load_json(mut file_path: PathBuf) -> io::Result<String> {
 	fs::read_to_string(file_path)
 }
 
+const COOLDOWN_SECONDS: u64 = 3;
+
+pub fn queue_save_json(json_string: String, file_path: PathBuf) {
+	let queue = &get_app_handle().state::<AppState>().queue;
+
+	// queue the json to be saved, overriding the existing queued save
+	queue
+		.jsons
+		.write()
+		.unwrap()
+		.insert(file_path.clone(), json_string);
+
+	if let Some(cooldown) = queue.cooldowns.read().unwrap().get(&file_path)
+		&& cooldown.elapsed().as_secs() > COOLDOWN_SECONDS
+	{
+		// cooldown has passed, set new cooldown
+		queue
+			.cooldowns
+			.write()
+			.unwrap()
+			.insert(file_path.clone(), Instant::now());
+
+		run_queued_save(&file_path);
+
+		// after COOLDOWN_SECONDS, attempt to save again
+		tokio::spawn(async move {
+			tokio::time::sleep(Duration::from_secs(COOLDOWN_SECONDS)).await;
+			run_queued_save(&file_path);
+		});
+	};
+}
+
+fn run_queued_save(file_path: &PathBuf) {
+	let queue = &get_app_handle().state::<AppState>().queue;
+	if let Some(json_string) = queue.jsons.read().unwrap().get(file_path) {
+		// json exists in queue, save it and remove it from the queue
+		if let Err(error) = save_json(json_string, file_path.clone()) {
+			log::error!(
+				"Error saving json \"{}\" to \"{:?}\": {}",
+				json_string,
+				file_path,
+				error
+			)
+		};
+		queue.jsons.write().unwrap().remove(file_path);
+	};
+}
+
 // file_path must not include .json
 // simply saves the given string as is, doesn't automatically pretty print it
-pub fn save_json(json_string: &str, mut file_path: PathBuf) -> io::Result<()> {
+fn save_json(json_string: &str, file_path: PathBuf) -> io::Result<()> {
 	// create parent folder if it doesn't exist
 	if let Some(parent_path) = file_path.parent() {
 		if !parent_path.exists() {
@@ -32,10 +83,36 @@ pub fn save_json(json_string: &str, mut file_path: PathBuf) -> io::Result<()> {
 		}
 	}
 
-	file_path.set_extension("json");
+	// set json extension
+	let mut json_file_path = file_path.clone();
+	json_file_path.set_extension("json");
+
+	// pretty print json
+	let pretty_json_string =
+		match serde_json::from_str::<serde_json::Value>(json_string) {
+			Ok(json) => match serde_json::to_string_pretty(&json) {
+				Ok(new_json_string) => new_json_string,
+				Err(error) => {
+					log::debug!(
+						"Unable to pretty print \"{}\"! {}",
+						json_string,
+						error
+					);
+					json_string.to_string()
+				}
+			},
+			Err(error) => {
+				log::debug!(
+					"Unable to pretty print \"{}\"! {}",
+					json_string,
+					error
+				);
+				json_string.to_string()
+			}
+		};
 
 	// write json to file
-	fs::write(file_path, json_string)?;
+	fs::write(json_file_path, pretty_json_string)?;
 
 	Ok(())
 }
