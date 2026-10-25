@@ -64,6 +64,16 @@ pub fn setup(
 			// this allows external applications to use it
 			.or(websocket_route.with(warp::cors().allow_any_origin()));
 
+		// Try to grab the port before handing off to the background thread
+		// to throw an error if the port is already in use
+		std::net::TcpListener::bind("127.0.0.1:57143").inspect_err(
+			|error| {
+				log::error!(
+					"Failed to open port 57143 for the overlay server! {error}"
+				);
+			},
+		)?;
+
 		// port 57143 in production, widget server running on the same port
 		// 57143 kind of looks like slime :3c
 		tauri::async_runtime::spawn(
